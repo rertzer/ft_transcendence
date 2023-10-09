@@ -3,6 +3,9 @@ import { SubscribeMessage, WebSocketGateway, MessageBody, WebSocketServer } from
 import { Socket } from "dgram";
 import { Server } from 'socket.io'
 
+
+let lastMessageId = 0;
+
 @WebSocketGateway({
 	cors: {
 		origin: '*',
@@ -21,13 +24,17 @@ export class MyGateway implements OnModuleInit {
 			console.log('connected');
 		})
 	}
+
 	@SubscribeMessage('newMessage')
-	onNewMessage(@MessageBody() body: any) {
-		console.log(body);
+	onNewMessage(@MessageBody() messageData: {username: string, content: string}) {
+		console.log(messageData);
 		console.log('gateway side');
+		lastMessageId++
 		this.server.emit('onMessage', {
 			msg: 'New message',
-			content: body,
+			content: messageData.content,
+			username: messageData.username,
+			id: lastMessageId
 		})
 	}
 }

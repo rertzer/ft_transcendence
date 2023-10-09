@@ -5,15 +5,24 @@ import { WebsocketContext } from "../contexts/websocketContext";
 type MessagePayload ={
 	content: string;
 	message: string;
+	user: string;
 }
+let name: string = '';
 
 export const Websocket = () => {
 
 	const [value, setValue] = useState('')
 	const socket = useContext(WebsocketContext);
 	const [messages, setMessages] = useState<MessagePayload[]>([]);
+	const [userName, setUserName] = useState('');
+
+
 
 	useEffect(() => {
+		name = prompt('Enter your name: ') || '';
+		if (name) {
+		setUserName(name);
+		}
 		socket.on('connect', () => {
 			console.log('connected');
 		});
@@ -33,6 +42,13 @@ export const Websocket = () => {
 		socket.emit('newMessage', value);
 		setValue('');
 	};
+	const handleNewMessage = () => {
+		if (name && value) {
+		  // Send a new message to the server with the user's name
+		  socket.emit('newMessage', { username: name, content: value });
+		  setValue('');
+		}
+	  };
 
 	return (
 		<div>
