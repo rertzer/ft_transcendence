@@ -13,7 +13,7 @@ export class SocketClient implements OnModuleInit{
 		this.registerConsumerEvents();
 	}
 	private registerConsumerEvents() {
-		this.socketClient.emit('newMessage', {msg: 'weewwewewe'})
+		this.socketClient.emit('newMessage', {msg: 'Ceci est un test', username: "pierrick"})
 		console.log('client side');
 		this.socketClient.on('connect', () => {
 			console.log('connecto to gateway');
