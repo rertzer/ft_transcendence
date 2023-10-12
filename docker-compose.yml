@@ -28,7 +28,7 @@ services:
     networks:
       - transcendence
     volumes:
-      - ./data:/var/lib/postgresql/data
+      - dbvolume:/var/lib/postgresql/data
 
   frontend:
     restart: unless-stopped
@@ -59,3 +59,6 @@ services:
 
 networks:
   transcendence:
+
+volumes:
+  dbvolume:
