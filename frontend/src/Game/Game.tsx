@@ -1,14 +1,16 @@
 import React, {useEffect, useState} from 'react';
-import Point from './classes/Point';
+/* import Point from './classes/Point';
 import Player from './classes/Player';
 import GameParam from './classes/GameParam';
-import Ball from './classes/Ball';
+import Ball from './classes/Ball'; */
 //import {drawCircle, drawRect, drawText} from './functions/draw';
 import printGame from './functions/printGame';
 import printStartMenu from './functions/printStartMenu';
 import printWinnerMenu from './functions/printWinnerMenu';
 import socketService from './services/socketService';
 import { JoinRoom } from './components/joinRoom';
+import GameContext, { IGameContextProps } from './gameContext';
+import { GameCanvas } from './components/gameCamvas';
 //import { colision, leftboard } from './functions/testColision';
 
 
@@ -219,25 +221,31 @@ import { JoinRoom } from './components/joinRoom';
 		<canvas id="pong" width="800" height="500"></canvas>
 	)
 }*/
+const connectSocket = async () => {
+	const socket = await socketService.connect('http://localhost:4000')
+	.then((s) => {console.log("Connected with socket: ", s.id);})
+	.catch((error) => {
+		console.log("Error: ", error);
+	});
+};
 
 function Game() {
-	const connectSocket = async () => {
-		const socket = await socketService.connect('http://localhost:4000')
-		.catch((error) => {
-			console.log("Error: ", error);
-		});
-	};
+	const [isInRoom, setInRoom] = useState(false);
 
 	useEffect(() => {
 		connectSocket();
 	}, []);
+
+	const gameContextValue :IGameContextProps = {
+		isInRoom, 
+		setInRoom,
+	};
 	
 	return (
-		<>
-			<h1>Game</h1>
-			<JoinRoom />
-			<canvas id="pong" width="800" height="500"></canvas>
-		</>
+		<GameContext.Provider value={gameContextValue}>
+			{!isInRoom && <JoinRoom />}
+			{isInRoom && <GameCanvas />}
+		</GameContext.Provider>
 	)
 }
 

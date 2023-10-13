@@ -1,9 +1,11 @@
 # ft_transcendence
 A website for the mighty Pong contest
 
-j'ai besoin de creer un react contexte avec les informations sur le jeu. les parametre etc. 
-video 54:32 https://www.youtube.com/watch?v=aA_SdbGD64E&t=5471s&ab_channel=CoderOne
+## Notes pour Maxence
+Besoin de reprendre ici :
+https://medium.com/@pdx.lucasm/canvas-with-react-js-32e133c05258
 
-creer un dossier de services:
- - SocketService > index.ts : gere la connexion, deconnexion, gestion des events etc. 
+et video pour la partie socket.io et React https://youtu.be/aA_SdbGD64E?si=acjJV02N0BNWz0Ro&t=5763
+
+et pour la partie backend Socket.io sur NestJS https://youtu.be/fBtNgqIu63g?si=_IGrSHtJLkuyP80R&t=701
 
