@@ -11,7 +11,7 @@ datasource db {
 }
 
 model User {
-  id                     Int                @id
+  id                     Int                @id @default(autoincrement())
   username               String?
   first_name             String?
   last_name              String?
@@ -22,68 +22,50 @@ model User {
   game_won               Int?
   game_lost              Int?
   game_played            Int?
-  chatChannelsUser       ChatChannelsUser[] @relation("ChatChannelsOwner")
   friends                Friend[]           @relation("UserToFriends")
   sentDirectMessages     DirectMsg[]        @relation("SenderMessages")
   receivedDirectMessages DirectMsg[]        @relation("ReceiverMessages")
   blockedUsers           BlockedUser[]      @relation("BlockingUser")
   usersBlockedBy         BlockedUser[]      @relation("BlockedByUser")
   twoFA                  TwoFA?             @relation("TwoFactorAuth")
-}
-
-model TwoFA {
-  id            Int    @id
-  user_id       Int    @unique
-  qr_code       String
-  ascii_secret  String
-  authenticator String
-  user          User   @relation("TwoFactorAuth", fields: [user_id], references: [id])
-}
-
-model Friend {
-  id                Int     @id
-  user_id           Int
-  friend_id         Int
-  friendship_status String?
-  user              User    @relation("UserToFriends", fields: [user_id], references: [id])
-}
-
-model Game {
-  id               Int     @id
-  player_one_id    Int
-  player_two_id    Int
-  winner_id        Int?
-  game_status      String?
-  player_one_score Int?
-  player_two_score Int?
-}
-
-model ChatChannels {
-  id       Int     @id
-  owner    Int
-  type     String
-  password String?
+  chatChannelsUser       ChatChannelsUser[] @relation("chatChanelUser")
+  channelOwner           ChatChannels[]     @relation("ChatChannelsOwner")
 }
 
 model ChatChannelsUser {
-  id          Int       @id
-  channel_id  Int
-  user_id     Int
-  user_role   String
-  date_joined DateTime
-  date_left   DateTime?
-  ownerUser   User      @relation("ChatChannelsOwner", fields: [user_id], references: [id])
+  id               Int              @id @default(autoincrement())
+  channel_id       Int              @unique
+  user_id          Int
+  user_role        String
+  date_joined      DateTime
+  date_left        DateTime?
+  chatChannelsUser User             @relation("chatChanelUser", fields: [user_id], references: [id], map: "chat_channels_user")
+  channel          ChatChannels[]   @relation("ChatChannelsUser")
+  messagesSent     ChatMsgHistory[] @relation("ChatMessagesSender")
+}
+
+model ChatChannels {
+  id           Int              @id @default(autoincrement())
+  owner        Int              @unique
+  type         String
+  password     String?
+  chatMessages ChatMsgHistory[] @relation("ChatMessages")
+  channelOwner User             @relation("ChatChannelsOwner", fields: [owner], references: [id])
+  channelUser  ChatChannelsUser @relation("ChatChannelsUser", fields: [id], references: [channel_id])
+  // Add other fields...
 }
 
 model ChatMsgHistory {
-  id                    Int    @id
+  id                    Int              @id @default(autoincrement())
   chat_channels_id      Int
   chat_channels_user_id Int
   message               String
+  channel               ChatChannels     @relation("ChatMessages", fields: [chat_channels_id], references: [id])
+  sender                ChatChannelsUser @relation("ChatMessagesSender", fields: [chat_channels_user_id], references: [id])
 }
 
 model DirectMsg {
-  id          Int    @id
+  id          Int    @id @default(autoincrement())
   sender_id   Int
   receiver_id Int
   msg_status  String
@@ -92,12 +74,38 @@ model DirectMsg {
   receiver    User   @relation("ReceiverMessages", fields: [receiver_id], references: [id])
 }
 
+model TwoFA {
+  id            Int    @id @default(autoincrement())
+  user_id       Int    @unique
+  qr_code       String
+  ascii_secret  String
+  authenticator String
+  user          User   @relation("TwoFactorAuth", fields: [user_id], references: [id])
+}
+
+model Friend {
+  id                Int     @id @default(autoincrement())
+  user_id           Int
+  friend_id         Int
+  friendship_status String?
+  user              User    @relation("UserToFriends", fields: [user_id], references: [id])
+}
+
+model Game {
+  id               Int     @id @default(autoincrement())
+  player_one_id    Int
+  player_two_id    Int
+  winner_id        Int?
+  game_status      String?
+  player_one_score Int?
+  player_two_score Int?
+}
+
 model BlockedUser {
-  id              Int      @id
+  id              Int      @id @default(autoincrement())
   user_id         Int
   blocked_user_id Int
   date_blocked    DateTime
   user            User     @relation("BlockingUser", fields: [user_id], references: [id])
-  // Add a relation to the blocked user
   blockedUser     User     @relation("BlockedByUser", fields: [blocked_user_id], references: [id])
 }
