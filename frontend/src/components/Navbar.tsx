@@ -1,36 +1,31 @@
-import "./Navbar.css";
+import "./Navbar.scss";
 import {Link} from "react-router-dom";
-import { NavbarItems } from "./NavbarItems";
-import {useState} from 'react';
+import SearchIcon from '@mui/icons-material/SearchOutlined';
+import DarkModeIcon from '@mui/icons-material/DarkModeOutlined';
+import LogoutIcon from '@mui/icons-material/MeetingRoomOutlined';
 
 function Navbar() {
 
-    const [clicked, setClicked] = useState(false);
-
-    function handleClick() {
-        setClicked(!clicked);
-    }
-
     return (
-        <nav className="NavbarItems">
-            <Link className="navbar-logo" to="/">
-                <h1><i className="navbar-logo"></i>Pong</h1>
-            </Link>
-
-            <div className="menu-icons" onClick={handleClick}>
-                <i className={clicked ? "fas fa-times" : "fas fa-bars"}></i>
+        <div className="navbar">
+            <div className="left">
+                <Link to="/" style={{textDecoration:"none"}}>
+                <span>Pong.</span>
+                </Link>
+                <div className="search">
+                    <SearchIcon />
+                    <input type="text" placeholder="Recherche de profils, parties, canaux..." />
+                </div>
             </div>
-
-            <ul className={clicked ? "nav-menu active" : "nav-menu"}>
-                {NavbarItems.map((item, index) => {
-                    return (<li key={index}>
-                        <Link className={item.cName} to={item.url}>
-                            <i className={item.icon}></i>{item.title}
-                        </Link>
-                    </li>);
-                })}
-            </ul>
-        </nav>
+            <div className="right">
+                <DarkModeIcon />
+                <div className="user">
+                    <img src="https://img.lamontagne.fr/c6BQg2OSHIeQEv4GJfr_br_8h5DGcOy84ruH2ZResWQ/fit/657/438/sm/0/bG9jYWw6Ly8vMDAvMDAvMDMvMTYvNDYvMjAwMDAwMzE2NDYxMQ.jpg"/>
+                    <span>tgrasset</span>
+                </div>
+                <LogoutIcon />
+            </div>
+        </div>
     );
 }
 

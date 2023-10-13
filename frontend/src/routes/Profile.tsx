@@ -1,10 +1,10 @@
+import "./Profile.scss";
+
 function Profile() {
-    
+
     return (
-        <div>
-            <h1>Le profil</h1>
-        </div>
-    )
+        <div className="profile">Profile</div>
+    );
 }
 
 export default Profile;
