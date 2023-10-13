@@ -1,6 +1,6 @@
 import { OnModuleInit } from "@nestjs/common";
 import { SubscribeMessage, WebSocketGateway, MessageBody, WebSocketServer } from "@nestjs/websockets";
-import { PrismaService } from "src/prisma/prisma.service";
+// import { PrismaService } from "src/prisma/prisma.service";
 import { Socket } from "dgram";
 import { Server } from 'socket.io'
 import { Prisma } from "@prisma/client";
@@ -10,7 +10,7 @@ let lastMessageId = 0;
 
 @WebSocketGateway({
 	cors: {
-		origin: '*',
+		origin: 'http://localhost:3000',
 	}
 })
 //implements mean that it will contains the metho onModuleInit and will be executed
@@ -27,7 +27,6 @@ export class MyGateway implements OnModuleInit {
 			console.log('connected');
 		})
 	}
-	const newUser = await PrismaService.
 
 	@SubscribeMessage('newMessage')
 	onNewMessage(@MessageBody() messageData: {username: string, content: string}) {

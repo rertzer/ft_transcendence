@@ -1,7 +1,7 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import {WebsocketProvider, socket } from './contexts/websocketContext';
+import {WebsocketProvider, socket } from './contexts/WebsocketContext';
 import { Websocket } from './components/Websocket';
 function App() {
   return (
