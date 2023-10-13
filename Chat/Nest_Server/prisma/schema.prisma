@@ -1,0 +1,87 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                Int     @id
+  username          String?
+  first_name        String?
+  last_name         String?
+  email             String
+  avatar            String?
+  role              String
+  password          String
+  game_won          Int?
+  game_lost         Int?
+  game_played       Int?
+
+}
+
+model TwoFA {
+  id                Int     @id
+  user_id           Int
+  qr_code           String
+  ascii_secret      String
+  authenticator     String
+}
+
+model Friend {
+  id                Int     @id
+  user_id           Int
+  friend_id         Int
+  friendship_status String?
+}
+
+model Game {
+  id                Int     @id
+  player_one_id     Int
+  player_two_id     Int
+  winner_id         Int?
+  game_status       String?
+  player_one_score  Int?
+  player_two_score  Int?
+}
+
+model ChatChannels {
+  id                Int     @id
+  owner             Int
+  type              String
+  password          String?
+}
+
+model ChatChannelsUser {
+  id                Int     @id
+  channel_id        Int
+  user_id           Int
+  user_role         String
+}
+
+model ChatMsgHistory {
+  id                Int     @id
+  chat_channels_id   Int
+  chat_channels_user_id Int
+  message           String
+}
+
+model DirectMsg {
+  id                Int     @id
+  sender_id         Int
+  receiver_id       Int
+  msg_status        String
+  message           String
+}
+
+model BlockedUser {
+  id                Int     @id
+  user_id           Int
+  blocked_user_id   Int
+  date_blocked      DateTime
+}
