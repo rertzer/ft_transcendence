@@ -1,6 +1,4 @@
 import Point from './Point';
-import Player from './Player';
-import Ball from './Ball';
 
 class GameParam {
     context: (CanvasRenderingContext2D | null ) = null;
@@ -37,12 +35,9 @@ class GameParam {
     play:boolean = false;
     goal:number = 0;
     endgame:boolean = false;
-	player1: Player = new Player();
-	player2: Player = new Player();
-	ball: Ball = new Ball();
 
     constructor(game?: {
-		context: CanvasRenderingContext2D,
+		context: CanvasRenderingContext2D | null,
         gameWidth: number,
         gameHeight: number,
         ballRadius: number,
@@ -76,9 +71,6 @@ class GameParam {
         play:boolean,
         goal:number,
         endgame:boolean,
-		player1: Player,
-		player2: Player,
-		ball: Ball,
 	}){
 		if(game) { 
             Object.assign(this, game);
