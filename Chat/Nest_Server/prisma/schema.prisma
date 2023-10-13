@@ -11,26 +11,33 @@ datasource db {
 }
 
 model User {
-  id                Int     @id
-  username          String?
-  first_name        String?
-  last_name         String?
-  email             String
-  avatar            String?
-  role              String
-  password          String
-  game_won          Int?
-  game_lost         Int?
-  game_played       Int?
-
+  id                     Int                @id
+  username               String?
+  first_name             String?
+  last_name              String?
+  email                  String
+  avatar                 String?
+  role                   String
+  password               String
+  game_won               Int?
+  game_lost              Int?
+  game_played            Int?
+  chatChannelsUser       ChatChannelsUser[] @relation("ChatChannelsOwner")
+  friends                Friend[]           @relation("UserToFriends")
+  sentDirectMessages     DirectMsg[]        @relation("SenderMessages")
+  receivedDirectMessages DirectMsg[]        @relation("ReceiverMessages")
+  blockedUsers           BlockedUser[]      @relation("BlockingUser")
+  usersBlockedBy         BlockedUser[]      @relation("BlockedByUser")
+  twoFA                  TwoFA?             @relation("TwoFactorAuth")
 }
 
 model TwoFA {
-  id                Int     @id
-  user_id           Int
-  qr_code           String
-  ascii_secret      String
-  authenticator     String
+  id            Int    @id
+  user_id       Int    @unique
+  qr_code       String
+  ascii_secret  String
+  authenticator String
+  user          User   @relation("TwoFactorAuth", fields: [user_id], references: [id])
 }
 
 model Friend {
@@ -38,50 +45,59 @@ model Friend {
   user_id           Int
   friend_id         Int
   friendship_status String?
+  user              User    @relation("UserToFriends", fields: [user_id], references: [id])
 }
 
 model Game {
-  id                Int     @id
-  player_one_id     Int
-  player_two_id     Int
-  winner_id         Int?
-  game_status       String?
-  player_one_score  Int?
-  player_two_score  Int?
+  id               Int     @id
+  player_one_id    Int
+  player_two_id    Int
+  winner_id        Int?
+  game_status      String?
+  player_one_score Int?
+  player_two_score Int?
 }
 
 model ChatChannels {
-  id                Int     @id
-  owner             Int
-  type              String
-  password          String?
+  id       Int     @id
+  owner    Int
+  type     String
+  password String?
 }
 
 model ChatChannelsUser {
-  id                Int     @id
-  channel_id        Int
-  user_id           Int
-  user_role         String
+  id          Int       @id
+  channel_id  Int
+  user_id     Int
+  user_role   String
+  date_joined DateTime
+  date_left   DateTime?
+  ownerUser   User      @relation("ChatChannelsOwner", fields: [user_id], references: [id])
 }
 
 model ChatMsgHistory {
-  id                Int     @id
-  chat_channels_id   Int
+  id                    Int    @id
+  chat_channels_id      Int
   chat_channels_user_id Int
-  message           String
+  message               String
 }
 
 model DirectMsg {
-  id                Int     @id
-  sender_id         Int
-  receiver_id       Int
-  msg_status        String
-  message           String
+  id          Int    @id
+  sender_id   Int
+  receiver_id Int
+  msg_status  String
+  message     String
+  sender      User   @relation("SenderMessages", fields: [sender_id], references: [id])
+  receiver    User   @relation("ReceiverMessages", fields: [receiver_id], references: [id])
 }
 
 model BlockedUser {
-  id                Int     @id
-  user_id           Int
-  blocked_user_id   Int
-  date_blocked      DateTime
+  id              Int      @id
+  user_id         Int
+  blocked_user_id Int
+  date_blocked    DateTime
+  user            User     @relation("BlockingUser", fields: [user_id], references: [id])
+  // Add a relation to the blocked user
+  blockedUser     User     @relation("BlockedByUser", fields: [blocked_user_id], references: [id])
 }
