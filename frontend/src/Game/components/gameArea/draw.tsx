@@ -1,11 +1,11 @@
-import Point from '../classes/Point';
+import { IPoint } from "./interfacesGame";
 
-function drawRect(rect:{start:Point, width:number, height:number, color:string}, context:CanvasRenderingContext2D):void {
+function drawRect(rect:{start:IPoint, width:number, height:number, color:string}, context:CanvasRenderingContext2D):void {
 	context.fillStyle = rect.color;
 	context.fillRect(rect.start.x, rect.start.y, rect.width, rect.height);
 };
 
-function drawCircle(cir:{center:Point, radius:number, color:string}, context:CanvasRenderingContext2D):void {
+function drawCircle(cir:{center:IPoint, radius:number, color:string}, context:CanvasRenderingContext2D):void {
     context.fillStyle = cir.color;
     context.beginPath();
     context.arc(cir.center.x, cir.center.y, cir.radius, Math.PI*2, 0)
@@ -15,7 +15,7 @@ function drawCircle(cir:{center:Point, radius:number, color:string}, context:Can
 
 function drawText(txt:{
     str:string, 
-    start: Point, 
+    start: IPoint, 
     color:string, 
     font:string, 
     fontDecoration: string, 

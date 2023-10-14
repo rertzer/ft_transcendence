@@ -1,17 +1,10 @@
 import React, {useEffect, useState} from 'react';
-/* import Point from './classes/Point';
-import Player from './classes/Player';
-import GameParam from './classes/GameParam';
-import Ball from './classes/Ball'; */
-//import {drawCircle, drawRect, drawText} from './functions/draw';
-import printGame from './functions/printGame';
-import printStartMenu from './functions/printStartMenu';
-import printWinnerMenu from './functions/printWinnerMenu';
 import socketService from './services/socketService';
 import { JoinRoom } from './components/joinRoom';
 import GameContext, { IGameContextProps } from './gameContext';
-import { GameCanvas } from './components/gameCamvas';
-//import { colision, leftboard } from './functions/testColision';
+import { Canvas } from './components/canvas';
+import GameArea from './components/gameArea';
+
 
 
 /*function Game() {
@@ -231,20 +224,31 @@ const connectSocket = async () => {
 
 function Game() {
 	const [isInRoom, setInRoom] = useState(false);
-
 	useEffect(() => {
 		connectSocket();
+	}, []);
+
+	const [gameWidth, setGameWidth] = useState(0);
+	const [gameHeight, setGameHeight] = useState(0);
+	useEffect(() => {
+		const width = 300;
+		setGameWidth(width);
+		setGameHeight(width / 2);
 	}, []);
 
 	const gameContextValue :IGameContextProps = {
 		isInRoom, 
 		setInRoom,
+		gameWidth,
+		setGameWidth,
+		gameHeight,
+		setGameHeight
 	};
-	
+
 	return (
 		<GameContext.Provider value={gameContextValue}>
 			{!isInRoom && <JoinRoom />}
-			{isInRoom && <GameCanvas />}
+			{isInRoom && <GameArea />}
 		</GameContext.Provider>
 	)
 }

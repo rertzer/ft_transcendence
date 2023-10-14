@@ -1,11 +1,11 @@
-import GameParam from "../classes/GameParam";
+/* import GameParam from "../classes/GameParam";
 import Point from "../classes/Point";
 import Ball from "../classes/Ball";
 import Player from "../classes/Player";
 import {drawCircle, drawRect, drawText} from './draw';
 
 function printGame(pong:GameParam, ball:Ball, player1:Player, player2:Player):void{
-    /* Print Background */
+    // Print Background
 	if (pong.context){
 		drawRect({
 			start: new Point({x: 0, y: 0}), 
@@ -14,7 +14,7 @@ function printGame(pong:GameParam, ball:Ball, player1:Player, player2:Player):vo
 			color: pong.backColor
 		}, pong.context);
 	
-		/* Print Net */
+		// Print Net 
 		let net = new Point({x: pong.gameWidth / 2 - pong.netWidth / 2, y: 0});
 		while (net.y< pong.gameHeight)
 		{
@@ -27,7 +27,7 @@ function printGame(pong:GameParam, ball:Ball, player1:Player, player2:Player):vo
 			net.y += pong.netHeight + pong.netInterval;
 		}
 	
-		/* Print score */
+		// Print score
 		drawText({
 			str: player1.score.toString(), 
 			start: player1.scorePos, 
@@ -45,7 +45,7 @@ function printGame(pong:GameParam, ball:Ball, player1:Player, player2:Player):vo
 			fontPx: pong.scoreFontPx
 		}, pong.context);
 	
-		/* Print Player name*/
+		// Print Player name
 		drawText({
 			str: player1.name, 
 			start: player1.namePos, 
@@ -63,7 +63,7 @@ function printGame(pong:GameParam, ball:Ball, player1:Player, player2:Player):vo
 			fontPx: pong.nameFontPx
 		}, pong.context);
 	
-		/* Print Game elements */
+		// Print Game elements 
 		drawCircle({
 			center: ball.pos, 
 			radius: pong.ballRadius,
@@ -84,4 +84,5 @@ function printGame(pong:GameParam, ball:Ball, player1:Player, player2:Player):vo
 	}
 }
 
-export default printGame;
+export default printGame; */
+export {}

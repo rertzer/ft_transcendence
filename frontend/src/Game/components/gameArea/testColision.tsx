@@ -1,4 +1,4 @@
-import GameParam from "../classes/GameParam";
+/* import GameParam from "../classes/GameParam";
 import Player from "../classes/Player";
 import Ball from "../classes/Ball";
 
@@ -20,4 +20,6 @@ function colision(player: Player, ball:Ball, pong:GameParam):boolean {
     return (ballRight > paddleLeft && ballTop < paddleBtm && ballLeft < paddleRight && ballBtm > paddleTop)
 }
 
-export {colision, leftboard};
+export {colision, leftboard}; */
+
+export {}
