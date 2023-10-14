@@ -44,4 +44,14 @@ export class MyGateway implements OnModuleInit {
 			id: lastMessageId
 		})
 	}
+	@SubscribeMessage('JoinChatRoom')
+	onJoinChatRoom(@MessageBody() messageData: {id: string}) {
+		console.log(messageData);
+		console.log('gateway side');
+		this.server.emit('onJoinChatRoom', {
+			msg: 'New message',
+			id : messageData
+		})
+	}
+
 }
