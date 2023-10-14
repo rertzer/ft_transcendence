@@ -90,6 +90,7 @@ import { WebsocketContext } from "../contexts/WebsocketContext";
 type MessagePayload = {
   content: string;
   msg: string;
+  username: string;
 };
 
 export const Websocket = () => {
@@ -123,11 +124,15 @@ export const Websocket = () => {
     setValue('');
 	setUserName('')
   };
+  const createNewChat = () => {
+	  console.log("create new chat")
+
+}
 
   return (
     <div>
       <div>
-        <h1>Websocket Component</h1>
+        <h1>Welcome to the chat of transcendance</h1>
         <div>
           {messages.length === 0 ? (
             <div>No Messages</div>
@@ -135,7 +140,7 @@ export const Websocket = () => {
             <div>
               {messages.map((msg) => (
                 <div>
-                  <p>{msg.content}</p>
+                  <p>{msg.username} : {msg.content}</p>
                 </div>
               ))}
             </div>
