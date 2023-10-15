@@ -76,7 +76,6 @@ function GameArea(props:any) {
 			menuFontPx: 20,
 			goal: 3,
 			endgame: false,});
-			console.log(pong);
 	}, [gameWidth, gameHeight]);
 	
 	const [player1, setPlayer1] = useState({
