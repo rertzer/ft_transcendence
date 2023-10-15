@@ -231,9 +231,9 @@ function Game() {
 	const [gameWidth, setGameWidth] = useState(0);
 	const [gameHeight, setGameHeight] = useState(0);
 	useEffect(() => {
-		const width = 300;
-		setGameWidth(width);
-		setGameHeight(width / 2);
+		//const width = 300;
+		setGameWidth(window.innerWidth * 0.8);
+		setGameHeight((window.innerWidth * 0.8) /2);
 	}, []);
 
 	const gameContextValue :IGameContextProps = {

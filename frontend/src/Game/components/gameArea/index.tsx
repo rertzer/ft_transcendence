@@ -7,8 +7,7 @@ import { drawCircle, drawRect, drawText } from "./draw";
 function GameArea(props:any) {
 
 	const {gameWidth, gameHeight } = useContext(gameContext);
-
-	const pong:IGameParam = {
+	const [pong, setPong] = useState({
 		gameWidth: gameWidth,
 		gameHeight: gameHeight, 
 		ballRadius: 7,
@@ -25,10 +24,10 @@ function GameArea(props:any) {
 		scoreColor: '#FFFFFF',
 		scoreFont: 'sans-serif',
 		scoreFontDecoration: '',
-		scoreFontPx: 12,
+		scoreFontPx: 30,
 		nameFont: 'sans-serif',
 		nameFontDecoration: 'italic',
-		nameFontPx: 12,
+		nameFontPx: 20,
 		nameColor: '#FFFFFF',
 		ballInitSpeed: 5,
 		ballInitDir: {x: 1, y: -1},
@@ -39,10 +38,46 @@ function GameArea(props:any) {
 		menuTextColor: '#000000',
 		menuFont: 'sans-serif',
 		menuFontDecoration: 'bold',
-		menuFontPx: 12,
+		menuFontPx: 20,
 		goal: 3,
-		endgame: false,
-	};
+		endgame: false,});
+
+	useEffect(() => {
+		setPong({gameWidth: gameWidth,
+			gameHeight: gameHeight, 
+			ballRadius: 7,
+			paddleWidth: 10,
+			paddleHeight: gameHeight / 4,
+			scoreWidth: gameWidth / 8,
+			scoreHeight: gameHeight / 4,
+			netWidth: 2,
+			netHeight: 10,
+			netInterval: 5,
+			backColor: '#000000',
+			ballColor: '#f2c546',
+			netColor: '#FFFFFF',
+			scoreColor: '#FFFFFF',
+			scoreFont: 'sans-serif',
+			scoreFontDecoration: '',
+			scoreFontPx: 30,
+			nameFont: 'sans-serif',
+			nameFontDecoration: 'italic',
+			nameFontPx: 20,
+			nameColor: '#FFFFFF',
+			ballInitSpeed: 5,
+			ballInitDir: {x: 1, y: -1},
+			ballSpeedIncrease: 0.2,
+			paddleSpeed: 7,
+			play: false,
+			menuBackColor: 'rgba(255,255,255,0.8)',
+			menuTextColor: '#000000',
+			menuFont: 'sans-serif',
+			menuFontDecoration: 'bold',
+			menuFontPx: 20,
+			goal: 3,
+			endgame: false,});
+			console.log(pong);
+	}, [gameWidth, gameHeight]);
 	
 	const [player1, setPlayer1] = useState({
 		pos: {x:0, y: pong.gameHeight / 2 - pong.paddleHeight / 2},
@@ -65,6 +100,31 @@ function GameArea(props:any) {
 		namePos: {x: 3 * pong.gameWidth / 4, y: pong.gameHeight - 20},
 		color: '#BB0B0B'
 		})
+
+	useEffect(() => {
+
+		setPlayer1({
+			pos: player1.pos,
+			score: player1.score,
+			scorePos: {x: gameWidth / 4, y:gameHeight / 5},
+			upArrowDown:player1.upArrowDown,
+			downArrowDown:player1.downArrowDown,
+			name:player1.name,
+			namePos:{x: gameWidth / 4, y: gameHeight - 20},
+			color:'#16B84E'
+		});
+		setPlayer2({
+			pos: player2.pos,
+			score: player2.score,
+			scorePos: {x: 3 * pong.gameWidth / 4, y: pong.gameHeight / 5}, 
+			upArrowDown:player2.upArrowDown,
+			downArrowDown:player2.downArrowDown,
+			name:player2.name,
+			namePos:{x: 3 * pong.gameWidth / 4, y: pong.gameHeight - 20},
+			color:'#BB0B0B'
+			});
+		
+	}, [gameWidth, gameHeight]);
 
 	useEffect(() => {
 		const handleKey = (event: KeyboardEvent) => {
@@ -90,7 +150,19 @@ function GameArea(props:any) {
 			}
 		};
 
-		//Move the player
+		window.addEventListener('keydown', handleKey);
+		window.addEventListener('keyup', handleKey);
+		return (() => {
+			window.removeEventListener('keydown', handleKey)
+			window.removeEventListener('keyup', handleKey)
+		});
+	}, [player1, player2]);
+
+	const styleCanvas = {width:gameWidth, height:gameHeight, backgroundColor:'purple'};
+	
+	function printGame(context:CanvasRenderingContext2D):void{
+		context.clearRect(0, 0, context.canvas.width, context.canvas.height)
+		//Move the player a deplacer dans render
 		if (player1.upArrowDown && player1.pos.y > 0) {
 			player1.pos.y -= pong.paddleSpeed;
 		}
@@ -103,31 +175,6 @@ function GameArea(props:any) {
 		if (player2.downArrowDown && player2.pos.y + pong.paddleHeight < pong.gameHeight) {
 			player2.pos.y += pong.paddleSpeed;
 		}
-		
-		window.addEventListener('keydown', handleKey);
-		window.addEventListener('keyup', handleKey);
-		return (() => {
-			window.removeEventListener('keydown', handleKey)
-			window.removeEventListener('keyup', handleKey)
-		});
-	}, [player1, player2]);
-
-	const [position, setPosition] = useState({ x: 0, y: 0 });
-	
-	useEffect(() => {
-		const handleMove = () => {
-			const newX = position.x + 5;
-			const newY = position.y + 5;
-			setPosition({ x: newX, y: newY });
-		};
-    	window.addEventListener('click', handleMove);
-  		return () => window.removeEventListener('click', handleMove);
-	}, [position]);
-
-	const styleCanvas = {width:gameWidth, height:gameHeight, backgroundColor:'purple'};
-	
-	function printGame(context:CanvasRenderingContext2D):void{
-		context.clearRect(0, 0, context.canvas.width, context.canvas.height)
 		
 		// Print Background
 		drawRect({
