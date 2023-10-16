@@ -1,13 +1,9 @@
-@import "../styles.scss";
-
 .rightbar {
-    @include themify($themes) {
     flex: 3;
     position: sticky;
     top: 50px;
     height: calc(100vh - 50px);
     overflow: scroll;
-    background-color: themed("bgSoft");
     &::-webkit-scrollbar {
         display: none;
     }
@@ -19,7 +15,6 @@
             box-shadow: 03px 0px 15px 1px rgba(0, 0, 0, 0.09);
             padding: 20px;
             margin-bottom: 20px;
-            background-color: themed("bg");
             span {
                 color: gray;
             }
@@ -49,11 +44,11 @@
                         left: 20px;
                     }
                     p {
-                        color: themed("tectColorSoft");
+                        color: gray;
                     }
                     span {
                         font-weight: 500;
-                        color: themed("tectColor");
+                        color: black;
                     }
                 }
                 .buttons {
@@ -76,5 +71,4 @@
             }
         }
     }
-}
 }
