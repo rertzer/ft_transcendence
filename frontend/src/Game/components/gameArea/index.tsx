@@ -40,7 +40,8 @@ function GameArea(props:any) {
 		endgame: false,});
 	
 	const styleCanvas = {width:gameWidth, height:gameHeight, backgroundColor: pong.backColor};
-
+	
+	const [players, setPlayers] = useState([{},{}]);
 	const [player1, setPlayer1] = useState({
 		pos: {x:0, y: 0.5 - pong.paddleHeight / 2},
 		score: 0,
@@ -161,7 +162,6 @@ function GameArea(props:any) {
 			resetPosition();
 		}
 	}
-
 
 	function render(context:CanvasRenderingContext2D):void {
 		context.clearRect(0, 0, context.canvas.width, context.canvas.height)

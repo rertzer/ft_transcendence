@@ -22,8 +22,8 @@ export class SocketEvents {
 
     //Recevoir un event 
     @SubscribeMessage('join_game')
-    handleEvent(@MessageBody() data:{roomId:string}, @ConnectedSocket() client:Socket){
-		console.log(`${client.id} asked to join ${data.roomId}`);
-		client.emit('room_joined');
+    handleEvent(@MessageBody() data:{roomId:string, playerName:string}, @ConnectedSocket() client:Socket){
+		console.log(`${client.id} asked to join ${data.roomId} with player Name ${data.playerName}`);
+		client.emit('room_joined', {opponentName: 'Toto', playerSide:'left'});
     }
 }

@@ -6,7 +6,7 @@ export function Canvas(props:any) {
 
 	const {draw, ...rest} = props;
 	const canvasRef = useRef(null);
-	const {gameWidth, setGameHeight, setGameWidth, gameHeight } = useContext(gameContext);
+	const {setGameHeight, setGameWidth } = useContext(gameContext);
 	
 	useEffect(()=> {
 		const canvas = canvasRef.current;
@@ -20,8 +20,9 @@ export function Canvas(props:any) {
 		}
 
 		const handleResize = () => {
-			context.canvas.width = window.innerWidth * 0.8;
-			context.canvas.height = (window.innerWidth * 0.8) /2;
+			const width = window.innerWidth * 0.9;
+			context.canvas.width = width;
+			context.canvas.height = width /2;
 			setGameHeight(context.canvas.height);
 			setGameWidth(context.canvas.width);
 		};
