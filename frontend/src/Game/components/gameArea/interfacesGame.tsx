@@ -10,13 +10,9 @@ export interface IBall {
 };
 
 export interface IGameParam {
-	gameWidth: number;
-    gameHeight: number;
     ballRadius: number;
     paddleWidth: number;
     paddleHeight: number;
-    scoreWidth: number;
-    scoreHeight: number;
     netWidth:number;
     netHeight:number;
     netInterval:number;

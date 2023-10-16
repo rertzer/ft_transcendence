@@ -1,12 +1,10 @@
-/* import GameParam from "../classes/GameParam";
-import Player from "../classes/Player";
-import Ball from "../classes/Ball";
+import { IBall, IPlayer, IGameParam } from "./interfacesGame";
 
-function leftboard(pong:GameParam, ball:Ball):boolean {
-    return (ball.pos.x > pong.gameWidth || ball.pos.x < 0)
+function leftboard(ball:IBall, gameWidth:number):boolean {
+    return (ball.pos.x > gameWidth || ball.pos.x < 0)
 }
 
-function colision(player: Player, ball:Ball, pong:GameParam):boolean {
+function colision(player: IPlayer, ball:IBall, pong:IGameParam):boolean {
     const ballTop:number = ball.pos.y - pong.ballRadius;
     const ballBtm:number = ball.pos.y + pong.ballRadius;
     const ballLeft:number = ball.pos.x - pong.ballRadius;
@@ -20,6 +18,4 @@ function colision(player: Player, ball:Ball, pong:GameParam):boolean {
     return (ballRight > paddleLeft && ballTop < paddleBtm && ballLeft < paddleRight && ballBtm > paddleTop)
 }
 
-export {colision, leftboard}; */
-
-export {}
+export {colision, leftboard};

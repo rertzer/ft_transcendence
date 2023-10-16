@@ -38,7 +38,6 @@ export function Canvas(props:any) {
 		}
 			
 	}, [draw]);
-	
 
 	return (
 		<canvas ref={canvasRef} {...rest} />
