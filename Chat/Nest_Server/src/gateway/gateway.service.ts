@@ -44,9 +44,15 @@ export class MyGateway implements OnModuleInit {
 		})
 	}
 	@SubscribeMessage('JoinChatRoom')
-	onJoinChatRoom(@MessageBody() messageData: {id: string}) {
-		console.log(messageData);
+	async onJoinChatRoom(@MessageBody() messageData: {id: number}) {
+		console.log("message receive : ", messageData.id);
 		console.log('gateway side');
+		const chatExist = await checkChatId(messageData.id);
+		if (chatExist === false) {
+			console.log("Chat asked have not been found")
+			return false;
+		}
+		console.log("Chat asked have been found");
 		this.server.emit('onJoinChatRoom', {
 			msg: 'New message',
 			id : messageData

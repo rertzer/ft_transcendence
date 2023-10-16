@@ -5,8 +5,8 @@ const prismaService = new PrismaClient()
 export async function checkChatId(idSearched: number) {
 	const chat = await prismaService.chatChannels.findFirst({
 		where: {
-			id: idSearched
-		}
+			id: idSearched,
+		},
 	})
 	if (chat) {
 		console.log("Chat asked have been found");

@@ -1,6 +1,6 @@
 
 import { useContext, useEffect, useState } from 'react';
-import { WebsocketContext } from "../contexts/WebsocketContext";
+import { WebsocketContext } from "../contexts/ChatContext";
 
 type MessagePayload = {
   content: string;
@@ -12,6 +12,7 @@ type MessagePayload = {
 type JoinChatRoomPayload = {
 	id: string;
 }
+export const inChat = false;
 
 export const Websocket = () => {
   const [value, setValue] = useState('');
@@ -53,7 +54,6 @@ export const Websocket = () => {
 	}
 	socket.emit('newMessage', messageData);
     setValue('');
-	setUserName('')
   };
   const createNewChat = () => {
 	  console.log("create new chat")
@@ -67,7 +67,7 @@ export const Websocket = () => {
 	};
 	const SendIdChat = () => {
 		console.log("send id chat")
-		socket.emit('JoinChatRoom', id);
+		socket.emit('JoinChatRoom', parseInt(id));
 		setId('');
 	}
 	return (
