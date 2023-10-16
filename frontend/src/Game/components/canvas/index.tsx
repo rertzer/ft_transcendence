@@ -1,4 +1,4 @@
-import React, {useEffect, useContext, useRef} from "react";
+import {useEffect, useContext, useRef} from "react";
 import gameContext from '../../gameContext';
 
 
@@ -24,8 +24,6 @@ export function Canvas(props:any) {
 			context.canvas.height = (window.innerWidth * 0.8) /2;
 			setGameHeight(context.canvas.height);
 			setGameWidth(context.canvas.width);
-			//console.log("gameWidth", gameWidth);
-			//console.log("gameHeight", gameHeight);
 		};
 	  
 		handleResize();

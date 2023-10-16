@@ -28,9 +28,9 @@ function GameArea(props:any) {
 		nameColor: '#FFFFFF',
 		ballInitSpeed: 0.006,
 		ballInitDir: {x: 0.5, y: -1},
-		ballSpeedIncrease: 0.2,
+		ballSpeedIncrease: 0.0005,
 		paddleSpeed: 0.01,
-		play: true,
+		play: false,
 		menuBackColor: 'rgba(255,255,255,0.8)',
 		menuTextColor: '#000000',
 		menuFont: 'sans-serif',
@@ -128,18 +128,16 @@ function GameArea(props:any) {
 		if (player2.upArrowDown) player2.pos.y = Math.max(0, player2.pos.y - pong.paddleSpeed);
 		if (player2.downArrowDown) player2.pos.y = Math.min(1 - pong.paddleHeight, player2.pos.y + pong.paddleSpeed);
 	};
-	let num = 0;
+	
 	const moveBall = () => {
 		if (!pong.play) return ;
-		console.log(num);
-		num ++;
+		
 		ball.pos.x += (ball.speed / Math.sqrt(ball.dir.x**2 + ball.dir.y**2)) * ball.dir.x;
     	ball.pos.y += (ball.speed / Math.sqrt(ball.dir.x**2 + ball.dir.y**2)) * ball.dir.y;
 
 		/*Top or bottom collision*/
 		if (ball.pos.y > 1 - pong.ballRadius 
 			|| ball.pos.y < pong.ballRadius) {
-			console.log("col top");
 			ball.dir.y = - ball.dir.y;
 		}
 		/* Paddle colision*/
@@ -148,9 +146,6 @@ function GameArea(props:any) {
 		let direction = (ball.pos.x <= 1 / 2) ? 1 : -1;
 	
 		if (colision(playerWithBall, ball, pong)) {
-			console.log("Colision");
-			console.log(direction);
-			//pong.play = false;
 			let colisionY = (ball.pos.y - (playerWithBall.pos.y + pong.paddleHeight / 2)) / (pong.paddleHeight / 2);
 			let ang = colisionY * (Math.PI / 4);
 			ball.dir.x = direction * Math.cos(ang);
