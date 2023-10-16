@@ -40,18 +40,18 @@ model ChatChannelsUser {
   date_joined      DateTime
   date_left        DateTime?
   chatChannelsUser User             @relation("chatChanelUser", fields: [user_id], references: [id], map: "chat_channels_user")
-  channel          ChatChannels[]   @relation("ChatChannelsUser")
+  channel          ChatChannels     @relation("ChatChannelsUser", fields: [id], references: [id])
   messagesSent     ChatMsgHistory[] @relation("ChatMessagesSender")
 }
 
 model ChatChannels {
-  id           Int              @id @default(autoincrement())
-  owner        Int              @unique
-  type         String
-  password     String?
-  chatMessages ChatMsgHistory[] @relation("ChatMessages")
-  channelOwner User             @relation("ChatChannelsOwner", fields: [owner], references: [id])
-  channelUser  ChatChannelsUser @relation("ChatChannelsUser", fields: [id], references: [channel_id])
+  id            Int                @id @default(autoincrement())
+  owner         Int                @unique
+  type          String
+  password      String?
+  chatMessages  ChatMsgHistory[]   @relation("ChatMessages")
+  channelOwner  User               @relation("ChatChannelsOwner", fields: [owner], references: [id])
+  channelsUsers ChatChannelsUser[] @relation("ChatChannelsUser")
   // Add other fields...
 }
 

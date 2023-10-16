@@ -4,13 +4,12 @@ import { SubscribeMessage, WebSocketGateway, MessageBody, WebSocketServer } from
 import { Socket } from "dgram";
 import { Server } from 'socket.io'
 import { Prisma, PrismaClient } from "@prisma/client";
-import { addChatChannel, createUser } from "src/prisma/prisma.test";
+import {createUser, checkChatId } from "src/prisma/prisma.test";
 
 
 let lastMessageId = 0;
 
 createUser()
-addChatChannel()
 @WebSocketGateway({
 	cors: {
 		origin: 'http://localhost:3000',

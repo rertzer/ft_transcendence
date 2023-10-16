@@ -1,52 +1,99 @@
-import { PrismaClient, Prisma } from '@prisma/client'
+import { PrismaClient, Prisma, ChatChannels } from '@prisma/client'
 
 const prismaService = new PrismaClient()
 
-export async function addChatChannel() {
-	try {
-	  // Define the properties of the new chat channel
-	  const newChatChannel = {
-		owner: 1, // Set the owner's ID (adjust this value accordingly)
-		type: 'public', // Set the type of the chat channel (e.g., 'public', 'private', etc.)
-		password: null, // Set a password if applicable, or null if it's not a private channel
-	  };
-
-	  // Use Prisma to create a new chat channel in the database
-	  const createdChatChannel = await prismaService.chatChannels.create({
-		data: newChatChannel,
-	  });
-
-	  console.log('New chat channel created:', createdChatChannel);
-	} catch (error) {
-	  console.error('Error creating chat channel:', error);
-	} finally {
-	  await prismaService.$disconnect(); // Disconnect from the Prisma client
+export async function checkChatId(idSearched: number) {
+	const chat = await prismaService.chatChannels.findFirst({
+		where: {
+			id: idSearched
+		}
+	})
+	if (chat) {
+		console.log("Chat asked have been found");
+		return true;
 	}
-  }
-
-export  async function createUser() {
-	try {
-	  const newUser = await prismaService.user.create({
-		data: {
-		  username: 'your_username',
-		  first_name: 'John',
-		  last_name: 'Doe',
-		  email: 'johndoe@example.com',
-		  avatar: 'avatar_url',
-		  role: 'user',
-		  password: 'your_password',
-		  game_won: 0,
-		  game_lost: 0,
-		  game_played: 0,
-		  // Add other user fields as needed
-		},
-	  });
-
-	  console.log('User created:', newUser);
-	} catch (error) {
-	  console.error('Error creating user:', error);
-	} finally {
-	  await prismaService.$disconnect(); // Disconnect from the database when done
+	else{
+		console.log("Chat asked have not been found")
+		return false;
 	}
-  }
+}
+
+export async function createUser() {
+	try {
+		// Check if a user with the same email exists
+    const existingUser = await prismaService.user.findFirst({
+		where: {
+        email: 'johndoe@example.com', // Replace with the email you want to check
+	},
+    });
+    if (existingUser) {
+
+		console.log('User already exists:', existingUser);
+    } else {
+		// User doesn't exist, create a new user
+		const newUser = await prismaService.user.create({
+			data: {
+				username: 'your_username',
+				first_name: 'John',
+				last_name: 'Doe',
+				email: 'johndoe@example.com',
+				avatar: 'avatar_url',
+				role: 'user',
+				password: 'your_password',
+				game_won: 0,
+				game_lost: 0,
+				game_played: 0,
+			},
+		});
+		const newUser2 = await prismaService.user.create({
+			data: {
+				username: 'Pierrick',
+				first_name: 'jay',
+				last_name: ';avf',
+				email: 'johndoeff@example.com',
+				avatar: 'fffvvf',
+				role: 'user',
+				password: 'your_password',
+          game_won: 0,
+          game_lost: 0,
+          game_played: 0,
+          // Add other user fields as needed
+        },
+	});
+	console.log('User created:', newUser2);
+	}
+	} catch (error) {
+		console.error('Error creating user:', error);
+	} finally {
+		await prismaService.$disconnect(); // Disconnect from the database when done
+	}
+	try {
+		// Check if a user with the same email exists
+		const existingChat = await prismaService.chatChannels.findFirst({
+			where: {
+			id: 1 // Replace with the email you want to check
+				},
+			});
+		if (existingChat) {
+			console.log('chat already exists:', existingChat);
+		}
+		else {
+		const newChat1 = await prismaService.chatChannels.create({
+			data: {
+				type: 'public',
+				password: null,
+			channelOwner: {
+				connect: { id: 1 }
+			}
+			}
+		})
+		}
+
+	} catch (error) {
+		console.error('Error creating chat:', error);
+	}
+	finally {
+		await prismaService.$disconnect(); // Disconnect from the database when done
+	}
+}
 
