@@ -2,35 +2,35 @@ import { IPlayer, IGameParam } from "./interfacesGame";
 import { drawRect, drawText } from "./draw";
 
 
-function printWinnerMenu(pong:IGameParam, player1:IPlayer,  player2:IPlayer):void {
-/*	
+function printWinnerMenu(params:{context:CanvasRenderingContext2D, pong:IGameParam, player1:IPlayer,  player2:IPlayer, gameWidth:number, gameHeight:number}):void {
+
 	drawRect({
 		start: {x: 0, y: 0}, 
-		width: pong.gameWidth - 2* buffer , 
-		height: pong.gameHeight - 2 * buffer, 
-		color: pong.menuBackColor},
-		pong.context);
+		width: params.gameWidth, 
+		height: params.gameHeight, 
+		color: params.pong.menuBackColor},
+		params.context);
 
-	let winner = (player1.score === pong.goal) ? player1.name : player2.name;
+	let winner = (params.player1.score === params.pong.goal) ? params.player1.name : params.player2.name;
 
 	const line1 = winner + ' WON !';
 	const line2 = 'Press space key to restart';
 	drawText({
 		str: line1, 
-		start: new Point({x: pong.gameWidth / 2, y: pong.gameHeight / 2 - 5}), 
-		color: pong.menuTextColor, 
-		font: pong.menuFont, 
-		fontDecoration: pong.menuFontDecoration, 
-		fontPx: pong.menuFontPx
-	}, pong.context);
+		start: {x: params.gameWidth / 2, y: params.gameHeight / 2 - 5}, 
+		color: params.pong.menuTextColor, 
+		font: params.pong.menuFont, 
+		fontDecoration: params.pong.menuFontDecoration, 
+		fontPx: params.pong.menuFontPx * params.gameHeight
+	}, params.context);
 	drawText({
 		str: line2, 
-		start: new Point({x: pong.gameWidth / 2, y: pong.gameHeight / 2 + pong.menuFontPx / 2}), 
-		color: pong.menuTextColor, 
-		font: pong.menuFont, 
-		fontDecoration: pong.menuFontDecoration, 
-		fontPx: pong.menuFontPx/2
-	}, pong.context);*/
+		start: {x: params.gameWidth / 2, y: params.gameHeight / 2 + (params.pong.menuFontPx * params.gameHeight) / 2}, 
+		color: params.pong.menuTextColor, 
+		font: params.pong.menuFont, 
+		fontDecoration: params.pong.menuFontDecoration, 
+		fontPx: (params.pong.menuFontPx * params.gameHeight ) / 2
+	}, params.context);
 }
 
 export default printWinnerMenu;

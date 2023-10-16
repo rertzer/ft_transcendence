@@ -1,7 +1,7 @@
 import { IBall, IPlayer, IGameParam } from "./interfacesGame";
 
-function leftboard(ball:IBall, gameWidth:number):boolean {
-    return (ball.pos.x > gameWidth || ball.pos.x < 0)
+function leftboard(ball:IBall):boolean {
+    return (ball.pos.x > 1 || ball.pos.x < 0)
 }
 
 function colision(player: IPlayer, ball:IBall, pong:IGameParam):boolean {

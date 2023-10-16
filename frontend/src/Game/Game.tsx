@@ -2,7 +2,6 @@ import React, {useEffect, useState} from 'react';
 import socketService from './services/socketService';
 import { JoinRoom } from './components/joinRoom';
 import GameContext, { IGameContextProps } from './gameContext';
-import { Canvas } from './components/canvas';
 import GameArea from './components/gameArea';
 
 const connectSocket = async () => {

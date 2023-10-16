@@ -1,14 +1,15 @@
-import React, {useEffect, useState, useContext} from "react";
+import {useEffect, useState, useContext} from "react";
 import { Canvas } from "../canvas";
 import gameContext from '../../gameContext';
-import { IBall, IGameParam, IPoint, IPlayer } from "./interfacesGame";
-import { drawCircle, drawRect, drawText } from "./draw";
 import printStartMenu from "./printStartMenu";
+import { colision,leftboard } from "./testColision";
+import printGame from "./printGame";
+import printWinnerMenu from "./printWinnerMenu";
 
 function GameArea(props:any) {
 	const {gameWidth, gameHeight } = useContext(gameContext);
 	const [pong, setPong] = useState({
-		ballRadius: 0.02,
+		ballRadius: 0.01,
 		paddleWidth: 0.02,
 		paddleHeight: 0.25,
 		netWidth: 0.005,
@@ -26,10 +27,10 @@ function GameArea(props:any) {
 		nameFontPx: 0.05,
 		nameColor: '#FFFFFF',
 		ballInitSpeed: 0.006,
-		ballInitDir: {x: 1, y: -1},
+		ballInitDir: {x: 0.5, y: -1},
 		ballSpeedIncrease: 0.2,
 		paddleSpeed: 0.01,
-		play: false,
+		play: true,
 		menuBackColor: 'rgba(255,255,255,0.8)',
 		menuTextColor: '#000000',
 		menuFont: 'sans-serif',
@@ -49,7 +50,7 @@ function GameArea(props:any) {
 		name:"Player 1",
 		namePos:{x: 1 / 4, y: 0.9},
 		color:'#16B84E'
-		})
+	});
 
 	const [player2, setPlayer2] = useState({
 		pos: {x: 1 - pong.paddleWidth, y: (0.5 - pong.paddleHeight / 2)}, 
@@ -60,7 +61,26 @@ function GameArea(props:any) {
 		name: "Player 2",
 		namePos: {x: 3 / 4, y: 0.9},
 		color: '#BB0B0B'
-		})
+	});
+	
+	const [ball, setBall] = useState({
+		pos: {x: 1 / 2, y: 1 / 2}, 
+    	speed: pong.ballInitSpeed, 
+    	dir: pong.ballInitDir
+	});
+
+	const resetPosition = () => {
+		setBall((prev) => ({pos: {x: 1 / 2, y: 1 / 2}, speed:pong.ballInitSpeed, dir: {x: -prev.dir.x, y: prev.dir.y}}));
+		setPlayer1((prev) => ({...prev, pos: {x: 0, y: 1 / 2 - pong.paddleHeight / 2}}));
+		setPlayer2((prev) => ({...prev, pos: {x: 1 - pong.paddleWidth, y: 1 / 2 - pong.paddleHeight / 2}}));
+	}
+	
+	const resetGame = () => {
+		resetPosition();
+		setBall(() => ({pos: {x: 1 / 2, y: 1 / 2}, speed:pong.ballInitSpeed, dir: pong.ballInitDir}));
+		setPlayer1((prev) => ({...prev, score: 0}));
+		setPlayer2((prev) => ({...prev, score: 0}));
+	}
 
 	useEffect(() => {
 		const handleKey = (event: KeyboardEvent) => {
@@ -81,6 +101,12 @@ function GameArea(props:any) {
 				case 'ArrowDown':
 					setPlayer2((prev) => ({ ...prev, downArrowDown: move}));
 					break;
+				case 'Space':
+					setPong((prev) => ({...prev, play: true, endgame:false}));
+					if (pong.endgame) {
+						resetGame();
+					}
+					break;
 				default:
 					return; 
 			}
@@ -94,90 +120,69 @@ function GameArea(props:any) {
 		});
 	}, [player1, player2]);
 	
+	
+
 	const movePlayers = () => {
-		if (player1.upArrowDown) player1.pos.y =  Math.max(0, player1.pos.y - pong.paddleSpeed);
+		if (player1.upArrowDown) player1.pos.y = Math.max(0, player1.pos.y - pong.paddleSpeed);
 		if (player1.downArrowDown) player1.pos.y = Math.min(1 - pong.paddleHeight, player1.pos.y + pong.paddleSpeed);
 		if (player2.upArrowDown) player2.pos.y = Math.max(0, player2.pos.y - pong.paddleSpeed);
 		if (player2.downArrowDown) player2.pos.y = Math.min(1 - pong.paddleHeight, player2.pos.y + pong.paddleSpeed);
 	};
+	let num = 0;
+	const moveBall = () => {
+		if (!pong.play) return ;
+		console.log(num);
+		num ++;
+		ball.pos.x += (ball.speed / Math.sqrt(ball.dir.x**2 + ball.dir.y**2)) * ball.dir.x;
+    	ball.pos.y += (ball.speed / Math.sqrt(ball.dir.x**2 + ball.dir.y**2)) * ball.dir.y;
 
-	function printGame(context:CanvasRenderingContext2D):void{
+		/*Top or bottom collision*/
+		if (ball.pos.y > 1 - pong.ballRadius 
+			|| ball.pos.y < pong.ballRadius) {
+			console.log("col top");
+			ball.dir.y = - ball.dir.y;
+		}
+		/* Paddle colision*/
+		let playerWithBall = (ball.pos.x <= 1 / 2) ? player1 : player2;
+		let otherPlayer = (ball.pos.x <= 1 / 2) ? player2 : player1;
+		let direction = (ball.pos.x <= 1 / 2) ? 1 : -1;
+	
+		if (colision(playerWithBall, ball, pong)) {
+			console.log("Colision");
+			console.log(direction);
+			//pong.play = false;
+			let colisionY = (ball.pos.y - (playerWithBall.pos.y + pong.paddleHeight / 2)) / (pong.paddleHeight / 2);
+			let ang = colisionY * (Math.PI / 4);
+			ball.dir.x = direction * Math.cos(ang);
+			ball.dir.y = Math.sin(ang);
+			ball.speed += pong.ballSpeedIncrease;
+		}
+		if (leftboard(ball)) {
+			otherPlayer.score++;
+			if (otherPlayer.score == pong.goal) {
+				pong.endgame = true;
+			}
+			pong.play = false;
+			resetPosition();
+		}
+	}
+
+
+	function render(context:CanvasRenderingContext2D):void {
 		context.clearRect(0, 0, context.canvas.width, context.canvas.height)
 		movePlayers();
-				
-		// Print Net 
-		let net = {x: 1 / 2 - pong.netWidth / 2, y: 0};
-		while (net.y < 1)
-		{
-			drawRect({
-				start:{x:net.x * gameWidth, y:net.y * gameHeight}, 
-				width: pong.netWidth * gameWidth, 
-				height: pong.netHeight * gameHeight,
-				color: pong.netColor
-			}, context);
-			net.y += pong.netHeight + pong.netInterval;
+		moveBall();
+		printGame({context:context, pong:pong, player1:player1, player2:player2, ball:ball, gameWidth:gameWidth, gameHeight:gameHeight});
+		if (!pong.play && !pong.endgame) {
+			printStartMenu({pong, context, gameWidth, gameHeight});
 		}
-	
-		// Print score
-		drawText({
-			str: player1.score.toString(), 
-			start: {x: player1.scorePos.x * gameWidth, y: player1.scorePos.y * gameHeight}, 
-			color: pong.scoreColor, 
-			font: pong.scoreFont, 
-			fontDecoration: pong.scoreFontDecoration, 
-			fontPx: pong.scoreFontPx * gameHeight
-		}, context);
-		drawText({
-			str: player2.score.toString(), 
-			start: {x: player2.scorePos.x * gameWidth, y: player2.scorePos.y * gameHeight},  
-			color: pong.scoreColor, 
-			font: pong.scoreFont, 
-			fontDecoration: pong.scoreFontDecoration,
-			fontPx: pong.scoreFontPx * gameHeight
-		}, context);
-	
-		// Print Player name
-		drawText({
-			str: player1.name, 
-			start: {x: player1.namePos.x * gameWidth, y: player1.namePos.y * gameHeight},
-			color: pong.nameColor, 
-			font: pong.nameFont, 
-			fontDecoration: pong.nameFontDecoration, 
-			fontPx: pong.nameFontPx * gameHeight
-		}, context);
-		drawText({
-			str: player2.name, 
-			start: {x: player2.namePos.x * gameWidth, y: player2.namePos.y * gameHeight},
-			color: pong.nameColor, 
-			font: pong.nameFont, 
-			fontDecoration: pong.nameFontDecoration, 
-			fontPx: pong.nameFontPx * gameHeight
-		}, context);
-		
-		// Print Game elements 
-		/*drawCircle({
-			center: ball.pos, 
-			radius: pong.ballRadius,
-			color: pong.ballColor
-		}, pong.context);*/
-		drawRect({
-			start: {x:player1.pos.x * gameWidth, y:player1.pos.y * gameHeight}, 
-			width: pong.paddleWidth * gameWidth,
-			height: pong.paddleHeight * gameHeight, 
-			color: player1.color
-		}, context);
-		drawRect({
-			start: {x:player2.pos.x * gameWidth, y:player2.pos.y * gameHeight}, 
-			width: pong.paddleWidth * gameWidth,
-			height: pong.paddleHeight * gameHeight, 
-			color: player2.color
-		}, context);
-		printStartMenu(pong, context, gameWidth, gameHeight);
-
+		else if (pong.endgame) {
+			printWinnerMenu({context, pong, player1,  player2, gameWidth, gameHeight});
+		}
 	}
 
 	return (
-		<Canvas draw = {printGame} style={styleCanvas} />
+		<Canvas draw = {render} style={styleCanvas} />
 	);
 
 };

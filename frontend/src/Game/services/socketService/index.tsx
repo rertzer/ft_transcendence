@@ -21,4 +21,5 @@ class SocketService {
 	}
 };
 
-export default new SocketService();
+const MySocketService = new SocketService()
+export default MySocketService;
