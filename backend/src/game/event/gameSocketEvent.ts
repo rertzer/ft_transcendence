@@ -6,7 +6,7 @@ import { Server, Socket } from "socket.io";
         origin: '*',
     },
 })
-export class SocketEvents {
+export class GameSocketEvents {
 
     @WebSocketServer()
     server: Server;
@@ -14,10 +14,9 @@ export class SocketEvents {
     //Connexion 
     handleConnection(client:Socket){
         console.log(`Client connected: ${client.id}`);
-    }
-    //Deconnexion 
-    handleDisConnect(client:Socket) {
-        console.log(`Client disconnected ${client.id}`);
+		client.on('disconnect', () => {
+			console.log(`Client disconnected ${client.id}`);
+		})
     }
 
     //Recevoir un event 
