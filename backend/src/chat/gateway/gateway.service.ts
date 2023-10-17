@@ -10,7 +10,7 @@ let lastMessageId = 0;
 createUser()
 @WebSocketGateway({
 	cors: {
-		origin: 'http://localhost:3000',
+		origin: '*'
 	}
 })
 //implements mean that it will contains the metho onModuleInit and will be executed
