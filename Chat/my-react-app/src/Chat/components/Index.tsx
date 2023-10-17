@@ -1,6 +1,7 @@
 
 import { useContext, useEffect, useState } from 'react';
 import { WebsocketContext } from "../contexts/ChatContext";
+import ChatContext from "../contexts/ChatContext";
 
 type MessagePayload = {
   content: string;
@@ -12,27 +13,19 @@ type MessagePayload = {
 type JoinChatRoomPayload = {
 	id: string;
 }
-export const inChat = false;
 
-export const Websocket = () => {
+export const Index = () => {
   const [value, setValue] = useState('');
   const [messages, setMessages] = useState<MessagePayload[]>([]);
-  const [username, setUserName] = useState('')
+  const {setUsername, username, isInChat, setIsInChat } = useContext(ChatContext)
   const socket = useContext(WebsocketContext);
   const [showJoinChatOptions, setShowJoinChatOptions] = useState(false);
 	const[showCreateChatOptions, setShowCreateChatOptions] = useState(false);
 	const [id, setId] = useState('');
 	const [idChatRoom, setIdChatRoom] = useState<JoinChatRoomPayload[]>([]);
-
 	useEffect(() => {
     socket.on('connect', () => {
       console.log('Connected!');
-    });
-
-    socket.on('onMessage', (newMessage: MessagePayload) => {
-      console.log('onMessage event received!');
-      console.log(newMessage);
-      setMessages((prev) => [...prev, newMessage]);
     });
 	socket.on('onJoinChatRoom', (idChatRoom: JoinChatRoomPayload) => {
 	  console.log('onJoinChatRoom event received!');
@@ -68,6 +61,7 @@ export const Websocket = () => {
 	const SendIdChat = () => {
 		console.log("send id chat")
 		socket.emit('JoinChatRoom', parseInt(id));
+		setIsInChat(true);
 		setId('');
 	}
 	return (
@@ -78,7 +72,7 @@ export const Websocket = () => {
 			<input
 			  type="text"
 			  value={username}
-			  onChange={(e) => setUserName(e.target.value)}
+			  onChange={(e) => setUsername(e.target.value)}
 			/>
 			<p>What do you want to do?</p>
 			<div>
@@ -99,26 +93,6 @@ export const Websocket = () => {
 				  />
 				  <button onClick={SendIdChat}>Join</button>
 				  <p>Chat room number {id}</p>
-				  {messages.length === 0 ? (
-					<div>No Messages</div>
-				  ) : (
-					<div>
-					  {messages.map((msg) => (
-						<div key={msg.id}>
-						  <p>{msg.username} : {msg.content}</p>
-						</div>
-					  ))}
-					</div>
-				  )}
-				  <div>
-					<p>Your message</p>
-					<input
-					  type="text"
-					  value={value}
-					  onChange={(e) => setValue(e.target.value)}
-					/>
-				  </div>
-				  <button onClick={onSubmit}>Submit</button>
 				</div>
 			  )}
 			</div>
