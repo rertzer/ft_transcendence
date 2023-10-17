@@ -16,7 +16,6 @@ type JoinChatRoomPayload = {
 
 export const Index = () => {
   const [value, setValue] = useState('');
-  const [messages, setMessages] = useState<MessagePayload[]>([]);
   const {setUsername, username, isInChat, setIsInChat } = useContext(ChatContext)
   const socket = useContext(WebsocketContext);
   const [showJoinChatOptions, setShowJoinChatOptions] = useState(false);
@@ -30,7 +29,16 @@ export const Index = () => {
 	socket.on('onJoinChatRoom', (idChatRoom: JoinChatRoomPayload) => {
 	  console.log('onJoinChatRoom event received!');
 	  console.log(idChatRoom.id);
-	  setIdChatRoom((prev) => [...prev, idChatRoom]);
+	  if (idChatRoom.id === '-1')
+	  {
+		  console.log("wrong id")
+	  }
+	  else{
+		  setIdChatRoom((prev) => [...prev, idChatRoom]);
+		  setIsInChat(true);
+		  setId('');
+	  }
+	  console.log("is in chat = ", isInChat);
 	},);
     return () => {
       console.log('Unregistering Events...');
@@ -61,8 +69,6 @@ export const Index = () => {
 	const SendIdChat = () => {
 		console.log("send id chat")
 		socket.emit('JoinChatRoom', parseInt(id));
-		setIsInChat(true);
-		setId('');
 	}
 	return (
 		<div>

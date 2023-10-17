@@ -9,11 +9,9 @@ export async function checkChatId(idSearched: number) {
 		},
 	})
 	if (chat) {
-		console.log("Chat asked have been found");
 		return true;
 	}
 	else{
-		console.log("Chat asked have not been found")
 		return false;
 	}
 }

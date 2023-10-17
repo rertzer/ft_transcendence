@@ -1,7 +1,5 @@
 import { OnModuleInit } from "@nestjs/common";
 import { SubscribeMessage, WebSocketGateway, MessageBody, WebSocketServer } from "@nestjs/websockets";
-// import { PrismaService } from "src/prisma/prisma.service";
-import { Socket } from "dgram";
 import { Server } from 'socket.io'
 import { Prisma, PrismaClient } from "@prisma/client";
 import {createUser, checkChatId } from "src/prisma/prisma.test";
@@ -44,13 +42,16 @@ export class MyGateway implements OnModuleInit {
 		})
 	}
 	@SubscribeMessage('JoinChatRoom')
-	async onJoinChatRoom(@MessageBody() messageData: {id: number}) {
-		console.log("message receive : ", messageData.id);
+	async onJoinChatRoom(@MessageBody() messageData: string) {
+		console.log("message receive : ", messageData);
 		console.log('gateway side');
-		const chatExist = await checkChatId(messageData.id);
+		const chatExist = await checkChatId(parseInt(messageData));
 		if (chatExist === false) {
 			console.log("Chat asked have not been found")
-			return false;
+			this.server.emit('onJoinChatRoom', {
+				id : '-1'
+			});
+			return;
 		}
 		console.log("Chat asked have been found");
 		this.server.emit('onJoinChatRoom', {
