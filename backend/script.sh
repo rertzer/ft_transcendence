@@ -1,4 +1,3 @@
-sleep 10
 yarn run prisma generate
-sleep 20
+yarn run prisma migrate dev --name init
 exec yarn start
