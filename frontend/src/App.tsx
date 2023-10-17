@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import './styles.scss';
 import { createBrowserRouter, RouterProvider, Route, Outlet, Navigate } from 'react-router-dom';
 import Login from './routes/Login';
@@ -8,10 +8,12 @@ import Profile from './routes/Profile';
 import Navbar from './components/Navbar';
 import Leftbar from './components/Leftbar';
 import Rightbar from './components/Rightbar';
+import { AuthContext } from './context/authContext';
+import { ChatApp } from './Chat/chatApp';
 
 function App() {
 
-  let loggedInUser = true;
+  const {currentUser} = useContext(AuthContext);
 
   const Layout = ()=> {
     return (
@@ -30,7 +32,7 @@ function App() {
 
   const ProtectedRoute = ({children}: any) => {
 
-    if (loggedInUser === false) {
+    if (!currentUser) {
       return (<Navigate to="/login" />);
     }
     return (children);
@@ -58,7 +60,7 @@ function App() {
     {
       path: "/register",
       element: <Register />,
-    }
+    },
   ]);
   return (
     <div >

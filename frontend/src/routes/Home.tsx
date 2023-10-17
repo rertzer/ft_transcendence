@@ -1,29 +1,11 @@
 import "./Home.scss";
+import Game from "../components/Game"
 
 function Home() {
 
     return (
         <div className="home">
-            <h1>Home</h1>
-            <h1>Home</h1>
-            <h1>Home</h1>
-            <h1>Home</h1>
-            <h1>Home</h1>
-            <h1>Home</h1>
-            <h1>Home</h1>
-            <h1>Home</h1>
-            <h1>Home</h1>
-            <h1>Home</h1>
-            <h1>Home</h1>
-            <h1>Home</h1>
-            <h1>Home</h1>
-            <h1>Home</h1>
-            <h1>Home</h1>
-            <h1>Home</h1>
-            <h1>Home</h1>
-            <h1>Home</h1>
-            <h1>Home</h1>
-            <h1>Home</h1>
+            <Game />
         </div>
     );
 }

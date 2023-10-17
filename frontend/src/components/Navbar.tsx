@@ -2,8 +2,12 @@ import "./Navbar.scss";
 import {Link} from "react-router-dom";
 import SearchIcon from '@mui/icons-material/SearchOutlined';
 import LogoutIcon from '@mui/icons-material/MeetingRoomOutlined';
+import { useContext } from "react";
+import { AuthContext } from "../context/authContext";
 
 function Navbar() {
+
+    const {currentUser} = useContext(AuthContext);
 
     return (
         <div className="navbar">
@@ -18,8 +22,8 @@ function Navbar() {
             </div>
             <div className="right">
                 <div className="user">
-                    <img src="https://img.lamontagne.fr/c6BQg2OSHIeQEv4GJfr_br_8h5DGcOy84ruH2ZResWQ/fit/657/438/sm/0/bG9jYWw6Ly8vMDAvMDAvMDMvMTYvNDYvMjAwMDAwMzE2NDYxMQ.jpg"/>
-                    <span>tgrasset</span>
+                    <img src={currentUser.profilePic}/>
+                    <span>{currentUser.name}</span>
                 </div>
                 <LogoutIcon />
             </div>
