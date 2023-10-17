@@ -1,4 +1,4 @@
 sleep 10
-yarn prisma migrate dev --name init
+yarn run prisma generate
 sleep 20
-exec nest start --watch
+exec yarn start
