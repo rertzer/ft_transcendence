@@ -20,6 +20,6 @@ export function ChatApp() {
 			{!isInChat && <Index />}
 			{isInChat && <InChat />}
 		</ChatContext.Provider>
-	</WebsocketProvider>
+		</WebsocketProvider>
 	)
 }

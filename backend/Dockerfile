@@ -1,3 +1,4 @@
+
 FROM node:20 AS base
 
 WORKDIR /app
@@ -7,7 +8,7 @@ COPY ["package.json", "yarn.lock", "./"]
 FROM base AS dev
 RUN yarn install --frozen-lockfile
 COPY . .
-CMD ["yarn", "start:dev"]
+CMD ["sh", "script.sh"]
 
 
 FROM base AS prod
@@ -15,4 +16,5 @@ RUN yarn install --frozen-lockfile --production
 COPY . .
 RUN yarn add global @nestjs/cli
 RUN yarn build
+
 CMD ["yarn", "start:prod"]

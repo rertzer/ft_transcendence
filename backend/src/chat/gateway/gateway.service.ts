@@ -2,7 +2,7 @@ import { OnModuleInit } from "@nestjs/common";
 import { SubscribeMessage, WebSocketGateway, MessageBody, WebSocketServer } from "@nestjs/websockets";
 import { Server } from 'socket.io'
 import { Prisma, PrismaClient } from "@prisma/client";
-import {createUser, checkChatId } from "src/prisma/prisma.test";
+import {createUser, checkChatId } from "../prisma/prisma.test";
 
 
 let lastMessageId = 0;
