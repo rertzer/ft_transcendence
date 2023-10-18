@@ -3,6 +3,8 @@ import Game from "../components/Game"
 import Sidebar from "../components/chat/Sidebar";
 import Chat from "../components/chat/Chat";
 import ChatComponent from "../components/chat/ChatComponent";
+import ChatContext from "../Chat/contexts/ChatContext";
+import { useContext } from "react";
 
 function Home() {
 
