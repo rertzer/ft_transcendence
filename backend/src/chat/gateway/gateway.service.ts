@@ -3,7 +3,7 @@ import { SubscribeMessage, WebSocketGateway, MessageBody, WebSocketServer } from
 import { Server } from 'socket.io'
 import { Prisma, PrismaClient } from "@prisma/client";
 import {createUser } from "../prisma/prisma.test";
-import { checkChatId, checkLogin, RetrieveMessage, addPrivateMessage,getIdOfLogin } from "../prisma/prisma.service";
+import {checkChatId, checkLogin, RetrieveMessage, addPrivateMessage,getIdOfLogin, addChatMessage } from "../prisma/prisma.service";
 import { arrayBuffer } from "stream/consumers";
 
 let lastMessageId = 0;
@@ -31,17 +31,14 @@ export class MyGateway implements OnModuleInit {
 	}
 
 	@SubscribeMessage('newMessage')
-	onNewMessage(@MessageBody() messageData: {username: string, content: string}) {
+	onNewMessage(@MessageBody() messageData: {username: string, content: string, idOfChat: number}) {
 		console.log(messageData);
 		console.log('gateway side');
 		lastMessageId++
-		this.server.emit('onMessage', {
-			msg: 'New message',
-			content: messageData.content,
-			username: messageData.username,
-			id: lastMessageId
-		})
+		addChatMessage(messageData.idOfChat, messageData.username, messageData.content);
 	}
+
+
 	@SubscribeMessage('JoinChatRoom')
 	async onJoinChatRoom(@MessageBody() messageData: string) {
 		console.log("message receive : ", messageData);
@@ -59,6 +56,7 @@ export class MyGateway implements OnModuleInit {
 			msg: 'New message',
 			id : messageData
 		})
+		
 	}
 
 	@SubscribeMessage('SendPrivateMessage')
