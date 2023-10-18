@@ -1,0 +1,15 @@
+.chatcomponent {
+    background-color: #d186d8;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    .container {
+        border: 1px solid white;
+        border-radius: 10px;
+        width: 90%;
+        height: 90%;
+        display: flex;
+        overflow: hidden;
+    }
+}

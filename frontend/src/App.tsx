@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import './styles.scss';
 import { createBrowserRouter, RouterProvider, Route, Outlet, Navigate } from 'react-router-dom';
 import Login from './routes/Login';
@@ -16,6 +16,7 @@ function App() {
   const {currentUser} = useContext(AuthContext);
 
   const Layout = ()=> {
+
     return (
       <div>
         <Navbar />
