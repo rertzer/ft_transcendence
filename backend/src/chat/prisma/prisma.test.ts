@@ -1,20 +1,6 @@
 import { PrismaClient } from '@prisma/client'
 
-const prismaService = new PrismaClient()
-
-export async function checkChatId(idSearched: number) {
-	const chat = await prismaService.chatChannels.findFirst({
-		where: {
-			id: idSearched,
-		},
-	})
-	if (chat) {
-		return true;
-	}
-	else{
-		return false;
-	}
-}
+export const prismaService = new PrismaClient()
 
 export async function createUser() {
 	try {

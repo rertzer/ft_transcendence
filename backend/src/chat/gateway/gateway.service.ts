@@ -2,8 +2,8 @@ import { OnModuleInit } from "@nestjs/common";
 import { SubscribeMessage, WebSocketGateway, MessageBody, WebSocketServer } from "@nestjs/websockets";
 import { Server } from 'socket.io'
 import { Prisma, PrismaClient } from "@prisma/client";
-import {createUser, checkChatId } from "../prisma/prisma.test";
-
+import {createUser } from "../prisma/prisma.test";
+import { checkChatId, checkLogin, RetrieveMessage } from "../prisma/prisma.service";
 
 let lastMessageId = 0;
 
@@ -60,4 +60,47 @@ export class MyGateway implements OnModuleInit {
 		})
 	}
 
+	@SubscribeMessage('SendPrivateMessage')
+	async onSendMessage(@MessageBody() messageData: {msg: string, loginToSend: string, idOfUser: string}) {
+		console.log(messageData);
+		const userExist = await checkLogin(messageData.loginToSend);
+		if (userExist === false) {
+			console.log("User asked have not been found")
+			this.server.emit('onSendMessage', {
+				id : '-1'
+			});
+			return;
+		}
+		console.log("User asked have been found");
+	}
+
+	@SubscribeMessage('onUserConnection')
+	async onUserConnection(@MessageBody() TokenConnection: string) {
+		console.log(TokenConnection);
+		const userExist:boolean = await checkLogin(TokenConnection);
+		if (userExist == false) {
+			console.log("User asked have not been found")
+			this.server.emit('onUserConnection', {
+				id : '-1'
+			});
+			return;
+		}
+		else {
+			console.log("User asked have been found");
+			this.server.emit('onUserConnection', {
+				id : 'good'
+			});
+			return;
+		}
+	}
+
+	@SubscribeMessage('onMailBox')
+	async onMailBox(@MessageBody() userAsked: string) {
+		console.log('in mail box');
+		const messageReceived = await RetrieveMessage(userAsked);
+		messageReceived.forEach(element => {
+			console.log(`From: ${element.sender.username}, Message: ${element.message}`)
+		})
+	}
 }
+
