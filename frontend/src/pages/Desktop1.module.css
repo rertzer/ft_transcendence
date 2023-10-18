@@ -1,0 +1,786 @@
+.desktop1Child {
+  position: absolute;
+  top: 155px;
+  left: 25px;
+  background-color: transparent;
+  border: 1px solid silver;
+  box-sizing: border-box;
+  width: 61px;
+  height: 13px;
+  display: none;
+}
+.background {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 1px;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  background-color: var(--color-white);
+}
+.grid,
+.gridImgIcon {
+  position: absolute;
+  overflow: hidden;
+}
+.gridImgIcon {
+  height: 100%;
+  width: 100%;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: cover;
+}
+.grid {
+  height: calc(100% - 58px);
+  width: calc(100% - 50px);
+  top: 17px;
+  right: 12px;
+  bottom: 41px;
+  left: 38px;
+}
+.numberGroupChild,
+.rightLettersBackground {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: var(--color-darkslategray-100);
+  width: 25px;
+}
+.rightLettersBackground {
+  height: 100%;
+  bottom: 0;
+}
+.numberGroupChild {
+  border-top: 1px solid var(--color-gray-100);
+  border-right: 1px solid var(--color-gray-100);
+  box-sizing: border-box;
+  height: 13px;
+}
+.numbers {
+  top: 0;
+  height: 936px;
+}
+.up {
+  position: absolute;
+  box-sizing: border-box;
+  top: 138px;
+  left: 12px;
+  background-color: var(--color-darkslategray-100);
+  border-right: 1px solid var(--color-gray-100);
+  width: 26px;
+  height: 16px;
+  position: fixed;
+}
+.rightLettersFrame {
+  position: absolute;
+  box-sizing: border-box;
+  top: 17px;
+  left: 12px;
+  border-left: 1px solid var(--color-gray-100);
+  width: 25px;
+  height: 100%;
+}
+.upLetter {
+  background-color: var(--color-darkslategray-100);
+  border-right: 1px solid var(--color-gray-100);
+  box-sizing: border-box;
+}
+.a,
+.b1,
+.upLetter {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 61px;
+  height: 16px;
+}
+.b1 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+}
+.b,
+.c,
+.d,
+.e,
+.f,
+.g,
+.h,
+.i,
+.j,
+.k,
+.l,
+.m,
+.n,
+.o,
+.p,
+.q {
+  position: absolute;
+  top: 0;
+  left: 61px;
+  width: 61px;
+  height: 16px;
+}
+.c,
+.d,
+.e,
+.f,
+.g,
+.h,
+.i,
+.j,
+.k,
+.l,
+.m,
+.n,
+.o,
+.p,
+.q {
+  left: 122px;
+}
+.d,
+.e,
+.f,
+.g,
+.h,
+.i,
+.j,
+.k,
+.l,
+.m,
+.n,
+.o,
+.p,
+.q {
+  left: 183px;
+}
+.e,
+.f,
+.g,
+.h,
+.i,
+.j,
+.k,
+.l,
+.m,
+.n,
+.o,
+.p,
+.q {
+  left: 244px;
+}
+.f,
+.g,
+.h,
+.i,
+.j,
+.k,
+.l,
+.m,
+.n,
+.o,
+.p,
+.q {
+  left: 305px;
+}
+.g,
+.h,
+.i,
+.j,
+.k,
+.l,
+.m,
+.n,
+.o,
+.p,
+.q {
+  left: 366px;
+}
+.h,
+.i,
+.j,
+.k,
+.l,
+.m,
+.n,
+.o,
+.p,
+.q {
+  left: 427px;
+}
+.i,
+.j,
+.k,
+.l,
+.m,
+.n,
+.o,
+.p,
+.q {
+  left: 488px;
+}
+.j,
+.k,
+.l,
+.m,
+.n,
+.o,
+.p,
+.q {
+  left: 549px;
+}
+.k,
+.l,
+.m,
+.n,
+.o,
+.p,
+.q {
+  left: 610px;
+}
+.l,
+.m,
+.n,
+.o,
+.p,
+.q {
+  left: 671px;
+}
+.m,
+.n,
+.o,
+.p,
+.q {
+  left: 732px;
+}
+.n,
+.o,
+.p,
+.q {
+  left: 793px;
+}
+.o,
+.p,
+.q {
+  left: 854px;
+}
+.p,
+.q {
+  left: 915px;
+}
+.q {
+  left: 976px;
+}
+.abc1,
+.abc2,
+.letters,
+.r,
+.s,
+.t,
+.u,
+.v,
+.w,
+.x,
+.y,
+.z {
+  position: absolute;
+  top: 0;
+  left: 1037px;
+  width: 61px;
+  height: 16px;
+}
+.abc1,
+.abc2,
+.letters,
+.s,
+.t,
+.u,
+.v,
+.w,
+.x,
+.y,
+.z {
+  left: 1098px;
+}
+.abc1,
+.abc2,
+.letters,
+.t,
+.u,
+.v,
+.w,
+.x,
+.y,
+.z {
+  left: 1159px;
+}
+.abc1,
+.abc2,
+.letters,
+.u,
+.v,
+.w,
+.x,
+.y,
+.z {
+  left: 1220px;
+}
+.abc1,
+.abc2,
+.letters,
+.v,
+.w,
+.x,
+.y,
+.z {
+  left: 1281px;
+}
+.abc1,
+.abc2,
+.letters,
+.w,
+.x,
+.y,
+.z {
+  left: 1342px;
+}
+.abc1,
+.abc2,
+.letters,
+.x,
+.y,
+.z {
+  left: 1403px;
+}
+.abc1,
+.abc2,
+.letters,
+.y,
+.z {
+  left: 1464px;
+}
+.abc1,
+.abc2,
+.letters,
+.z {
+  left: 1525px;
+}
+.abc1,
+.abc2,
+.letters {
+  left: 0;
+  width: 1586px;
+}
+.abc1,
+.letters {
+  left: 1586px;
+}
+.letters {
+  top: 138px;
+  left: 38px;
+  width: 3172px;
+  text-align: center;
+  position: fixed;
+}
+.rightScrollZone {
+  position: absolute;
+  height: 100%;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  background-color: var(--color-darkslategray-100);
+  width: 12px;
+}
+.racket2 {
+  position: absolute;
+  top: 406px;
+  left: 2px;
+  border-radius: var(--br-6xs);
+  background-color: var(--color-darkgray);
+  width: 8px;
+  height: 237px;
+}
+.racketPlayer2 {
+  position: absolute;
+  height: calc(100% - 42px);
+  top: 1px;
+  bottom: 41px;
+  left: 0;
+  width: 12px;
+}
+.rightScrollZone1 {
+  position: absolute;
+  height: 100%;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--color-darkslategray-100);
+  width: 12px;
+}
+.racket1 {
+  position: absolute;
+  top: 108px;
+  right: 2px;
+  border-radius: var(--br-6xs);
+  background-color: var(--color-darkgray);
+  width: 8px;
+  height: 237px;
+}
+.racketPlayer1 {
+  position: absolute;
+  height: calc(100% - 42px);
+  top: 1px;
+  right: 0;
+  bottom: 41px;
+  width: 12px;
+}
+.bottom {
+  bottom: 0;
+  background-color: var(--color-darkslategray-100);
+  box-shadow: 0 2px 0#585857 inset;
+  height: 41px;
+}
+.body,
+.bottom,
+.headerBackground {
+  position: fixed;
+  width: 100%;
+  right: 0;
+  left: 0;
+  bottom: 0;
+}
+.body {
+  position: fixed;
+  height: calc(100% - 137px);
+  top: 137px;
+  overflow: hidden;
+}
+.headerBackground {
+  top: 0;
+  background-color: var(--color-darkslategray-100);
+  height: 138px;
+}
+.tchatbox {
+  position: absolute;
+  width: calc(100% - 186px);
+  right: 0;
+  bottom: 3.46px;
+  left: 186px;
+  background-color: #2d2d2d;
+  border: 1px solid var(--color-gray-200);
+  box-sizing: border-box;
+  height: 18px;
+}
+.buttonsIcon {
+  position: absolute;
+  bottom: 0;
+  left: 137px;
+  width: 38.72px;
+  height: 25.46px;
+}
+.buttonBackground,
+.menuBackground {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  border: 1px solid var(--color-gray-200);
+  box-sizing: border-box;
+  height: 25px;
+}
+.menuBackground {
+  width: 100%;
+  left: 0;
+  border-radius: var(--br-6xs);
+  background-color: var(--color-darkslategray-200);
+}
+.buttonBackground {
+  border-radius: 0 var(--br-6xs) var(--br-6xs) 0;
+  background-color: var(--color-darkslategray-100);
+  width: 27px;
+}
+.buttpnChild {
+  position: absolute;
+  right: 10.79px;
+  bottom: 8.57px;
+  border-radius: var(--br-12xs);
+  width: 6.42px;
+  height: 4.68px;
+}
+.buttpn {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 27px;
+  height: 25px;
+}
+.frameText {
+  width: calc(100% - 52px);
+  top: 1px;
+  right: 27px;
+  left: 25px;
+  height: 23px;
+}
+.frameText,
+.line3,
+.menu {
+  position: absolute;
+}
+.menu {
+  bottom: 0.46px;
+  left: 0;
+  width: 137px;
+  height: 25px;
+}
+.line3 {
+  width: calc(100% - 24px);
+  right: 12px;
+  bottom: 1.54px;
+  left: 12px;
+  height: 25.46px;
+}
+.frameText1,
+.pt {
+  position: absolute;
+  left: 0;
+  height: 23px;
+}
+.pt {
+  width: 100%;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.frameText1 {
+  width: calc(100% - 27px);
+  top: 1px;
+  right: 27px;
+}
+.menu1 {
+  position: absolute;
+  bottom: 0;
+  left: 158px;
+  width: 73px;
+  height: 25px;
+}
+.basicSansCs {
+  position: absolute;
+  width: 100%;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  height: 23px;
+}
+.line2,
+.menu2 {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 150px;
+  height: 25px;
+  text-align: left;
+}
+.line2 {
+  bottom: 32px;
+  left: 12px;
+  width: 231px;
+  text-align: center;
+}
+.textBar1 {
+  position: absolute;
+  width: 100%;
+  top: 0;
+  right: 0;
+  left: 0;
+  background-color: var(--color-darkslategray-100);
+  border-bottom: 1px solid #313131;
+  box-sizing: border-box;
+  height: 18px;
+}
+.file1 {
+  left: 8px;
+  display: flex;
+  align-items: center;
+  width: 33px;
+  height: 18px;
+}
+.file,
+.file1,
+.settings1 {
+  position: absolute;
+  top: 0;
+}
+.file {
+  left: 0;
+  width: 32px;
+  height: 17px;
+  overflow: hidden;
+}
+.settings1 {
+  left: 8px;
+  display: flex;
+  align-items: center;
+  width: 48px;
+  height: 18px;
+}
+.settings {
+  left: 32px;
+  width: 55px;
+  height: 17px;
+  overflow: hidden;
+}
+.contact,
+.data1,
+.settings {
+  position: absolute;
+  top: 0;
+}
+.contact {
+  left: 213px;
+  width: 55px;
+  height: 17px;
+  overflow: hidden;
+}
+.data1 {
+  left: 8px;
+  display: flex;
+  align-items: center;
+  width: 28px;
+  height: 18px;
+}
+.data,
+.history {
+  height: 17px;
+  overflow: hidden;
+}
+.data {
+  position: absolute;
+  top: 0;
+  left: 130px;
+  width: 40px;
+}
+.history {
+  left: 166px;
+  width: 55px;
+}
+.history,
+.profile,
+.profile1 {
+  position: absolute;
+  top: 0;
+}
+.profile1 {
+  left: 0;
+  display: flex;
+  align-items: center;
+  width: 41px;
+  height: 18px;
+}
+.profile {
+  left: 92px;
+  width: 35px;
+  height: 17px;
+  overflow: hidden;
+}
+.textBar {
+  position: absolute;
+  width: 100%;
+  top: 32px;
+  right: 0;
+  left: 0;
+  height: 18px;
+  color: var(--color-dimgray);
+}
+.titleBarBackground {
+  position: absolute;
+  width: calc(100% - 0.46px);
+  top: 0;
+  right: 0.46px;
+  left: 0;
+  background-color: var(--color-darkslategray-100);
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.25);
+  height: 32px;
+}
+.untitled1 {
+  position: absolute;
+  top: 9px;
+  left: calc(50% - 83.23px);
+  font-weight: 800;
+  mix-blend-mode: normal;
+}
+.user1,
+.userChild {
+  position: absolute;
+  top: 6px;
+  height: 15px;
+}
+.userChild {
+  right: 29.46px;
+  border-radius: 50%;
+  width: 15px;
+  object-fit: cover;
+}
+.user1 {
+  right: 52.46px;
+  display: flex;
+  align-items: center;
+  width: 56px;
+}
+.crossIcon {
+  top: 0;
+  right: 0;
+  width: 25.46px;
+  height: 25.46px;
+}
+.crossIcon,
+.titleBar,
+.user {
+  position: absolute;
+}
+.user {
+  top: 3px;
+  right: 0;
+  width: 108.46px;
+  height: 25.46px;
+  text-align: right;
+  font-size: var(--font-size-3xs);
+  color: #797979;
+}
+.titleBar {
+  width: calc(100% + 0.46px);
+  top: 0;
+  right: -0.46px;
+  left: 0;
+  box-shadow: 0 1px 0#474747 inset, 0 1px 1px #252525;
+  height: 32px;
+  text-align: center;
+  font-size: 12px;
+  color: #8a8a8a;
+}
+.desktop1,
+.headerFrame {
+  width: 100%;
+  overflow: hidden;
+  text-align: left;
+  font-size: var(--font-size-3xs);
+  color: var(--color-white);
+  font-family: var(--font-inter);
+}
+.headerFrame {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 138px;
+}
+.desktop1 {
+  position: relative;
+  background-color: var(--color-white);
+}
