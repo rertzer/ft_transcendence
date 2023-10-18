@@ -3,7 +3,8 @@ import { SubscribeMessage, WebSocketGateway, MessageBody, WebSocketServer } from
 import { Server } from 'socket.io'
 import { Prisma, PrismaClient } from "@prisma/client";
 import {createUser } from "../prisma/prisma.test";
-import { checkChatId, checkLogin, RetrieveMessage } from "../prisma/prisma.service";
+import { checkChatId, checkLogin, RetrieveMessage, addPrivateMessage,getIdOfLogin } from "../prisma/prisma.service";
+import { arrayBuffer } from "stream/consumers";
 
 let lastMessageId = 0;
 
@@ -71,12 +72,18 @@ export class MyGateway implements OnModuleInit {
 			});
 			return;
 		}
-		console.log("User asked have been found");
+		else {
+			const idToSend = await getIdOfLogin(messageData.loginToSend);
+			const idOfSender = await getIdOfLogin(messageData.idOfUser);
+			console.log("id to send = ", idToSend, "id of sender = ", idOfSender);
+			if (idOfSender !== undefined && idToSend !== undefined)
+				addPrivateMessage(idOfSender, idToSend, messageData.msg);
+		}
 	}
 
 	@SubscribeMessage('onUserConnection')
 	async onUserConnection(@MessageBody() TokenConnection: string) {
-		console.log(TokenConnection);
+		console.log("Token receive to try to connect : ",TokenConnection);
 		const userExist:boolean = await checkLogin(TokenConnection);
 		if (userExist == false) {
 			console.log("User asked have not been found")
@@ -88,7 +95,8 @@ export class MyGateway implements OnModuleInit {
 		else {
 			console.log("User asked have been found");
 			this.server.emit('onUserConnection', {
-				id : 'good'
+				id : 'good',
+				username: TokenConnection
 			});
 			return;
 		}
@@ -99,8 +107,12 @@ export class MyGateway implements OnModuleInit {
 		console.log('in mail box');
 		const messageReceived = await RetrieveMessage(userAsked);
 		messageReceived.forEach(element => {
-			console.log(`From: ${element.sender.username}, Message: ${element.message}`)
-		})
+			this.server.emit('onMailBox', {
+				msg: 'all message',
+				content: element.message,
+				sender: element.sender.username,
+			})
+		});
 	}
 }
 

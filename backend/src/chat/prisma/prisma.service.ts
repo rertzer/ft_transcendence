@@ -59,3 +59,16 @@ export async function RetrieveMessage(login:string) {
 	  });
 	return userDirectMessages;
 }
+
+export async function addPrivateMessage(sender_id: number, receiver_id: number, message: string) {
+	console.log("sender_id : ", sender_id);
+	console.log("receiver_id : ", receiver_id);
+	const newMessage = await prismaService.directMsg.create({
+		data: {
+			message: message,
+			sender_id: sender_id,
+			receiver_id: receiver_id,
+			msg_status: 'unread',
+		},
+	})
+}
