@@ -9,17 +9,33 @@ export const WebsocketProvider = WebsocketContext.Provider;
 
 
 export interface IChatContext {
+	isConnected:boolean,
+	setIsConnected: (isConnected: boolean) => void;
 	username: string,
 	setUsername: (usemane: string) => void;
 	isInChat:boolean,
 	setIsInChat: (inchat: boolean) => void;
+	isInMp:boolean,
+	setIsInMp: (inMp: boolean) => void;
+	isInMailbox:boolean,
+	setIsInMailbox: (inMailbox: boolean) => void;
+	chatId: number,
+	setChatId: (chatId: number) => void;
 };
 
 const defaultState:IChatContext = {
+	isConnected: false,
+	setIsConnected: () => {},
 	username: '',
 	setUsername: () => {},
 	isInChat: false,
 	setIsInChat: () => {},
+	isInMp: false,
+	setIsInMp: () => {},
+	isInMailbox: false,
+	setIsInMailbox: () => {},
+	chatId: -1,
+	setChatId: () => {},
 };
 
 export default React.createContext(defaultState);

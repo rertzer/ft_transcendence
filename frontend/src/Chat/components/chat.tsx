@@ -12,7 +12,7 @@ export const InChat = () => {
 	const [messages, setMessages] = useState<MessagePayload[]>([]);
 	const [value, setValue] = useState('');
 	const socket = useContext(WebsocketContext);
-	const {setUsername, username, setIsInChat} = useContext(ChatContext);
+	const {username, setIsInChat, chatId} = useContext(ChatContext);
 
 	useEffect(() => {
 		socket.on('onMessage', (newMessage: MessagePayload) => {
@@ -30,13 +30,11 @@ export const InChat = () => {
 		const messageData = {
 			username: username,
 			content: value,
+			idOfChat: chatId,
 		}
 		socket.emit('newMessage', messageData);
 		setValue('');
 	  };
-	const goBack = () => {
-		setIsInChat(false);
-	}
 	return (
 		<div>
 		{messages.length === 0 ? (
@@ -59,7 +57,7 @@ export const InChat = () => {
 			/>
 			</div>
 			<button onClick={onSubmit}>Submit</button>
-			<button onClick={goBack}>Leave chat</button>
+			<button onClick={() => setIsInChat(false)}>go chat</button>
 		</div>
 	)
 }

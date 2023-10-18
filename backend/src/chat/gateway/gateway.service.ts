@@ -3,7 +3,7 @@ import { SubscribeMessage, WebSocketGateway, MessageBody, WebSocketServer } from
 import { Server } from 'socket.io'
 import { Prisma, PrismaClient } from "@prisma/client";
 import {createUser } from "../prisma/prisma.test";
-import {checkChatId, checkLogin, RetrieveMessage, addPrivateMessage,getIdOfLogin, addChatMessage } from "../prisma/prisma.service";
+import {checkChatId, checkLogin, RetrieveMessage, addPrivateMessage,getIdOfLogin, addChatMessage, addChanelUser } from "../prisma/prisma.service";
 import { arrayBuffer } from "stream/consumers";
 
 let lastMessageId = 0;
@@ -40,10 +40,10 @@ export class MyGateway implements OnModuleInit {
 
 
 	@SubscribeMessage('JoinChatRoom')
-	async onJoinChatRoom(@MessageBody() messageData: string) {
+	async onJoinChatRoom(@MessageBody() messageData:{username: string, id:string, user_role:string}) {
 		console.log("message receive : ", messageData);
 		console.log('gateway side');
-		const chatExist = await checkChatId(parseInt(messageData));
+		const chatExist = await checkChatId(parseInt(messageData.id));
 		if (chatExist === false) {
 			console.log("Chat asked have not been found")
 			this.server.emit('onJoinChatRoom', {
@@ -51,12 +51,18 @@ export class MyGateway implements OnModuleInit {
 			});
 			return;
 		}
-		console.log("Chat asked have been found");
-		this.server.emit('onJoinChatRoom', {
-			msg: 'New message',
-			id : messageData
-		})
-		
+		const userId = await getIdOfLogin(messageData.username);
+		//need to check if the user is already in the chat
+		//if not then :
+		if (userId !== undefined)
+		{
+			addChanelUser(parseInt(messageData.id),userId, messageData.user_role, new Date(Date.now()), null);
+			console.log("Chat asked have been found");
+			this.server.emit('onJoinChatRoom', {
+				msg: 'New message',
+				id : messageData
+			})
+		}
 	}
 
 	@SubscribeMessage('SendPrivateMessage')

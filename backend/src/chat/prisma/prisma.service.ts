@@ -82,21 +82,31 @@ export async function addChatMessage(chatChanelId: number, chat_channels_usernam
 
 export async function addChanelUser(channel_id : number, user_id : number, user_role:string, date_joined:Date, date_left:Date | null)
 {
-
-	// console.log("channel_id : ", channel_id);
-	// console.log("user_id : ", user_id);
-	// const newMessage = await prismaService.chatChannelsUser.create ({
-	// 	data: {
-	// 		channel_id: channel_id,
-	// 		user_id: user_id,
-	// 		user_role: user_role,
-	// 		date_joined: date_joined,
-	// 		date_left: date_left,
-	// 		messagesSent :{
-	// 			connect: {
-	// 		}
-	// 	},
-	// })
+	console.log("in add chanel user date receive : ", date_joined);
+	const findNextConectId = await prismaService.chatChannelsUser.findMany({
+		where: {
+			channel_id: channel_id,
+		},
+		orderBy: {
+			id: 'desc',
+		},
+		take: 1,
+	});
+	console.log("findNextConectId : ", findNextConectId);
+	console.log("channel_id : ", channel_id);
+	console.log("user_id : ", user_id);
+	const newMessage = await prismaService.chatChannelsUser.create ({
+		data: {
+			channel_id: channel_id,
+			user_id: user_id,
+			user_role: user_role,
+			date_joined: date_joined,
+			date_left: date_left,
+			messagesSent :{
+				connect: {id: (findNextConectId[0]?.id || 0) + 1}
+			}
+		},
+	})
 }
 
 export async function addPrivateMessage(sender_id: number, receiver_id: number, message: string) {

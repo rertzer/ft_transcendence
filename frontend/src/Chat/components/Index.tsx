@@ -3,25 +3,23 @@ import { useContext, useEffect, useState } from 'react';
 import { WebsocketContext } from "../contexts/ChatContext";
 import ChatContext from "../contexts/ChatContext";
 
-type MessagePayload = {
-  content: string;
-  msg: string;
-  username: string;
-  id: string;
-};
-
 type JoinChatRoomPayload = {
 	id: string;
+	username: string;
+	user_role: string;
 }
-
+//channel_id : number, user_id : number, user_role:string, date_joined:Date, date_left:Date | null
+//
 export const Index = () => {
-  const [value, setValue] = useState('');
-  const {setUsername, username, isInChat, setIsInChat } = useContext(ChatContext)
-  const socket = useContext(WebsocketContext);
-  const [showJoinChatOptions, setShowJoinChatOptions] = useState(false);
+	const [value, setValue] = useState('');
+	const {username, isInChat, setChatId, setIsInChat, setIsInMp, setIsInMailbox } = useContext(ChatContext)
+	const socket = useContext(WebsocketContext);
+	const [showJoinChatOptions, setShowJoinChatOptions] = useState(false);
 	const[showCreateChatOptions, setShowCreateChatOptions] = useState(false);
 	const [id, setId] = useState('');
 	const [idChatRoom, setIdChatRoom] = useState<JoinChatRoomPayload[]>([]);
+
+	console.log("username", username)
 	useEffect(() => {
     socket.on('connect', () => {
       console.log('Connected!');
@@ -34,6 +32,7 @@ export const Index = () => {
 		  console.log("wrong id")
 	  }
 	  else{
+		  setChatId(parseInt(idChatRoom.id));
 		  setIdChatRoom((prev) => [...prev, idChatRoom]);
 		  setIsInChat(true);
 		  setId('');
@@ -67,23 +66,24 @@ export const Index = () => {
 		setShowJoinChatOptions(true);
 	};
 	const SendIdChat = () => {
+		const messageData = {
+			username: username,
+			id: id,
+			user_role: "user",
+		}
 		console.log("send id chat")
-		socket.emit('JoinChatRoom', parseInt(id));
+		socket.emit('JoinChatRoom', messageData);
 	}
 	return (
 		<div>
 		  <div>
 			<h1>Welcome to the chat of transcendance</h1>
-			<p>Enter your username</p>
-			<input
-			  type="text"
-			  value={username}
-			  onChange={(e) => setUsername(e.target.value)}
-			/>
 			<p>What do you want to do?</p>
 			<div>
 			  <button onClick={createNewChat}>Create new chat</button>
 			  <button onClick={joinAchat}>Join a chat</button>
+			  <button onClick={() => setIsInMailbox(true)}>See my private Msg</button>
+			  <button onClick={() => setIsInMp(true)}>Send a Private msg</button>
 			  {showCreateChatOptions && (
 				<div>
 				  <p>Welcome to a new chat</p>
