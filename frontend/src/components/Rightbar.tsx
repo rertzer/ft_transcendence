@@ -1,9 +1,9 @@
 import "./Rightbar.scss";
 
-function Rightbar() {
+function Rightbar(props: any) {
 
     return (
-        <div className="rightbar">
+        <div className={props.show === "notifications" ? 'rightbar' : 'hidden'}>
             <div className="container">
                 <div className="item">
                     <span>Invitations</span>
@@ -13,7 +13,7 @@ function Rightbar() {
                             <span>jlanza</span>
                         </div>
                         <div className="buttons">
-                            <button>Affronter</button>
+                            <button>Jouer</button>
                             <button>Refuser</button>
                         </div>
                     </div>
@@ -23,7 +23,7 @@ function Rightbar() {
                             <span>mbocquel</span>
                         </div>
                         <div className="buttons">
-                            <button>Affronter</button>
+                            <button>Jouer</button>
                             <button>Refuser</button>
                         </div>
                     </div>

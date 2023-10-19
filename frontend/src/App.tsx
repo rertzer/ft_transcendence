@@ -10,6 +10,7 @@ import Leftbar from './components/Leftbar';
 import Rightbar from './components/Rightbar';
 import { AuthContext } from './context/authContext';
 import { ChatApp } from './Chat/chatApp';
+import ChatComponent from './components/chat/ChatComponent';
 
 function App() {
 
@@ -17,15 +18,18 @@ function App() {
 
   const Layout = ()=> {
 
+    const [showRightBar, setShowRightBar] = useState("none");
+
     return (
       <div>
-        <Navbar />
+        <Navbar showRightBar={showRightBar} setShowRightBar={setShowRightBar}/>
         <div style={{display: "flex"}}>
           <Leftbar />
-          <div style={{flex: 7}}>
+          <div className="pagecontent" style={{flex: 7}}>
             <Outlet />
           </div>
-          <Rightbar />
+          <Rightbar show={showRightBar}/>
+          <ChatComponent show={showRightBar}/>
         </div>
       </div>
     );
@@ -46,7 +50,7 @@ function App() {
       children:[
         {
           path:"/",
-          element: <Home/>
+          element: <Home />
         },
         {
           path:"/profile/:id",

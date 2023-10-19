@@ -9,12 +9,8 @@
 
 .App {
     text-align: center;
-}
-
-.chat-hidden {
-
-}
-
-.chat-visible {
-    
+    .pagecontent {
+        flex: 7;
+        overflow: hidden;
+    }
 }

@@ -3,12 +3,12 @@ import "./ChatComponent.scss"
 import Sidebar from './Sidebar';
 import Chat from './Chat'
 
-const ChatComponent = () => {
+const ChatComponent = (props: any) => {
     return (
-        <div className="chatcomponent">
+        <div className={props.show === "chat" ? "chatcomponent" : "hidden"}>
             <div className='container'>
-            <Sidebar/>
-            <Chat />
+                <Sidebar/>
+                <Chat />
             </div>
         </div>
     )
