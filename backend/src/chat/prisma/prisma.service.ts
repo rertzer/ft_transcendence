@@ -15,7 +15,23 @@ export async function getIdOfLogin(login: string){
 		return user.id;
 }
 
-export async function RetrieveMessage(login:string) {
+export async function getIdOfChatChannelsUser(login: string, chat_channels_id: number){
+
+	const idOfUser = await getIdOfLogin(login);
+	const user = await prismaService.chatChannelsUser.findFirst({
+		where: {
+			user_id: idOfUser,
+			channel_id: chat_channels_id,
+		}
+	})
+	if (user)
+	{
+		console.log("user id : ", user.id);
+		return user.id;
+	}
+}
+
+export async function RetrievePrivateMessage(login:string) {
 	const id = await getIdOfLogin(login);
 	const userDirectMessages = await prismaService.directMsg.findMany({
 		where: {
@@ -32,18 +48,37 @@ export async function RetrieveMessage(login:string) {
 	return userDirectMessages;
 }
 
-export async function addChatMessage(chatChanelId: number, chat_channels_username :string, message:string )
+export async function RetrieveChatMessage(chat_channels_id: number) {
+		// Find the chat channel by its ID
+		const chatChannel = await prismaService.chatChannels.findUnique({
+		  where: {
+			id: chat_channels_id,
+		  },
+		  include: {
+			// Include the related chat messages (ChatMsgHistory)
+			chatMessages: true,
+		  },
+		});
+		if (chatChannel)
+		{
+			console.log(chatChannel.chatMessages);
+			return chatChannel.chatMessages;
+		}
+}
+
+export async function addChatMessage(chatChanelId: number, chat_channels_username :string, message:string, date:Date )
 {
 	console.log("chat_channels_id : ", chatChanelId);
 	console.log("chat_channels_username : ", chat_channels_username);
 	console.log("message : ", message);
 
-	const chat_channels_user_id = await getIdOfLogin(chat_channels_username);
+	const chat_channels_user_id = await getIdOfChatChannelsUser(chat_channels_username, chatChanelId);
 	if (chat_channels_user_id !== undefined)
 	{
 		console.log("chat_channels_user_id : ", chat_channels_user_id);
 		const newMessage = await prismaService.chatMsgHistory.create({
 			data: {
+				date: date,
 				message: message,
 				chat_channels_id: chatChanelId,
 				chat_channels_user_id: chat_channels_user_id,

@@ -33,6 +33,7 @@ export const Index = () => {
 	  }
 	  else{
 		  setChatId(parseInt(idChatRoom.id));
+		  console.log("id chat room", idChatRoom.id);
 		  setIdChatRoom((prev) => [...prev, idChatRoom]);
 		  setIsInChat(true);
 		  setId('');
@@ -47,14 +48,6 @@ export const Index = () => {
     };
   }, []);
 
-  const onSubmit = () => {
-	const messageData = {
-		username: username,
-    	content: value,
-	}
-	socket.emit('newMessage', messageData);
-    setValue('');
-  };
   const createNewChat = () => {
 	  console.log("create new chat")
 	  setShowCreateChatOptions(true);

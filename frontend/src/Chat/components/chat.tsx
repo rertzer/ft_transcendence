@@ -8,25 +8,38 @@ type MessagePayload = {
 	id: string;
   };
 
+type ChatHistory = {
+	msg: string;
+	username: string;
+}
+
 export const InChat = () => {
 	const [messages, setMessages] = useState<MessagePayload[]>([]);
+	const [chatHistory, setChatHistory] = useState<ChatHistory[]>([]);
 	const [value, setValue] = useState('');
 	const socket = useContext(WebsocketContext);
 	const {username, setIsInChat, chatId} = useContext(ChatContext);
-
 	useEffect(() => {
 		socket.on('onMessage', (newMessage: MessagePayload) => {
 			console.log('onMessage event received!');
 			console.log(newMessage);
 			setMessages((prev) => [...prev, newMessage]);
 		  });
-		  return () => {
+		  socket.on('retrieveMessage', (chatHistoryReceive :{msg: string, username: string}) => {
+			  setChatHistory((prevMessages) => [...prevMessages, chatHistoryReceive]);
+			  for (let i = 0; i < chatHistory.length; i++) {
+				  console.log("Username: ",chatHistory[i].username, "Message: ", chatHistory[i].msg);
+				}
+			});
+		return () => {
 			console.log('Unregistering Events...');
 			socket.off('onMessage');
-		  };
+			socket.off('retrieveMessage');
+		};
 	}, []);
 
 	const onSubmit = () => {
+		console.log ("id of chat", chatId)
 		const messageData = {
 			username: username,
 			content: value,

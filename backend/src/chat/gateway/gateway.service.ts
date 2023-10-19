@@ -2,7 +2,7 @@ import { OnModuleInit } from "@nestjs/common";
 import { SubscribeMessage, WebSocketGateway, MessageBody, WebSocketServer } from "@nestjs/websockets";
 import { Server } from 'socket.io'
 import {createUser } from "../prisma/prisma.test";
-import {RetrieveMessage, addPrivateMessage,getIdOfLogin, addChatMessage, addChanelUser } from "../prisma/prisma.service";
+import {RetrievePrivateMessage, addPrivateMessage,getIdOfLogin, addChatMessage, addChanelUser, RetrieveChatMessage } from "../prisma/prisma.service";
 import {checkChatId, checkLogin} from "../prisma/prisma.check";
 
 let lastMessageId = 0;
@@ -35,15 +35,15 @@ export class MyGateway implements OnModuleInit {
 		console.log('gateway side');
 		console.log(messageData.idOfChat)
 		lastMessageId++
-		addChatMessage(parseInt(messageData.idOfChat), messageData.username, messageData.content);
+		addChatMessage(parseInt(messageData.idOfChat), messageData.username, messageData.content, new Date(Date.now()));
 	}
 
 
 	@SubscribeMessage('JoinChatRoom')
-	async onJoinChatRoom(@MessageBody() messageData:{username: string, id:string, user_role:string}) {
+	async onJoinChatRoom(@MessageBody() messageData:{username: string, chat_id:string, user_role:string}) {
 		console.log("message receive : ", messageData);
 		console.log('gateway side');
-		if (Number.isNaN(parseInt(messageData.id)))
+		if (Number.isNaN(parseInt(messageData.chat_id)))
 		{
 			console.log("Chat asked have not been found")
 			this.server.emit('onJoinChatRoom', {
@@ -51,7 +51,7 @@ export class MyGateway implements OnModuleInit {
 			});
 			return;
 		}
-		const chatExist = await checkChatId(parseInt(messageData.id));
+		const chatExist = await checkChatId(parseInt(messageData.chat_id));
 		if (chatExist === false) {
 			console.log("Chat asked have not been found")
 			this.server.emit('onJoinChatRoom', {
@@ -61,7 +61,7 @@ export class MyGateway implements OnModuleInit {
 		}
 		else {
 			this.server.emit('onJoinChatRoom', {
-				id : messageData.id
+				id : messageData.chat_id
 			});
 		}
 		const userId = await getIdOfLogin(messageData.username);
@@ -69,13 +69,24 @@ export class MyGateway implements OnModuleInit {
 		//if not then :
 		if (userId !== undefined)
 		{
-			addChanelUser(parseInt(messageData.id),userId, messageData.user_role, new Date(Date.now()), null);
+			addChanelUser(parseInt(messageData.chat_id),userId, messageData.user_role, new Date(Date.now()), null);
 			console.log("Chat asked have been found");
 			this.server.emit('onJoinChatRoom', {
 				msg: 'New message',
 				id : messageData
 			})
 		}
+		// const messageReceived = await RetrieveChatMessage(parseInt(messageData.chat_id))
+		// if (messageReceived !== undefined)
+		// {
+		// 	messageReceived.forEach(element => {
+
+		// 		this.server.emit('onMailBox', {
+
+		// 		})
+		// 	});
+
+		// }
 	}
 
 	@SubscribeMessage('SendPrivateMessage')
@@ -122,7 +133,7 @@ export class MyGateway implements OnModuleInit {
 	@SubscribeMessage('onMailBox')
 	async onMailBox(@MessageBody() userAsked: string) {
 		console.log('in mail box');
-		const messageReceived = await RetrieveMessage(userAsked);
+		const messageReceived = await RetrievePrivateMessage(userAsked);
 		messageReceived.forEach(element => {
 			this.server.emit('onMailBox', {
 				msg: 'all message',
