@@ -1,16 +1,27 @@
-import React, { useState } from 'react';
-import styless from "./Numbers.module.css";
-import styles from "../global.css";
+import React, { useState, useEffect, useRef } from 'react';
+import styles from "./Numbers.module.css";
 
-function RepeatingComponent() {
-  const [count, setCount] = useState(1000);
+function RepeatingNumbers() {
+  const windowHeightRef = useRef(window.innerHeight);
 
-  const repeatComponent = () => {
-    setCount(count + 1);
-  };
+  useEffect(() => {
+    const handleResize = () => {
+      windowHeightRef.current = window.innerHeight;
+      // Trigger a re-render of the component when window.innerHeight changes
+      forceUpdate();
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  const forceUpdate = useForceUpdate();
 
   const components = [];
-  for (let i = 1; i < count; i++) {
+  for (let i = 1; i * 13 < windowHeightRef.current; i++) {
     const dynamicTop = `${(i) * 13 - 13}px`;
     components.push(
     <div style={{
@@ -20,8 +31,8 @@ function RepeatingComponent() {
         width: '25px',
         height: '13px',
       }}>
-        <div className={styless.numberGroupChild} />
-        <div className={styless.numbers}>{i}</div>
+        <div className={styles.numberGroupChild} />
+        <div className={styles.numbers}>{i}</div>
     </div>
     );
   }
@@ -30,11 +41,15 @@ function RepeatingComponent() {
     <div>
         {components}
     </div>
-    // <div>
-    //   <button onClick={repeatComponent}>Add Another</button>
-    //   <div className="container">{components}</div>
-    // </div>
   );
 }
 
-export default RepeatingComponent;
+function useForceUpdate() {
+  const [, setTick] = useState(0);
+  const forceUpdate = () => {
+    setTick((tick) => tick + 1);
+  };
+  return forceUpdate;
+}
+
+export default RepeatingNumbers;
