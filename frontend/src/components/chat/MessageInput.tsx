@@ -5,8 +5,8 @@ const MessageInput = () => {
 
     return (
         <div className='messageinput'>
-            <input type="text" placeholder="Type your message..." />
-            <button>Send</button>
+            <input type="text" placeholder="Message..." />
+            <button>Envoi</button>
         </div>
     )
 }

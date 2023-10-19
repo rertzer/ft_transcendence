@@ -1,6 +1,6 @@
 .register {
     height: 100vh;
-    background-color: rgb(148, 71, 221);
+    background-color: #3e3c61;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -36,7 +36,7 @@
                 padding: 10px;
                 border: none;
                 background-color: white;
-                color: rgb(148, 71, 221);
+                color: r#3e3c61;
                 font-weight: bold;
                 cursor: pointer;
             }
@@ -65,7 +65,7 @@
                     width: 50%;
                     padding: 10px;
                     border: none;
-                    background-color: rgb(148, 71, 221);
+                    background-color: #3e3c61;
                     color: white;
                     font-weight: bold;
                     cursor: pointer;

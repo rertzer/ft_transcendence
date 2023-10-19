@@ -1,0 +1,76 @@
+import "./Navbar.scss";
+import {Link} from "react-router-dom";
+import SearchIcon from '@mui/icons-material/SearchOutlined';
+import LogoutIcon from '@mui/icons-material/MeetingRoomOutlined';
+import MenuIcon from '@mui/icons-material/MenuOutlined';
+import { useContext } from "react";
+import { AuthContext } from "../../context/authContext";
+import ForumIcon from '@mui/icons-material/ForumOutlined';
+import LeaderboardIcon from '@mui/icons-material/LeaderboardOutlined';
+import FriendsIcon from '@mui/icons-material/Diversity1Outlined';
+import { Tooltip } from "@mui/material";
+
+function Navbar(props: any) {
+
+    const {currentUser} = useContext(AuthContext);
+
+    function handleClickFriends() {
+        if (props.RightBar !== "friends") {
+            props.setRightBar("friends");
+        } else {
+            props.setRightBar("none");
+        }
+    }
+
+    function handleClickChat() {
+        if (props.RightBar !== "chat") {
+            props.setRightBar("chat");
+        } else {
+            props.setRightBar("none");
+        }
+    }
+
+    function handleClickLeaderboards() {
+        if (props.RightBar !== "leaderboards") {
+            props.setRightBar("leaderboards");
+        } else {
+            props.setRightBar("none");
+        }
+    }
+
+    return (
+        <div className="navbar">
+            <div className="left">
+                <Link to="/" style={{textDecoration:"none"}}>
+                    <span>Pong.</span>
+                </Link>
+                <div className="search">
+                    <SearchIcon />
+                    <input type="text" placeholder="Recherche de profils, parties, canaux..." />
+                </div>
+            </div>
+            <div className="right">
+                <Link to="/profile/1" style={{textDecoration:"none"}}>
+                    <div className="user">
+                        <img src={currentUser.profilePic}/>
+                        <span>{currentUser.name}</span>
+                    </div>
+                </Link>
+                <Tooltip title="Chat" arrow>
+                    <ForumIcon style={{cursor:"pointer"}} onClick={handleClickChat}/>
+                </Tooltip>
+                <Tooltip title="Friends" arrow>
+                    <FriendsIcon style={{cursor:"pointer"}} onClick={handleClickFriends}/>
+                </Tooltip>
+                <Tooltip title="Leaderboards" arrow>
+                    <LeaderboardIcon style={{cursor:"pointer"}} onClick={handleClickLeaderboards}/>
+                </Tooltip>
+                <Tooltip title="Log out" arrow>
+                    <LogoutIcon style={{cursor:"pointer"}}/>
+                </Tooltip>
+            </div>
+        </div>
+    );
+}
+
+export default Navbar;

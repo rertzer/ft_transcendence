@@ -5,31 +5,44 @@ import Login from './routes/Login';
 import Register from './routes/Register';
 import Home from './routes/Home';
 import Profile from './routes/Profile';
-import Navbar from './components/Navbar';
-import Leftbar from './components/Leftbar';
-import Rightbar from './components/Rightbar';
+import Navbar from './components/menus/Navbar';
+import Leftbar from './components/menus/Leftbar';
+import FriendsComponent from './components/friendlist/FriendsComponent';
 import { AuthContext } from './context/authContext';
 import { ChatApp } from './Chat/chatApp';
 import ChatComponent from './components/chat/ChatComponent';
+import Leaderboards from './components/leaderboards/Leaderboards';
 
 function App() {
 
   const {currentUser} = useContext(AuthContext);
 
+  const rightBarSwitch = (state: string) => {
+    switch(state) {
+      case "friends" :
+        return (<FriendsComponent />);
+      case "chat" :
+        return (<ChatComponent />);
+      case "leaderboards" :
+        return (<Leaderboards />);
+      default :
+        return;
+    }
+  }
+
   const Layout = ()=> {
 
-    const [showRightBar, setShowRightBar] = useState("none");
+    const [RightBar, setRightBar] = useState("none");
 
     return (
       <div>
-        <Navbar showRightBar={showRightBar} setShowRightBar={setShowRightBar}/>
+        <Navbar RightBar={RightBar} setRightBar={setRightBar}/>
         <div style={{display: "flex"}}>
           <Leftbar />
-          <div className="pagecontent" style={{flex: 7}}>
+          <div style={{flex: 7}}>
             <Outlet />
           </div>
-          <Rightbar show={showRightBar}/>
-          <ChatComponent show={showRightBar}/>
+          {rightBarSwitch(RightBar)}
         </div>
       </div>
     );

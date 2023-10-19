@@ -1,9 +1,9 @@
-import "./Rightbar.scss";
+import "./FriendsComponent.scss";
 
-function Rightbar(props: any) {
+function FriendsComponent() {
 
     return (
-        <div className={props.show === "notifications" ? 'rightbar' : 'hidden'}>
+        <div className='FriendsComponent'>
             <div className="container">
                 <div className="item">
                     <span>Invitations</span>
@@ -28,6 +28,42 @@ function Rightbar(props: any) {
                         </div>
                     </div>
                 </div>
+
+                <div className="item">
+                    <span>Amis</span>
+                    <div className="user">
+                        <div className="userInfo">
+                            <img src="https://img.lamontagne.fr/c6BQg2OSHIeQEv4GJfr_br_8h5DGcOy84ruH2ZResWQ/fit/657/438/sm/0/bG9jYWw6Ly8vMDAvMDAvMDMvMTYvNDYvMjAwMDAwMzE2NDYxMQ.jpg" alt="" />
+                            <div className="online" />
+                            <span>jlanza</span>
+                            <p>( disponible )</p>
+                        </div>
+                    </div>
+                    <div className="user">
+                        <div className="userInfo">
+                            <img src="https://img.lamontagne.fr/c6BQg2OSHIeQEv4GJfr_br_8h5DGcOy84ruH2ZResWQ/fit/657/438/sm/0/bG9jYWw6Ly8vMDAvMDAvMDMvMTYvNDYvMjAwMDAwMzE2NDYxMQ.jpg" alt="" />
+                            <div className="online" />
+                            <span>mbocquel</span>
+                            <p>( disponible )</p>
+                        </div>
+                    </div>
+                    <div className="user">
+                        <div className="userInfo">
+                            <img src="https://img.lamontagne.fr/c6BQg2OSHIeQEv4GJfr_br_8h5DGcOy84ruH2ZResWQ/fit/657/438/sm/0/bG9jYWw6Ly8vMDAvMDAvMDMvMTYvNDYvMjAwMDAwMzE2NDYxMQ.jpg" alt="" />
+                            <div className="online" />
+                            <span>pjay</span>
+                            <p>( en jeu )</p>
+                        </div>
+                    </div>
+                    <div className="user">
+                        <div className="userInfo">
+                            <img src="https://img.lamontagne.fr/c6BQg2OSHIeQEv4GJfr_br_8h5DGcOy84ruH2ZResWQ/fit/657/438/sm/0/bG9jYWw6Ly8vMDAvMDAvMDMvMTYvNDYvMjAwMDAwMzE2NDYxMQ.jpg" alt="" />
+                            <span>rertzer</span>
+                        </div>
+                    </div>
+    
+                </div>
+
                 <div className="item">
                     <span>Dernières activités</span>
                     <div className="user">
@@ -75,37 +111,10 @@ function Rightbar(props: any) {
                         </div>
                         <span>il y a 17 min</span>
                     </div>
-                    <div className="user">
-                        <div className="userInfo">
-                            <img src="https://img.lamontagne.fr/c6BQg2OSHIeQEv4GJfr_br_8h5DGcOy84ruH2ZResWQ/fit/657/438/sm/0/bG9jYWw6Ly8vMDAvMDAvMDMvMTYvNDYvMjAwMDAwMzE2NDYxMQ.jpg" alt="" />
-                            <p>
-                                <span>rertzer</span> a gagné une partie
-                            </p>
-                        </div>
-                        <span>il y a 30 min</span>
-                    </div>
-                </div>
-                <div className="item">
-                    <span>Amis en ligne</span>
-                    <div className="user">
-                        <div className="userInfo">
-                            <img src="https://img.lamontagne.fr/c6BQg2OSHIeQEv4GJfr_br_8h5DGcOy84ruH2ZResWQ/fit/657/438/sm/0/bG9jYWw6Ly8vMDAvMDAvMDMvMTYvNDYvMjAwMDAwMzE2NDYxMQ.jpg" alt="" />
-                            <div className="online" />
-                            <span>pjay</span>
-                        </div>
-                    </div>
-                    <div className="user">
-                        <div className="userInfo">
-                            <img src="https://img.lamontagne.fr/c6BQg2OSHIeQEv4GJfr_br_8h5DGcOy84ruH2ZResWQ/fit/657/438/sm/0/bG9jYWw6Ly8vMDAvMDAvMDMvMTYvNDYvMjAwMDAwMzE2NDYxMQ.jpg" alt="" />
-                            <div className="online" />
-                            <span>rertzer</span>
-                        </div>
-                    </div>
-                    
                 </div>
             </div>
         </div>
     );
 }
 
-export default Rightbar;
+export default FriendsComponent;

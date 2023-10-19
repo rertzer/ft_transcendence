@@ -11,10 +11,6 @@ const Chatbar = () => {
     return (
         <div className='chatbar'>
             <span className='chatlogo'>Pong Chat</span>
-            <div className="chatuser">
-                <img src={currentUser.profilePic} alt="your profile picture" />
-                <span>{currentUser.name}</span>
-            </div>
         </div>
     )
 }
