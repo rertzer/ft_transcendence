@@ -35,13 +35,13 @@ model User {
 
 model ChatChannelsUser {
   id               Int              @id @default(autoincrement())
-  channel_id       Int              @unique
+  channel_id       Int
   user_id          Int
   user_role        String
   date_joined      DateTime
   date_left        DateTime?
   chatChannelsUser User             @relation("chatChanelUser", fields: [user_id], references: [id], map: "chat_channels_user")
-  channel          ChatChannels     @relation("ChatChannelsUser", fields: [id], references: [id])
+  channel          ChatChannels     @relation("ChatChannelsUser", fields: [channel_id], references: [id])
   messagesSent     ChatMsgHistory[] @relation("ChatMessagesSender")
 }
 

@@ -1,10 +1,9 @@
 import { OnModuleInit } from "@nestjs/common";
 import { SubscribeMessage, WebSocketGateway, MessageBody, WebSocketServer } from "@nestjs/websockets";
 import { Server } from 'socket.io'
-import { Prisma, PrismaClient } from "@prisma/client";
 import {createUser } from "../prisma/prisma.test";
-import {checkChatId, checkLogin, RetrieveMessage, addPrivateMessage,getIdOfLogin, addChatMessage, addChanelUser } from "../prisma/prisma.service";
-import { arrayBuffer } from "stream/consumers";
+import {RetrieveMessage, addPrivateMessage,getIdOfLogin, addChatMessage, addChanelUser } from "../prisma/prisma.service";
+import {checkChatId, checkLogin} from "../prisma/prisma.check";
 
 let lastMessageId = 0;
 
@@ -31,11 +30,12 @@ export class MyGateway implements OnModuleInit {
 	}
 
 	@SubscribeMessage('newMessage')
-	onNewMessage(@MessageBody() messageData: {username: string, content: string, idOfChat: number}) {
+	onNewMessage(@MessageBody() messageData: {username: string, content: string, idOfChat: string}) {
 		console.log(messageData);
 		console.log('gateway side');
+		console.log(messageData.idOfChat)
 		lastMessageId++
-		addChatMessage(messageData.idOfChat, messageData.username, messageData.content);
+		addChatMessage(parseInt(messageData.idOfChat), messageData.username, messageData.content);
 	}
 
 
@@ -43,6 +43,14 @@ export class MyGateway implements OnModuleInit {
 	async onJoinChatRoom(@MessageBody() messageData:{username: string, id:string, user_role:string}) {
 		console.log("message receive : ", messageData);
 		console.log('gateway side');
+		if (Number.isNaN(parseInt(messageData.id)))
+		{
+			console.log("Chat asked have not been found")
+			this.server.emit('onJoinChatRoom', {
+				id : '-1'
+			});
+			return;
+		}
 		const chatExist = await checkChatId(parseInt(messageData.id));
 		if (chatExist === false) {
 			console.log("Chat asked have not been found")
@@ -50,6 +58,11 @@ export class MyGateway implements OnModuleInit {
 				id : '-1'
 			});
 			return;
+		}
+		else {
+			this.server.emit('onJoinChatRoom', {
+				id : messageData.id
+			});
 		}
 		const userId = await getIdOfLogin(messageData.username);
 		//need to check if the user is already in the chat

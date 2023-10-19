@@ -19,6 +19,7 @@ export async function createUser() {
 			data: {
 				username: 'your_username',
 				first_name: 'John',
+				login: 'your_login',
 				last_name: 'Doe',
 				email: 'johndoe@example.com',
 				avatar: 'avatar_url',
@@ -34,6 +35,7 @@ export async function createUser() {
 				username: 'Pierrick',
 				first_name: 'jay',
 				last_name: ';avf',
+				login: 'pjay',
 				email: 'johndoeff@example.com',
 				avatar: 'fffvvf',
 				role: 'user',
