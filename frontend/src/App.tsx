@@ -45,18 +45,18 @@ function App() {
   const Layout = ()=> {
 
     const [RightBar, setRightBar] = useState("none");
-
+	console.log("username", username)
     return (
-      <div>
-        <Navbar RightBar={RightBar} setRightBar={setRightBar}/>
-        <div style={{display: "flex"}}>
-          <Leftbar />
-          <div style={{flex: 7}}>
-            <Outlet />
-          </div>
-          {rightBarSwitch(RightBar)}
-        </div>
-      </div>
+    <div>
+         <Navbar RightBar={RightBar} setRightBar={setRightBar}/>
+         <div style={{display: "flex"}}>
+           <Leftbar />
+           <div style={{flex: 7}}>
+             <Outlet />
+           </div>
+           {rightBarSwitch(RightBar)}
+         </div>
+    </div>
     );
   }
 
@@ -69,24 +69,20 @@ function App() {
   }
 
   const router = createBrowserRouter([
-    // {
-    //   path:"/",
-    //   //element: <ProtectedRoute><Layout /></ProtectedRoute>,
-    //   children:[
-    //     {
-    //       path:"/",
-    //       element: <Home />
-    //     },
-    //     {
-    //       path:"/profile/:id",
-    //       element: <Profile />
-    //     }
-    //   ]
-    // },
-	{
-		path:"/",
-		element: <Layout/>
-	},
+    {
+      path:"/",
+      element: <ProtectedRoute><Layout /></ProtectedRoute>,
+      children:[
+        {
+          path:"/",
+          element: <Home />
+        },
+        {
+          path:"/profile/:id",
+          element: <Profile />
+        }
+      ]
+    },
     {
       path: "/login",
       element: <Login />,

@@ -34,6 +34,7 @@ function Login() {
 			{
 				console.log("wrong id")
 				setUsername('');
+				setuserOk(false)
 
 			}
 			else{
@@ -70,11 +71,11 @@ function Login() {
                         <input type="text" placeholder="Login" />
                         <input type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)}/>
                         <input type="password" placeholder="Password" />
-                        {<button onClick={sendUserConnection}>Log in</button>}
-						{userOk && (
-							<Navigate to='/'></Navigate>
-						)}
                     </form>
+                        <button onClick={sendUserConnection}>Log in</button>
+					{userOk && (
+						<Navigate to='/'></Navigate>
+					)}
                 </div>
             </div>
         </div>

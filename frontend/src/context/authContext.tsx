@@ -3,7 +3,7 @@ import ChatContext from "../context/chatContext";
 import chatContext from "../context/chatContext";
 import  ConnectionContext from "./authContext"
 // export const AuthContext = createContext({
-//     username: {
+//     currentUser: {
 //         id: 0,
 //         name:"toto",
 //         profilePic: ""
@@ -13,7 +13,7 @@ import  ConnectionContext from "./authContext"
 
 export interface IConnected {
 	username: string,
-	setUsername: (usemane: string) => void;
+	setUsername: (username: string) => void;
 }
 
 const defaultState:IConnected = {
