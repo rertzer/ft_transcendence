@@ -8,14 +8,26 @@ import Profile from './routes/Profile';
 import Navbar from './components/menus/Navbar';
 import Leftbar from './components/menus/Leftbar';
 import FriendsComponent from './components/friendlist/FriendsComponent';
-import { AuthContext } from './context/authContext';
+import {  IConnected } from './context/authContext';
 import { ChatApp } from './Chat/chatApp';
 import ChatComponent from './components/chat/ChatComponent';
 import Leaderboards from './components/leaderboards/Leaderboards';
+import {IChatContext, WebsocketProvider, socket } from './context/chatContext';
+import ChatContext from './context/chatContext';
+// import { AuthContextProvider } from './context/authContext';
+import ConnectionContext from './context/authContext'
 
 function App() {
-
-  const {currentUser} = useContext(AuthContext);
+	const [username, setUsername] = useState('')
+  const [chatId, setChatId] = useState(-1)
+  const ChatContextValue :IChatContext = {
+	  chatId,
+	  setChatId,
+  };
+  const ConnectionValue: IConnected = {
+	  username,
+	  setUsername,
+  }
 
   const rightBarSwitch = (state: string) => {
     switch(state) {
@@ -50,27 +62,31 @@ function App() {
 
   const ProtectedRoute = ({children}: any) => {
 
-    if (!currentUser) {
+    if (!username) {
       return (<Navigate to="/login" />);
     }
     return (children);
   }
 
   const router = createBrowserRouter([
-    {
-      path:"/",
-      element: <ProtectedRoute><Layout /></ProtectedRoute>,
-      children:[
-        {
-          path:"/",
-          element: <Home />
-        },
-        {
-          path:"/profile/:id",
-          element: <Profile />
-        }
-      ]
-    },
+    // {
+    //   path:"/",
+    //   //element: <ProtectedRoute><Layout /></ProtectedRoute>,
+    //   children:[
+    //     {
+    //       path:"/",
+    //       element: <Home />
+    //     },
+    //     {
+    //       path:"/profile/:id",
+    //       element: <Profile />
+    //     }
+    //   ]
+    // },
+	{
+		path:"/",
+		element: <Layout/>
+	},
     {
       path: "/login",
       element: <Login />,
@@ -80,9 +96,28 @@ function App() {
       element: <Register />,
     },
   ]);
+//   export function ChatApp() {
+// 	return (
+// 		<WebsocketProvider value={socket}>
+// 			<ChatContext.Provider value={ChatContextValue}>
+// 			{!isConnected && <Connection />}
+// 			{!isInChat && !isInMp && !isInMailbox && isConnected &&  <Index />}
+// 			{isInMailbox && <Mailbox />}
+// 			{isInChat && <InChat />}
+// 			{isInMp && <MsgPrive />}
+// 		</ChatContext.Provider>
+// 		</WebsocketProvider>
+// 	)
+
   return (
     <div >
-        <RouterProvider router={router} />
+		{/* <AuthContextProvider> */}
+			<ChatContext.Provider value={ChatContextValue}>
+				<ConnectionContext.Provider value={ConnectionValue}>
+					<RouterProvider router={router} />
+				</ConnectionContext.Provider>
+			</ChatContext.Provider>
+		{/* </AuthContextProvider> */}
     </div>
   );
 }

@@ -4,15 +4,16 @@ import SearchIcon from '@mui/icons-material/SearchOutlined';
 import LogoutIcon from '@mui/icons-material/MeetingRoomOutlined';
 import MenuIcon from '@mui/icons-material/MenuOutlined';
 import { useContext } from "react";
-import { AuthContext } from "../../context/authContext";
+//import { AuthContext } from "../../context/authContext";
 import ForumIcon from '@mui/icons-material/ForumOutlined';
 import LeaderboardIcon from '@mui/icons-material/LeaderboardOutlined';
 import FriendsIcon from '@mui/icons-material/Diversity1Outlined';
 import { Tooltip } from "@mui/material";
+import  ConnectionContext from "../../context/authContext"
 
 function Navbar(props: any) {
 
-    const {currentUser} = useContext(AuthContext);
+    const {username} = useContext(ConnectionContext);
 
     function handleClickFriends() {
         if (props.RightBar !== "friends") {
@@ -52,8 +53,8 @@ function Navbar(props: any) {
             <div className="right">
                 <Link to="/profile/1" style={{textDecoration:"none"}}>
                     <div className="user">
-                        <img src={currentUser.profilePic}/>
-                        <span>{currentUser.name}</span>
+                        <img src={""}/>
+                        <span>{username}</span>
                     </div>
                 </Link>
                 <Tooltip title="Chat" arrow>

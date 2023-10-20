@@ -1,6 +1,6 @@
 import {IChatContext, WebsocketProvider, socket } from './contexts/ChatContext';
-import { Index } from './components/Index';
 import ChatContext from './contexts/ChatContext';
+import { Index } from './components/Index';
 import { InChat } from './components/chat';
 import { useState } from 'react';
 import { MsgPrive } from './components/msgPrive';

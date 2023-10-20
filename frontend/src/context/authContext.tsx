@@ -1,34 +1,48 @@
-import { createContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
+import ChatContext from "../context/chatContext";
+import chatContext from "../context/chatContext";
+import  ConnectionContext from "./authContext"
+// export const AuthContext = createContext({
+//     username: {
+//         id: 0,
+//         name:"toto",
+//         profilePic: ""
+//     },
+//     login: () => {},
+// });
 
-export const AuthContext = createContext({
-    currentUser: {
-        id: 0,
-        name:"toto",
-        profilePic: ""
-    },
-    login: () => {},
-});
+export interface IConnected {
+	username: string,
+	setUsername: (usemane: string) => void;
+}
 
-export const AuthContextProvider = ({children}: {children: React.ReactNode}) => {
-    const [currentUser, setCurrentUser] = useState(
-        JSON.parse(localStorage.getItem("user") || '{}') || null
-    );
+const defaultState:IConnected = {
+	username: '',
+	setUsername: () => {},
+}
 
-        const login = () => {
-            setCurrentUser({
-                id:1,
-                name:"tgrasset",
-                profilePic: "https://img.lamontagne.fr/c6BQg2OSHIeQEv4GJfr_br_8h5DGcOy84ruH2ZResWQ/fit/657/438/sm/0/bG9jYWw6Ly8vMDAvMDAvMDMvMTYvNDYvMjAwMDAwMzE2NDYxMQ.jpg"
-            });
-        }
+export default React.createContext(defaultState);
 
-useEffect(() => {
-    localStorage.setItem("user", JSON.stringify(currentUser));
-}, [currentUser]);
+// export const AuthContextProvider = ({children}: {children: React.ReactNode}) => {
 
-    return (
-        <AuthContext.Provider value={{currentUser, login}}>
-            {children}
-        </AuthContext.Provider>
-    )
-};
+// 	const {username, setUsername} = useContext(ConnectionContext)
+//     //     JSON.parse(localStorage.getItem("user") || '{}') || null
+//     // );
+
+
+//         const login = () => {
+// 			if (username !== '')
+// 			{
+// 			}
+//         }
+
+// useEffect(() => {
+//     localStorage.setItem("user", JSON.stringify(username));
+// }, [username]);
+
+//     return (
+//         <AuthContext.Provider value={{username, login}}>
+//             {children}
+//         </AuthContext.Provider>
+//     )
+// };
