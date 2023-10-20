@@ -29,16 +29,6 @@ function Leftbar() {
                         <QuestionMarkIcon />
                         <span>Random</span>
                     </div>
-                    <hr/>
-                    <span>Social</span>
-                    <div className="item">
-                        <FriendsIcon />
-                        <span>Amis</span>
-                    </div>
-                    <div className="item">
-                        <LeaderboardIcon />
-                        <span>Classements</span>
-                    </div>
                 </div>
             </div>
         </div>

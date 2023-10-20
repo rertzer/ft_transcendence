@@ -3,7 +3,7 @@ import { createContext, useEffect, useState } from "react";
 export const AuthContext = createContext({
     currentUser: {
         id: 0,
-        name:"",
+        name:"toto",
         profilePic: ""
     },
     login: () => {},
@@ -17,7 +17,7 @@ export const AuthContextProvider = ({children}: {children: React.ReactNode}) => 
         const login = () => {
             setCurrentUser({
                 id:1,
-                name:"testName",
+                name:"tgrasset",
                 profilePic: "https://img.lamontagne.fr/c6BQg2OSHIeQEv4GJfr_br_8h5DGcOy84ruH2ZResWQ/fit/657/438/sm/0/bG9jYWw6Ly8vMDAvMDAvMDMvMTYvNDYvMjAwMDAwMzE2NDYxMQ.jpg"
             });
         }

@@ -1,8 +1,8 @@
 .leftbar{
-    flex: 2;
     position: sticky;
     top: 50px;
     height: calc(100vh - 50px);
+    width: 180px;
     overflow: scroll;
     &::-webkit-scrollbar {
         display: none;
