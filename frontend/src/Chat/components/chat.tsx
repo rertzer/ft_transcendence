@@ -11,6 +11,8 @@ type MessagePayload = {
 type ChatHistory = {
 	msg: string;
 	username: string;
+	date: string;
+	id: number;
 }
 
 export const InChat = () => {
@@ -20,17 +22,23 @@ export const InChat = () => {
 	const socket = useContext(WebsocketContext);
 	const {username, setIsInChat, chatId} = useContext(ChatContext);
 	useEffect(() => {
+
 		socket.on('onMessage', (newMessage: MessagePayload) => {
 			console.log('onMessage event received!');
 			console.log(newMessage);
 			setMessages((prev) => [...prev, newMessage]);
 		  });
-		  socket.on('retrieveMessage', (chatHistoryReceive :{msg: string, username: string}) => {
-			  setChatHistory((prevMessages) => [...prevMessages, chatHistoryReceive]);
-			  for (let i = 0; i < chatHistory.length; i++) {
-				  console.log("Username: ",chatHistory[i].username, "Message: ", chatHistory[i].msg);
-				}
+
+		  socket.on('retrieveMessage', (chatHistoryReceive :{msg: string, username: string, date: Date, id: number}) => {
+				console.log("trigger reterieve message, what i receive :", chatHistoryReceive)
+				const newDateString = chatHistoryReceive.date.toString();
+				const add : ChatHistory = {msg: chatHistoryReceive.msg, username: chatHistoryReceive.username, date: newDateString, id: chatHistoryReceive.id}
+				//console.log("Previous catHistory:", chatHistory);
+				setChatHistory((prevMessages) => [...prevMessages, add]);
+				// Debugging: Check the updated chatHistory
+				//console.log("Updated chatHistory:", chatHistory);
 			});
+
 		return () => {
 			console.log('Unregistering Events...');
 			socket.off('onMessage');
@@ -50,13 +58,13 @@ export const InChat = () => {
 	  };
 	return (
 		<div>
-		{messages.length === 0 ? (
+		{chatHistory.length === 0 ? (
 			<div>No Messages</div>
 		  ) : (
 			<div>
-			  {messages.map((msg) => (
-				<div key={msg.id}>
-				  <p>{msg.username} : {msg.content}</p>
+			  {chatHistory.map((chat) => (
+				<div key={chat.id}>
+				  <p>{chat.date} :  {chat.username} : {chat.msg}</p>
 				</div>
 			  ))}
 			</div>

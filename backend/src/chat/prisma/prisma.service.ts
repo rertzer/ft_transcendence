@@ -122,3 +122,18 @@ export async function addPrivateMessage(sender_id: number, receiver_id: number, 
 		},
 	})
 }
+
+export async function findUser(chat_channels_user_id: number) {
+	const user = await prismaService.chatChannelsUser.findUnique({
+		where: {
+			id: chat_channels_user_id,
+		},
+		include: {
+			chatChannelsUser: true,
+		},
+	})
+	if (user)
+	{
+		return user.chatChannelsUser.username;
+	}
+}

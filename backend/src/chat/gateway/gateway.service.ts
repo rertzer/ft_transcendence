@@ -2,7 +2,7 @@ import { OnModuleInit } from "@nestjs/common";
 import { SubscribeMessage, WebSocketGateway, MessageBody, WebSocketServer } from "@nestjs/websockets";
 import { Server } from 'socket.io'
 import {createUser } from "../prisma/prisma.test";
-import {RetrievePrivateMessage, addPrivateMessage,getIdOfLogin, addChatMessage, addChanelUser, RetrieveChatMessage } from "../prisma/prisma.service";
+import {RetrievePrivateMessage, addPrivateMessage,getIdOfLogin, addChatMessage, addChanelUser, RetrieveChatMessage, findUser } from "../prisma/prisma.service";
 import {checkChatId, checkLogin} from "../prisma/prisma.check";
 import { getDate } from "../utils/utils.service";
 
@@ -84,17 +84,19 @@ export class MyGateway implements OnModuleInit {
 				id : messageData
 			})
 		}
-		// const messageReceived = await RetrieveChatMessage(parseInt(messageData.chat_id))
-		// if (messageReceived !== undefined)
-		// {
-		// 	messageReceived.forEach(element => {
-
-		// 		this.server.emit('onMailBox', {
-
-		// 		})
-		// 	});
-
-		// }
+		const messageReceived = await RetrieveChatMessage(parseInt(messageData.chat_id))
+		if (messageReceived !== undefined)
+		{
+			for (const element of messageReceived) {
+				const username = await findUser(element.chat_channels_user_id);
+				this.server.emit('retrieveMessage', {
+					msg: element.message,
+					username: username,
+					date: element.date_sent,
+					id: element.id
+				})
+			};
+		}
 	}
 
 	@SubscribeMessage('SendPrivateMessage')

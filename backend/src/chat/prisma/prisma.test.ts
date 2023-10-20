@@ -11,8 +11,7 @@ export async function createUser() {
 	},
     });
     if (existingUser) {
-
-		console.log('User already exists:', existingUser);
+		console.log('User already exists');
     } else {
 		// User doesn't exist, create a new user
 		const newUser = await prismaService.user.create({
