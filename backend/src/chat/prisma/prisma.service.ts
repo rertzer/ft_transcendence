@@ -17,7 +17,10 @@ export async function getIdOfLogin(login: string){
 
 export async function getIdOfChatChannelsUser(login: string, chat_channels_id: number){
 
+	console.log("login : ", login);
 	const idOfUser = await getIdOfLogin(login);
+	console.log("id of user : ", idOfUser);
+
 	const user = await prismaService.chatChannelsUser.findFirst({
 		where: {
 			user_id: idOfUser,
@@ -28,6 +31,9 @@ export async function getIdOfChatChannelsUser(login: string, chat_channels_id: n
 	{
 		console.log("user id : ", user.id);
 		return user.id;
+	}
+	else {
+		
 	}
 }
 
@@ -84,6 +90,10 @@ export async function addChatMessage(chatChanelId: number, chat_channels_usernam
 				chat_channels_user_id: chat_channels_user_id,
 			},
 		})
+	}
+	else
+	{
+		console.log("issue addchat mesasge.")
 	}
 }
 

@@ -38,6 +38,7 @@ export class MyGateway implements OnModuleInit {
 		console.log('gateway side');
 		console.log(messageData.idOfChat)
 		lastMessageId++
+		console.log('message username = ', messageData.username);
 		addChatMessage(parseInt(messageData.idOfChat), messageData.username, messageData.content, getDate());
 	}
 
@@ -84,7 +85,13 @@ export class MyGateway implements OnModuleInit {
 				id : messageData
 			})
 		}
-		const messageReceived = await RetrieveChatMessage(parseInt(messageData.chat_id))
+	}
+
+	@SubscribeMessage('retrieveMessage')
+	async retrieveChatMesssage(@MessageBody() messageData: {numberMsgToDisplay:number, chatId: string})
+	{
+		console.log(parseInt(messageData.chatId))
+		const messageReceived = await RetrieveChatMessage(parseInt(messageData.chatId))
 		if (messageReceived !== undefined)
 		{
 			for (const element of messageReceived) {
