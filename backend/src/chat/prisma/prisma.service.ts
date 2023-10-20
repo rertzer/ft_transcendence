@@ -78,7 +78,7 @@ export async function addChatMessage(chatChanelId: number, chat_channels_usernam
 		console.log("chat_channels_user_id : ", chat_channels_user_id);
 		const newMessage = await prismaService.chatMsgHistory.create({
 			data: {
-				date: date,
+				date_sent: date,
 				message: message,
 				chat_channels_id: chatChanelId,
 				chat_channels_user_id: chat_channels_user_id,

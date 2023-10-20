@@ -4,6 +4,7 @@ import { Server } from 'socket.io'
 import {createUser } from "../prisma/prisma.test";
 import {RetrievePrivateMessage, addPrivateMessage,getIdOfLogin, addChatMessage, addChanelUser, RetrieveChatMessage } from "../prisma/prisma.service";
 import {checkChatId, checkLogin} from "../prisma/prisma.check";
+import { getDate } from "../utils/utils.service";
 
 let lastMessageId = 0;
 
@@ -18,6 +19,8 @@ createUser()
 
 
 export class MyGateway implements OnModuleInit {
+
+
 
 	@WebSocketServer()
 	server: Server;
@@ -35,7 +38,7 @@ export class MyGateway implements OnModuleInit {
 		console.log('gateway side');
 		console.log(messageData.idOfChat)
 		lastMessageId++
-		addChatMessage(parseInt(messageData.idOfChat), messageData.username, messageData.content, new Date(Date.now()));
+		addChatMessage(parseInt(messageData.idOfChat), messageData.username, messageData.content, getDate());
 	}
 
 
@@ -43,14 +46,18 @@ export class MyGateway implements OnModuleInit {
 	async onJoinChatRoom(@MessageBody() messageData:{username: string, chat_id:string, user_role:string}) {
 		console.log("message receive : ", messageData);
 		console.log('gateway side');
+		console.log(messageData.chat_id)
+		getDate();
+		Date.now();
 		if (Number.isNaN(parseInt(messageData.chat_id)))
 		{
-			console.log("Chat asked have not been found")
+			console.log("Chat asked is not a number")
 			this.server.emit('onJoinChatRoom', {
 				id : '-1'
 			});
 			return;
 		}
+		console.log("chat id : ", parseInt(messageData.chat_id));
 		const chatExist = await checkChatId(parseInt(messageData.chat_id));
 		if (chatExist === false) {
 			console.log("Chat asked have not been found")
@@ -69,7 +76,8 @@ export class MyGateway implements OnModuleInit {
 		//if not then :
 		if (userId !== undefined)
 		{
-			addChanelUser(parseInt(messageData.chat_id),userId, messageData.user_role, new Date(Date.now()), null);
+			// console.log("date now : ", new Date(Date.now())));
+			addChanelUser(parseInt(messageData.chat_id),userId, messageData.user_role, getDate(), null);
 			console.log("Chat asked have been found");
 			this.server.emit('onJoinChatRoom', {
 				msg: 'New message',

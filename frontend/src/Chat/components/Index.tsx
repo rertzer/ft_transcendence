@@ -11,7 +11,6 @@ type JoinChatRoomPayload = {
 //channel_id : number, user_id : number, user_role:string, date_joined:Date, date_left:Date | null
 //
 export const Index = () => {
-	const [value, setValue] = useState('');
 	const {username, isInChat, setChatId, setIsInChat, setIsInMp, setIsInMailbox } = useContext(ChatContext)
 	const socket = useContext(WebsocketContext);
 	const [showJoinChatOptions, setShowJoinChatOptions] = useState(false);
@@ -61,10 +60,11 @@ export const Index = () => {
 	const SendIdChat = () => {
 		const messageData = {
 			username: username,
-			id: id,
+			chat_id: id,
 			user_role: "user",
 		}
 		console.log("send id chat")
+		console.log("id chat room", id);
 		socket.emit('JoinChatRoom', messageData);
 	}
 	return (
