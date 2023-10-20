@@ -5,6 +5,7 @@ import LogoutIcon from '@mui/icons-material/MeetingRoomOutlined';
 import MenuIcon from '@mui/icons-material/MenuOutlined';
 import { useContext } from "react";
 //import { AuthContext } from "../../context/authContext";
+import ChatroomIcon from '@mui/icons-material/CommentOutlined';
 import ForumIcon from '@mui/icons-material/ForumOutlined';
 import LeaderboardIcon from '@mui/icons-material/LeaderboardOutlined';
 import FriendsIcon from '@mui/icons-material/Diversity1Outlined';
@@ -22,6 +23,14 @@ function Navbar(props: any) {
             props.setRightBar("none");
         }
     }
+
+    function handleClickChannels() {
+        if (props.RightBar !== "channels") {
+            props.setRightBar("channels");
+        } else {
+            props.setRightBar("none");
+        }
+    }  
 
     function handleClickChat() {
         if (props.RightBar !== "chat") {
@@ -47,7 +56,7 @@ function Navbar(props: any) {
                 </Link>
                 <div className="search">
                     <SearchIcon />
-                    <input type="text" placeholder="Recherche de profils, parties, canaux..." />
+                    <input type="text" placeholder="Rechercher un profil..." />
                 </div>
             </div>
             <div className="right">
@@ -59,6 +68,9 @@ function Navbar(props: any) {
                 </Link>
                 <Tooltip title="Chat" arrow>
                     <ForumIcon style={{cursor:"pointer"}} onClick={handleClickChat}/>
+                </Tooltip>
+                <Tooltip title="Channels" arrow>
+                    <ChatroomIcon style={{cursor:"pointer"}} onClick={handleClickChannels}/>
                 </Tooltip>
                 <Tooltip title="Friends" arrow>
                     <FriendsIcon style={{cursor:"pointer"}} onClick={handleClickFriends}/>
