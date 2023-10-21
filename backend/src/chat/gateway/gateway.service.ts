@@ -2,10 +2,10 @@ import { OnModuleInit } from "@nestjs/common";
 import { SubscribeMessage, WebSocketGateway, MessageBody, WebSocketServer } from "@nestjs/websockets";
 import { Server } from 'socket.io'
 import {createUser } from "../prisma/prisma.test";
-import {RetrievePrivateMessage, addPrivateMessage,getIdOfLogin, addChatMessage, addChanelUser, RetrieveChatMessage, findUser } from "../prisma/prisma.service";
+import {addChat, RetrievePrivateMessage, addPrivateMessage,getIdOfLogin, addChatMessage, addChanelUser, RetrieveChatMessage, findUser } from "../prisma/prisma.service";
 import {checkChatId, checkLogin} from "../prisma/prisma.check";
 import { getDate } from "../utils/utils.service";
-
+import { encodePassword, checkPassword } from "../password/password.service";
 let lastMessageId = 0;
 
 createUser()
@@ -19,8 +19,6 @@ createUser()
 
 
 export class MyGateway implements OnModuleInit {
-
-
 
 	@WebSocketServer()
 	server: Server;
@@ -151,6 +149,18 @@ export class MyGateway implements OnModuleInit {
 				sender: element.sender.username,
 			})
 		});
+	}
+
+	@SubscribeMessage('createChat')
+	async onCreateChat(@MessageBody() messageData: {username: string, chatName: string, chatType: string, chatPassword: string}) {
+		const idOfUser = await getIdOfLogin(messageData.username);
+		const encodedPassword = await encodePassword(messageData.chatPassword);
+		console.log("id of user : ", idOfUser);
+		if (idOfUser !== undefined)
+		{
+			const newChat = await addChat(messageData.chatName, messageData.chatType,idOfUser,  encodedPassword );
+			console.log("new chat : ", newChat);
+		}
 	}
 }
 
