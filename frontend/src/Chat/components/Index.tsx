@@ -11,7 +11,7 @@ type JoinChatRoomPayload = {
 //channel_id : number, user_id : number, user_role:string, date_joined:Date, date_left:Date | null
 //
 export const Index = () => {
-	const {username, isInChat, setChatId, setIsInChat, setIsInMp, setIsInMailbox } = useContext(ChatContext)
+	const {username, setInCreateChat,isInChat, setChatId, setIsInChat, setIsInMp, setIsInMailbox } = useContext(ChatContext)
 	const socket = useContext(WebsocketContext);
 	const [showJoinChatOptions, setShowJoinChatOptions] = useState(false);
 	const[showCreateChatOptions, setShowCreateChatOptions] = useState(false);
@@ -49,8 +49,8 @@ export const Index = () => {
 
   const createNewChat = () => {
 	  console.log("create new chat")
-	  setShowCreateChatOptions(true);
-  	setShowJoinChatOptions(false);
+		setShowCreateChatOptions(true);
+  		setShowJoinChatOptions(false);
 	};
 	const joinAchat = () => {
 		console.log("join a chat")
@@ -73,7 +73,7 @@ export const Index = () => {
 			<h1>Welcome to the chat of transcendance</h1>
 			<p>What do you want to do?</p>
 			<div>
-			  <button onClick={createNewChat}>Create new chat</button>
+			  <button onClick={() => setInCreateChat(true)}>Create new chat</button>
 			  <button onClick={joinAchat}>Join a chat</button>
 			  <button onClick={() => setIsInMailbox(true)}>See my private Msg</button>
 			  <button onClick={() => setIsInMp(true)}>Send a Private msg</button>

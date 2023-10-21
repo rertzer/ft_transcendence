@@ -6,6 +6,8 @@ import { useState } from 'react';
 import { MsgPrive } from './components/msgPrive';
 import { Connection } from './components/connection';
 import { Mailbox } from './components/mailbox';
+import { CreateChat } from './components/createChat';
+
 export function ChatApp() {
 	const [username, setUsername] = useState('')
 	const [isInChat, setIsInChat] = useState(false)
@@ -13,6 +15,7 @@ export function ChatApp() {
 	const [isConnected, setIsConnected] = useState(false)
 	const [isInMailbox, setIsInMailbox] = useState(false)
 	const [chatId, setChatId] = useState(-1)
+	const [InCreateChat, setInCreateChat] = useState(false)
 	const ChatContextValue :IChatContext = {
 		chatId,
 		setChatId,
@@ -26,12 +29,15 @@ export function ChatApp() {
 		setIsInMp,
 		isInMailbox,
 		setIsInMailbox,
+		InCreateChat,
+		setInCreateChat,
 	};
 	return (
 		<WebsocketProvider value={socket}>
 			<ChatContext.Provider value={ChatContextValue}>
 			{!isConnected && <Connection />}
 			{!isInChat && !isInMp && !isInMailbox && isConnected &&  <Index />}
+			{InCreateChat && <CreateChat />}
 			{isInMailbox && <Mailbox />}
 			{isInChat && <InChat />}
 			{isInMp && <MsgPrive />}

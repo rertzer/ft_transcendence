@@ -155,6 +155,7 @@ export async function addChat(chatName: string, chatType: string, chatOwnerId: n
 		data: {
 			type: chatType,
 			name: chatName,
+			password: chatPassword,
 			channelOwner: {
 				connect: { id: chatOwnerId }
 			}
