@@ -35,38 +35,33 @@ function Grid() {
     {
         const dynamicLeft = `${(i) * 80}px`;
         const dynamicTop = `${(j) * 16}px`;
-        if (i == x && j == y)
-        {
-          components.push(
-            <div onClick={() => updateXY(i, j)} style={{
-                position: 'absolute',
-                top: dynamicTop,
-                left: dynamicLeft,
-                width: '80px',
-                height: '16px',
-                boxSizing: 'border-box',
-                border: '2px solid #15539E',
-            }}>
-            </div>
-          );
-        }
-        else
-        {
-          components.push(
-            <div onClick={() => updateXY(i, j)} style={{
-                position: 'absolute',
-                top: dynamicTop,
-                left: dynamicLeft,
-                width: '80px',
-                height: '16px',
-                boxSizing: 'border-box',
-                border: '1px solid #C0C0C0',
-            }}>
-            </div>
-          );
-        }
+        components.push(
+          <div onMouseDown={() => updateXY(i, j)} style={{
+              position: 'absolute',
+              top: dynamicTop,
+              left: dynamicLeft,
+              width: '80px',
+              height: '16px',
+              boxSizing: 'border-box',
+              borderTop: '1px solid #C0C0C0',
+              borderRight: '1px solid #C0C0C0',
+          }}>
+          </div>)
     }
   }
+  components.push(
+    <div style={{
+        position: 'absolute',
+        top: `${y * 16}px`,
+        left: `${x * 80}px`,
+        width: '80px',
+        height: '16px',
+        boxSizing: 'border-box',
+        border: '1px solid #15539E',
+        outline: '1px solid #15539E',
+    }}>
+    </div>);
+  components.push(<div style={{position: 'relative', top: `${y * 16 + 14}px`, left: `${x * 80 + 77}px`, width: '5px', height: '5px', backgroundColor:'#15539E',}}></div>);
   return (
     <div>
         {components}
