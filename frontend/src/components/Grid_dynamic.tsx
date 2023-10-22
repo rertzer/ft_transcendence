@@ -1,12 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styless from "./Letters.module.css";
 
-function RepeatingLetters() {
+function Grid() {
+  const windowHeightRef = useRef(window.innerHeight);
   const windowWidthRef = useRef(window.innerWidth);
+
+  const forceUpdate = useForceUpdate();
 
   useEffect(() => {
     const handleResize = () => {
       windowWidthRef.current = window.innerWidth;
+      windowHeightRef.current = window.innerHeight;
       // Trigger a re-render of the component when window.innerWidth changes
       forceUpdate();
     };
@@ -18,34 +22,26 @@ function RepeatingLetters() {
     };
   }, []);
 
-  const forceUpdate = useForceUpdate();
 
   const components = [];
   for (let i = 0; i * 61 < windowWidthRef.current; i++) {
-    const dynamicLeft = `${(i) * 61}px`;
-    let string = "";
-    if (i == 0 || i == 26)
-      string = "A";
-    let j = i;
-    if (j >= 26)
-      j = j - 26;
-    for (; j > 0; j = Math.floor(j / 26)) {
-      string = String.fromCharCode((j%26)+65) + string;
+    for (let j = 0; j * 13 < windowHeightRef.current; j++)
+    {
+        const dynamicLeft = `${(i) * 61}px`;
+        const dynamicTop = `${(j) * 13}px`;
+        components.push(
+        <div style={{
+            position: 'absolute',
+            top: dynamicTop,
+            left: dynamicLeft,
+            width: '61px',
+            height: '13px',
+            boxSizing: 'border-box',
+            border: '1px solid #C0C0C0',
+        }}>
+        </div>
+        );
     }
-    if (i >= 26 && i < 52)
-      string = "A" + string;
-    components.push(
-    <div style={{
-        position: 'absolute',
-        top: '0px',
-        left: dynamicLeft,
-        width: '25px',
-        height: '13px',
-      }}>
-        <div className={styless.upLetter}>{string}</div>
-        <div className={styless.a} />
-    </div>
-    );
   }
   return (
     <div>
@@ -62,4 +58,4 @@ function useForceUpdate() {
   return forceUpdate;
 }
 
-export default RepeatingLetters;
+export default Grid;

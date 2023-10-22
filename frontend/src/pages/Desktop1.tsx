@@ -1,10 +1,9 @@
 import { FunctionComponent } from "react";
-import {useRef} from 'react';
 import Numbers from "../components/Numbers_dynamic";
 import Letters from "../components/Letters_dynamic";
+import Grid from "../components/Grid_dynamic";
 import styles from "./Desktop1.module.css";
-import RepeatingNumbers from "../components/Numbers_dynamic";
-
+/* <img className={styles.gridImgIcon} alt="" src="/grid-img@2x.png" /> */
 const Desktop1: FunctionComponent = () => {
   return (
     <div className={styles.desktop1}>
@@ -81,11 +80,11 @@ const Desktop1: FunctionComponent = () => {
       <body className={styles.body}>
         <div className={styles.background} />
         <div className={styles.grid}>
-          <img className={styles.gridImgIcon} alt="" src="/grid-img@2x.png" />
+          <Grid />
         </div>
         <div className={styles.rightLettersFrame}>
           <div className={styles.rightLettersBackground} />
-          <RepeatingNumbers />
+          <Numbers />
           <div className={styles.up} />
         </div>
         <div className={styles.letters}>
