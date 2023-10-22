@@ -1,4 +1,5 @@
-import styles from "../pages/Desktop1.module.css";
+// import styles from "../pages/Desktop1.module.css";
+import styles from "./Body.module.css";
 import Numbers from "./Body/Numbers_dynamic";
 import Letters from "./Body/Letters_dynamic";
 import Grid from "./Body/Grid_dynamic";
