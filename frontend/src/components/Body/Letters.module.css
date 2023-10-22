@@ -1,21 +1,21 @@
-.a {
+.letter {
   position: absolute;
   top: 0;
   left: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 60px;
+  width: 79px;
   height: 16px;
 }
 
-.upLetter {
+.background {
   background-color: var(--color-darkslategray-100);
   border-right: 1px solid var(--color-gray-100);
   box-sizing: border-box;
   position: absolute;
   top: 0;
   left: 0;
-  width: 61px;
+  width: 80px;
   height: 16px;
 }

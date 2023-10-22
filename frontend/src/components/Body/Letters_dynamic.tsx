@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import styless from "./Letters.module.css";
+import styles from "./Letters.module.css";
 
 function RepeatingLetters() {
   const windowWidthRef = useRef(window.innerWidth);
@@ -21,8 +21,8 @@ function RepeatingLetters() {
   const forceUpdate = useForceUpdate();
 
   const components = [];
-  for (let i = 0; i * 61 < windowWidthRef.current; i++) {
-    const dynamicLeft = `${(i) * 61}px`;
+  for (let i = 0; i * 80 < windowWidthRef.current; i++) {
+    const dynamicLeft = `${(i) * 80}px`;
     let string = "";
     if (i == 0 || i == 26)
       string = "A";
@@ -42,8 +42,8 @@ function RepeatingLetters() {
         width: '25px',
         height: '13px',
       }}>
-        <div className={styless.upLetter}>{string}</div>
-        <div className={styless.a} />
+        <div className={styles.background}>{string}</div>
+        <div className={styles.letter} />
     </div>
     );
   }
