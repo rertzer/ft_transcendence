@@ -1,4 +1,4 @@
-import { OnModuleInit } from "@nestjs/common";
+import { OnModuleInit, Injectable } from "@nestjs/common";
 import { SubscribeMessage, WebSocketGateway, MessageBody, WebSocketServer } from "@nestjs/websockets";
 import { Server } from 'socket.io'
 import {createUser } from "../prisma/prisma.test";
@@ -6,6 +6,7 @@ import {addChat, RetrievePrivateMessage, addPrivateMessage,getIdOfLogin, addChat
 import {checkChatId, checkLogin} from "../prisma/prisma.check";
 import { getDate } from "../utils/utils.service";
 import { encodePassword, checkPassword } from "../password/password.service";
+import { JoinChatService } from "../joinChat/joinChat.service";
 let lastMessageId = 0;
 
 createUser()
@@ -17,11 +18,15 @@ createUser()
 //implements mean that it will contains the metho onModuleInit and will be executed
 // the init of my gatewAY
 
-
+@Injectable()
 export class MyGateway implements OnModuleInit {
 
 	@WebSocketServer()
 	server: Server;
+
+	getWebsocketServer() {
+		return this.server;
+	}
 
 	onModuleInit() {
 		this.server.on('connection', (socket) => {
@@ -31,68 +36,20 @@ export class MyGateway implements OnModuleInit {
 	}
 
 	@SubscribeMessage('newMessage')
-	onNewMessage(@MessageBody() messageData: {username: string, content: string, idOfChat: string}) {
+	async onNewMessage(@MessageBody() messageData: {username: string, content: string, idOfChat: string}) {
 		console.log(messageData);
 		console.log('gateway side');
 		console.log(messageData.idOfChat)
 		lastMessageId++
-		addChatMessage(parseInt(messageData.idOfChat), messageData.username, messageData.content, getDate());
+		await addChatMessage(parseInt(messageData.idOfChat), messageData.username, messageData.content, getDate());
 	}
 
 
 	@SubscribeMessage('JoinChatRoom')
-	async onJoinChatRoom(@MessageBody() messageData:{username: string, chat_id:string, user_role:string}) {
-		console.log("message receive : ", messageData);
-		console.log('gateway side');
-		console.log(messageData.chat_id)
-		if (Number.isNaN(parseInt(messageData.chat_id)))
-		{
-			console.log("Chat asked is not a number")
-			this.server.emit('onJoinChatRoom', {
-				id : '-1'
-			});
-			return;
-		}
-		console.log("chat id : ", parseInt(messageData.chat_id));
-		const chatExist = await checkChatId(parseInt(messageData.chat_id));
-		if (chatExist === false) {
-			console.log("Chat asked have not been found")
-			this.server.emit('onJoinChatRoom', {
-				id : '-1'
-			});
-			return;
-		}
-		else {
-			this.server.emit('onJoinChatRoom', {
-				id : messageData.chat_id
-			});
-		}
-		const userId = await getIdOfLogin(messageData.username);
-		//need to check if the user is already in the chat
-		//if not then :
-		if (userId !== undefined)
-		{
-			// console.log("date now : ", new Date(Date.now())));
-			addChanelUser(parseInt(messageData.chat_id),userId, messageData.user_role, getDate(), null);
-			console.log("Chat asked have been found");
-			this.server.emit('onJoinChatRoom', {
-				msg: 'New message',
-				id : messageData
-			})
-		}
-		const messageReceived = await RetrieveChatMessage(parseInt(messageData.chat_id))
-		if (messageReceived !== undefined)
-		{
-			for (const element of messageReceived) {
-				const username = await findUser(element.chat_channels_user_id);
-				this.server.emit('retrieveMessage', {
-					msg: element.message,
-					username: username,
-					date: element.date_sent,
-					id: element.id
-				})
-			};
-		}
+	async onJoinChatRoom(@MessageBody() messageData:{username: string, chat_id:string, user_role:string, passeword:string}) {
+		const joinClass = new JoinChatService(this);
+		joinClass.joinChat(messageData.username, messageData.chat_id, messageData.user_role, messageData.passeword);
+
 	}
 
 	@SubscribeMessage('SendPrivateMessage')
