@@ -161,4 +161,6 @@ export async function addChat(chatName: string, chatType: string, chatOwnerId: n
 			}
 		}
 	})
+	return newChat.id;
+
 }

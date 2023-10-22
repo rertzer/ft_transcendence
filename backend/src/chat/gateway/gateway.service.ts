@@ -45,8 +45,6 @@ export class MyGateway implements OnModuleInit {
 		console.log("message receive : ", messageData);
 		console.log('gateway side');
 		console.log(messageData.chat_id)
-		getDate();
-		Date.now();
 		if (Number.isNaN(parseInt(messageData.chat_id)))
 		{
 			console.log("Chat asked is not a number")
@@ -159,8 +157,9 @@ export class MyGateway implements OnModuleInit {
 		console.log("id of user : ", idOfUser);
 		if (idOfUser !== undefined)
 		{
-			const newChat = await addChat(messageData.chatName, messageData.chatType,idOfUser,  encodedPassword );
-			console.log("new chat : ", newChat);
+			const newChatId = await addChat(messageData.chatName, messageData.chatType,idOfUser,  encodedPassword );
+			addChanelUser(newChatId, idOfUser, 'admin', getDate(), null);
+			console.log("new chat : ", newChatId);
 		}
 	}
 }
