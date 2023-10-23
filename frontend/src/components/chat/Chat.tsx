@@ -4,7 +4,7 @@ import ProfileIcon from '@mui/icons-material/AccountBoxOutlined';
 import BlockIcon from '@mui/icons-material/BlockOutlined';
 import Messages from "./Messages";
 import MessageInput from "./MessageInput";
-import { AddChat } from './AddChat';
+import { Tooltip } from "@mui/material";
 
 const Chat = () => {
 
@@ -14,14 +14,15 @@ const Chat = () => {
                 <span>mbocquel</span>
                 <div className="chatIcons">
                     <div>
-                        <ProfileIcon />
+                        <Tooltip title="View profile" arrow>
+                            <ProfileIcon />
+                        </Tooltip>
                     </div>
                     <div>
-                        <BlockIcon />
+                        <Tooltip title="Block" arrow>
+                            <BlockIcon />
+                        </Tooltip>
                     </div>
-					<div>
-						<AddChat />
-					</div>
                 </div>
             </div>
             <Messages />
