@@ -1,4 +1,4 @@
-import { prismaService } from "./prisma.test";
+import { prismaService } from "./prisma.chat.test";
 
 export enum ChatType {
 	NotExisting = -1,
