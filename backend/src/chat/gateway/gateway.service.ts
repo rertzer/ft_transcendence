@@ -117,6 +117,7 @@ export class MyGateway implements OnModuleInit {
 	@SubscribeMessage('createChat')
 	async onCreateChat(@MessageBody() messageData: {username: string, chatName: string, chatType: string, chatPassword: string}) {
 		const idOfUser = await getIdOfLogin(messageData.username);
+		console.log("id of user : ", idOfUser);
 		const encodedPassword = await encodePassword(messageData.chatPassword);
 		console.log("encoded password : ", encodedPassword);
 		console.log("id of user : ", idOfUser);
