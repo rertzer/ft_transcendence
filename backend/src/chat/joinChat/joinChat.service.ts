@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import {MyGateway } from "../gateway/gateway.service";
-import {checkChatId, checkLogin} from "../prisma/prisma.check";
-import { ChatType } from "../prisma/prisma.check";
-import {addChat, RetrievePrivateMessage, addPrivateMessage,getIdOfLogin, addChatMessage, addChanelUser, RetrieveChatMessage, findUser } from "../prisma/prisma.service";
+import {checkChatId, checkLogin} from "../../prisma/chat/prisma.chat.check";
+import { ChatType } from "../../prisma/chat/prisma.chat.check";
+import {addChat, RetrievePrivateMessage, addPrivateMessage,getIdOfLogin, addChatMessage, addChanelUser, RetrieveChatMessage, findUser } from "../../prisma/chat/prisma.chat.service";
 import { getDate } from "../utils/utils.service";
 
 

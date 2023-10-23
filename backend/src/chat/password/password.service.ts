@@ -1,5 +1,5 @@
 import * as bcrypt from 'bcrypt';
-import { getPasswordOfChat } from '../prisma/prisma.service';
+import { getPasswordOfChat } from '../../prisma/chat/prisma.chat.service';
 
 
 export async function encodePassword(rawPassword: string) {

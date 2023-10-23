@@ -1,6 +1,6 @@
 
-import { prismaService } from "./prisma.test";
-import {userHasChatChannelsUser} from "./prisma.check";
+import { prismaService } from "./prisma.chat.test";
+import {userHasChatChannelsUser} from "./prisma.chat.check";
 
 
 export async function getIdOfLogin(login: string){

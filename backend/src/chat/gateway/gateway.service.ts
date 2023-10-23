@@ -1,9 +1,9 @@
 import { OnModuleInit, Injectable } from "@nestjs/common";
 import { SubscribeMessage, WebSocketGateway, MessageBody, WebSocketServer } from "@nestjs/websockets";
 import { Server } from 'socket.io'
-import {createUser } from "../prisma/prisma.test";
-import {addChat, RetrievePrivateMessage, addPrivateMessage,getIdOfLogin, addChatMessage, addChanelUser, RetrieveChatMessage, findUser } from "../prisma/prisma.service";
-import {checkChatId, checkLogin} from "../prisma/prisma.check";
+import {createUser } from "../../prisma/chat/prisma.chat.test";
+import {addChat, RetrievePrivateMessage, addPrivateMessage,getIdOfLogin, addChatMessage, addChanelUser, RetrieveChatMessage, findUser } from "../../prisma/chat/prisma.chat.service";
+import {checkChatId, checkLogin} from "../../prisma/chat/prisma.chat.check";
 import { getDate } from "../utils/utils.service";
 import { encodePassword, checkPassword } from "../password/password.service";
 import { JoinChatService } from "../joinChat/joinChat.service";

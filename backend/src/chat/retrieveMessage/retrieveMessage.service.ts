@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import {MyGateway } from "../gateway/gateway.service";
-import { RetrieveChatMessage, findUser } from "../prisma/prisma.service";
+import { RetrieveChatMessage, findUser } from "../../prisma/chat/prisma.chat.service";
 import { parse } from "path";
 
 
