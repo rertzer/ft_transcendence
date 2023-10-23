@@ -43,7 +43,7 @@ export const AddChat = () => {
 			<Tooltip title="Create new channel" arrow>
 				<AddIcon onClick={toggleForm} style={{cursor: "pointer"}}/>
 			</Tooltip>
-			<div className='submenu'>
+			<div className={showForm? 'submenu' : 'submenu-hidden'}>
 			{showForm && (
 				<div>
 				<input
@@ -64,7 +64,7 @@ export const AddChat = () => {
 				</select>
 				{chatType === 'protected by password' && (
 					<input
-					type="text"
+					type="password"
 					placeholder="Password"
 					value={password}
 					onChange={(e) => setPassword(e.target.value)}
