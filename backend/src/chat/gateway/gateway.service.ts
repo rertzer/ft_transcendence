@@ -16,6 +16,7 @@ createUser()
 		origin: '*'
 	}
 })
+
 //implements mean that it will contains the metho onModuleInit and will be executed
 // the init of my gatewAY
 
@@ -42,6 +43,12 @@ export class MyGateway implements OnModuleInit {
 		console.log('gateway side');
 		console.log(messageData.idOfChat)
 		lastMessageId++
+		this.server.emit('newMessage', {
+			msg: messageData.content,
+			username: messageData.username,
+			date: getDate(),
+			id: lastMessageId,
+		});
 		await addChatMessage(parseInt(messageData.idOfChat), messageData.username, messageData.content, getDate());
 	}
 
