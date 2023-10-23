@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import Message from "./Message";
 import "./Messages.scss";
 import { useContext, useState } from 'react';
@@ -65,6 +65,17 @@ const Messages = () => {
 		return (<div></div>);
 	}
 
+	const endRef = useRef<HTMLDivElement>(null); //ref to empty div to autoscroll to bottom
+
+	useEffect(() => {
+		if (chatHistory.length > 0) {
+			endRef.current?.scrollIntoView({
+				behavior: "smooth",
+				block: "end",
+			});
+		}
+	}, [chatHistory.length]);
+
     return (
         <div className='messages'>
 			{chatHistory.length === 0 ? (
@@ -78,6 +89,7 @@ const Messages = () => {
 			  			))}
 			  		</div>
 				)}
+				<div ref={endRef} />
 		</div>
     )
 }

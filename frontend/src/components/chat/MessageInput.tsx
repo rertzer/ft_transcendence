@@ -38,7 +38,10 @@ const MessageInput = () => {
 			socket.off('retrieveMessage');
 		};
 	}, []);
+
 	const onSubmit = () => {
+		if (value === "")
+			return;
 		console.log ("id of chat", chatId)
 		const messageData = {
 			username: username,
@@ -49,12 +52,20 @@ const MessageInput = () => {
 		socket.emit('newMessage', messageData);
 		setValue('');
 	  };
+	
+	const handleKeyDown = (e: React.KeyboardEvent<HTMLElement>) => {
+		if (e.key === "Enter") {
+			onSubmit();
+		}
+	}
+
     return (
         <div className='messageinput'>
             <input
 				type="text"
 				value={value}
 				onChange={(e) => setValue(e.target.value)}
+				onKeyDown={handleKeyDown} // gestion du bouton Enter pour envoyer
 			/>
 			<button onClick={onSubmit}>envoi</button>
         </div>
