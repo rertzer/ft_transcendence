@@ -49,7 +49,6 @@ export class MyGateway implements OnModuleInit {
 	async onJoinChatRoom(@MessageBody() messageData:{username: string, chat_id:string, user_role:string, passeword:string}) {
 		const joinClass = new JoinChatService(this);
 		joinClass.joinChat(messageData.username, messageData.chat_id, messageData.user_role, messageData.passeword);
-
 	}
 
 	@SubscribeMessage('SendPrivateMessage')

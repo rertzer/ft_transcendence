@@ -7,6 +7,7 @@ type JoinChatRoomPayload = {
 	id: string;
 	username: string;
 	user_role: string;
+	password: string | null;
 }
 //channel_id : number, user_id : number, user_role:string, date_joined:Date, date_left:Date | null
 //
@@ -17,7 +18,8 @@ export const Index = () => {
 	const[showCreateChatOptions, setShowCreateChatOptions] = useState(false);
 	const [id, setId] = useState('');
 	const [idChatRoom, setIdChatRoom] = useState<JoinChatRoomPayload[]>([]);
-
+	const [needPassword,setNeedPasword] = useState(false);
+	const [password, setPassword] = useState('');
 	console.log("username", username)
 	useEffect(() => {
     socket.on('connect', () => {
@@ -30,7 +32,17 @@ export const Index = () => {
 	  {
 		  console.log("wrong id")
 	  }
-	  else{
+	  else if (idChatRoom.id === '-2')
+	  {
+		console.log("This chat is protected by a password")
+		setNeedPasword(true);
+	  }
+	  else if (idChatRoom.id === '-3')
+	  {
+		console.log("This chat is private")
+	  }
+	  else
+	  {
 		  setChatId(parseInt(idChatRoom.id));
 		  console.log("id chat room", idChatRoom.id);
 		  setIdChatRoom((prev) => [...prev, idChatRoom]);
@@ -62,6 +74,7 @@ export const Index = () => {
 			username: username,
 			chat_id: id,
 			user_role: "user",
+			password: password,
 		}
 		console.log("send id chat")
 		console.log("id chat room", id);
@@ -91,6 +104,16 @@ export const Index = () => {
 					onChange={(e) => setId(e.target.value)}
 				  />
 				  <button onClick={SendIdChat}>Join</button>
+				  {needPassword && (
+					  <div>
+						<input
+							type="text"
+							value={password}
+							onChange={(e) => setPassword(e.target.value)}
+						/>
+						<button onClick={SendIdChat}>Join</button>
+					  </div>
+				  )}
 				  <p>Chat room number {id}</p>
 				</div>
 			  )}
