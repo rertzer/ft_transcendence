@@ -1,5 +1,7 @@
 import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { Server, Socket } from "socket.io";
+import { PlayersService } from "../players/players.service";
+import { Inject } from "@nestjs/common";
 
 @WebSocketGateway({
     cors: {
@@ -8,12 +10,19 @@ import { Server, Socket } from "socket.io";
 })
 export class GameSocketEvents {
 
+	@Inject(PlayersService)
+	private readonly playerService: PlayersService;
+
     @WebSocketServer()
     server: Server;
 
     //Connexion 
     handleConnection(client:Socket){
         console.log(`Client connected: ${client.id}`);
+		this.playerService.create({upArrowDown:false,
+			downArrowDown:false,
+			name:'toto',
+			socket: client})
 		client.on('disconnect', () => {
 			console.log(`Client disconnected ${client.id}`);
 		})
