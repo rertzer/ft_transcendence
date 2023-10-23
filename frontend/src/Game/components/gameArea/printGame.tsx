@@ -4,8 +4,8 @@ import { drawCircle, drawRect, drawText } from "./draw";
 function printGame(params:{
 	context:CanvasRenderingContext2D,
 	pong:IGameParam, 
-	player1:IPlayer, 
-	player2:IPlayer, 
+	playerLeft:IPlayer, 
+	playerRight:IPlayer, 
 	ball:IBall, 
 	gameWidth:number, 
 	gameHeight:number}):void{
@@ -25,18 +25,18 @@ function printGame(params:{
 
 	// Print score
 	drawText({
-		str: params.player1.score.toString(), 
-		start: {x: params.player1.scorePos.x * params.gameWidth,
-				y: params.player1.scorePos.y * params.gameHeight}, 
+		str: params.playerLeft.score.toString(), 
+		start: {x: params.playerLeft.scorePos.x * params.gameWidth,
+				y: params.playerLeft.scorePos.y * params.gameHeight}, 
 		color: params.pong.scoreColor, 
 		font: params.pong.scoreFont, 
 		fontDecoration: params.pong.scoreFontDecoration, 
 		fontPx: params.pong.scoreFontPx * params.gameHeight
 	}, params.context);
 	drawText({
-		str: params.player2.score.toString(), 
-		start: {x: params.player2.scorePos.x * params.gameWidth,
-				y: params.player2.scorePos.y * params.gameHeight},  
+		str: params.playerRight.score.toString(), 
+		start: {x: params.playerRight.scorePos.x * params.gameWidth,
+				y: params.playerRight.scorePos.y * params.gameHeight},  
 		color: params.pong.scoreColor, 
 		font: params.pong.scoreFont, 
 		fontDecoration: params.pong.scoreFontDecoration,
@@ -45,18 +45,18 @@ function printGame(params:{
 
 	// Print Player name
 	drawText({
-		str: params.player1.name, 
-		start: {x: params.player1.namePos.x * params.gameWidth, 
-				y: params.player1.namePos.y * params.gameHeight},
+		str: params.playerLeft.name, 
+		start: {x: params.playerLeft.namePos.x * params.gameWidth, 
+				y: params.playerLeft.namePos.y * params.gameHeight},
 		color: params.pong.nameColor, 
 		font: params.pong.nameFont, 
 		fontDecoration: params.pong.nameFontDecoration, 
 		fontPx: params.pong.nameFontPx * params.gameHeight
 	}, params.context);
 	drawText({
-		str: params.player2.name, 
-		start: {x: params.player2.namePos.x * params.gameWidth, 
-				y: params.player2.namePos.y * params.gameHeight},
+		str: params.playerRight.name, 
+		start: {x: params.playerRight.namePos.x * params.gameWidth, 
+				y: params.playerRight.namePos.y * params.gameHeight},
 		color: params.pong.nameColor, 
 		font: params.pong.nameFont, 
 		fontDecoration: params.pong.nameFontDecoration, 
@@ -71,18 +71,18 @@ function printGame(params:{
 		color: params.pong.ballColor
 	}, params.context);
 	drawRect({
-		start: {x:params.player1.pos.x * params.gameWidth,
-				y:params.player1.pos.y * params.gameHeight}, 
+		start: {x:0,
+				y:(params.playerLeft.pos.y - params.pong.paddleHeight / 2) * params.gameHeight}, 
 		width: params.pong.paddleWidth * params.gameWidth,
 		height: params.pong.paddleHeight * params.gameHeight, 
-		color: params.player1.color
+		color: params.playerLeft.color
 	}, params.context);
 	drawRect({
-		start: {x:params.player2.pos.x * params.gameWidth, 
-			y:params.player2.pos.y * params.gameHeight}, 
+		start: {x:(1 - params.pong.paddleWidth) * params.gameWidth, 
+			y:(params.playerRight.pos.y - params.pong.paddleHeight / 2) * params.gameHeight}, 
 		width: params.pong.paddleWidth * params.gameWidth,
 		height: params.pong.paddleHeight * params.gameHeight, 
-		color: params.player2.color
+		color: params.playerRight.color
 	}, params.context);
 	
 }

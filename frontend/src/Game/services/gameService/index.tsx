@@ -6,19 +6,22 @@ class GameService {
 
 	private opponentName:string = '';
 	private playerSide:string = '';
+	private id:string = '' ;
 
-	public async joinGameRomm(socket:Socket, roomId:string, playerName:string): Promise<boolean> {
+	public async joinGameRoom(socket:Socket, roomId:string, playerName:string): Promise<boolean> {
 		return new Promise((resolve, reject) => {
 			socket.emit("join_game", {roomId, playerName});
 			socket.on("room_joined", (data) => {
 				console.log("Room joined !");
-				this.opponentName = data.opponentName;
-				this.playerSide = data.playerSide;
-				console.log('opponentName',data.opponentName);
-				console.log('playerSide',data.playerSide)
+				console.log(data);
 				resolve(true);
 			});
 			socket.on('room_joined_error', (error) => {reject(error)});
+			socket.on('room_status_change', (data) => {
+				console.log("room_status_change");
+				console.log(data);				
+				resolve(true);
+			})
 		});
 	}
 

@@ -5,9 +5,24 @@ import printStartMenu from "./printStartMenu";
 import { colision,leftboard } from "./testColision";
 import printGame from "./printGame";
 import printWinnerMenu from "./printWinnerMenu";
+import { gameSocket } from "../../services/gameSocketService";
+
+
+/*
+const connectSocket = async () => {
+	if (gameSocketService.socket != null)
+		return;
+	const socket = await gameSocketService.connect('http://localhost:4000')
+	.then((s) => {console.log("Connected with socket: ", s.id);})
+	.catch((error) => {
+		console.log("Error: ", error);
+	});
+};*/
+
 
 function GameArea(props:any) {
-	const {gameWidth, gameHeight } = useContext(gameContext);
+
+	const {roomName, gameWidth, gameHeight, playerName, playerSide, setPlayerSide, opponentName, setOpponentName} = useContext(gameContext);
 	const [pong, setPong] = useState({
 		ballRadius: 0.01,
 		paddleWidth: 0.02,
@@ -41,9 +56,8 @@ function GameArea(props:any) {
 	
 	const styleCanvas = {width:gameWidth, height:gameHeight, backgroundColor: pong.backColor};
 	
-	const [players, setPlayers] = useState([{},{}]);
-	const [player1, setPlayer1] = useState({
-		pos: {x:0, y: 0.5 - pong.paddleHeight / 2},
+	const [playerLeft, setplayerLeft] = useState({
+		pos: {x:0, y: 0.5},
 		score: 0,
 		scorePos: {x: 1 / 4, y: 1 / 5},
 		upArrowDown:false,
@@ -53,7 +67,7 @@ function GameArea(props:any) {
 		color:'#16B84E'
 	});
 
-	const [player2, setPlayer2] = useState({
+	const [playerRight, setplayerRight] = useState({
 		pos: {x: 1 - pong.paddleWidth, y: (0.5 - pong.paddleHeight / 2)}, 
 		score: 0,
 		scorePos: {x: 3 / 4, y: 1 / 5}, 
@@ -72,16 +86,52 @@ function GameArea(props:any) {
 
 	const resetPosition = () => {
 		setBall((prev) => ({pos: {x: 1 / 2, y: 1 / 2}, speed:pong.ballInitSpeed, dir: {x: -prev.dir.x, y: prev.dir.y}}));
-		setPlayer1((prev) => ({...prev, pos: {x: 0, y: 1 / 2 - pong.paddleHeight / 2}}));
-		setPlayer2((prev) => ({...prev, pos: {x: 1 - pong.paddleWidth, y: 1 / 2 - pong.paddleHeight / 2}}));
+		setplayerLeft((prev) => ({...prev, pos: {x: 0, y: 1 / 2 - pong.paddleHeight / 2}}));
+		setplayerRight((prev) => ({...prev, pos: {x: 1 - pong.paddleWidth, y: 1 / 2 - pong.paddleHeight / 2}}));
 	}
 	
 	const resetGame = () => {
 		resetPosition();
 		setBall(() => ({pos: {x: 1 / 2, y: 1 / 2}, speed:pong.ballInitSpeed, dir: pong.ballInitDir}));
-		setPlayer1((prev) => ({...prev, score: 0}));
-		setPlayer2((prev) => ({...prev, score: 0}));
+		setplayerLeft((prev) => ({...prev, score: 0}));
+		setplayerRight((prev) => ({...prev, score: 0}));
 	}
+
+	useEffect(() => {
+		function onConnect() {
+			console.log("Connected with socket: ", gameSocket.id);
+		}
+		function onDisconnect() {
+			console.log("Disconnected");
+		}
+		function onRoomJoined(data:any) {
+			console.log("Room joined !");
+			if (data.yourSide === 'left')
+			{
+				setPlayerSide('left');
+				setplayerLeft((prev) => ({ ...prev, name: playerName}));
+			}
+		}
+		function onRoomStatusChanged(data:any) {
+			console.log("room_status_change");
+			console.log(data);
+		}
+		gameSocket.on('connect', onConnect);
+		gameSocket.on('disconnect', onDisconnect);
+		console.log('roomName: ', roomName);
+		console.log('playerName: ', playerName);
+		gameSocket.emit("join_game", {roomName, playerName});
+		gameSocket.on("room_joined", onRoomJoined);
+		gameSocket.on('room_status_change', onRoomStatusChanged);		
+
+		return () => {
+			gameSocket.off('connect', onConnect);
+			gameSocket.off('disconnect', onDisconnect);
+			gameSocket.off("room_joined", onRoomJoined);
+			gameSocket.off('room_status_change', onRoomStatusChanged);
+		}			
+			
+	}, []);
 
 	useEffect(() => {
 		const handleKey = (event: KeyboardEvent) => {
@@ -91,16 +141,16 @@ function GameArea(props:any) {
 			}
 			switch (event.code){
 				case 'KeyW':
-					setPlayer1((prev) => ({ ...prev, upArrowDown: move}));
+					setplayerLeft((prev) => ({ ...prev, upArrowDown: move}));
 					break;
 				case 'KeyS':
-					setPlayer1((prev) => ({ ...prev, downArrowDown: move}));
+					setplayerLeft((prev) => ({ ...prev, downArrowDown: move}));
 					break;
 				case 'ArrowUp':
-					setPlayer2((prev) => ({ ...prev, upArrowDown: move}));
+					setplayerRight((prev) => ({ ...prev, upArrowDown: move}));
 					break;
 				case 'ArrowDown':
-					setPlayer2((prev) => ({ ...prev, downArrowDown: move}));
+					setplayerRight((prev) => ({ ...prev, downArrowDown: move}));
 					break;
 				case 'Space':
 					setPong((prev) => ({...prev, play: true, endgame:false}));
@@ -119,15 +169,15 @@ function GameArea(props:any) {
 			window.removeEventListener('keydown', handleKey)
 			window.removeEventListener('keyup', handleKey)
 		});
-	}, [player1, player2]);
+	}, [playerLeft, playerRight]);
 	
 	
 
 	const movePlayers = () => {
-		if (player1.upArrowDown) player1.pos.y = Math.max(0, player1.pos.y - pong.paddleSpeed);
-		if (player1.downArrowDown) player1.pos.y = Math.min(1 - pong.paddleHeight, player1.pos.y + pong.paddleSpeed);
-		if (player2.upArrowDown) player2.pos.y = Math.max(0, player2.pos.y - pong.paddleSpeed);
-		if (player2.downArrowDown) player2.pos.y = Math.min(1 - pong.paddleHeight, player2.pos.y + pong.paddleSpeed);
+		if (playerLeft.upArrowDown) playerLeft.pos.y = Math.max(0, playerLeft.pos.y - pong.paddleSpeed);
+		if (playerLeft.downArrowDown) playerLeft.pos.y = Math.min(1 - pong.paddleHeight, playerLeft.pos.y + pong.paddleSpeed);
+		if (playerRight.upArrowDown) playerRight.pos.y = Math.max(0, playerRight.pos.y - pong.paddleSpeed);
+		if (playerRight.downArrowDown) playerRight.pos.y = Math.min(1 - pong.paddleHeight, playerRight.pos.y + pong.paddleSpeed);
 	};
 	
 	const moveBall = () => {
@@ -142,8 +192,8 @@ function GameArea(props:any) {
 			ball.dir.y = - ball.dir.y;
 		}
 		/* Paddle colision*/
-		let playerWithBall = (ball.pos.x <= 1 / 2) ? player1 : player2;
-		let otherPlayer = (ball.pos.x <= 1 / 2) ? player2 : player1;
+		let playerWithBall = (ball.pos.x <= 1 / 2) ? playerLeft : playerRight;
+		let otherPlayer = (ball.pos.x <= 1 / 2) ? playerRight : playerLeft;
 		let direction = (ball.pos.x <= 1 / 2) ? 1 : -1;
 	
 		if (colision(playerWithBall, ball, pong)) {
@@ -155,7 +205,7 @@ function GameArea(props:any) {
 		}
 		if (leftboard(ball)) {
 			otherPlayer.score++;
-			if (otherPlayer.score == pong.goal) {
+			if (otherPlayer.score === pong.goal) {
 				pong.endgame = true;
 			}
 			pong.play = false;
@@ -167,12 +217,12 @@ function GameArea(props:any) {
 		context.clearRect(0, 0, context.canvas.width, context.canvas.height)
 		movePlayers();
 		moveBall();
-		printGame({context:context, pong:pong, player1:player1, player2:player2, ball:ball, gameWidth:gameWidth, gameHeight:gameHeight});
+		printGame({context:context, pong:pong, playerLeft:playerLeft, playerRight:playerRight, ball:ball, gameWidth:gameWidth, gameHeight:gameHeight});
 		if (!pong.play && !pong.endgame) {
 			printStartMenu({pong, context, gameWidth, gameHeight});
 		}
 		else if (pong.endgame) {
-			printWinnerMenu({context, pong, player1,  player2, gameWidth, gameHeight});
+			printWinnerMenu({context, pong, playerLeft,  playerRight, gameWidth, gameHeight});
 		}
 	}
 

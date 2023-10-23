@@ -27,3 +27,8 @@ Quand le client a recu ces infos, la partie peut commencer.
 - Si autre client se connecte sur le room qui a ete cree, un message est envoye aux deux clients pour leur dire GOGOGO. 
 
 si un client se deconnecte. => Si il est seul dans la room, elle est supprime. Si il est pas seul, la partie est remise a zero, un message est envoye au client qui reste, et on attend qu'un autre client arrive. 
+
+
+## Notes pour Maxence 23/10
+Reprendre a la creation des event de socket sur le fron et le back pour la connexion des clients a la room. 
+

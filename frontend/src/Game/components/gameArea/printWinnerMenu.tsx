@@ -2,7 +2,7 @@ import { IPlayer, IGameParam } from "./interfacesGame";
 import { drawRect, drawText } from "./draw";
 
 
-function printWinnerMenu(params:{context:CanvasRenderingContext2D, pong:IGameParam, player1:IPlayer,  player2:IPlayer, gameWidth:number, gameHeight:number}):void {
+function printWinnerMenu(params:{context:CanvasRenderingContext2D, pong:IGameParam, playerLeft:IPlayer,  playerRight:IPlayer, gameWidth:number, gameHeight:number}):void {
 
 	drawRect({
 		start: {x: 0, y: 0}, 
@@ -11,7 +11,7 @@ function printWinnerMenu(params:{context:CanvasRenderingContext2D, pong:IGamePar
 		color: params.pong.menuBackColor},
 		params.context);
 
-	let winner = (params.player1.score === params.pong.goal) ? params.player1.name : params.player2.name;
+	let winner = (params.playerLeft.score === params.pong.goal) ? params.playerLeft.name : params.playerRight.name;
 
 	const line1 = winner + ' WON !';
 	const line2 = 'Press space key to restart';

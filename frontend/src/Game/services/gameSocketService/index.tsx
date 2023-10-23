@@ -1,8 +1,8 @@
 import { io, Socket } from "socket.io-client";
-import { DefaultEventsMap } from '@socket.io/component-emitter';
+/*import { DefaultEventsMap } from '@socket.io/component-emitter';
 
-class SocketService {
-	public socket: Socket | null = null;
+class GameSocketService {
+	public socket: Socket =  io('http://localhost:4000');
 
 	public connect(url:string): Promise<Socket<DefaultEventsMap, DefaultEventsMap>> {
 		return new Promise((resolve, reject) => {
@@ -21,5 +21,7 @@ class SocketService {
 	}
 };
 
-const MySocketService = new SocketService()
-export default MySocketService;
+const MySocketService = new GameSocketService()
+export default MySocketService;*/
+
+export const gameSocket:Socket = io('http://localhost:4000');

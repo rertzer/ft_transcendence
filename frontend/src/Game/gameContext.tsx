@@ -1,8 +1,8 @@
 import React from 'react';
 
 export interface IGameContextProps {
-	isInRoom:boolean;
-	setInRoom: (inRoom:boolean) => void;
+	roomName:string;
+	setRoomName: (roomName:string) => void;
 	gameWidth:number;
 	setGameWidth: (gameWidth:number) => void;
 	gameHeight:number;
@@ -16,8 +16,8 @@ export interface IGameContextProps {
 };
 
 const defaultState:IGameContextProps = {
-	isInRoom: false,
-	setInRoom: () => {},
+	roomName: '',
+	setRoomName: () => {},
 	gameWidth:800,
 	setGameWidth:() => {},
 	gameHeight:400,
