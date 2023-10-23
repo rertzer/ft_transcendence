@@ -41,20 +41,16 @@ const Messages = () => {
 			console.log("Updated chatHistory:", chatHistory);
 		});
 		socket.on('newMessage', (chatHistoryReceive :{msg: string, username: string, date: Date, id: number}) => {
-			console.log("trigger reterieve message, what i receive :", chatHistoryReceive)
+
 			const newDateString = chatHistoryReceive.date.toString();
 			const add : ChatHistory = {msg: chatHistoryReceive.msg, username: chatHistoryReceive.username, date: newDateString, id: chatHistoryReceive.id}
-			console.log("hey ")
-			console.log("Previous catHistory:", chatHistory);
 			setChatHistory((prevMessages) => [...prevMessages, add]);
+			console.log("cat id : ", chatHistoryReceive.id);
 			// Debugging: Check the updated chatHistory
-			console.log("Updated chatHistory:", chatHistory);
 		});
 		return () => {
 			console.log('Unregistering Events...');
-			socket.off('retrieveMessage');
-			socket.off('newMessage');
-		};
+		}
 	}, [])
 
 

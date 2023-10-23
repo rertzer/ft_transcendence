@@ -42,7 +42,6 @@ const MessageInput = () => {
 	const onSubmit = () => {
 		if (value === "")
 			return;
-		console.log ("id of chat", chatId)
 		const messageData = {
 			username: username,
 			content: value,
@@ -52,7 +51,7 @@ const MessageInput = () => {
 		socket.emit('newMessage', messageData);
 		setValue('');
 	  };
-	
+
 	const handleKeyDown = (e: React.KeyboardEvent<HTMLElement>) => {
 		if (e.key === "Enter") {
 			onSubmit();

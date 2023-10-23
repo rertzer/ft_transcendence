@@ -33,7 +33,7 @@ const defaultState:IChatContext = {
 	// setIsInMp: () => {},
 	// isInMailbox: false,
 	// setIsInMailbox: () => {},
-	chatId: -1,
+	chatId: 0,
 	setChatId: () => {},
 };
 

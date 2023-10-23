@@ -42,7 +42,7 @@ export class MyGateway implements OnModuleInit {
 		console.log(messageData);
 		console.log('gateway side');
 		console.log(messageData.idOfChat)
-		lastMessageId++
+		lastMessageId++;
 		this.server.emit('newMessage', {
 			msg: messageData.content,
 			username: messageData.username,
