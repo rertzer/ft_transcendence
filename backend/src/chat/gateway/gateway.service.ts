@@ -8,6 +8,7 @@ import { getDate } from "../utils/utils.service";
 import { encodePassword, checkPassword } from "../password/password.service";
 import { JoinChatService } from "../joinChat/joinChat.service";
 import { RetrieveMessageService } from "../retrieveMessage/retrieveMessage.service";
+
 let lastMessageId = 0;
 
 createUser()
