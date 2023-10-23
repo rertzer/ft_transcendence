@@ -7,6 +7,7 @@ import {checkChatId, checkLogin} from "../prisma/prisma.check";
 import { getDate } from "../utils/utils.service";
 import { encodePassword, checkPassword } from "../password/password.service";
 import { JoinChatService } from "../joinChat/joinChat.service";
+import { RetrieveMessageService } from "../retrieveMessage/retrieveMessage.service";
 let lastMessageId = 0;
 
 createUser()
@@ -117,6 +118,13 @@ export class MyGateway implements OnModuleInit {
 			addChanelUser(newChatId, idOfUser, 'admin', getDate(), null);
 			console.log("new chat : ", newChatId);
 		}
+	}
+
+	@SubscribeMessage('retrieveMessage')
+	async onRetrieveMessage(@MessageBody() messageData: {numberMsgToDisplay: number, chatId: string}) {
+		console.log("in retrieve message : ", messageData);
+		const RetrieveMessage = new RetrieveMessageService(this);
+		RetrieveMessage.retrievePrivateMessage(messageData.chatId, messageData.numberMsgToDisplay);
 	}
 }
 

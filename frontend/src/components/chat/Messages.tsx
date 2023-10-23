@@ -14,8 +14,8 @@ type ChatHistory = {
 }
 
 type trigger = {
-	numberMsgToDisplay: number;
 	chatId : string;
+	numberMsgToDisplay: number;
 }
 
 const Messages = () => {
@@ -32,14 +32,20 @@ const Messages = () => {
 			const newDateString = chatHistoryReceive.date.toString();
 			const add : ChatHistory = {msg: chatHistoryReceive.msg, username: chatHistoryReceive.username, date: newDateString, id: chatHistoryReceive.id}
 			console.log("hey ")
-			//console.log("Previous catHistory:", chatHistory);
+			console.log("Previous catHistory:", chatHistory);
 			setChatHistory((prevMessages) => [...prevMessages, add]);
 			// Debugging: Check the updated chatHistory
-			//console.log("Updated chatHistory:", chatHistory);
+			console.log("Updated chatHistory:", chatHistory);
 		});
+		return () => {
+			console.log('Unregistering Events...');
+			socket.off('retrieveMessage');
+		};
 	}, [])
 
+
 	const funcTrigger = ()  => {
+		console.log("object send :", toTrigger)
 		socket.emit('retrieveMessage', toTrigger ); // need to be chat id
 
 		return (<div></div>);
