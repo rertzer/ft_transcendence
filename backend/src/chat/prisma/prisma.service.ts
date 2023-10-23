@@ -1,6 +1,4 @@
-// import { Injectable } from '@nestjs/common';
-// import { PrismaClient } from '@prisma/client';
-import { staticBlock } from "@babel/types";
+
 import { prismaService } from "./prisma.test";
 import {userHasChatChannelsUser} from "./prisma.check";
 
@@ -14,6 +12,18 @@ export async function getIdOfLogin(login: string){
 	if (user)
 		return user.id;
 }
+
+export async function getPasswordOfChat(chat_channels_id: number){
+	const chat = await prismaService.chatChannels.findFirst({
+		where: {
+			id: chat_channels_id,
+		}
+	})
+	if (chat)
+		return chat.password;
+}
+
+
 
 export async function getIdOfChatChannelsUser(login: string, chat_channels_id: number){
 
@@ -146,4 +156,21 @@ export async function findUser(chat_channels_user_id: number) {
 	{
 		return user.chatChannelsUser.username;
 	}
+}
+
+
+export async function addChat(chatName: string, chatType: string, chatOwnerId: number, chatPassword: string) {
+
+	const newChat = await prismaService.chatChannels.create({
+		data: {
+			type: chatType,
+			name: chatName,
+			password: chatPassword,
+			channelOwner: {
+				connect: { id: chatOwnerId }
+			}
+		}
+	})
+	return newChat.id;
+
 }

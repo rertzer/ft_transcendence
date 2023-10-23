@@ -47,8 +47,9 @@ model ChatChannelsUser {
 
 model ChatChannels {
   id            Int                @id @default(autoincrement())
-  owner         Int                @unique
+  owner         Int
   type          String
+  name          String?
   password      String?
   chatMessages  ChatMsgHistory[]   @relation("ChatMessages")
   channelOwner  User               @relation("ChatChannelsOwner", fields: [owner], references: [id])

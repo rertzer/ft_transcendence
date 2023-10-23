@@ -7,17 +7,19 @@ type JoinChatRoomPayload = {
 	id: string;
 	username: string;
 	user_role: string;
+	password: string | null;
 }
 //channel_id : number, user_id : number, user_role:string, date_joined:Date, date_left:Date | null
 //
 export const Index = () => {
-	const {username, isInChat, setChatId, setIsInChat, setIsInMp, setIsInMailbox } = useContext(ChatContext)
+	const {username, setInCreateChat,isInChat, setChatId, setIsInChat, setIsInMp, setIsInMailbox } = useContext(ChatContext)
 	const socket = useContext(WebsocketContext);
 	const [showJoinChatOptions, setShowJoinChatOptions] = useState(false);
 	const[showCreateChatOptions, setShowCreateChatOptions] = useState(false);
 	const [id, setId] = useState('');
 	const [idChatRoom, setIdChatRoom] = useState<JoinChatRoomPayload[]>([]);
-
+	const [needPassword,setNeedPasword] = useState(false);
+	const [password, setPassword] = useState('');
 	console.log("username", username)
 	useEffect(() => {
     socket.on('connect', () => {
@@ -30,7 +32,17 @@ export const Index = () => {
 	  {
 		  console.log("wrong id")
 	  }
-	  else{
+	  else if (idChatRoom.id === '-2')
+	  {
+		console.log("This chat is protected by a password")
+		setNeedPasword(true);
+	  }
+	  else if (idChatRoom.id === '-3')
+	  {
+		console.log("This chat is private")
+	  }
+	  else
+	  {
 		  setChatId(parseInt(idChatRoom.id));
 		  console.log("id chat room", idChatRoom.id);
 		  setIdChatRoom((prev) => [...prev, idChatRoom]);
@@ -49,8 +61,8 @@ export const Index = () => {
 
   const createNewChat = () => {
 	  console.log("create new chat")
-	  setShowCreateChatOptions(true);
-  	setShowJoinChatOptions(false);
+		setShowCreateChatOptions(true);
+  		setShowJoinChatOptions(false);
 	};
 	const joinAchat = () => {
 		console.log("join a chat")
@@ -62,6 +74,7 @@ export const Index = () => {
 			username: username,
 			chat_id: id,
 			user_role: "user",
+			password: password,
 		}
 		console.log("send id chat")
 		console.log("id chat room", id);
@@ -73,7 +86,7 @@ export const Index = () => {
 			<h1>Welcome to the chat of transcendance</h1>
 			<p>What do you want to do?</p>
 			<div>
-			  <button onClick={createNewChat}>Create new chat</button>
+			  <button onClick={() => setInCreateChat(true)}>Create new chat</button>
 			  <button onClick={joinAchat}>Join a chat</button>
 			  <button onClick={() => setIsInMailbox(true)}>See my private Msg</button>
 			  <button onClick={() => setIsInMp(true)}>Send a Private msg</button>
@@ -91,6 +104,16 @@ export const Index = () => {
 					onChange={(e) => setId(e.target.value)}
 				  />
 				  <button onClick={SendIdChat}>Join</button>
+				  {needPassword && (
+					  <div>
+						<input
+							type="text"
+							value={password}
+							onChange={(e) => setPassword(e.target.value)}
+						/>
+						<button onClick={SendIdChat}>Join</button>
+					  </div>
+				  )}
 				  <p>Chat room number {id}</p>
 				</div>
 			  )}

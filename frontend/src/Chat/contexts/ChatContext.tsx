@@ -21,6 +21,8 @@ export interface IChatContext {
 	setIsInMailbox: (inMailbox: boolean) => void;
 	chatId: number,
 	setChatId: (chatId: number) => void;
+	InCreateChat: boolean,
+	setInCreateChat: (InCreateChat: boolean) => void;
 };
 
 const defaultState:IChatContext = {
@@ -36,6 +38,8 @@ const defaultState:IChatContext = {
 	setIsInMailbox: () => {},
 	chatId: -1,
 	setChatId: () => {},
+	InCreateChat: false,
+	setInCreateChat: () => {},
 };
 
 export default React.createContext(defaultState);

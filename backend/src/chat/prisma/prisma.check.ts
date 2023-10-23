@@ -1,5 +1,12 @@
 import { prismaService } from "./prisma.test";
 
+export enum ChatType {
+	NotExisting = -1,
+	Public = 0,
+	Private = 1,
+	Password = 2,
+
+}
 export async function checkChatId(idSearched: number) {
 	const chat = await prismaService.chatChannels.findFirst({
 		where: {
@@ -7,10 +14,18 @@ export async function checkChatId(idSearched: number) {
 		},
 	})
 	if (chat) {
-		return true;
+		if (chat.type === 'public')
+			return ChatType.Public;
+		else
+		{
+			if (chat.password !== null)
+				return ChatType.Password;
+			else
+				return ChatType.Private;
+		}
 	}
 	else{
-		return false;
+		return ChatType.NotExisting;
 	}
 }
 
