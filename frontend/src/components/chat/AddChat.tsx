@@ -9,12 +9,12 @@ import "./AddChat.scss";
 type CreateaChatPayload = {
 	username: string;
 	chatName: string;
-	chatPassword: string;
+	chatPassword: string | null;
 	chatType: string;
 }
 
 export const AddChat = () => {
-	const {username} = useContext(ChatContext);
+	const {username} = useContext(ConnectionContext);
 	const [chatName, setChatName] = useState('');
 	const [password, setPassword] = useState('');
 	const socket = useContext(WebsocketContext);
@@ -27,6 +27,7 @@ export const AddChat = () => {
 	};
 
 	const onSubmit = () => {
+		console.log("username :", username)
 		const createChatData: CreateaChatPayload = {
 			username: username,
 			chatName: chatName,

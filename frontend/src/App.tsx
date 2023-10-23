@@ -95,18 +95,6 @@ function App() {
       element: <Register />,
     },
   ]);
-//   export function ChatApp() {
-// 	return (
-// 		<WebsocketProvider value={socket}>
-// 			<ChatContext.Provider value={ChatContextValue}>
-// 			{!isConnected && <Connection />}
-// 			{!isInChat && !isInMp && !isInMailbox && isConnected &&  <Index />}
-// 			{isInMailbox && <Mailbox />}
-// 			{isInChat && <InChat />}
-// 			{isInMp && <MsgPrive />}
-// 		</ChatContext.Provider>
-// 		</WebsocketProvider>
-// 	)
 
   return (
     <div >
