@@ -1,4 +1,5 @@
-import styles from "../pages/Desktop1.module.css";
+import { SelectBar } from './SelectBar';
+import styles from "./Header.module.css"
 
 export function Header({}) {
   return <header className={styles.headerFrame}>
@@ -39,27 +40,7 @@ export function Header({}) {
             </div>
           </div>
         </div>
-        <div className={styles.textBar}>
-          <div className={styles.textBar1} />
-          <div className={styles.file}>
-            <div className={styles.file1}>File</div>
-          </div>
-          <div className={styles.settings}>
-            <div className={styles.settings1}>Settings</div>
-          </div>
-          <div className={styles.contact}>
-            <div className={styles.settings1}>Contact</div>
-          </div>
-          <div className={styles.data}>
-            <div className={styles.data1}>Data</div>
-          </div>
-          <div className={styles.history}>
-            <div className={styles.settings1}>History</div>
-          </div>
-          <div className={styles.profile}>
-            <div className={styles.profile1}>Profile</div>
-          </div>
-        </div>
+        <SelectBar     />
         <div className={styles.titleBar}>
           <div className={styles.titleBarBackground} />
           <div className={styles.untitled1}>Untitled 1 - PongOffice Calc</div>

@@ -1,19 +1,29 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useContext } from 'react';
+import { MyContext } from '../../../contexts/PageContext';
 
 
 function Grid() {
   const windowHeightRef = useRef(window.innerHeight);
   const windowWidthRef = useRef(window.innerWidth);
 
-  const [x, setX] = useState(0);
-  const [y, setY] = useState(0);
-
-  function updateXY(i: number, j: number) {
-    setX(i);
-    setY(j);
+  const context = useContext(MyContext);
+  if (!context) {
+    throw new Error('useContext must be used within a MyProvider');
   }
-  const forceUpdate = useForceUpdate();
 
+  const { coords, updateCoords } = context;
+  const { coordX, coordY } = coords;
+
+  const [x, setNewCoordX] = useState(coordX);
+  const [y, setNewCoordY] = useState(coordY);
+  
+  const handleUpdateCoords = (a: number, b: number) => {
+    setNewCoordX(a);
+    setNewCoordY(b);
+    updateCoords({ coordX: a, coordY: b });
+  };
+  
   useEffect(() => {
     const handleResize = () => {
       windowWidthRef.current = window.innerWidth;
@@ -29,6 +39,8 @@ function Grid() {
     };
   }, []);
 
+  const forceUpdate = useForceUpdate();
+
   const components = [];
   for (let i:number = 0; i * 80 < windowWidthRef.current; i++) {
     for (let j:number = 0; j * 16 < windowHeightRef.current; j++)
@@ -36,7 +48,7 @@ function Grid() {
         const dynamicLeft = `${(i) * 80}px`;
         const dynamicTop = `${(j) * 16}px`;
         components.push(
-          <div onMouseDown={() => updateXY(i, j)} style={{
+          <div onMouseDown={() => handleUpdateCoords(i, j)} style={{
               position: 'absolute',
               top: dynamicTop,
               left: dynamicLeft,

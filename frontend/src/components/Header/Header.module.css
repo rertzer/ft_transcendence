@@ -1,0 +1,244 @@
+.headerFrame {
+    width: 100%;
+    overflow: hidden;
+    text-align: left;
+    font-size: var(--font-size-3xs);
+    color: var(--color-white);
+    font-family: var(--font-inter);
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 113px;
+  }
+.headerBackground {
+    top: 0;
+    background-color: var(--color-darkslategray-100);
+    height: 113px;
+    position: fixed;
+    width: 100%;
+    right: 0;
+    left: 0;
+    bottom: 0;
+  }
+.line3 {
+    position: absolute;
+    width: calc(100% - 24px);
+    right: 12px;
+    bottom: 1.54px;
+    left: 12px;
+    height: 25.46px;
+  }
+.tchatbox {
+    position: absolute;
+    width: calc(100% - 186px);
+    right: 0;
+    bottom: 3.46px;
+    left: 186px;
+    background-color: #2d2d2d;
+    border: 1px solid var(--color-gray-200);
+    box-sizing: border-box;
+    height: 18px;
+  }
+.buttonsIcon {
+    position: absolute;
+    bottom: 0;
+    left: 137px;
+    width: 38.72px;
+    height: 25.46px;
+  }
+.menu {
+    position: absolute;
+    bottom: 0.46px;
+    left: 0;
+    width: 137px;
+    height: 25px;
+  }
+.menuBackground {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    border: 1px solid var(--color-gray-200);
+    box-sizing: border-box;
+    height: 25px;
+    width: 100%;
+    left: 0;
+    border-radius: var(--br-6xs);
+    background-color: var(--color-darkslategray-200);
+  }
+.buttpn {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 27px;
+    height: 25px;
+  }
+.buttonBackground {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    border: 1px solid var(--color-gray-200);
+    box-sizing: border-box;
+    height: 25px;
+    border-radius: 0 var(--br-6xs) var(--br-6xs) 0;
+    background-color: var(--color-darkslategray-100);
+    width: 27px;
+  }
+.buttpnChild {
+    position: absolute;
+    right: 10.79px;
+    bottom: 8.57px;
+    border-radius: var(--br-12xs);
+    width: 6.42px;
+    height: 4.68px;
+  }
+.frameText {
+    position: absolute;
+    width: calc(100% - 52px);
+    top: 1px;
+    right: 27px;
+    left: 25px;
+    height: 23px;
+  }
+.basicSansCs {
+    position: absolute;
+    width: 100%;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    height: 23px;
+  }
+.line2 {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 150px;
+    height: 25px;
+    text-align: left;
+    bottom: 32px;
+    left: 12px;
+    width: 231px;
+    text-align: center;
+  }
+.menu1 {
+    position: absolute;
+    bottom: 0;
+    left: 158px;
+    width: 73px;
+    height: 25px;
+  }
+.frameText1 {
+    position: absolute;
+    left: 0;
+    height: 23px;
+  }
+.pt {
+    position: absolute;
+    left: 0;
+    height: 23px;
+    width: 100%;
+    top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+.menu2 {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 150px;
+    height: 25px;
+    text-align: left;
+  }
+
+.textBar1 {
+    position: absolute;
+    width: 100%;
+    top: 0;
+    right: 0;
+    left: 0;
+    background-color: var(--color-darkslategray-100);
+    border-bottom: 1px solid #313131;
+    box-sizing: border-box;
+    height: 18px;
+  }
+  .textBar {
+    position: absolute;
+    width: 100%;
+    top: 32px;
+    right: 0;
+    left: 0;
+    height: 18px;
+    color: var(--color-dimgray);
+  }
+.titleBar {
+    position: absolute;
+    width: calc(100% + 0.46px);
+    top: 0;
+    right: -0.46px;
+    left: 0;
+    box-shadow: 0 1px 0#474747 inset, 0 1px 1px #252525;
+    height: 32px;
+    text-align: center;
+    font-size: 12px;
+    color: #8a8a8a;
+  }
+.titleBarBackground {
+    position: absolute;
+    width: calc(100% - 0.46px);
+    top: 0;
+    right: 0.46px;
+    left: 0;
+    background-color: var(--color-darkslategray-100);
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.25);
+    height: 32px;
+  }
+.untitled1 {
+    position: absolute;
+    top: 9px;
+    left: calc(50% - 83.23px);
+    font-weight: 800;
+    mix-blend-mode: normal;
+  }
+.user {
+    position: absolute;
+    top: 3px;
+    right: 0;
+    width: 108.46px;
+    height: 25.46px;
+    text-align: right;
+    font-size: var(--font-size-3xs);
+    color: #797979;
+  }
+
+.frameText1 {
+    width: calc(100% - 27px);
+    top: 1px;
+    right: 27px;
+  }
+  .userChild {
+    position: absolute;
+    top: 6px;
+    height: 15px;
+    right: 29.46px;
+    border-radius: 50%;
+    width: 15px;
+    object-fit: cover;
+  }
+  .user1 {
+    position: absolute;
+    top: 6px;
+    height: 15px;
+    right: 52.46px;
+    display: flex;
+    align-items: center;
+    width: 56px;
+  }
+  .crossIcon{
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 25.46px;
+    height: 25.46px;
+  }
