@@ -27,7 +27,20 @@ const Messages = () => {
 	const [toTrigger, setTrigger] = useState<trigger>({numberMsgToDisplay: 15, chatId: '1'});
 
 	useEffect(() => {
+
+		funcTrigger();
+
 		socket.on('retrieveMessage', (chatHistoryReceive :{msg: string, username: string, date: Date, id: number}) => {
+			console.log("trigger reterieve message, what i receive :", chatHistoryReceive)
+			const newDateString = chatHistoryReceive.date.toString();
+			const add : ChatHistory = {msg: chatHistoryReceive.msg, username: chatHistoryReceive.username, date: newDateString, id: chatHistoryReceive.id}
+			console.log("hey ")
+			console.log("Previous catHistory:", chatHistory);
+			setChatHistory((prevMessages) => [...prevMessages, add]);
+			// Debugging: Check the updated chatHistory
+			console.log("Updated chatHistory:", chatHistory);
+		});
+		socket.on('newMessage', (chatHistoryReceive :{msg: string, username: string, date: Date, id: number}) => {
 			console.log("trigger reterieve message, what i receive :", chatHistoryReceive)
 			const newDateString = chatHistoryReceive.date.toString();
 			const add : ChatHistory = {msg: chatHistoryReceive.msg, username: chatHistoryReceive.username, date: newDateString, id: chatHistoryReceive.id}
@@ -40,6 +53,7 @@ const Messages = () => {
 		return () => {
 			console.log('Unregistering Events...');
 			socket.off('retrieveMessage');
+			socket.off('newMessage');
 		};
 	}, [])
 
@@ -53,7 +67,6 @@ const Messages = () => {
 
     return (
         <div className='messages'>
-			{funcTrigger()}
 			{chatHistory.length === 0 ? (
 				<div>No Messages</div>
 				) : (
@@ -65,7 +78,7 @@ const Messages = () => {
 			  			))}
 			  		</div>
 				)}
-        </div>
+		</div>
     )
 }
 

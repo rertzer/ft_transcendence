@@ -4,6 +4,7 @@ import ProfileIcon from '@mui/icons-material/AccountBoxOutlined';
 import BlockIcon from '@mui/icons-material/BlockOutlined';
 import Messages from "./Messages";
 import MessageInput from "./MessageInput";
+import { AddChat } from './AddChat';
 
 const Chat = () => {
 
@@ -18,6 +19,9 @@ const Chat = () => {
                     <div>
                         <BlockIcon />
                     </div>
+					<div>
+						<AddChat />
+					</div>
                 </div>
             </div>
             <Messages />
