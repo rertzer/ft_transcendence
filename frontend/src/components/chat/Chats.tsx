@@ -27,16 +27,16 @@ const Chats = (props: {activeChat: {id: number, name: string}, setActiveChat: Fu
     
             trigger();
 
-            socket.on('chatList', (channelsListReceive :{id: number, channelName: string, chatPicture: string, 
-                                username: String, msg: string, dateSend: Date  }) => {
-                console.log("trigger chat list, what i receive :", channelsListReceive)
-                const add : allChatOfUser = {id:channelsListReceive.id, channelName: channelsListReceive.channelName, 
-                    chatPicture: channelsListReceive.chatPicture, username: channelsListReceive.username, msg: channelsListReceive.msg, dateSend: channelsListReceive.dateSend}
-                console.log("hey ")
-                console.log("Previous channelsList:", add);
-                setChatsOfUser((prevChat) => [...prevChat, add]);
-                // Debugging: Check the updated chatsList
-                console.log("Updated channelsList:", add);
+            socket.on('chatList', (channelsListReceive : allChatOfUser[]) => {
+                setChatsOfUser(channelsListReceive);
+                // console.log("trigger chat list, what i receive :", channelsListReceive)
+                // const add : allChatOfUser = {id:channelsListReceive.id, channelName: channelsListReceive.channelName, 
+                //     chatPicture: channelsListReceive.chatPicture, username: channelsListReceive.username, msg: channelsListReceive.msg, dateSend: channelsListReceive.dateSend}
+                // console.log("hey ")
+                // console.log("Previous channelsList:", add);
+                // setChatsOfUser((prevChat) => [...prevChat, add]);
+                // // Debugging: Check the updated chatsList
+                // console.log("Updated channelsList:", add);
             });
 
             return () => {
