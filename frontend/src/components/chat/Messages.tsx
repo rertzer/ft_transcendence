@@ -32,7 +32,8 @@ const Messages = (props: {chatId: number}) => {
 
 		socket.on('retrieveMessage', (chatHistoryReceive :{msg: string, username: string, date: Date, id: number}) => {
 			console.log("trigger reterieve message, what i receive :", chatHistoryReceive)
-			const newDateString = chatHistoryReceive.date.toString();
+			let newDateString = chatHistoryReceive.date.toString();
+			newDateString = newDateString.slice(newDateString.indexOf("T") + 1, newDateString.indexOf("T") + 9);
 			const add : ChatHistory = {msg: chatHistoryReceive.msg, username: chatHistoryReceive.username, date: newDateString, id: chatHistoryReceive.id}
 			console.log("hey ")
 			console.log("Previous catHistory:", chatHistory);
@@ -42,7 +43,8 @@ const Messages = (props: {chatId: number}) => {
 		});
 		socket.on('newMessage', (chatHistoryReceive :{msg: string, username: string, date: Date, id: number}) => {
 
-			const newDateString = chatHistoryReceive.date.toString();
+			let newDateString = chatHistoryReceive.date.toString();
+			newDateString = newDateString.slice(newDateString.indexOf("T") + 1, newDateString.indexOf("T") + 9);
 			const add : ChatHistory = {msg: chatHistoryReceive.msg, username: chatHistoryReceive.username, date: newDateString, id: chatHistoryReceive.id}
 			setChatHistory((prevMessages) => [...prevMessages, add]);
 			console.log("cat id : ", chatHistoryReceive.id);

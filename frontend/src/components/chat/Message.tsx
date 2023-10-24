@@ -3,7 +3,7 @@ import "./Message.scss"
 import { useContext } from "react";
 import  ConnectionContext from "../../context/authContext"
 
-const Message = (props: any) => {
+const Message = (props: {username: string, date: string, msg: string}) => {
 
     const {username} = useContext(ConnectionContext);
 
@@ -14,8 +14,10 @@ const Message = (props: any) => {
             </div>
             <div className='messageContent'>
                 <p>{props.msg}</p>
-                <span>{props.date}</span>
-				<span>{props.username}</span>
+                <div className="name-time">
+                    {username === props.username ? <span></span> : <span>{props.username},</span>}
+                    <span>{props.date}</span>
+                </div>
             </div>
         </div>
     )

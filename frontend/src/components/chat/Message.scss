@@ -25,12 +25,17 @@
             padding: 10px 20px;
             border-radius: 0px 10px 10px 10px;
         }
-        span {
-            color: gray;
-            font-size: small;
+        .name-time {
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+            justify-content: right;
+            span{
+                font-size: small;
+                color: gray;
+            }
         }
     }
-
     &.owner {
         flex-direction: row-reverse;
         p {
