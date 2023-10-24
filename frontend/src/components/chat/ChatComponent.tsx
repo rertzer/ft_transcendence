@@ -11,8 +11,8 @@ const ChatComponent = () => {
     return (
         <div className="chatcomponent">
             <div className='container'>
-                <Sidebar activeChat={}/>
-                <Chat />
+                <Sidebar activeChat={activeChat} setActiveChat={setActiveChat}/>
+                <Chat activeChat={activeChat}/>
             </div>
         </div>
     )

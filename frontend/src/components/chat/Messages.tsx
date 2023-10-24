@@ -57,8 +57,6 @@ const Messages = () => {
 	const funcTrigger = ()  => {
 		console.log("object send :", toTrigger)
 		socket.emit('retrieveMessage', toTrigger ); // need to be chat id
-
-		return (<div></div>);
 	}
 
 	const endRef = useRef<HTMLDivElement>(null); //ref to empty div to autoscroll to bottom

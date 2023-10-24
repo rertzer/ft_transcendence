@@ -9,7 +9,7 @@ import { StringLiteral } from 'typescript';
 
 
 
-const Chat = () => {
+const Chat = (props: {activeChat: number}) => {
 
     return (
         <div className='chat'>

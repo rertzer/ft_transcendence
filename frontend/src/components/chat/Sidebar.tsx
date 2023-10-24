@@ -4,13 +4,13 @@ import Chatbar from './Chatbar';
 import Search from './Search';
 import Chats from "./Chats";
 
-const Sidebar = () => {
+const Sidebar = (props: {activeChat: number, setActiveChat: Function}) => {
 
     return (
         <div className='sidebar'>
             <Chatbar />
             <Search />
-            <Chats />
+            <Chats activeChat={props.activeChat} setActiveChat={props.setActiveChat}/>
         </div>
     )
 }

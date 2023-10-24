@@ -12,7 +12,7 @@ import FriendsIcon from '@mui/icons-material/Diversity1Outlined';
 import { Tooltip } from "@mui/material";
 import  ConnectionContext from "../../context/authContext"
 
-function Navbar(props: any) {
+function Navbar(props: {RightBar: string, setRightBar: Function}) {
 
     const {username} = useContext(ConnectionContext);
 

@@ -22,7 +22,33 @@
         }
         .userChatInfo {
             span {
-                font-weight: 500;;
+                font-weight: 500;
+            }
+            p {
+                color: lightgray;
+            }
+        }
+    }
+    .userChat-active {
+        padding: 10px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: rgb(233, 10, 10);
+        cursor: pointer;
+        &:hover {
+            background-color: #2f2d52;
+        }
+        
+        img {
+           width: 50px;
+           height: 50px; 
+           border-radius: 50%;
+           object-fit: cover;
+        }
+        .userChatInfo {
+            span {
+                font-weight: 500;
             }
             p {
                 color: lightgray;
