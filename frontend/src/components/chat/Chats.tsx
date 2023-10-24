@@ -66,6 +66,7 @@ const Chats = (props: {activeChat: {id: string, name: string}, setActiveChat: Fu
         function trigger() {
             socket.emit('chatList', username);
         }
+        
 
     return (
         <div className='chats'>
@@ -75,7 +76,10 @@ const Chats = (props: {activeChat: {id: string, name: string}, setActiveChat: Fu
 					<div>
                         <div ref={startRef} />
 						{chatsOfUser.map((channel) => (
-                            <div onClick={() => {props.setActiveChat({id: channel.id.toString(), name: channel.channelName});}}>
+                            <div onClick={() => {
+                                    props.setActiveChat({id: channel.id.toString(), name: channel.channelName});
+                                    socket.emit('retrieveMessage', {chatId: channel.id, messageToDisplay: 15 })
+                                    }}>
                                 <div key={channel.id} className={parseInt(props.activeChat.id) === channel.id ? "userChat-active" : "userChat"}>
                                     <img src={channel.chatPicture === null ? "" : channel.chatPicture} />
                                     <div className='userChatInfo'>

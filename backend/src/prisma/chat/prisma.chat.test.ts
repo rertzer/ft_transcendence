@@ -52,33 +52,5 @@ export async function createUser() {
 	} finally {
 		await prismaService.$disconnect(); // Disconnect from the database when done
 	}
-	try {
-		// Check if a user with the same email exists
-		const existingChat = await prismaService.chatChannels.findFirst({
-			where: {
-			id: 1 // Replace with the email you want to check
-				},
-			});
-		if (existingChat) {
-			console.log('chat already exists:', existingChat);
-		}
-		else {
-		const newChat1 = await prismaService.chatChannels.create({
-			data: {
-				type: 'public',
-				password: null,
-			channelOwner: {
-				connect: { id: 1 }
-			}
-			}
-		})
-		}
-
-	} catch (error) {
-		console.error('Error creating chat:', error);
-	}
-	finally {
-		await prismaService.$disconnect(); // Disconnect from the database when done
-	}
 }
 

@@ -3,6 +3,7 @@ import Message from "./Message";
 import "./Messages.scss";
 import { useContext, useState } from 'react';
 import ChatContext, { WebsocketContext } from "../../context/chatContext";
+import userEvent from '@testing-library/user-event';
 
 
 type ChatHistory = {
@@ -22,7 +23,6 @@ const Messages = (props: {chatId: string}) => {
 	const socket = useContext(WebsocketContext);
 
 	const [chatHistory, setChatHistory] = useState<ChatHistory[]>([]);
-	const {chatId} = useContext(ChatContext)
 	const [toTrigger, setTrigger] = useState<trigger>({numberMsgToDisplay: 15, chatId: props.chatId});
 
 	useEffect(() => {
@@ -50,6 +50,11 @@ const Messages = (props: {chatId: string}) => {
 			console.log('Unregistering Events...');
 		}
 	}, [])
+
+	useEffect(() => {
+		console.log("hey i am trigger")
+		setChatHistory([]);
+	}, [props.chatId])
 
 
 	const funcTrigger = ()  => {
