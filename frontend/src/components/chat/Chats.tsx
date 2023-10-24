@@ -31,18 +31,6 @@ const Chats = (props: {activeChat: {id: string, name: string}, setActiveChat: Fu
 				console.log(channelsListReceive);
                 setChatsOfUser(channelsListReceive);
 				console.log("chat of user = ", chatsOfUser);
-                if (chatsOfUser[0])
-                {
-                    console.log("lolilololilol chat id: ", chatsOfUser[0].id);
-                }
-                // console.log("trigger chat list, what i receive :", channelsListReceive)
-                // const add : allChatOfUser = {id:channelsListReceive.id, channelName: channelsListReceive.channelName,
-                //     chatPicture: channelsListReceive.chatPicture, username: channelsListReceive.username, msg: channelsListReceive.msg, dateSend: channelsListReceive.dateSend}
-                // console.log("hey ")
-                // console.log("Previous channelsList:", add);
-                // setChatsOfUser((prevChat) => [...prevChat, add]);
-                // // Debugging: Check the updated chatsList
-                // console.log("Updated channelsList:", add);
             });
 
             return () => {

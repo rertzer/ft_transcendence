@@ -13,9 +13,7 @@ const Chatbar = () => {
                 <Tooltip title="List available channels" arrow>
                     <MenuIcon />
                 </Tooltip>
-                <Tooltip title="Create new channels" arrow>
-                    <AddChat />
-                </Tooltip>
+                <AddChat />
             </div>
         </div>
     )

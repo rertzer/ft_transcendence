@@ -3,6 +3,7 @@ import "./MessageInput.scss"
 import ChatContext, { WebsocketContext } from '../../context/chatContext';
 import  ConnectionContext from "../../context/authContext"
 import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
 import { Tooltip } from  "@mui/material";
 import "./AddChat.scss";
 
@@ -29,6 +30,8 @@ export const AddChat = () => {
 	const onSubmit = () => {
 		console.log("username :", username);
 		let createChatData: CreateaChatPayload;
+		if (chatName === "")
+			return ;
 		if (password === "")
 		{
 			createChatData = {
@@ -51,6 +54,7 @@ export const AddChat = () => {
 		socket.emit('createChat', createChatData);
 		setChatName('');
 		setPassword('');
+		toggleForm();
 	}
 	return (
 		<div className='addchat'>
