@@ -27,12 +27,25 @@ export const AddChat = () => {
 	};
 
 	const onSubmit = () => {
-		console.log("username :", username)
-		const createChatData: CreateaChatPayload = {
-			username: username,
-			chatName: chatName,
-			chatType: chatType,
-			chatPassword: password,
+		console.log("username :", username);
+		let createChatData: CreateaChatPayload;
+		if (password === "")
+		{
+			createChatData = {
+				username: username,
+				chatName: chatName,
+				chatType: chatType,
+				chatPassword: null,
+			}
+		}
+		else
+		{
+			createChatData = {
+				username: username,
+				chatName: chatName,
+				chatType: chatType,
+				chatPassword: password,
+			}
 		}
 		console.log("object send :", createChatData);
 		socket.emit('createChat', createChatData);

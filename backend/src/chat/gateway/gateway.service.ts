@@ -1,4 +1,4 @@
-import { OnModuleInit, Injectable } from "@nestjs/common";
+import { OnModuleInit, Injectable, NestHybridApplicationOptions } from "@nestjs/common";
 import { SubscribeMessage, WebSocketGateway, MessageBody, WebSocketServer } from "@nestjs/websockets";
 import { Server } from 'socket.io'
 import {createUser } from "../../prisma/chat/prisma.chat.test";
@@ -8,7 +8,7 @@ import { getDate } from "../utils/utils.service";
 import { encodePassword, checkPassword } from "../password/password.service";
 import { JoinChatService } from "../joinChat/joinChat.service";
 import { RetrieveMessageService } from "../retrieveMessage/retrieveMessage.service";
-
+import {ChatLister} from "../chatLister/chatLister.service";
 let lastMessageId = 0;
 
 createUser()
@@ -101,29 +101,31 @@ export class MyGateway implements OnModuleInit {
 		}
 	}
 
-	@SubscribeMessage('onMailBox')
-	async onMailBox(@MessageBody() userAsked: string) {
-		console.log('in mail box');
-		const messageReceived = await RetrievePrivateMessage(userAsked);
-		messageReceived.forEach(element => {
-			this.server.emit('onMailBox', {
-				msg: 'all message',
-				content: element.message,
-				sender: element.sender.username,
-			})
-		});
-	}
+	// @SubscribeMessage('onMailBox')
+	// async onMailBox(@MessageBody() userAsked: string) {
+	// 	console.log('in mail box');
+	// 	const messageReceived = await RetrievePrivateMessage(userAsked);
+	// 	messageReceived.forEach(element => {
+	// 		this.server.emit('onMailBox', {
+	// 			msg: 'all message',
+	// 			content: element.message,
+	// 			sender: element.sender.username,
+	// 		})
+	// 	});
+	// }
 
 	@SubscribeMessage('createChat')
 	async onCreateChat(@MessageBody() messageData: {username: string, chatName: string, chatType: string, chatPassword: string}) {
 		const idOfUser = await getIdOfLogin(messageData.username);
 		console.log("id of user : ", idOfUser);
-		const encodedPassword = await encodePassword(messageData.chatPassword);
+		let encodedPassword : string | null = null;
+		if (messageData.chatPassword)
+			encodedPassword = await encodePassword(messageData.chatPassword);
 		console.log("encoded password : ", encodedPassword);
 		console.log("id of user : ", idOfUser);
 		if (idOfUser !== undefined)
 		{
-			const newChatId = await addChat(messageData.chatName, messageData.chatType,idOfUser,  encodedPassword );
+			const newChatId = await addChat(messageData.chatName, messageData.chatType,idOfUser, encodedPassword );
 			addChanelUser(newChatId, idOfUser, 'admin', getDate(), null);
 			console.log("new chat : ", newChatId);
 		}
@@ -135,5 +137,13 @@ export class MyGateway implements OnModuleInit {
 		const RetrieveMessage = new RetrieveMessageService(this);
 		RetrieveMessage.retrievePrivateMessage(messageData.chatId, messageData.numberMsgToDisplay);
 	}
+
+	@SubscribeMessage('chatList')
+	async onChatList(@MessageBody() username: string) {
+		console.log("username receive : ", username)
+		const chatLister = new ChatLister(this);
+		chatLister.listChatOfUser(username);
+	}
 }
+
 

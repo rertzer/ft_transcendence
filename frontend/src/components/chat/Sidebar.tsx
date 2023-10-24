@@ -10,7 +10,7 @@ const Sidebar = () => {
         <div className='sidebar'>
             <Chatbar />
             <Search />
-            <Chats />
+            <Chats value='string'/>
         </div>
     )
 }
