@@ -20,9 +20,9 @@ model User {
   avatar                 String?
   role                   String
   password               String
-  game_won               Int?
-  game_lost              Int?
-  game_played            Int?
+  game_won               Int              @default(0)
+  game_lost              Int              @default(0)
+  game_played            Int              @default(0)
   friends                Friend[]           @relation("UserToFriends")
   sentDirectMessages     DirectMsg[]        @relation("SenderMessages")
   receivedDirectMessages DirectMsg[]        @relation("ReceiverMessages")

@@ -7,6 +7,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { AuthDto, LoginDto } from './dto';
 import * as argon from 'argon2';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { User } from '@prisma/client';
 
 
 @Injectable()
@@ -14,7 +15,7 @@ export class AuthService {
   constructor(private prisma: PrismaService) { }
   async login(dto: LoginDto) {
     // log existing user
-    console.log("received 3 dto: ", dto.login);
+    console.log("received dto: ", dto.login);
     let user = await this.prisma.user.findUnique({
       where: {
         login: dto.login,
@@ -31,7 +32,6 @@ export class AuthService {
         user = await this.prisma.user.create({
           data: {
             login: dto.login,
-            username: 'Forest',//dto.username,
             email: dto.login + '@student.42.rf',//dto.email,
             password,
             role: 'player',
@@ -52,17 +52,22 @@ export class AuthService {
       }
     } // end of !user
     // password comparison
+
     if (user) {
-      const pwMatches = argon.verify(
+      const pwMatches = await argon.verify(
         user.password,
         dto.password,
       );
       if (!pwMatches)
+      {  
+        console.log("Bad password");
         throw new ForbiddenException(
           'Bad password',
         );
+      }
+      else
+        console.log("password ok");
     }
-
     else
       throw new ImATeapotException(
         'For real: I\'m a Teapot'

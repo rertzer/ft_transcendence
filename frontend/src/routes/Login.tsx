@@ -16,7 +16,7 @@ function Login() {
   const { login, setLogin, password, setPassword } =
     useContext(ConnectionContext);
 
-  const [userOk, setuserOk] = useState(false);
+  const [userOk, setUserOk] = useState(false);
   // const handleLogin = () => {
   //     login();
   // }
@@ -29,19 +29,23 @@ function Login() {
     const data = await fetch("http://localhost:4000/auth/login", {
       method: "POST",
       mode: "cors",
-	  headers: { 'Content-Type': 'application/json; charset=utf-8' },
-	  body: JSON.stringify({login, password})
+      headers: { "Content-Type": "application/json; charset=utf-8" },
+      body: JSON.stringify({ login, password }),
     });
-	console.log("data returned: ", data);
-    //socket.emit("onUserConnection", login);
+    const user = await data.json();
+    if (user.message) {
+      console.log("Bad password");
+      setLogin("");
+      setPassword("");
+    } else {
+      setUserOk(true);
+    }
+
+    console.log("json:", user);
   };
 
   useEffect(() => {
-    socket.on("onUserConnection", (UserConnection: UserConnection) => {
-      console.log("userConnection event received!");
-
-      //console.log(UserConnection.username);
-      //console.log(UserConnection.id);
+    /*
       if (UserConnection.id === "-1") {
         console.log("wrong id");
         setLogin("");
@@ -58,7 +62,7 @@ function Login() {
     return () => {
       console.log("Unregistering Events...");
       socket.off("onUserConnection");
-    };
+    };*/
   }, []);
 
   return (
