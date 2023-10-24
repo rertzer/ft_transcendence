@@ -72,14 +72,14 @@ function printGame(params:{
 	}, params.context);
 	drawRect({
 		start: {x:0,
-				y:(params.playerLeft.pos.y - params.pong.paddleHeight / 2) * params.gameHeight}, 
+				y:(params.playerLeft.posY - params.pong.paddleHeight / 2) * params.gameHeight}, 
 		width: params.pong.paddleWidth * params.gameWidth,
 		height: params.pong.paddleHeight * params.gameHeight, 
 		color: params.playerLeft.color
 	}, params.context);
 	drawRect({
 		start: {x:(1 - params.pong.paddleWidth) * params.gameWidth, 
-			y:(params.playerRight.pos.y - params.pong.paddleHeight / 2) * params.gameHeight}, 
+			y:(params.playerRight.posY - params.pong.paddleHeight / 2) * params.gameHeight}, 
 		width: params.pong.paddleWidth * params.gameWidth,
 		height: params.pong.paddleHeight * params.gameHeight, 
 		color: params.playerRight.color

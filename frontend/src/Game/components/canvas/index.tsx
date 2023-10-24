@@ -13,14 +13,14 @@ export function Canvas(props:any) {
 		// @ts-ignore: Object is possibly 'null'.
 		const context:CanvasRenderingContext2D = canvas.getContext('2d');
     	let animationFrameId:number;
-
+		
 		const render = () => {
 			draw(context);
-			animationFrameId = window.requestAnimationFrame(render);
+			animationFrameId = window.requestAnimationFrame(render);	
 		}
 
 		const handleResize = () => {
-			const width = window.innerWidth * 0.9;
+			const width = window.innerWidth ;
 			context.canvas.width = width;
 			context.canvas.height = width /2;
 			setGameHeight(context.canvas.height);
@@ -36,7 +36,7 @@ export function Canvas(props:any) {
 			window.removeEventListener("resize", handleResize);
 		}
 			
-	}, [draw]);
+	}, [draw,setGameWidth, setGameHeight]);
 
 	return (
 		<canvas ref={canvasRef} {...rest} />

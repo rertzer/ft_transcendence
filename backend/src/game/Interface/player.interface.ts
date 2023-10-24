@@ -5,4 +5,5 @@ export interface Player {
 	downArrowDown:boolean;
 	name:string;
 	socket: Socket;
+	readyToPlay:boolean;
 }

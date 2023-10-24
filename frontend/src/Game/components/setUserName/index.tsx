@@ -6,7 +6,7 @@ interface IConnectGameProps {
 };
 
 export function SetUserName(props:IConnectGameProps) {
-	const {playerName, setPlayerName } = useContext(gameContext);
+	const {setPlayerName } = useContext(gameContext);
 	const [tempName, setTempName] = useState('');
 
 	const handlePlayerNameChange = (event:React.ChangeEvent<any>) => {

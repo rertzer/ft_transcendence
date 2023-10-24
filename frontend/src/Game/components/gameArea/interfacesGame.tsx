@@ -9,7 +9,10 @@ export interface IBall {
 	dir: IPoint;
 };
 
+export type GameStatus = 'WAITING_FOR_PLAYER' | 'PAUSE' | 'PLAYING' | 'FINISHED';
+
 export interface IGameParam {
+	idRoom: string;
     ballRadius: number;
     paddleWidth: number;
     paddleHeight: number;
@@ -39,10 +42,11 @@ export interface IGameParam {
     play:boolean;
     goal:number;
     endgame:boolean;
+	gameStatus:GameStatus;
 };
 
 export interface IPlayer {
-	pos: IPoint;
+	posY: number;
     score: number;
     scorePos: IPoint;
     upArrowDown:boolean;

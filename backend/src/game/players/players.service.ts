@@ -37,6 +37,31 @@ export class PlayersService {
 			this.players[index] = player;
 		}
 		console.log('Players:',this.players);
+	};
+
+	processPlayerKeyEvent(param:{socket: Socket, key:string, move:boolean}) {
+		let player = this.findOne(param.socket);
+		if (!player) return; 
+		switch (param.key){
+			case 'KeyW':
+				player.upArrowDown = param.move;
+				break;
+			case 'KeyS':
+				player.downArrowDown = param.move;
+				break;
+			case 'ArrowUp':
+				player.upArrowDown = param.move;
+				break;
+			case 'ArrowDown':
+				player.downArrowDown = param.move;
+				break;
+			case 'Space':
+				player.readyToPlay = true;
+				break;
+			default:
+				return; 
+		}
 	}
+
 
 }

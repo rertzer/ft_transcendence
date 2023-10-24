@@ -1,11 +1,11 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import gameContext from '../../gameContext';
 
 interface IJoinRoomProps {
 };
 
 export function JoinRoom(props:IJoinRoomProps) {
-	const {roomName, setRoomName} = useContext(gameContext);
+	const {setRoomName} = useContext(gameContext);
 	const [TmpRoomName, setTmpRoomName] = useState('');
 	
 

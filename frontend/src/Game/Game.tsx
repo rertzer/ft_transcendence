@@ -13,9 +13,9 @@ function Game() {
 	const [gameHeight, setGameHeight] = useState(0);
 
 	useEffect(() => {
-		const width = window.innerWidth * 0.9;
+		const width = window.innerWidth * 1;
 		setGameWidth(width);
-		setGameHeight((window.innerWidth * 0.9) /2);
+		setGameHeight((window.innerWidth * 1) /2);
 	}, []);
 	
 	const gameContextValue :IGameContextProps = {
@@ -36,8 +36,8 @@ function Game() {
 	return (
 		<GameContext.Provider value={gameContextValue}>
 			{playerName === '' && <SetUserName />}
-			{playerName!= '' && roomName === '' && <JoinRoom />}
-			{playerName!= '' && roomName != '' && <GameArea />}
+			{playerName!== '' && roomName === '' && <JoinRoom />}
+			{playerName!== '' && roomName !== '' && <GameArea />}
 		</GameContext.Provider>
 	)
 }
