@@ -63,7 +63,7 @@ const Chats = () => {
     return (
         <div className='chats'>
             {chatsOfUser.length === 0 ? (
-				<div>No conversations</div>
+				<div className='noConversations'>No conversations</div>
 				) : (
 					<div>
                         <div ref={startRef} />

@@ -14,7 +14,7 @@ type CreateaChatPayload = {
 }
 
 export const AddChat = () => {
-	const {username} = useContext(ChatContext);
+	const {username} = useContext(ConnectionContext);
 	const [chatName, setChatName] = useState('');
 	const [password, setPassword] = useState('');
 	const socket = useContext(WebsocketContext);
