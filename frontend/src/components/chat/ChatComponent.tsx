@@ -6,7 +6,7 @@ import { useState } from 'react';
 
 const ChatComponent = () => {
 
-    const [activeChat, setActiveChat] = useState(-1)
+    const [activeChat, setActiveChat] = useState({id: -1, name: "Chat window"})
 
     return (
         <div className="chatcomponent">

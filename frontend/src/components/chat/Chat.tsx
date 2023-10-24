@@ -9,12 +9,12 @@ import { StringLiteral } from 'typescript';
 
 
 
-const Chat = (props: {activeChat: number}) => {
+const Chat = (props: {activeChat: {id: number, name: string}}) => {
 
     return (
         <div className='chat'>
             <div className='chatInfo'>
-                <span>mbocquel</span>
+                <span>{props.activeChat.name}</span>
                 <div className="chatIcons">
                     <div>
                         <Tooltip title="View profile" arrow>
@@ -28,7 +28,7 @@ const Chat = (props: {activeChat: number}) => {
                     </div>
                 </div>
             </div>
-            <Messages />
+            <Messages chatId={props.activeChat.id}/>
             <MessageInput />
         </div>
     )

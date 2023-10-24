@@ -4,7 +4,7 @@ import Chatbar from './Chatbar';
 import Search from './Search';
 import Chats from "./Chats";
 
-const Sidebar = (props: {activeChat: number, setActiveChat: Function}) => {
+const Sidebar = (props: {activeChat: {id: number, name: string}, setActiveChat: Function}) => {
 
     return (
         <div className='sidebar'>

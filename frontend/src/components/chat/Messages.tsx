@@ -18,13 +18,13 @@ type trigger = {
 	numberMsgToDisplay: number;
 }
 
-const Messages = () => {
+const Messages = (props: {chatId: number}) => {
 
 	const socket = useContext(WebsocketContext);
 
 	const [chatHistory, setChatHistory] = useState<ChatHistory[]>([]);
 	const {chatId} = useContext(ChatContext)
-	const [toTrigger, setTrigger] = useState<trigger>({numberMsgToDisplay: 15, chatId: '1'});
+	const [toTrigger, setTrigger] = useState<trigger>({numberMsgToDisplay: 15, chatId: props.chatId.toString()});
 
 	useEffect(() => {
 
@@ -56,7 +56,7 @@ const Messages = () => {
 
 	const funcTrigger = ()  => {
 		console.log("object send :", toTrigger)
-		socket.emit('retrieveMessage', toTrigger ); // need to be chat id
+		socket.emit('retrieveMessage', toTrigger );
 	}
 
 	const endRef = useRef<HTMLDivElement>(null); //ref to empty div to autoscroll to bottom

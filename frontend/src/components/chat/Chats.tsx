@@ -17,7 +17,7 @@ type allChatOfUser = {
 }
 
 
-const Chats = (props: {activeChat: number, setActiveChat: Function}) => {
+const Chats = (props: {activeChat: {id: number, name: string}, setActiveChat: Function}) => {
 
         const [chatsOfUser, setChatsOfUser] = useState<allChatOfUser[]>([])
         const socket = useContext(WebsocketContext);
@@ -70,7 +70,7 @@ const Chats = (props: {activeChat: number, setActiveChat: Function}) => {
                         <div ref={startRef} />
 						{chatsOfUser.map((channel) => (
                             <div onClick={props.setActiveChat(channel.id)}>
-                                <div key={channel.id} className={props.activeChat === channel.id ? "userChat-active" : "userChat"}>
+                                <div key={channel.id} className={props.activeChat.id === channel.id ? "userChat-active" : "userChat"}>
                                     <img src={channel.chatPicture} />
                                     <div className='userChatInfo'>
                                         <span>{channel.channelName}</span>
