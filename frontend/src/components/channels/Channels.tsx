@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
-import { WebsocketContext } from "../../context/chatContext";
+import ChatContext ,{ WebsocketContext } from "../../context/chatContext";
 import  ConnectionContext from "../../context/authContext"
-import ChatContext from '../../Chat/contexts/ChatContext';
 import "./Channels.scss"
 
 type JoinChatRoomPayload = {

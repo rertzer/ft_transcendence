@@ -9,7 +9,6 @@ import Navbar from './components/menus/Navbar';
 import Leftbar from './components/menus/Leftbar';
 import FriendsComponent from './components/friendlist/FriendsComponent';
 import {  IConnected } from './context/authContext';
-import { ChatApp } from './Chat/chatApp';
 import ChatComponent from './components/chat/ChatComponent';
 import Leaderboards from './components/leaderboards/Leaderboards';
 import {IChatContext, WebsocketProvider, socket } from './context/chatContext';
@@ -95,18 +94,6 @@ function App() {
       element: <Register />,
     },
   ]);
-//   export function ChatApp() {
-// 	return (
-// 		<WebsocketProvider value={socket}>
-// 			<ChatContext.Provider value={ChatContextValue}>
-// 			{!isConnected && <Connection />}
-// 			{!isInChat && !isInMp && !isInMailbox && isConnected &&  <Index />}
-// 			{isInMailbox && <Mailbox />}
-// 			{isInChat && <InChat />}
-// 			{isInMp && <MsgPrive />}
-// 		</ChatContext.Provider>
-// 		</WebsocketProvider>
-// 	)
 
   return (
     <div >

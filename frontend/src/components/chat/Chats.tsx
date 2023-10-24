@@ -11,9 +11,9 @@ type allChatOfUser = {
     channelName: string;
     chatPicture: string;
     /*---------LastMessageReceive-------*/
-    username: String;
-    msg: string;
-    dateSend: Date;
+    username: String | null;
+    msg: string| null;
+    dateSend: Date | null;
 }
 
 
@@ -21,16 +21,18 @@ const Chats = (props: {activeChat: {id: number, name: string}, setActiveChat: Fu
 
         const [chatsOfUser, setChatsOfUser] = useState<allChatOfUser[]>([])
         const socket = useContext(WebsocketContext);
-    
-    
+
+
         useEffect(() => {
-    
+
             trigger();
 
-            socket.on('chatList', (channelsListReceive : allChatOfUser[]) => {
+            socket.on("ListOfChat", (channelsListReceive : allChatOfUser[]) => {
+				console.log(channelsListReceive);
                 setChatsOfUser(channelsListReceive);
+				console.log("chat of user = ", chatsOfUser);
                 // console.log("trigger chat list, what i receive :", channelsListReceive)
-                // const add : allChatOfUser = {id:channelsListReceive.id, channelName: channelsListReceive.channelName, 
+                // const add : allChatOfUser = {id:channelsListReceive.id, channelName: channelsListReceive.channelName,
                 //     chatPicture: channelsListReceive.chatPicture, username: channelsListReceive.username, msg: channelsListReceive.msg, dateSend: channelsListReceive.dateSend}
                 // console.log("hey ")
                 // console.log("Previous channelsList:", add);
@@ -43,9 +45,9 @@ const Chats = (props: {activeChat: {id: number, name: string}, setActiveChat: Fu
                 console.log('Unregistering Events...');
             }
         }, [])
-    
+
         const startRef = useRef<HTMLDivElement>(null); //ref to empty div to autoscroll to bottom
-    
+
         useEffect(() => {
             if (chatsOfUser.length > 0) {
                 startRef.current?.scrollIntoView({
@@ -54,8 +56,8 @@ const Chats = (props: {activeChat: {id: number, name: string}, setActiveChat: Fu
                 });
             }
         }, [chatsOfUser.length]);
-    
-        const username = useContext(ConnectionContext);
+
+        const {username} = useContext(ConnectionContext);
 
         function trigger() {
             socket.emit('chatList', username);
@@ -75,7 +77,7 @@ const Chats = (props: {activeChat: {id: number, name: string}, setActiveChat: Fu
                                     <div className='userChatInfo'>
                                         <span>{channel.channelName}</span>
                                         <p>{channel.msg}</p>
-                                    </div>    
+                                    </div>
                                 </div>
                             </div>
 			  			))}

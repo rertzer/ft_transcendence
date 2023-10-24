@@ -43,7 +43,7 @@ export async function getIdOfChatChannelsUser(login: string, chat_channels_id: n
 		return user.id;
 	}
 	else {
-		
+
 	}
 }
 
@@ -130,6 +130,52 @@ export async function addChatMessage(chatChanelId: number, chat_channels_usernam
 	}
 }
 
+export async function getListOfChat(username: string)
+{
+	const id = await getIdOfLogin(username);
+	const userChatChannels = await prismaService.chatChannelsUser.findMany({
+		where: {
+			user_id: id,
+		},
+		include: {
+			channel: true,
+		},
+	})
+	return userChatChannels;
+}
+
+export async function getLastMessages(id:number)
+{
+	const lastMessagesOfChat = await prismaService.chatMsgHistory.findMany({
+		where:{
+			chat_channels_id: id,
+		},
+		orderBy: {
+			date_sent: 'desc',
+		},
+		take: 1,
+		}
+	)
+	return lastMessagesOfChat ? lastMessagesOfChat : null;
+}
+
+export async function getOwnerOfChatAvatar(id:number)
+{
+	const owner = await prismaService.chatChannels.findUnique({
+		where:{
+			id: id,
+		},
+		include: {
+			channelOwner: true,
+		},
+	})
+	if (owner)
+	{
+		return owner.channelOwner.avatar;
+	}
+}
+
+
 export async function addPrivateMessage(sender_id: number, receiver_id: number, message: string) {
 	console.log("sender_id : ", sender_id);
 	console.log("receiver_id : ", receiver_id);
@@ -159,7 +205,7 @@ export async function findUser(chat_channels_user_id: number) {
 }
 
 
-export async function addChat(chatName: string, chatType: string, chatOwnerId: number, chatPassword: string) {
+export async function addChat(chatName: string, chatType: string, chatOwnerId: number, chatPassword: string | null) {
 
 	const newChat = await prismaService.chatChannels.create({
 		data: {
@@ -173,4 +219,20 @@ export async function addChat(chatName: string, chatType: string, chatOwnerId: n
 	})
 	return newChat.id;
 
+}
+
+export async function getLastMessagesUsername(chatId: number) {
+		console.log(" chat id receive in getLastMessagesUsername : ",chatId);
+		const lastMessageUsername = await prismaService.chatMsgHistory.findFirst({
+		  where: { chat_channels_id : chatId },
+		  orderBy: { date_sent: 'desc' },
+		  take: 1,
+		});
+		if (lastMessageUsername)
+		{
+			const username = await findUser(lastMessageUsername.chat_channels_user_id);
+			//console.log("last message : ", lastMessageUsername)
+			return username;
+		}
+		return null;
 }

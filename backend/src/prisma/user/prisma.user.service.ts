@@ -12,4 +12,3 @@ export async function getIdOfLogin(login: string){
 	if (user)
 		return user.id;
 }
-

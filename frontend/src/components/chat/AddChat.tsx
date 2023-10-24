@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import "./MessageInput.scss"
-import ChatContext, { WebsocketContext } from '../../Chat/contexts/ChatContext';
+import ChatContext, { WebsocketContext } from '../../context/chatContext';
 import  ConnectionContext from "../../context/authContext"
 import AddIcon from '@mui/icons-material/Add';
 import { Tooltip } from  "@mui/material";
@@ -9,7 +9,7 @@ import "./AddChat.scss";
 type CreateaChatPayload = {
 	username: string;
 	chatName: string;
-	chatPassword: string;
+	chatPassword: string | null;
 	chatType: string;
 }
 
@@ -27,11 +27,25 @@ export const AddChat = () => {
 	};
 
 	const onSubmit = () => {
-		const createChatData: CreateaChatPayload = {
-			username: username,
-			chatName: chatName,
-			chatType: chatType,
-			chatPassword: password,
+		console.log("username :", username);
+		let createChatData: CreateaChatPayload;
+		if (password === "")
+		{
+			createChatData = {
+				username: username,
+				chatName: chatName,
+				chatType: chatType,
+				chatPassword: null,
+			}
+		}
+		else
+		{
+			createChatData = {
+				username: username,
+				chatName: chatName,
+				chatType: chatType,
+				chatPassword: password,
+			}
 		}
 		console.log("object send :", createChatData);
 		socket.emit('createChat', createChatData);

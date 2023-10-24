@@ -2,8 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import Message from "./Message";
 import "./Messages.scss";
 import { useContext, useState } from 'react';
-import { WebsocketContext } from "../../context/chatContext";
-import ChatContext from '../../Chat/contexts/ChatContext';
+import ChatContext, { WebsocketContext } from "../../context/chatContext";
 
 
 type ChatHistory = {
@@ -35,11 +34,8 @@ const Messages = (props: {chatId: number}) => {
 			let newDateString = chatHistoryReceive.date.toString();
 			newDateString = newDateString.slice(newDateString.indexOf("T") + 1, newDateString.indexOf("T") + 9);
 			const add : ChatHistory = {msg: chatHistoryReceive.msg, username: chatHistoryReceive.username, date: newDateString, id: chatHistoryReceive.id}
-			console.log("hey ")
-			console.log("Previous catHistory:", chatHistory);
 			setChatHistory((prevMessages) => [...prevMessages, add]);
 			// Debugging: Check the updated chatHistory
-			console.log("Updated chatHistory:", chatHistory);
 		});
 		socket.on('newMessage', (chatHistoryReceive :{msg: string, username: string, date: Date, id: number}) => {
 
