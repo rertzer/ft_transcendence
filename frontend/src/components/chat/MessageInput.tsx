@@ -39,7 +39,7 @@ const MessageInput = (props: {chatId: string}) => {
 	}, []);
 
 	const onSubmit = () => {
-		if (value === "")
+		if (value === "" || parseInt(props.chatId) < 0)
 			return;
 		const messageData = {
 			username: username,

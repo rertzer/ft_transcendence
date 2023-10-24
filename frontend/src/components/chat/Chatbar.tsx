@@ -10,7 +10,7 @@ const Chatbar = () => {
         <div className='chatbar'>
             <span className='chatlogo'>Pong Chat</span>
             <div className='icons'>
-                <Tooltip title="List all public channels" arrow>
+                <Tooltip title="List available channels" arrow>
                     <MenuIcon />
                 </Tooltip>
                 <Tooltip title="Create new channels" arrow>

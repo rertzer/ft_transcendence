@@ -77,13 +77,14 @@ const Chats = (props: {activeChat: {id: string, name: string}, setActiveChat: Fu
                         <div ref={startRef} />
 						{chatsOfUser.map((channel) => (
                             <div onClick={() => {
+                                    if (channel.id !== parseInt(props.activeChat.id)) {
                                     props.setActiveChat({id: channel.id.toString(), name: channel.channelName});
                                     socket.emit('retrieveMessage', {chatId: channel.id, messageToDisplay: 15 })
-                                    }}>
-                                <div key={channel.id} className={parseInt(props.activeChat.id) === channel.id ? "userChat-active" : "userChat"}>
+                                    }}}>
+                                <div key={channel.id} className={parseInt(props.activeChat.id) === channel.id ? "userChat active" : "userChat"}>
                                     <img src={channel.chatPicture === null ? "" : channel.chatPicture} />
                                     <div className='userChatInfo'>
-                                        <span>{channel.channelName}</span>
+                                        <h1>{channel.channelName}</h1>
                                         <p>{channel.msg === null ? "" : channel.msg}</p>
                                     </div>
                                 </div>
