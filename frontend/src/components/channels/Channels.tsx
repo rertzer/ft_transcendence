@@ -14,7 +14,7 @@ const Channels = () => {
 
     const socket = useContext(WebsocketContext);
 	const [idChatRoom, setIdChatRoom] = useState<JoinChatRoomPayload[]>([]);
-	const {username} = useContext(ConnectionContext);
+	const {login} = useContext(ConnectionContext);
 	const {setChatId} = useContext(ChatContext);
 	const [id, setId] = useState('');
 
@@ -40,7 +40,7 @@ const Channels = () => {
 	}, []);
 	const SendIdChat = () => {
 		const messageData = {
-			username: username,
+			login: login,
 			chat_id: id,
 			user_role: "user",
 		}

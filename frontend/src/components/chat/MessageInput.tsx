@@ -22,7 +22,7 @@ const MessageInput = () => {
 	const [value, setValue] = useState('');
 	const socket = useContext(WebsocketContext);
 	const { setIsInChat, chatId} = useContext(ChatContext);
-	const {username} = useContext(ConnectionContext);
+	const {login} = useContext(ConnectionContext);
 
 	useEffect(() => {
 
@@ -41,11 +41,11 @@ const MessageInput = () => {
 	const onSubmit = () => {
 		console.log ("id of chat", chatId)
 		const messageData = {
-			username: username,
+			loing: login,
 			content: value,
 			idOfChat: 1,
 		}
-		console.log(" username send ", username)
+		console.log("login send ", login)
 		socket.emit('newMessage', messageData);
 		setValue('');
 	  };

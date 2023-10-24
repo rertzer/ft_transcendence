@@ -14,7 +14,7 @@ import  ConnectionContext from "../../context/authContext"
 
 function Navbar(props: any) {
 
-    const {username} = useContext(ConnectionContext);
+    const {login} = useContext(ConnectionContext);
 
     function handleClickFriends() {
         if (props.RightBar !== "friends") {
@@ -63,7 +63,7 @@ function Navbar(props: any) {
                 <Link to="/profile/1" style={{textDecoration:"none"}}>
                     <div className="user">
                         <img src={""}/>
-                        <span>{username}</span>
+                        <span>{login}</span>
                     </div>
                 </Link>
                 <Tooltip title="Chat" arrow>

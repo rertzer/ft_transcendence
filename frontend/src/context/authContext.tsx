@@ -12,13 +12,19 @@ import  ConnectionContext from "./authContext"
 // });
 
 export interface IConnected {
-	username: string,
-	setUsername: (username: string) => void;
+	//username: string,
+	//setUsername: (username: string) => void;
+	login: string,
+	setLogin: (login: string) => void,
+	password: string,
+	setPassword: (password: string) => void
 }
 
 const defaultState:IConnected = {
-	username: '',
-	setUsername: () => {},
+	login: '',
+	setLogin: () => {},
+	password: '',
+	setPassword: () => {},
 }
 
 export default React.createContext(defaultState);

@@ -19,15 +19,20 @@ import ConnectionContext from './context/authContext'
 import Channels from './components/channels/Channels'
 
 function App() {
-	const [username, setUsername] = useState('')
+	const [login, setLogin] = useState('')
+  const [password, setPassword] = useState('')
   const [chatId, setChatId] = useState(-1)
   const ChatContextValue :IChatContext = {
 	  chatId,
 	  setChatId,
   };
   const ConnectionValue: IConnected = {
-	  username,
-	  setUsername,
+	  login,
+    setLogin,
+    password,
+    setPassword,
+    //username,
+	  //setUsername,
   }
 
   const rightBarSwitch = (state: string) => {
@@ -48,7 +53,7 @@ function App() {
   const Layout = ()=> {
 
     const [RightBar, setRightBar] = useState("none");
-	console.log("username", username)
+	console.log("login", login)
     return (
     <div>
          <Navbar RightBar={RightBar} setRightBar={setRightBar}/>
@@ -65,7 +70,7 @@ function App() {
 
   const ProtectedRoute = ({children}: any) => {
 
-    if (!username) {
+    if (!login) {
       return (<Navigate to="/login" />);
     }
     return (children);

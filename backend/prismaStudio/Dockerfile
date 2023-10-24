@@ -8,4 +8,6 @@ RUN apk update
 RUN apk --no-cache add curl
 RUN npm install -g prisma
 
+STOPSIGNAL SIGKILL
+
 CMD ["prisma", "studio", "--browser", "none"]

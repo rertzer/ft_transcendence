@@ -4,17 +4,17 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { AuthDto } from './dto';
+import { AuthDto, LoginDto } from './dto';
 import * as argon from 'argon2';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
-import { ColdObservable } from 'rxjs/internal/testing/ColdObservable';
+
 
 @Injectable()
 export class AuthService {
   constructor(private prisma: PrismaService) { }
-  async login(dto: AuthDto) {
+  async login(dto: LoginDto) {
     // log existing user
-    console.log(dto.login);
+    console.log("received 3 dto: ", dto.login);
     let user = await this.prisma.user.findUnique({
       where: {
         login: dto.login,
@@ -31,10 +31,10 @@ export class AuthService {
         user = await this.prisma.user.create({
           data: {
             login: dto.login,
-            username: dto.username,
-            email: dto.email,
+            username: 'Forest',//dto.username,
+            email: dto.login + '@student.42.rf',//dto.email,
             password,
-            role: 'user',
+            role: 'player',
           },
         });
       } catch (error) {
