@@ -15,7 +15,7 @@ type ChatHistory = {
 	date: string;
 	id: number;
 }
-const MessageInput = () => {
+const MessageInput = (props: {chatId: string}) => {
 
 	const [messages, setMessages] = useState<MessagePayload[]>([]);
 
@@ -44,7 +44,7 @@ const MessageInput = () => {
 		const messageData = {
 			username: username,
 			content: value,
-			idOfChat: 1,
+			idOfChat: parseInt(props.chatId),
 		}
 		console.log(" username send ", username)
 		socket.emit('newMessage', messageData);

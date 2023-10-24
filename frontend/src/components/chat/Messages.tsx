@@ -17,13 +17,13 @@ type trigger = {
 	numberMsgToDisplay: number;
 }
 
-const Messages = (props: {chatId: number}) => {
+const Messages = (props: {chatId: string}) => {
 
 	const socket = useContext(WebsocketContext);
 
 	const [chatHistory, setChatHistory] = useState<ChatHistory[]>([]);
 	const {chatId} = useContext(ChatContext)
-	const [toTrigger, setTrigger] = useState<trigger>({numberMsgToDisplay: 15, chatId: props.chatId.toString()});
+	const [toTrigger, setTrigger] = useState<trigger>({numberMsgToDisplay: 15, chatId: props.chatId});
 
 	useEffect(() => {
 

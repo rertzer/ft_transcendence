@@ -6,7 +6,7 @@ import Messages from "./Messages";
 import MessageInput from "./MessageInput";
 import { Tooltip } from "@mui/material";
 
-const Chat = (props: {activeChat: {id: number, name: string}}) => {
+const Chat = (props: {activeChat: {id: string, name: string}}) => {
 
     return (
         <div className='chat'>
@@ -26,7 +26,7 @@ const Chat = (props: {activeChat: {id: number, name: string}}) => {
                 </div>
             </div>
             <Messages chatId={props.activeChat.id}/>
-            <MessageInput />
+            <MessageInput chatId={props.activeChat.id}/>
         </div>
     )
 }

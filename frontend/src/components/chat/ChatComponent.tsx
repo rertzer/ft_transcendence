@@ -4,9 +4,14 @@ import Sidebar from './Sidebar';
 import Chat from './Chat'
 import { useState } from 'react';
 
+type Active = {
+	id: string;
+    name: string
+}
+
 const ChatComponent = () => {
 
-    const [activeChat, setActiveChat] = useState({id: -1, name: "Chat window"})
+    const [activeChat, setActiveChat] = useState<Active>({id: "-1", name: "Chat window"})
 
     return (
         <div className="chatcomponent">
