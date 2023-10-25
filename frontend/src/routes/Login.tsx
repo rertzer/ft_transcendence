@@ -1,9 +1,9 @@
 import "./Login.scss";
 import { Link, Navigate } from "react-router-dom";
-//import { AuthContext } from "../context/authContext";
 import { useContext, useEffect, useState } from "react";
-import { WebsocketContext } from "../context/chatContext";
 import ConnectionContext from "../context/authContext";
+import { IUser, IContextUser } from "../context/userContext";
+import UserContext from "../context/userContext";
 
 type UserConnection = {
   id: string;
@@ -12,20 +12,14 @@ type UserConnection = {
 };
 
 function Login() {
-  //const {login} = useContext(AuthContext);
+
   const { login, setLogin, password, setPassword } =
     useContext(ConnectionContext);
+  const { user, setUser } = useContext(UserContext);
 
   const [userOk, setUserOk] = useState(false);
-  // const handleLogin = () => {
-  //     login();
-  // }
-  const socket = useContext(WebsocketContext);
 
   const sendUserConnection = async () => {
-    setLogin(login);
-    setPassword(password);
-
     const data = await fetch("http://localhost:4000/auth/login", {
       method: "POST",
       mode: "cors",
@@ -37,32 +31,15 @@ function Login() {
       console.log("Bad password");
       setLogin("");
       setPassword("");
+      setUserOk(false);
     } else {
+      setUser(user);
       setUserOk(true);
     }
-
-    console.log("json:", user);
   };
 
   useEffect(() => {
-    /*
-      if (UserConnection.id === "-1") {
-        console.log("wrong id");
-        setLogin("");
-        setPassword("");
-        setuserOk(false);
-      } else {
-        console.log("login before set", login);
-        setLogin(UserConnection.login);
-        setPassword(UserConnection.password);
-        console.log("here");
-        setuserOk(true);
-      }
-    });
-    return () => {
-      console.log("Unregistering Events...");
-      socket.off("onUserConnection");
-    };*/
+   
   }, []);
 
   return (

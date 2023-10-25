@@ -27,7 +27,6 @@
                 font-size: 100px;
                 line-height: 100px;
             }
-            p{}
             span{
                 font-size: 14px;
             }
@@ -52,6 +51,9 @@
             h1{
                 color: #555;
             }
+            h2{
+                color: #555;
+            }
             form{
                 display: flex;;
                 flex-direction: column;
@@ -71,7 +73,35 @@
                     cursor: pointer;
 
                 }
+                input.NA{
+                    border-color: blue;
+                    
+                }
+                input.NA:focus-visible{
+                    outline: 1px solid blue;
 
+                    background-color: white;
+                }
+                input.OK{
+                    border-color: green;
+                    
+                }
+                input.OK:focus-visible{
+                    outline: 2px solid green;
+
+                    background-color: white;
+                }
+                input.KO{
+                    border-color: red;
+                    color: orange;
+                    
+                }
+                input.KO:focus-visible{
+                    outline: 1px solid red;
+                    color: black;
+
+                    background-color: orange;
+                }
             }
         }
     }
