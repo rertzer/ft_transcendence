@@ -39,3 +39,8 @@ Reprendre a la creation des event de socket sur le fron et le back pour la conne
 - Enregistrer la date de debut du game. 
 - Enregistrer les resultats dans la base de donnee (qui a gagner, le type de victoire -> Normale ou forfait la date de fin de la room). 
 - Implementer des modes de jeux plus elabores. (avec des niveaux de difficultes. )
+
+
+
+FrontEnd .env 
+REACT_APP_URL_MACHINE=made-f0Br8s5.clusters.42paris.fr
