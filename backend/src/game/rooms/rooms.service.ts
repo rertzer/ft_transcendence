@@ -90,8 +90,8 @@ export class RoomsService {
 		}
 		return room;
 	};
-
-	addPlayerToRoom(player:Player, roomName:string) {
+/* Trop complique. on va juste envoyer les elements room param */
+	/* addPlayerToRoom(player:Player, roomName:string) {
 		let room = this.findRoomById(roomName);
 		console.log(room);
 		if (room === null)
@@ -107,6 +107,7 @@ export class RoomsService {
 				scoreLeft:room.scoreLeft,
 				scoreRight:room.scoreRight,
 				gameStatus:room.gameStatus
+
 			});
 		}
 		else if (room.playerLeft === player || room.playerRight === player) {
@@ -156,6 +157,48 @@ export class RoomsService {
 		}
 		console.log('addPlayerToRoom');
 		console.log('Rooms :', this.rooms);
+	}; */
+
+	sendRoomStatus(room: Room) {
+		const data_to_send = {
+			idRoom:room.id,
+			gameParam: this.gameParam,
+			playerLeft:{
+				name:room.playerLeft?.name,
+				socket_id: room.playerLeft?.socket.id,
+			},
+			playerRight:{
+				name:room.playerRight?.name,
+				socket_id: room.playerRight?.socket.id,
+			},
+			gameStatus:room.gameStatus
+		};
+		room.playerLeft?.socket.emit('room_status', data_to_send);
+		room.playerRight?.socket.emit('room_status', data_to_send);
+	}
+
+	addPlayerToRoom(player:Player, roomName:string) {
+		let room = this.findRoomById(roomName);
+		if (room === null) {
+			room = this.createRoom(roomName, player);
+		}
+		else if (room.playerLeft === player || room.playerRight === player) {
+			player.socket.emit('Error_player_already_in_room');
+		}
+		else if (room.playerLeft != null  && room.playerRight != null) {
+			player.socket.emit('Error_room_full');
+		}
+		else {
+			if (room.playerLeft === null) {
+				room.playerLeft = player;
+			}
+			else {
+				room.playerRight = player;
+			}
+			room.gameStatus = 'WAITING_FOR_PLAYER';
+			console.log('Player ', player.socket.id, ' added to Room ', room.id);
+		}
+		this.sendRoomStatus(room);
 	};
 
 	getNumberOfPlayersInRoom(room:Room):number {
@@ -190,11 +233,6 @@ export class RoomsService {
 			console.log('Rooms :', this.rooms);
 		}
 	};
-
-	moveBsgbgallrstgb() {
-	
-		
-	}
 
 	moveBall(room:Room) {
 		if(room.gameStatus !== 'PLAYING') return ;
@@ -257,7 +295,7 @@ export class RoomsService {
 		});
 	};
 
-	broadcastRoomsStatus() {
+	broadcastGameState() {
 		this.rooms.forEach(room => {
 			const data = {
 				idRoom:room.id,
@@ -282,8 +320,8 @@ export class RoomsService {
 				scoreRight:room.scoreRight,
 				gameStatus:room.gameStatus
 			};
-				room.playerLeft?.socket.emit('game_status', data);
-				room.playerRight?.socket.emit('game_status', data);
+				room.playerLeft?.socket.emit('game_state', data);
+				room.playerRight?.socket.emit('game_state', data);
 		});
 	}
 

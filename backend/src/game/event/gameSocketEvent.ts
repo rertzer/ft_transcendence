@@ -62,7 +62,7 @@ export class GameSocketEvents {
 	@Interval(15)
 	handleInterval() {
 		this.roomsService.playGameLoop()
-		this.roomsService.broadcastRoomsStatus();
+		this.roomsService.broadcastGameState();
 	};
 }
 
