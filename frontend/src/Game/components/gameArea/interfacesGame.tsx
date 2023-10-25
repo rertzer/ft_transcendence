@@ -9,7 +9,7 @@ export interface IBall {
 	dir: IPoint;
 };
 
-export type GameStatus = 'WAITING_FOR_PLAYER' | 'PAUSE' | 'PLAYING' | 'FINISHED';
+export type GameStatus = 'WAITING_FOR_PLAYER' | 'WAITING_TO_START' | 'PAUSE' | 'PLAYING' | 'FINISHED';
 
 export interface IGameParam {
 	idRoom: string;
@@ -54,4 +54,5 @@ export interface IPlayer {
     name:string;
     namePos: IPoint;
     color:string;
+	socketId: string;
 };

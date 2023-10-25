@@ -90,74 +90,6 @@ export class RoomsService {
 		}
 		return room;
 	};
-/* Trop complique. on va juste envoyer les elements room param */
-	/* addPlayerToRoom(player:Player, roomName:string) {
-		let room = this.findRoomById(roomName);
-		console.log(room);
-		if (room === null)
-		{
-			room = this.createRoom(roomName, player);
-			player.socket.emit('room_status_change', {
-				id:room.id,
-				ball:room.ball,
-				yourSide:this.getSideOfPlayer(room,player), 
-				oponentName: (this.getSideOfPlayer(room,player) === 'left' ? room.playerRight?.name : room.playerLeft?.name),
-				posYLeft:room.posYLeft,
-				posYRight:room.posYRight,
-				scoreLeft:room.scoreLeft,
-				scoreRight:room.scoreRight,
-				gameStatus:room.gameStatus
-
-			});
-		}
-		else if (room.playerLeft === player || room.playerRight === player) {
-			player.socket.emit('Error_player_already_in_room');
-		}
-		else if (room.playerLeft != null  && room.playerRight != null) {
-			player.socket.emit('Error_room_full');
-		}
-		else {
-			let opponent:Player | null = null;
-			if (room.playerLeft === null) {
-				room.playerLeft = player;
-				opponent = room.playerRight;
-			}
-			else if (room.playerRight === null) {
-				room.playerRight = player;
-				opponent = room.playerLeft;
-			}
-			room.gameStatus = 'PAUSE';
-			const index = this.rooms.indexOf(room);
-			this.rooms[index] = room;
-			player.socket.emit('room_status_change', {
-				id:room.id,
-				ball:room.ball,
-				yourSide:this.getSideOfPlayer(room,player), 
-				opponentName: (this.getSideOfPlayer(room,player) === 'left' ? room.playerRight?.name : room.playerLeft?.name),
-				posYLeft:room.posYLeft,
-				posYRight:room.posYRight,
-				scoreLeft:room.scoreLeft,
-				scoreRight:room.scoreRight,
-				gameStatus:room.gameStatus
-			});
-			if (opponent) {
-				opponent.socket.emit('room_status_change', {
-					id:room.id,
-					ball:room.ball,
-					yourSide:this.getSideOfPlayer(room, opponent), 
-					opponentName: (this.getSideOfPlayer(room,opponent) === 'left' ? room.playerRight?.name : room.playerLeft?.name),
-					posYLeft:room.posYLeft,
-					posYRight:room.posYRight,
-					scoreLeft:room.scoreLeft,
-					scoreRight:room.scoreRight,
-					gameStatus:room.gameStatus
-				});
-			}
-			
-		}
-		console.log('addPlayerToRoom');
-		console.log('Rooms :', this.rooms);
-	}; */
 
 	sendRoomStatus(room: Room) {
 		const data_to_send = {
@@ -165,11 +97,11 @@ export class RoomsService {
 			gameParam: this.gameParam,
 			playerLeft:{
 				name:room.playerLeft?.name,
-				socket_id: room.playerLeft?.socket.id,
+				socketId: room.playerLeft?.socket.id,
 			},
 			playerRight:{
 				name:room.playerRight?.name,
-				socket_id: room.playerRight?.socket.id,
+				socketId: room.playerRight?.socket.id,
 			},
 			gameStatus:room.gameStatus
 		};
@@ -195,7 +127,7 @@ export class RoomsService {
 			else {
 				room.playerRight = player;
 			}
-			room.gameStatus = 'WAITING_FOR_PLAYER';
+			room.gameStatus = 'WAITING_TO_START';
 			console.log('Player ', player.socket.id, ' added to Room ', room.id);
 		}
 		this.sendRoomStatus(room);
@@ -215,23 +147,18 @@ export class RoomsService {
 
 	removePlayerFromRoom(player:Player) {
 		let room = this.findRoomOfPlayer(player);
-		if (room && this.getNumberOfPlayersInRoom(room) != 2){
+		if (room === null) return ;
+		if (this.getNumberOfPlayersInRoom(room) != 2){
 			this.removeRoom(room);
 		}
-		else if (room && room.playerLeft === player) {
-			const index = this.rooms.indexOf(room);
+		else if (room.playerLeft === player) {
 			room.playerLeft = null;
-			this.rooms[index] = room;
-			room.playerRight?.socket.emit('opponent_left');
-			console.log('Rooms :', this.rooms);
 		}
-		else if (room && room.playerRight === player) {
-			const index = this.rooms.indexOf(room);
+		else if (room.playerRight === player) {
 			room.playerRight = null;
-			this.rooms[index] = room;
-			room.playerLeft?.socket.emit('opponent_left');
-			console.log('Rooms :', this.rooms);
 		}
+			room.gameStatus = 'WAITING_FOR_PLAYER';
+		this.sendRoomStatus(room);
 	};
 
 	moveBall(room:Room) {
@@ -247,7 +174,6 @@ export class RoomsService {
 		/* Paddle colision*/
 		let playerWithBallPosY = (room.ball.pos.x <= 1 / 2) ? room.posYLeft : room.posYRight;
 		let sidePlayer:string = (room.ball.pos.x <= 1 / 2) ? 'left' : 'right';
-		let otherPlayer = (room.ball.pos.x <= 1 / 2) ? room.playerRight : room.playerLeft;
 		let direction = (room.ball.pos.x <= 1 / 2) ? 1 : -1;
 		if (colision(playerWithBallPosY, room.ball, this.gameParam, sidePlayer)) {
 			let colisionY = (room.ball.pos.y - (playerWithBallPosY)) / (this.gameParam.paddleHeight / 2);
@@ -264,7 +190,6 @@ export class RoomsService {
 			if (room.playerLeft) room.playerLeft.readyToPlay = false;
 			if (room.playerRight) room.playerRight.readyToPlay = false;
 			room.gameStatus = 'PAUSE';
-			//resetPosition();
 			room.ball = {
 				pos: {x: 1 / 2, y: 1 / 2},
 				dir: {x: -room.ball.dir.x, y: room.ball.dir.y},
@@ -298,7 +223,6 @@ export class RoomsService {
 	broadcastGameState() {
 		this.rooms.forEach(room => {
 			const data = {
-				idRoom:room.id,
 				ball:room.ball,
 				playerLeft:{
 					upArrowDown:room.playerLeft?.upArrowDown,

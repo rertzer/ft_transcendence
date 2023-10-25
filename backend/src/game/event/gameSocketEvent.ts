@@ -3,7 +3,7 @@ import { Server, Socket } from "socket.io";
 import { PlayersService } from "../players/players.service";
 import { Inject } from "@nestjs/common";
 import { RoomsService } from "../rooms/rooms.service";
-import { Interval, SchedulerRegistry } from "@nestjs/schedule";
+import { Interval } from "@nestjs/schedule";
 
 @WebSocketGateway({
     cors: {
@@ -11,7 +11,6 @@ import { Interval, SchedulerRegistry } from "@nestjs/schedule";
     },
 })
 export class GameSocketEvents {
-	//constructor(private schedulerRegistry: SchedulerRegistry) {}
 
 	@Inject(PlayersService)
 	private readonly playersService: PlayersService;
@@ -21,9 +20,6 @@ export class GameSocketEvents {
 
 	@WebSocketServer()
 	server: Server;
-	
-	/*private roomStatusInterval = setInterval(() => {this.roomsService.broadcastRoomsStatus();
-		console.log('handleInterval');}, 10);*/
 
 	//Connexion 
 	handleConnection(client:Socket){

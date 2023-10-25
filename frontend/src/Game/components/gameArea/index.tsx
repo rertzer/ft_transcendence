@@ -1,7 +1,7 @@
 import {useEffect, useState, useContext} from "react";
 import { Canvas } from "../canvas";
 import gameContext from '../../gameContext';
-import printStartMenu from "./printStartMenu";
+import printMenu from "./printStartMenu";
 import printGame from "./printGame";
 import printWinnerMenu from "./printWinnerMenu";
 import { gameSocket } from "../../services/gameSocketService";
@@ -12,9 +12,9 @@ function GameArea(props:any) {
 	const {roomName, gameWidth, gameHeight, playerName, playerSide, setPlayerSide, opponentName, setOpponentName} = useContext(gameContext);
 	const [pong, setPong] = useState({
 		idRoom: '',
-		ballRadius: 0.01,
-		paddleWidth: 0.02,
-		paddleHeight: 0.25,
+		ballRadius: 0,
+		paddleWidth: 0,
+		paddleHeight: 0,
 		netWidth: 0.005,
 		netHeight: 0.05,
 		netInterval: 0.025,
@@ -29,19 +29,19 @@ function GameArea(props:any) {
 		nameFontDecoration: 'italic',
 		nameFontPx: 0.05,
 		nameColor: '#FFFFFF',
-		ballInitSpeed: 0.006,
+		ballInitSpeed: 0,
 		ballInitDir: {x: 0.5, y: -1},
-		ballSpeedIncrease: 0.00005,
-		paddleSpeed: 0.01,
+		ballSpeedIncrease: 0,
+		paddleSpeed: 0,
 		play: false,
 		menuBackColor: 'rgba(255,255,255,0.8)',
 		menuTextColor: '#000000',
 		menuFont: 'sans-serif',
 		menuFontDecoration: 'bold',
 		menuFontPx: 0.07,
-		goal: 3,
+		goal: 0,
 		endgame: false,
-		gameStatus:'WAITING' as GameStatus
+		gameStatus:'WAITING_FOR_PLAYER' as GameStatus
 	});
 	/* besoin d'initialiser les valeurs du Game Param avec les valeurs envoyes par la backend pour celles qui sont importante pour le game */
 
@@ -52,10 +52,11 @@ function GameArea(props:any) {
 		score: 0,
 		scorePos: {x: 1 / 4, y: 1 / 5},
 		upArrowDown:false,
-    	downArrowDown:false,
+		downArrowDown:false,
 		name:"",
 		namePos:{x: 1 / 4, y: 0.9},
-		color:'#16B84E'
+		color:'#16B84E', 
+		socketId: ''
 	});
 
 	const [frontEndPlayerRight, setFrontEndPlayerRight] = useState({
@@ -66,7 +67,8 @@ function GameArea(props:any) {
     	downArrowDown:false,
 		name: "",
 		namePos: {x: 3 / 4, y: 0.9},
-		color: '#BB0B0B'
+		color: '#BB0B0B', 
+		socketId: ''
 	});
 	
 	const [ball, setBall] = useState({
@@ -83,40 +85,60 @@ function GameArea(props:any) {
 		function onDisconnect() {
 			console.log("Disconnected");
 		}
-		function onRoomStatusChanged(data:any) {
-			console.log("room_status_change");
-			console.log(data);
-			if (data.yourSide === 'left') {
-				setPlayerSide('left');
-				setFrontEndPlayerLeft((prev) => ({ ...prev, name: playerName}));
-				if (typeof(data.opponentName) != 'undefined') setFrontEndPlayerRight((prev) => ({ ...prev, name: data.opponentName}));
-			}
-			else {
-				setPlayerSide('right');
-				setFrontEndPlayerRight((prev) => ({ ...prev, name: playerName}));
-				if (typeof(data.opponentName) != 'undefined') setFrontEndPlayerLeft((prev) => ({ ...prev, name: data.opponentName}));
-			}
-		}
 
 		function onGameStatus(data:any) {
 			setBall((prev) => ({ ...prev, pos: data.ball.pos, dir:data.ball.dir, speed:data.ball.speed}))
 			setFrontEndPlayerLeft((prev) => ({ ...prev, posY: data.posYLeft, score: data.scoreLeft}));
 			setFrontEndPlayerRight((prev) => ({ ...prev, posY: data.posYRight, score: data.scoreRight}));
-			setPong((prev) => ({ ...prev, gameStatus:data.gameStatus, idRoom: data.idRoom}))
+			setPong((prev) => ({ ...prev, gameStatus:data.gameStatus}))
 		}
+
+		function onRoomStatus(data:any) {
+			setPong((prev) => ({...prev, 
+				idRoom: data.idRoom,
+				ballRadius: data.gameParam.ballRadius,
+				paddleWidth: data.gameParam.paddleWidth,
+				paddleHeight: data.gameParam.paddleHeight,
+				ballInitSpeed: data.gameParam.ballInitSpeed,
+				ballInitDir: {x:data.gameParam.ballInitDir.x, y:data.gameParam.ballInitDir.y},
+				ballSpeedIncrease: data.gameParam.ballSpeedIncrease,
+				paddleSpeed:data.gameParam.paddleSpeed,
+				goal:data.gameParam.goal,
+				gameStatus : data.gameStatus
+			}));
+			if (typeof(data.playerLeft.name) !== 'undefined' && typeof(data.playerLeft.socketId) !== 'undefined') {
+				setFrontEndPlayerLeft((prev) => ({...prev, 
+				name: data.playerLeft.name, 
+				socketId: data.playerLeft.socketId}))
+			}
+			else {
+				setFrontEndPlayerLeft((prev) => ({...prev, 
+					name: '', 
+					socketId: ''}))
+			}
+			if (typeof(data.playerRight.name) !== 'undefined' && typeof(data.playerRight.socketId) !== 'undefined') {
+				setFrontEndPlayerRight((prev) => ({...prev, 
+				name: data.playerRight.name, 
+				socketId: data.playerRight.socketId}))
+			}
+			else {
+				setFrontEndPlayerRight((prev) => ({...prev, 
+					name: '', 
+					socketId: ''}))
+			}
+		}
+
 		gameSocket.on('connect', onConnect);
 		gameSocket.on('disconnect', onDisconnect);
-		console.log('roomName: ', roomName);
-		console.log('playerName: ', playerName);
 		gameSocket.emit("join_game", {roomName, playerName});
-		gameSocket.on('room_status_change', onRoomStatusChanged);
 		gameSocket.on('game_status', onGameStatus);
+		gameSocket.on('room_status', onRoomStatus);
 
 		return () => {
 			gameSocket.off('connect', onConnect);
 			gameSocket.off('disconnect', onDisconnect);
-			gameSocket.off('room_status_change', onRoomStatusChanged);
 			gameSocket.off('game_status', onGameStatus);
+			gameSocket.off('room_status', onRoomStatus);
 		}			
 			
 	}, [playerName, roomName, setPlayerSide ]);
@@ -169,16 +191,15 @@ function GameArea(props:any) {
 	function render(context:CanvasRenderingContext2D):void {
 		context.clearRect(0, 0, context.canvas.width, context.canvas.height)
 		printGame({context:context, pong:pong, playerLeft:frontEndPlayerLeft, playerRight:frontEndPlayerRight, ball:ball, gameWidth:gameWidth, gameHeight:gameHeight});
-		if (!pong.play && !pong.endgame) {
-			printStartMenu({pong, context, gameWidth, gameHeight});
-		}
-		else if (pong.endgame) {
-			printWinnerMenu({context:context, pong:pong, playerLeft:frontEndPlayerLeft,  playerRight:frontEndPlayerRight, gameWidth:gameWidth, gameHeight:gameHeight});
-		}
+		printMenu({pong:pong, context:context, gameWidth:gameWidth, gameHeight:gameHeight});
 	}
 
 	return (
-		<Canvas draw = {render} style={styleCanvas} />
+		<>
+			<Canvas draw = {render} style={styleCanvas} />
+			<div> <strong>Pong : </strong><br/>{JSON.stringify(pong, null, 4)}</div>
+			<div> <strong>PlayerLeft : </strong><br/>{JSON.stringify(frontEndPlayerLeft, null, 4)}</div>
+			<div> <strong>PlayerRight : </strong><br/>{JSON.stringify(frontEndPlayerRight, null, 4)}</div>		</>
 	);
 
 };
