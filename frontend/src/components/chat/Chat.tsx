@@ -5,6 +5,7 @@ import Messages from "./Messages";
 import MessageInput from "./MessageInput";
 import { Tooltip } from "@mui/material";
 import { Active } from './ChatComponent';
+import { allChatOfUser } from "./ChatComponent";
 
 const Chat = (props: {activeChat: Active}) => {
 

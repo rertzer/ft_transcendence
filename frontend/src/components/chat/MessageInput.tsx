@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import "./MessageInput.scss"
 import { WebsocketContext } from '../../context/chatContext';
 import  ConnectionContext from "../../context/authContext"
+import { allChatOfUser } from './ChatComponent';
 
 type MessagePayload = {
 	msg: string;
@@ -48,6 +49,7 @@ const MessageInput = (props: {chatId: string}) => {
 		}
 		console.log(" username send ", username)
 		socket.emit('newMessage', messageData);
+		socket.emit('chatList', username); // super bizarre, des fois ca marche et des fois un temps de retard
 		setValue('');
 	  };
 
