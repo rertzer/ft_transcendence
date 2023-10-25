@@ -3,8 +3,6 @@ import GamepadIcon from '@mui/icons-material/GamepadOutlined';
 import VideogameIcon from '@mui/icons-material/VideogameAssetOutlined';
 import EsportsIcon from '@mui/icons-material/SportsEsportsOutlined';
 import QuestionMarkIcon from '@mui/icons-material/QuestionMarkOutlined';
-import LeaderboardIcon from '@mui/icons-material/LeaderboardOutlined';
-import FriendsIcon from '@mui/icons-material/Diversity1Outlined';
 
 function Leftbar() {
 

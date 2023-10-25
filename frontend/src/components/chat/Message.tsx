@@ -1,4 +1,3 @@
-import React from 'react';
 import "./Message.scss"
 import { useContext } from "react";
 import  ConnectionContext from "../../context/authContext"

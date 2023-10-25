@@ -1,8 +1,8 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import Message from "./Message";
 import "./Messages.scss";
 import { useContext, useState } from 'react';
-import ChatContext, { WebsocketContext } from "../../context/chatContext";
+import { WebsocketContext } from "../../context/chatContext";
 import userEvent from '@testing-library/user-event';
 import  ConnectionContext from "../../context/authContext"
 

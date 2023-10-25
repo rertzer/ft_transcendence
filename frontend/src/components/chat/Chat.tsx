@@ -1,4 +1,3 @@
-import React from 'react';
 import "./Chat.scss";
 import ProfileIcon from '@mui/icons-material/AccountBoxOutlined';
 import BlockIcon from '@mui/icons-material/BlockOutlined';

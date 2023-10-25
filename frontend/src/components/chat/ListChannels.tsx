@@ -43,6 +43,9 @@ export const ListChannels = (props: {chatsOfUser: allChatOfUser[], showSubMenu: 
 		};
 	}, []);
 	const SendIdChat = () => {
+		if (id === "") {
+			return;
+		}
 		const messageData = {
 			username: username,
 			chat_id: id,

@@ -1,4 +1,3 @@
-import React from 'react';
 import "./Sidebar.scss"
 import Chatbar from './Chatbar';
 import Search from './Search';

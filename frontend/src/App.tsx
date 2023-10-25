@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import { useState } from 'react';
 import './styles.scss';
 import { createBrowserRouter, RouterProvider, Route, Outlet, Navigate } from 'react-router-dom';
 import Login from './routes/Login';
@@ -13,7 +13,6 @@ import ChatComponent from './components/chat/ChatComponent';
 import Leaderboards from './components/leaderboards/Leaderboards';
 import {IChatContext, WebsocketProvider, socket } from './context/chatContext';
 import ChatContext from './context/chatContext';
-// import { AuthContextProvider } from './context/authContext';
 import ConnectionContext from './context/authContext'
 
 function App() {
@@ -44,7 +43,7 @@ function App() {
   const Layout = ()=> {
 
     const [RightBar, setRightBar] = useState("none");
-	console.log("username", username)
+	  console.log("username", username)
     return (
     <div>
          <Navbar RightBar={RightBar} setRightBar={setRightBar}/>

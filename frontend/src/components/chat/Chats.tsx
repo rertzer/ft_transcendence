@@ -1,6 +1,4 @@
-import React from 'react';
 import "./Chats.scss";
-import { socket } from '../../context/chatContext';
 import { WebsocketContext } from "../../context/chatContext";
 import { useContext, useState, useEffect, useRef } from 'react';
 import ConnectionContext from '../../context/authContext'

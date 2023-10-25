@@ -1,6 +1,4 @@
-import React from 'react';
 import "./Chatbar.scss"
-//import { AuthContext } from "../../context/authContext";
 import { AddChat } from './AddChat';
 import { ListChannels } from './ListChannels';
 import { allChatOfUser } from "./ChatComponent"
