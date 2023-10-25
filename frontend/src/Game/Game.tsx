@@ -7,8 +7,6 @@ import { SetUserName } from './components/setUserName';
 function Game() {
 	const [roomName, setRoomName] = useState('');
 	const [playerName, setPlayerName] = useState('');
-	const [playerSide, setPlayerSide] = useState('');
-	const [opponentName, setOpponentName] = useState('');
 	const [gameWidth, setGameWidth] = useState(0);
 	const [gameHeight, setGameHeight] = useState(0);
 
@@ -26,11 +24,7 @@ function Game() {
 		gameHeight,
 		setGameHeight,
 		playerName,
-		setPlayerName,
-		playerSide,
-		setPlayerSide, 
-		opponentName,
-		setOpponentName
+		setPlayerName
 	};
 
 	return (

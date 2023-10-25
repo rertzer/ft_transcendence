@@ -9,10 +9,6 @@ export interface IGameContextProps {
 	setGameHeight: (gameHeight:number) => void;
 	playerName:string;
 	setPlayerName: (playerName:string) => void;
-	playerSide:string;
-	setPlayerSide: (playerSide:string) => void;
-	opponentName:string;
-	setOpponentName: (opponentName:string) => void;
 };
 
 const defaultState:IGameContextProps = {
@@ -24,10 +20,6 @@ const defaultState:IGameContextProps = {
 	setGameHeight: () => {},
 	playerName:'',
 	setPlayerName: () => {},
-	playerSide:'',
-	setPlayerSide: () => {},
-	opponentName:'',
-	setOpponentName: () => {},
 };
 
 export default React.createContext(defaultState);

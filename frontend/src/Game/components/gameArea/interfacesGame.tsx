@@ -8,8 +8,7 @@ export interface IBall {
 	speed: number;
 	dir: IPoint;
 };
-
-export type GameStatus = 'WAITING_FOR_PLAYER' | 'WAITING_TO_START' | 'PAUSE' | 'PLAYING' | 'FINISHED';
+export type GameStatus = 'WAITING_FOR_PLAYER' | 'WAITING_TO_START' | 'STARTING' | 'PLAYING' | 'FINISHED';
 
 export interface IGameParam {
 	idRoom: string;
@@ -43,6 +42,7 @@ export interface IGameParam {
     goal:number;
     endgame:boolean;
 	gameStatus:GameStatus;
+	startingCount : number;
 };
 
 export interface IPlayer {
@@ -55,4 +55,5 @@ export interface IPlayer {
     namePos: IPoint;
     color:string;
 	socketId: string;
+	readyToPlay:boolean;
 };

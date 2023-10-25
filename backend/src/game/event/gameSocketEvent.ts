@@ -29,7 +29,9 @@ export class GameSocketEvents {
 			downArrowDown:false,
 			name:'', 
 			readyToPlay:false,
-			socket: client});
+			socket: client, 
+			room:null
+		});
 		client.on('disconnect', () => {
 			console.log(`Client disconnected ${client.id}`);
 			const player = this.playersService.findOne(client);

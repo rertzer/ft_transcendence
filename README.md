@@ -32,3 +32,10 @@ si un client se deconnecte. => Si il est seul dans la room, elle est supprime. S
 ## Notes pour Maxence 23/10
 Reprendre a la creation des event de socket sur le fron et le back pour la connexion des clients a la room. 
 
+
+## Foctionnalites du jeu a implementer : 
+- avoir un compte a rebour avant de commencer a jouer pour un tour ou une reprise. 
+- implementer les trucs qui font que le mouvement est plus fluide (cf video multijoueur)
+- Enregistrer la date de debut du game. 
+- Enregistrer les resultats dans la base de donnee (qui a gagner, le type de victoire -> Normale ou forfait la date de fin de la room). 
+- Implementer des modes de jeux plus elabores. (avec des niveaux de difficultes. )

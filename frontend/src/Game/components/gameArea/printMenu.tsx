@@ -1,8 +1,8 @@
 import { drawRect, drawText } from "./draw";
-import { IGameParam } from "./interfacesGame";
+import { IGameParam, IPlayer } from "./interfacesGame";
 
 
-function printMenu(param:{pong:IGameParam, context:CanvasRenderingContext2D, gameWidth:number, gameHeight:number}):void {
+function printMenu(param:{pong:IGameParam, context:CanvasRenderingContext2D, gameWidth:number, gameHeight:number, frontEndPlayerLeft:IPlayer, frontEndPlayerRight:IPlayer}):void {
 	if (param.pong.gameStatus === 'PLAYING') return;
 	drawRect({
 		start: {x: 0, y: 0}, 
@@ -21,12 +21,13 @@ function printMenu(param:{pong:IGameParam, context:CanvasRenderingContext2D, gam
 			line1 = 'WAITING FOR ANOTHER';
 			line2 = 'PLAYER TO CONNECT';
 			break;
-		case 'PAUSE':
-			line1 = 'PAUSE';
+		case 'STARTING':
+			line1 = 'STARTING';
+			line2 = `in ${ 3 - Math.round(param.pong.startingCount)}`;
 			break;
 		case 'FINISHED':
-			line1 = 'THE GAME IS FINISH';
-			line2 = '';
+			line1 = 'THE GAME IS FINISHED';
+			line2 = `Congratulation to ${ param.frontEndPlayerLeft.score === param.pong.goal ? param.frontEndPlayerLeft.name : param.frontEndPlayerRight.name} !`;
 			break;
 		default:
 			return; 

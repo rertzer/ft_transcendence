@@ -36,9 +36,7 @@ export class RoomsService {
 		ballRadius: 0.01,
 		paddleWidth: 0.02,
 		paddleHeight: 0.25,
-		ballInitSpeed: 0.006,
-		ballInitDir: {x:0.5, y:-1},
-		ballSpeedIncrease: 0.00005,
+		ballSpeedIncrease: 0.0005,
 		paddleSpeed:0.01,
 		goal:3
 	};
@@ -57,7 +55,11 @@ export class RoomsService {
 			posYRight:1/2,
 			scoreLeft:0,
 			scoreRight:0,
-			gameStatus:'WAITING_FOR_PLAYER'
+			gameStatus:'WAITING_FOR_PLAYER', 
+			createdOn: new Date(),
+			finishOn: null,
+			startingCountDownStart: null,
+			startingCount: 0
 		}
 		this.rooms.push(newRoom);
 		console.log('Room created');
@@ -94,7 +96,17 @@ export class RoomsService {
 	sendRoomStatus(room: Room) {
 		const data_to_send = {
 			idRoom:room.id,
-			gameParam: this.gameParam,
+			gameParam: {
+				ballRadius: this.gameParam.ballRadius,
+				paddleWidth:this.gameParam.paddleWidth,
+				paddleHeight: this.gameParam.paddleHeight,
+				paddleSpeed: this.gameParam.paddleSpeed,
+				goal: this.gameParam.goal,
+				ballInitSpeed: this.initBall.speed,
+				ballInitDir: {x:this.initBall.dir.x, y:this.initBall.dir.y},
+				ballSpeedIncrease: this.gameParam.ballSpeedIncrease
+				
+			},
 			playerLeft:{
 				name:room.playerLeft?.name,
 				socketId: room.playerLeft?.socket.id,
@@ -112,7 +124,8 @@ export class RoomsService {
 	addPlayerToRoom(player:Player, roomName:string) {
 		let room = this.findRoomById(roomName);
 		if (room === null) {
-			room = this.createRoom(roomName, player);
+			room = this.createRoom(roomName, player)
+			player.room = room;
 		}
 		else if (room.playerLeft === player || room.playerRight === player) {
 			player.socket.emit('Error_player_already_in_room');
@@ -127,6 +140,7 @@ export class RoomsService {
 			else {
 				room.playerRight = player;
 			}
+			player.room = room;
 			room.gameStatus = 'WAITING_TO_START';
 			console.log('Player ', player.socket.id, ' added to Room ', room.id);
 		}
@@ -185,15 +199,17 @@ export class RoomsService {
 		if (leftboard(room.ball)) {
 			sidePlayer === 'left' ? room.scoreRight++ : room.scoreLeft++;
 			if (room.scoreRight === this.gameParam.goal || room.scoreLeft === this.gameParam.goal) {
-				room.gameStatus = 'FINISHED'
+				room.gameStatus = 'FINISHED';
+			}
+			else {
+				room.gameStatus = 'WAITING_TO_START';
 			}
 			if (room.playerLeft) room.playerLeft.readyToPlay = false;
 			if (room.playerRight) room.playerRight.readyToPlay = false;
-			room.gameStatus = 'PAUSE';
 			room.ball = {
-				pos: {x: 1 / 2, y: 1 / 2},
+				pos: {x: this.initBall.pos.x, y: this.initBall.pos.y},
 				dir: {x: -room.ball.dir.x, y: room.ball.dir.y},
-				speed: room.ball.speed + this.gameParam.ballInitSpeed
+				speed: this.initBall.speed
 			}
 			room.posYLeft = 0.5;
 			room.posYRight = 0.5;
@@ -208,13 +224,29 @@ export class RoomsService {
 		if (room.playerRight?.downArrowDown) room.posYRight = Math.min(1 - this.gameParam.paddleHeight / 2, room.posYRight + this.gameParam.paddleSpeed);
 	}
 
+	updateRoomGameStatus(room:Room) {
+		if (room.gameStatus === 'WAITING_FOR_PLAYER' || room.gameStatus === 'FINISHED'
+		|| !room.playerLeft || !room.playerRight ) return;
+		if (room.gameStatus === 'WAITING_TO_START' && room.playerLeft.readyToPlay && room.playerRight.readyToPlay) {
+			room.gameStatus = 'STARTING';
+		}
+		else if (room.gameStatus === 'STARTING' && room.startingCount >= 3) {
+			room.gameStatus = 'PLAYING';
+			room.startingCount = 0;
+			room.startingCountDownStart = null;
+		}
+		else if (room.gameStatus === 'STARTING') {
+			if (room.startingCountDownStart === null) {
+				room.startingCountDownStart = new Date();
+			}
+			const newDate = new Date();
+			room.startingCount = (newDate.getTime() - room.startingCountDownStart.getTime()) / 1000;
+		}
+	}
+
 	playGameLoop() {
 		this.rooms.forEach(room => {
-			if (room.gameStatus === 'WAITING_FOR_PLAYER' || room.gameStatus === 'FINISHED') return;
-			if (room.playerLeft?.readyToPlay && room.playerRight?.readyToPlay && room.gameStatus !== 'PLAYING') {
-				room.gameStatus = 'PLAYING';
-				console.log(room.id, ' Ready to play');
-			}
+			this.updateRoomGameStatus(room);
 			this.movePlayers(room);
 			this.moveBall(room);
 		});
@@ -242,7 +274,8 @@ export class RoomsService {
 				posYRight:room.posYRight,
 				scoreLeft:room.scoreLeft, 
 				scoreRight:room.scoreRight,
-				gameStatus:room.gameStatus
+				gameStatus:room.gameStatus,
+				startingCount: room.startingCount
 			};
 				room.playerLeft?.socket.emit('game_state', data);
 				room.playerRight?.socket.emit('game_state', data);

@@ -1,15 +1,15 @@
 import {useEffect, useState, useContext} from "react";
 import { Canvas } from "../canvas";
 import gameContext from '../../gameContext';
-import printMenu from "./printStartMenu";
+import printMenu from "./printMenu";
 import printGame from "./printGame";
-import printWinnerMenu from "./printWinnerMenu";
 import { gameSocket } from "../../services/gameSocketService";
 import { GameStatus } from "./interfacesGame";
 
 function GameArea(props:any) {
 
-	const {roomName, gameWidth, gameHeight, playerName, playerSide, setPlayerSide, opponentName, setOpponentName} = useContext(gameContext);
+	
+	const {roomName, gameWidth, gameHeight, playerName } = useContext(gameContext);
 	const [pong, setPong] = useState({
 		idRoom: '',
 		ballRadius: 0,
@@ -41,9 +41,9 @@ function GameArea(props:any) {
 		menuFontPx: 0.07,
 		goal: 0,
 		endgame: false,
-		gameStatus:'WAITING_FOR_PLAYER' as GameStatus
+		gameStatus:'WAITING_FOR_PLAYER' as GameStatus, 
+		startingCount:0
 	});
-	/* besoin d'initialiser les valeurs du Game Param avec les valeurs envoyes par la backend pour celles qui sont importante pour le game */
 
 	const styleCanvas = {width:gameWidth, height:gameHeight, backgroundColor: pong.backColor};
 	
@@ -56,7 +56,8 @@ function GameArea(props:any) {
 		name:"",
 		namePos:{x: 1 / 4, y: 0.9},
 		color:'#16B84E', 
-		socketId: ''
+		socketId: '',
+		readyToPlay:false
 	});
 
 	const [frontEndPlayerRight, setFrontEndPlayerRight] = useState({
@@ -68,7 +69,8 @@ function GameArea(props:any) {
 		name: "",
 		namePos: {x: 3 / 4, y: 0.9},
 		color: '#BB0B0B', 
-		socketId: ''
+		socketId: '', 
+		readyToPlay:false
 	});
 	
 	const [ball, setBall] = useState({
@@ -86,11 +88,11 @@ function GameArea(props:any) {
 			console.log("Disconnected");
 		}
 
-		function onGameStatus(data:any) {
+		function onGameState(data:any) {
 			setBall((prev) => ({ ...prev, pos: data.ball.pos, dir:data.ball.dir, speed:data.ball.speed}))
-			setFrontEndPlayerLeft((prev) => ({ ...prev, posY: data.posYLeft, score: data.scoreLeft}));
-			setFrontEndPlayerRight((prev) => ({ ...prev, posY: data.posYRight, score: data.scoreRight}));
-			setPong((prev) => ({ ...prev, gameStatus:data.gameStatus}))
+			setFrontEndPlayerLeft((prev) => ({ ...prev, posY: data.posYLeft, score: data.scoreLeft, readyToPlay:data.playerLeft.readyToPlay}));
+			setFrontEndPlayerRight((prev) => ({ ...prev, posY: data.posYRight, score: data.scoreRight, readyToPlay:data.playerRight.readyToPlay}));
+			setPong((prev) => ({ ...prev, gameStatus:data.gameStatus, startingCount: data.startingCount}))
 		}
 
 		function onRoomStatus(data:any) {
@@ -109,7 +111,7 @@ function GameArea(props:any) {
 			if (typeof(data.playerLeft.name) !== 'undefined' && typeof(data.playerLeft.socketId) !== 'undefined') {
 				setFrontEndPlayerLeft((prev) => ({...prev, 
 				name: data.playerLeft.name, 
-				socketId: data.playerLeft.socketId}))
+				socketId: data.playerLeft.socketId}));
 			}
 			else {
 				setFrontEndPlayerLeft((prev) => ({...prev, 
@@ -119,7 +121,7 @@ function GameArea(props:any) {
 			if (typeof(data.playerRight.name) !== 'undefined' && typeof(data.playerRight.socketId) !== 'undefined') {
 				setFrontEndPlayerRight((prev) => ({...prev, 
 				name: data.playerRight.name, 
-				socketId: data.playerRight.socketId}))
+				socketId: data.playerRight.socketId}));
 			}
 			else {
 				setFrontEndPlayerRight((prev) => ({...prev, 
@@ -131,25 +133,19 @@ function GameArea(props:any) {
 		gameSocket.on('connect', onConnect);
 		gameSocket.on('disconnect', onDisconnect);
 		gameSocket.emit("join_game", {roomName, playerName});
-		gameSocket.on('game_status', onGameStatus);
+		gameSocket.on('game_state', onGameState);
 		gameSocket.on('room_status', onRoomStatus);
 
 		return () => {
 			gameSocket.off('connect', onConnect);
 			gameSocket.off('disconnect', onDisconnect);
-			gameSocket.off('game_status', onGameStatus);
+			gameSocket.off('game_state', onGameState);
 			gameSocket.off('room_status', onRoomStatus);
 		}			
 			
-	}, [playerName, roomName, setPlayerSide ]);
+	}, [playerName, roomName ]);
 
 	useEffect(() => {
-		const resetGame = () => {
-			setBall(() => ({pos: {x: 1 / 2, y: 1 / 2}, speed:pong.ballInitSpeed, dir: pong.ballInitDir}));
-			setFrontEndPlayerLeft((prev) => ({...prev, posY: 1 / 2, score: 0}));
-			setFrontEndPlayerRight((prev) => ({...prev, posY: 1 / 2, score: 0}));
-		}
-
 		const handleKey = (event: KeyboardEvent) => {
 			let move:boolean = false
 			if (event.type === 'keydown') {
@@ -168,15 +164,11 @@ function GameArea(props:any) {
 				case 'ArrowDown':
 					gameSocket.emit('keyevent', {move:move, key:'ArrowDown'});
 					break;
-				case 'Space': /*A GERER DANS LE BACK END*/
+				case 'Space':
 					gameSocket.emit('keyevent', {move:move, key:'Space'});
-					setPong((prev) => ({...prev, play: true, endgame:false}));
-					if (pong.endgame) {
-						resetGame();
-					}
 					break;
 				default:
-					return; 
+					return;
 			}
 		};
 
@@ -191,17 +183,19 @@ function GameArea(props:any) {
 	function render(context:CanvasRenderingContext2D):void {
 		context.clearRect(0, 0, context.canvas.width, context.canvas.height)
 		printGame({context:context, pong:pong, playerLeft:frontEndPlayerLeft, playerRight:frontEndPlayerRight, ball:ball, gameWidth:gameWidth, gameHeight:gameHeight});
-		printMenu({pong:pong, context:context, gameWidth:gameWidth, gameHeight:gameHeight});
+		printMenu({pong:pong, context:context, gameWidth:gameWidth, gameHeight:gameHeight, frontEndPlayerLeft:frontEndPlayerLeft, frontEndPlayerRight:frontEndPlayerRight,});
 	}
 
 	return (
 		<>
 			<Canvas draw = {render} style={styleCanvas} />
+			<div><strong>You play on the {frontEndPlayerLeft.socketId === gameSocket.id ? 'left' : 'right'} !</strong></div>
+			<div><strong>Ball speed {ball.speed} </strong></div>
 			<div> <strong>Pong : </strong><br/>{JSON.stringify(pong, null, 4)}</div>
 			<div> <strong>PlayerLeft : </strong><br/>{JSON.stringify(frontEndPlayerLeft, null, 4)}</div>
-			<div> <strong>PlayerRight : </strong><br/>{JSON.stringify(frontEndPlayerRight, null, 4)}</div>		</>
+			<div> <strong>PlayerRight : </strong><br/>{JSON.stringify(frontEndPlayerRight, null, 4)}</div>
+		</>
 	);
-
 };
 
 export default GameArea
