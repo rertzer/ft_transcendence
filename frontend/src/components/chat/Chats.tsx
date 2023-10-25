@@ -4,57 +4,44 @@ import { socket } from '../../context/chatContext';
 import { WebsocketContext } from "../../context/chatContext";
 import { useContext, useState, useEffect, useRef } from 'react';
 import ConnectionContext from '../../context/authContext'
+import { allChatOfUser } from './ChatComponent';
+import { Active } from './ChatComponent';
 
+const Chats = (props: {activeChat: Active, setActiveChat: Function, chatsOfUser: allChatOfUser[], setChatsOfUser: Function}) => {
 
-type allChatOfUser = {
-    id: number;
-    channelName: string;
-    chatPicture: string;
-    /*---------LastMessageReceive-------*/
-    username: String | null;
-    msg: string| null;
-    dateSend: Date | null;
-}
+    const [chatsOfUser, setChatsOfUser] = useState<allChatOfUser[]>([])
+    const socket = useContext(WebsocketContext);
+    const {username} = useContext(ConnectionContext);
 
+    useEffect(() => {
 
-const Chats = (props: {activeChat: {id: string, name: string}, setActiveChat: Function}) => {
+        trigger();
 
-        const [chatsOfUser, setChatsOfUser] = useState<allChatOfUser[]>([])
-        const socket = useContext(WebsocketContext);
+        socket.on("ListOfChat", (channelsListReceive : allChatOfUser[]) => {
+			console.log(channelsListReceive);
+            setChatsOfUser(channelsListReceive);
+			console.log("chat of user = ", chatsOfUser);
+        });
 
-
-        useEffect(() => {
-
-            trigger();
-
-            socket.on("ListOfChat", (channelsListReceive : allChatOfUser[]) => {
-				console.log(channelsListReceive);
-                setChatsOfUser(channelsListReceive);
-				console.log("chat of user = ", chatsOfUser);
-            });
-
-            return () => {
-                console.log('Unregistering Events...');
-            }
-        }, [])
-
-        const startRef = useRef<HTMLDivElement>(null); //ref to empty div to autoscroll to bottom
-
-        useEffect(() => {
-            if (chatsOfUser.length > 0) {
-                startRef.current?.scrollIntoView({
-                    behavior: "smooth",
-                    block: "end",
-                });
-            }
-        }, [chatsOfUser.length]);
-
-        const {username} = useContext(ConnectionContext);
-
-        function trigger() {
-            socket.emit('chatList', username);
+        return () => {
+            console.log('Unregistering Events...');
         }
+    }, [])
+
+    const startRef = useRef<HTMLDivElement>(null); //ref to empty div to autoscroll to bottom
+
+    function trigger() {
+       socket.emit('chatList', username);
+    }
         
+    useEffect(() => {
+        if (chatsOfUser.length > 0) {
+            startRef.current?.scrollIntoView({
+                behavior: "smooth",
+                block: "end",
+            });
+        }
+    }, [chatsOfUser.length]);
 
     return (
         <div className='chats'>

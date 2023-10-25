@@ -5,8 +5,9 @@ import BlockIcon from '@mui/icons-material/BlockOutlined';
 import Messages from "./Messages";
 import MessageInput from "./MessageInput";
 import { Tooltip } from "@mui/material";
+import { Active } from './ChatComponent';
 
-const Chat = (props: {activeChat: {id: string, name: string}}) => {
+const Chat = (props: {activeChat: Active}) => {
 
     return (
         <div className='chat'>

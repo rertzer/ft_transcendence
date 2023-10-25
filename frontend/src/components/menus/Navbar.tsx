@@ -24,14 +24,6 @@ function Navbar(props: {RightBar: string, setRightBar: Function}) {
         }
     }
 
-    function handleClickChannels() {
-        if (props.RightBar !== "channels") {
-            props.setRightBar("channels");
-        } else {
-            props.setRightBar("none");
-        }
-    }  
-
     function handleClickChat() {
         if (props.RightBar !== "chat") {
             props.setRightBar("chat");
@@ -68,9 +60,6 @@ function Navbar(props: {RightBar: string, setRightBar: Function}) {
                 </Link>
                 <Tooltip title="Chat" arrow>
                     <ForumIcon style={{cursor:"pointer"}} onClick={handleClickChat}/>
-                </Tooltip>
-                <Tooltip title="Channels" arrow>
-                    <ChatroomIcon style={{cursor:"pointer"}} onClick={handleClickChannels}/>
                 </Tooltip>
                 <Tooltip title="Friends" arrow>
                     <FriendsIcon style={{cursor:"pointer"}} onClick={handleClickFriends}/>

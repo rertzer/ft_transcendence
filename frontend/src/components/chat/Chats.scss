@@ -1,4 +1,9 @@
 .chats {
+    height: calc(100% - 100px);
+    overflow: scroll;
+    &::-webkit-scrollbar {
+        display: none;
+    }
     .noConversations {
         color : white;
         padding: 10px;

@@ -4,7 +4,7 @@ import "./Messages.scss";
 import { useContext, useState } from 'react';
 import ChatContext, { WebsocketContext } from "../../context/chatContext";
 import userEvent from '@testing-library/user-event';
-
+import  ConnectionContext from "../../context/authContext"
 
 type ChatHistory = {
 	msg: string;
@@ -20,8 +20,8 @@ type trigger = {
 
 const Messages = (props: {chatId: string}) => {
 
+	const {username} = useContext(ConnectionContext);
 	const socket = useContext(WebsocketContext);
-
 	const [chatHistory, setChatHistory] = useState<ChatHistory[]>([]);
 	const [toTrigger, setTrigger] = useState<trigger>({numberMsgToDisplay: 15, chatId: props.chatId});
 
@@ -76,7 +76,7 @@ const Messages = (props: {chatId: string}) => {
     return (
         <div className='messages'>
 			{chatHistory.length === 0 ? (
-				<div>No Messages</div>
+				<div></div>
 				) : (
 					<div>
 						{chatHistory.map((chat) => (

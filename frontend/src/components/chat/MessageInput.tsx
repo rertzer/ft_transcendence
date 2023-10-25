@@ -65,7 +65,7 @@ const MessageInput = (props: {chatId: string}) => {
 				onChange={(e) => setValue(e.target.value)}
 				onKeyDown={handleKeyDown} // gestion du bouton Enter pour envoyer
 			/>
-			<button onClick={onSubmit}>envoi</button>
+			<button onClick={onSubmit}>Send</button>
         </div>
     )
 }

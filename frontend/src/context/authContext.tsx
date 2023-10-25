@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import ChatContext from "../context/chatContext";
 import chatContext from "../context/chatContext";
-import  ConnectionContext from "./authContext"
+import ConnectionContext from "./authContext";
 
 export interface IConnected {
 	username: string,

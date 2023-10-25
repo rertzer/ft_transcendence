@@ -1,19 +1,21 @@
 import React from 'react';
 import "./Chatbar.scss"
 //import { AuthContext } from "../../context/authContext";
-import { Tooltip } from '@mui/material';
 import { AddChat } from './AddChat';
-import MenuIcon from '@mui/icons-material/Menu';
+import { ListChannels } from './ListChannels';
+import { allChatOfUser } from "./ChatComponent"
+import { useState } from 'react';
 
-const Chatbar = () => {
+const Chatbar = (props: {chatsOfUser: allChatOfUser[]}) => {
+
+    const [showSubMenu, setShowSubMenu] = useState("none");
+
     return (
         <div className='chatbar'>
             <span className='chatlogo'>Pong Chat</span>
             <div className='icons'>
-                <Tooltip title="List available channels" arrow>
-                    <MenuIcon />
-                </Tooltip>
-                <AddChat />
+                <ListChannels chatsOfUser={props.chatsOfUser} showSubMenu={showSubMenu} setShowSubMenu={setShowSubMenu}/>
+                <AddChat chatsOfUser={props.chatsOfUser} showSubMenu={showSubMenu} setShowSubMenu={setShowSubMenu}/>
             </div>
         </div>
     )

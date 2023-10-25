@@ -1,0 +1,20 @@
+.listchannels {
+    .submenu {
+        width: 460px;
+        background-color: #2f2d52;
+        top: 100px;
+        position: absolute;
+        border-radius: 0px 10px 10px 10px;
+        color: #ddddf7;
+        padding: 20px;
+        cursor: auto;
+        max-height: calc(100% - 100px);
+        overflow: scroll;
+        &::-webkit-scrollbar {
+            display: none;
+        }
+    }
+    .submenu-hidden {
+        display: none;
+    }
+}

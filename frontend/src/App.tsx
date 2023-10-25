@@ -15,12 +15,11 @@ import {IChatContext, WebsocketProvider, socket } from './context/chatContext';
 import ChatContext from './context/chatContext';
 // import { AuthContextProvider } from './context/authContext';
 import ConnectionContext from './context/authContext'
-import Channels from './components/channels/Channels'
 
 function App() {
 	const [username, setUsername] = useState('')
   const [chatId, setChatId] = useState(-1)
-  const ChatContextValue :IChatContext = {
+  const ChatContextValue: IChatContext = {
 	  chatId,
 	  setChatId,
   };
@@ -37,8 +36,6 @@ function App() {
         return (<ChatComponent />);
       case "leaderboards" :
         return (<Leaderboards />);
-      case "channels" :
-        return (<Channels />)
       default :
         return;
     }

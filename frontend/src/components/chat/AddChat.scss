@@ -4,10 +4,28 @@
         background-color: #2f2d52;
         top: 100px;
         position: absolute;
-        border-radius: 10px;
+        border-radius: 0px 10px 10px 10px;
         overflow: hidden;
         color: #ddddf7;
         padding: 20px;
+        cursor: auto;
+        .form {
+            display: flex;
+            justify-content: space-between;
+            p {
+                padding: 10px;
+            }
+            button {
+                padding: 10px;
+                margin: 20px;
+                background-color: #5d5b8d;
+                color: #ddddf7;
+                border-radius: 10px;
+                height: 70px;
+                cursor: pointer;
+                position: sticky;
+            }
+        }
     }
     .submenu-hidden {
         display: none;
