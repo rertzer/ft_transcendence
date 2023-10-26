@@ -98,19 +98,6 @@ function App() {
     if (!login) {
       return <Navigate to="/login" />;
     }
-    /* else {
-      const fetchUser = async () => {
-    
-        const data = await fetch("http://localhost:4000/auth/login", {
-          method: "POST",
-          mode: "cors",
-          headers: { "Content-Type": "application/json; charset=utf-8" },
-          body: JSON.stringify({ login, password }),
-        });
-        setUser(await data.json());
-      };
-      fetchUser();
-    }*/
     return children;
   };
 

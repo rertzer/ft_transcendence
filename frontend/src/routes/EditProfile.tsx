@@ -13,11 +13,49 @@ function Register() {
   const [newEmail, setnewEmail] = useState(user.email);
   const [confPasswordClass, setConfPasswordClass] = useState("NA");
 
+  interface IToSend
+  {
+    login : string,
+    username?: string,
+    password?: string,
+    email?:string,
+  }
+
+  
+  
   const editUser = async () => {
-    if (confPassword !== 'KO')
+    if (confPasswordClass !== 'KO')
     {
-        
+      
+      //const login = user.login;
+      let tosend: IToSend = {login: user.login};
+      if (newUsername)
+        tosend.username = newUsername;
+      if (newPassword)
+        tosend.password = newPassword;
+      if (newEmail)
+        tosend.email = newEmail;
+      
+      console.log(JSON.stringify(tosend));
+      const data = await fetch("http://localhost:4000/auth/edit", {
+        method: "POST",
+        mode: "cors",
+        headers: { "Content-Type": "application/json; charset=utf-8" },
+        body: JSON.stringify(tosend),
+      });
+      const newUser = await data.json();
+      if (newUser.message) {
+        console.log("Bad password");
+        setNewPassword("");
+        setConfPassword("");
+        setConfPasswordClass("NA");
+      } else {
+        setUser(newUser);
+        setEditOk(true);
+      }
     }
+    else
+    console.log("BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD");
   }
   
   useEffect(() => {
