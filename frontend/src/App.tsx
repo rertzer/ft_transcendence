@@ -14,6 +14,7 @@ import Leaderboards from './components/leaderboards/Leaderboards';
 import {IChatContext, WebsocketProvider, socket } from './context/chatContext';
 import ChatContext from './context/chatContext';
 import ConnectionContext from './context/authContext'
+import Game from './components/game/Game';
 
 function App() {
 	const [username, setUsername] = useState('')
@@ -78,7 +79,11 @@ function App() {
         {
           path:"/profile/:id",
           element: <Profile />
-        }
+        },
+		{
+			path:"/game",
+			element: <Game />
+		  }
       ]
     },
     {

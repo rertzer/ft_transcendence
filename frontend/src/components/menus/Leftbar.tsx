@@ -3,6 +3,7 @@ import GamepadIcon from '@mui/icons-material/GamepadOutlined';
 import VideogameIcon from '@mui/icons-material/VideogameAssetOutlined';
 import EsportsIcon from '@mui/icons-material/SportsEsportsOutlined';
 import QuestionMarkIcon from '@mui/icons-material/QuestionMarkOutlined';
+import {Link} from "react-router-dom";
 
 function Leftbar() {
 
@@ -11,10 +12,12 @@ function Leftbar() {
             <div className="container">
                 <div className="menu">
                     <span>Modes de jeu</span>
-                    <div className="item">
-                        <GamepadIcon />
-                        <span>Classic</span>
-                    </div>
+					<Link to="/game" style={{textDecoration:"none"}}>
+                    	<div className="item">
+                        	<GamepadIcon />
+                        	<span>Classic</span>
+                   		</div>
+					</Link>
                     <div className="item">
                         <VideogameIcon />
                         <span>Brickbreaker</span>

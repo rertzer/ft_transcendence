@@ -14,8 +14,9 @@ let lastMessageId = 0;
 createUser()
 @WebSocketGateway({
 	cors: {
-		origin: '*'
-	}
+		origin: 'http://localhost:3000'
+	},
+	namespace: '/chat'
 })
 
 //implements mean that it will contains the metho onModuleInit and will be executed
@@ -34,7 +35,7 @@ export class MyGateway implements OnModuleInit {
 	onModuleInit() {
 		this.server.on('connection', (socket) => {
 			console.log(socket.id);
-			console.log('connected');
+			console.log('connected to chat');
 		})
 	}
 
