@@ -16,7 +16,7 @@ type ChatHistory = {
 	date: string;
 	id: number;
 }
-const MessageInput = (props: {chatId: string}) => {
+const MessageInput = (props: {chatId: number}) => {
 
 	const [messages, setMessages] = useState<MessagePayload[]>([]);
 
@@ -40,12 +40,12 @@ const MessageInput = (props: {chatId: string}) => {
 	}, []);
 
 	const onSubmit = () => {
-		if (value === "" || parseInt(props.chatId) < 0)
+		if (value === "" || props.chatId < 0)
 			return;
 		const messageData = {
 			username: username,
 			content: value,
-			idOfChat: parseInt(props.chatId),
+			idOfChat: props.chatId,
 		}
 		console.log(" username send ", username)
 		socket.emit('newMessage', messageData);

@@ -13,14 +13,14 @@ const Chat = (props: {activeChat: Active}) => {
         <div className='chat'>
             <div className='chatInfo'>
                 <span>{props.activeChat.name}</span>
-                {props.activeChat.id !== '-1' ? <div className="chatIcons">
+                {props.activeChat.id !== -1 ? <div className="chatIcons">
                     <div>
                         <Tooltip title="View profile" arrow>
                             <ProfileIcon />
                         </Tooltip>
                     </div>
                     <div>
-                        <Tooltip title="Block" arrow>
+                        <Tooltip title="Block user" arrow>
                             <BlockIcon />
                         </Tooltip>
                     </div>

@@ -14,11 +14,11 @@ type ChatHistory = {
 }
 
 type trigger = {
-	chatId : string;
+	chatId : number;
 	numberMsgToDisplay: number;
 }
 
-const Messages = (props: {chatId: string}) => {
+const Messages = (props: {chatId: number}) => {
 
 	const {username} = useContext(ConnectionContext);
 	const socket = useContext(WebsocketContext);
