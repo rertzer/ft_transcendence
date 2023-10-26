@@ -77,7 +77,7 @@ export class MyGateway {
 				username: messageData.username,
 				date: getDate(),
 				id: lastMessageId,
-				// idOfChat: messageData.idOfChat
+				idOfChat: messageData.idOfChat
 			});
 			await addChatMessage(messageData.idOfChat, messageData.username, messageData.content, getDate());
 		}
