@@ -50,7 +50,7 @@ const Chats = (props: {activeChat: Active, setActiveChat: Function, chatsOfUser:
 						{props.chatsOfUser.map((channel) => (
                             <div onClick={() => {
                                     if (channel.id != props.activeChat.id) {
-                                    props.setActiveChat({id: channel.id.toString(), name: channel.channelName});
+                                    props.setActiveChat({id: channel.id, name: channel.channelName});
                                     socket.emit('retrieveMessage', {chatId: channel.id, messageToDisplay: 15 })
                                     }}}>
                                 <div key={channel.id} className={props.activeChat.id === channel.id ? "userChat active" : "userChat"}>

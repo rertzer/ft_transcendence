@@ -18,7 +18,7 @@ type trigger = {
 	numberMsgToDisplay: number;
 }
 
-const Messages = (props: {chatId: number}) => {
+const Messages = (props: {chatId: number, isOwner: boolean, isAdmin: boolean}) => {
 
 	const {username} = useContext(ConnectionContext);
 	const socket = useContext(WebsocketContext);
@@ -76,12 +76,12 @@ const Messages = (props: {chatId: number}) => {
     return (
         <div className='messages'>
 			{chatHistory.length === 0 ? (
-				<div></div>
+				<div>No messages</div>
 				) : (
 					<div>
 						{chatHistory.map((chat) => (
 							<div key={chat.id}>
-				 				 <Message date={chat.date} username={chat.username} msg={chat.msg}/>
+				 				 <Message date={chat.date} username={chat.username} msg={chat.msg} isOwner={props.isOwner} isAdmin={props.isAdmin}/>
 							</div>
 			  			))}
 			  		</div>

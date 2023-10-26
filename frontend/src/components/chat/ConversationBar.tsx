@@ -1,6 +1,7 @@
 import "./ConversationBar.scss";
 import ProfileIcon from '@mui/icons-material/AccountBoxOutlined';
 import BlockIcon from '@mui/icons-material/BlockOutlined';
+import LogoutIcon from '@mui/icons-material/MeetingRoomOutlined';
 import LockIcon from '@mui/icons-material/Lock';
 import CloseIcon from '@mui/icons-material/Close';
 import { Tooltip } from "@mui/material";
@@ -8,7 +9,7 @@ import { allChatOfUser } from "./ChatComponent";
 import {Link} from "react-router-dom";
 
 
-const ConversationBar = (props: {toDisplay: allChatOfUser, setActiveChat: Function}) => {
+const ConversationBar = (props: {toDisplay: allChatOfUser , setActiveChat: Function, isOwner: boolean}) => {
 
     // if (props.toDisplay.isChannel === false) {  //interface d'une fenetre de DM
     //     return (
@@ -35,21 +36,23 @@ const ConversationBar = (props: {toDisplay: allChatOfUser, setActiveChat: Functi
     //         </div>
     //     </div>
     // );
-    // } else if (currentUser.uid === props.toDisplay.ownerUid)  { // interface de l'owner du channel
+    // } else 
         return (
             <div className='chatInfo'>
             <span>{props.toDisplay.channelName}</span>
             <div className="chatIcons">
+                {props.isOwner === true ? 
                 <div>
                     <Tooltip title="Manage password" arrow>
                         <LockIcon />
                     </Tooltip>
-                </div>
+                </div> : <div></div>
+                }             
                 <div>
-                    <Tooltip title="Block user" arrow>
-                        <BlockIcon />
+                    <Tooltip title="Leave channel" arrow>
+                        <LogoutIcon />
                     </Tooltip>
-                </div>
+                 </div>
                 <div>
                     <Tooltip title="Close conversation" arrow>
                         <CloseIcon onClick={() => {props.setActiveChat({id: -1, name: "none"})}} />
@@ -58,19 +61,6 @@ const ConversationBar = (props: {toDisplay: allChatOfUser, setActiveChat: Functi
             </div>
         </div>
         );
-    // } else if (props.toDisplay.adminUids.indexOf(currentUser.uid) !== -1) { // interface admin
-    //     return (
-    //         <div>
-
-    //         </div>
-    //     );
-    // } else { // interface user classique
-    //     return (
-    //         <div>
-
-    //         </div>
-    //     );
-    // }
 }
 
 export default ConversationBar;
