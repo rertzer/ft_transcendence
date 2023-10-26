@@ -29,16 +29,26 @@ const ChatComponent = () => {
     const [chatsOfUser, setChatsOfUser] = useState<allChatOfUser[]>([])
     const [activeChat, setActiveChat] = useState<Active>({id: -1, name: "none"})
 
+    let chatToDisplay = chatsOfUser.find(element => element.id === activeChat.id);
+    if (chatToDisplay !== undefined) {
     return (
         <div className="chatcomponent">
             <div className='container'>
                 <Sidebar activeChat={activeChat} setActiveChat={setActiveChat} chatsOfUser={chatsOfUser} setChatsOfUser={setChatsOfUser}/>
-                {activeChat.id !== -1 ?
-                <Chat toDisplay={chatsOfUser[activeChat.id - 1]} setActiveChat={setActiveChat}/> :
-                <div className='noChat'>Pong Chat</div> }
+                <Chat toDisplay={chatToDisplay} setActiveChat={setActiveChat}/> :
             </div>
         </div>
     )
+    } else {
+        return (
+            <div className="chatcomponent">
+            <div className='container'>
+                <Sidebar activeChat={activeChat} setActiveChat={setActiveChat} chatsOfUser={chatsOfUser} setChatsOfUser={setChatsOfUser}/>
+                <div className='noChat'>Pong Chat</div>
+            </div>
+        </div>
+        )
+    }
 }
 
 export default ChatComponent;

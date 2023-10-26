@@ -4,6 +4,7 @@ import {checkChatId, checkLogin} from "../../prisma/chat/prisma.chat.check";
 import { ChatType } from "../../prisma/chat/prisma.chat.check";
 import {addChat, RetrievePrivateMessage, addPrivateMessage,getIdOfLogin, addChatMessage, addChanelUser, RetrieveChatMessage, findUser } from "../../prisma/chat/prisma.chat.service";
 import { getDate } from "../utils/utils.service";
+import { Socket } from "socket.io";
 
 
 @Injectable()
@@ -11,23 +12,23 @@ export class JoinChatService{
 	constructor(private gatewayModule: MyGateway){
 	}
 
-	async joinChat(username: string, chat_id:string, user_role:string, passeword:string)
+	async joinChat(username: string, chat_id:string, user_role:string, passeword:string, sock : Socket)
 	{
 		console.log("in join chat class");
-		if (this.checkNumber(chat_id) === -1)
+		if (this.checkNumber(chat_id, sock) === -1)
 			return;
-		if (this.checkChatExist(chat_id) === null)
+		if (this.checkChatExist(chat_id, sock) === null)
 			return;
 		this.addUserToChat(username, chat_id, user_role, passeword);
 	}
 	//async addUserToChat(username: string, chat_id:string, user_role:string, passeword:string)
 
-	checkNumber(chat_id: string) : Number
+	checkNumber(chat_id: string, sock : Socket) : Number
 	{
 		if (Number.isNaN(parseInt(chat_id)))
 		{
 			console.log("Chat asked is not a number")
-			this.gatewayModule.getWebsocketServer().emit('onJoinChatRoom', {
+			sock.emit('onJoinChatRoom', {
 				id : '-1'
 			});
 			return (-1)
@@ -35,25 +36,25 @@ export class JoinChatService{
 		return (0);
 	}
 
-	async checkChatExist(chat_id: string) {
+	async checkChatExist(chat_id: string, sock : Socket) {
 		const chatExist = await checkChatId(parseInt(chat_id));
 		if (chatExist == ChatType.NotExisting) {
-			this.gatewayModule.getWebsocketServer().emit('onJoinChatRoom', {
+			sock.emit('onJoinChatRoom', {
 				id : '-1'
 			});
 		}
 		else if  (chatExist == ChatType.Private) {
-			this.gatewayModule.getWebsocketServer().emit('onJoinChatRoom', {
+			sock.emit('onJoinChatRoom', {
 				id : '-3'
 			});
 		}
 		else if  (chatExist == ChatType.Password) {
-			this.gatewayModule.getWebsocketServer().emit('onJoinChatRoom', {
+			sock.emit('onJoinChatRoom', {
 				id : '-2'
 			});
 		}
 		else {
-			this.gatewayModule.getWebsocketServer().emit('onJoinChatRoom', {
+			sock.emit('onJoinChatRoom', {
 				id : chat_id
 			});
 			return (chat_id)
@@ -74,18 +75,3 @@ export class JoinChatService{
 		}
 	}
 }
-
-
-// 		const messageReceived = await RetrieveChatMessage(parseInt(chat_id))
-// 		if (messageReceived !== undefined)
-// 		{
-// 			for (const element of messageReceived) {
-// 				const username = await findUser(element.chat_channels_user_id);
-// 				this.gatewayModule.getWebsocketServer().emit('retrieveMessage', {
-// 					msg: element.message,
-// 					username: username,
-// 					date: element.date_sent,
-// 					id: element.id
-// 				})
-// 			};
-// 		}

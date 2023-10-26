@@ -66,6 +66,7 @@ export async function RetrievePrivateMessage(login:string) {
 
 export async function RetrieveChatMessage(chat_channels_id: number) {
 		// Find the chat channel by its ID
+		console.log("prisam side chat id : ", chat_channels_id)
 		const chatChannel = await prismaService.chatChannels.findUnique({
 		  where: {
 			id: chat_channels_id,
