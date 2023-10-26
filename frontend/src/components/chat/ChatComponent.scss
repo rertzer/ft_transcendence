@@ -11,5 +11,15 @@
         height: 100%;
         display: flex;
         overflow: hidden;
+        .noChat {
+            width: 440px;
+            background-color: #ddddf7;
+            font-weight: bold;
+            font-size: 30px;
+            justify-content: center;
+            text-align: center;
+            color: #2f2d52;
+            padding: 100px;
+        }
     }
 }

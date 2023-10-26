@@ -56,13 +56,20 @@ function Navbar(props: {RightBar: string, setRightBar: Function}) {
                     </div>
                 </Link>
                 <Tooltip title="Chat" arrow>
+                    {props.RightBar === "chat" ?
+                    <ForumIcon style={{cursor:"pointer", color:"#5d5b8d"}} onClick={handleClickChat}/> :
                     <ForumIcon style={{cursor:"pointer"}} onClick={handleClickChat}/>
+                }
                 </Tooltip>
                 <Tooltip title="Friends" arrow>
-                    <FriendsIcon style={{cursor:"pointer"}} onClick={handleClickFriends}/>
+                    {props.RightBar === "friends" ?
+                    <FriendsIcon style={{cursor:"pointer", color:"#5d5b8d"}} onClick={handleClickFriends}/> :
+                    <FriendsIcon style={{cursor:"pointer"}} onClick={handleClickFriends}/> }
                 </Tooltip>
                 <Tooltip title="Leaderboards" arrow>
-                    <LeaderboardIcon style={{cursor:"pointer"}} onClick={handleClickLeaderboards}/>
+                    {props.RightBar === "leaderboards" ?
+                    <LeaderboardIcon style={{cursor:"pointer", color:"#5d5b8d"}} onClick={handleClickLeaderboards}/> :
+                    <LeaderboardIcon style={{cursor:"pointer"}} onClick={handleClickLeaderboards}/>}
                 </Tooltip>
                 <Tooltip title="Log out" arrow>
                     <LogoutIcon style={{cursor:"pointer"}}/>

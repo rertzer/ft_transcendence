@@ -21,15 +21,6 @@ export const AddChat = (props: {chatsOfUser: allChatOfUser[], showSubMenu: strin
 	const [chatType, setChatType] = useState('public');
 	const [chatInfo, setChatInfo] = useState({}); // Define the state for chat information
 
-	useEffect(() => {
-
-        trigger();
-
-        return () => {
-            console.log('triggered');
-        }
-    }, [props.chatsOfUser])
-
 	function trigger() {
 		socket.emit('chatList', username);
 	}
