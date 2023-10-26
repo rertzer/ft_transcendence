@@ -31,7 +31,7 @@ const Message = (props: {username: string, date: string, msg: string, isOwner: b
             <div className={showUserActionsMenu ? "userActions" : "userActions-hidden"}>
                 <div className="menuHeader">
                     <h4>{props.username}</h4>
-                    <CloseIcon style={{}}/>
+                    <CloseIcon style={{cursor:"pointer"}} onClick={toggleUserActionsMenu}/>
                 </div>
                 <hr></hr>
                 <div>Invite to play</div>

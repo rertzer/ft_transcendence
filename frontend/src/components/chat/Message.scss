@@ -47,11 +47,10 @@
     .userActions {
         width: 160px;
         background-color: #2f2d52;
-        position: absolute;
+        position: relative;
         display: flex;
         flex-direction: column;
         gap: 5px;
-        top: 100px;
         border-radius: 0px 10px 10px 10px;
         overflow:show;
         color: #ddddf7;
@@ -59,6 +58,7 @@
         font-size: 12px;
         .menuHeader {
             display: flex;
+            gap: 10px;
         }
     }
     .userActions-hidden {
