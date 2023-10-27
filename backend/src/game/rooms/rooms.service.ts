@@ -3,6 +3,7 @@ import { Room } from '../Interface/room.interface';
 import { Player } from '../Interface/player.interface';
 import { Ball } from '../Interface/ball.interface';
 import { IGameParamBackEnd } from '../Interface/gameparam.interface';
+import { Socket } from 'socket.io';
 
 function leftboard(ball:Ball):boolean {
     return (ball.pos.x > 1 || ball.pos.x < 0)
@@ -51,8 +52,6 @@ export class RoomsService {
 			},
 			playerLeft:player,
 			playerRight:null,
-			posYLeft:1/2,
-			posYRight:1/2,
 			scoreLeft:0,
 			scoreRight:0,
 			gameStatus:'WAITING_FOR_PLAYER', 
@@ -77,7 +76,8 @@ export class RoomsService {
 		return this.rooms;
 	};
 
-	findRoomOfPlayer(player: Player): Room | null {
+	findRoomOfPlayer(player: Player | null): Room | null {
+		if (!player) return null;
 		const room = this.rooms.find((element) => (element.playerLeft === player || element.playerRight === player));
 		if (typeof(room) === 'undefined') {
 			return null;
@@ -85,6 +85,14 @@ export class RoomsService {
 		return room;
 	};
 	
+	findRoomOfPlayerBySocket(socket: Socket): Room | null {
+		const room = this.rooms.find((element) => (element.playerLeft?.socket === socket || element.playerRight?.socket === socket));
+		if (typeof(room) === 'undefined') {
+			return null;
+		}
+		return room;
+	};
+
 	findRoomById(idToFind:string) : Room | null {
 		const room = this.rooms.find((element) => (element.id === idToFind));
 		if (typeof(room) === 'undefined') {
@@ -186,7 +194,7 @@ export class RoomsService {
 				room.ball.dir.y = - room.ball.dir.y;
 		}
 		/* Paddle colision*/
-		let playerWithBallPosY = (room.ball.pos.x <= 1 / 2) ? room.posYLeft : room.posYRight;
+		let playerWithBallPosY = (room.ball.pos.x <= 1 / 2) ? room.playerLeft?.posY! : room.playerRight?.posY!;
 		let sidePlayer:string = (room.ball.pos.x <= 1 / 2) ? 'left' : 'right';
 		let direction = (room.ball.pos.x <= 1 / 2) ? 1 : -1;
 		if (colision(playerWithBallPosY, room.ball, this.gameParam, sidePlayer)) {
@@ -211,17 +219,29 @@ export class RoomsService {
 				dir: {x: -room.ball.dir.x, y: room.ball.dir.y},
 				speed: this.initBall.speed
 			}
-			room.posYLeft = 0.5;
-			room.posYRight = 0.5;
+			if (room.playerLeft) room.playerLeft.posY = 0.5;
+			if (room.playerRight) room.playerRight.posY = 0.5;
 		}
 	}
 
-	movePlayers(room: Room) {
-		if(room.gameStatus !== 'PLAYING') return ;
-		if (room.playerLeft?.upArrowDown) room.posYLeft = Math.max(this.gameParam.paddleHeight / 2, room.posYLeft - this.gameParam.paddleSpeed);
-		if (room.playerLeft?.downArrowDown) room.posYLeft = Math.min(1 - this.gameParam.paddleHeight / 2, room.posYLeft + this.gameParam.paddleSpeed);
-		if (room.playerRight?.upArrowDown) room.posYRight = Math.max(this.gameParam.paddleHeight / 2, room.posYRight - this.gameParam.paddleSpeed);
-		if (room.playerRight?.downArrowDown) room.posYRight = Math.min(1 - this.gameParam.paddleHeight / 2, room.posYRight + this.gameParam.paddleSpeed);
+	movePlayerOnEvent(param :{room: Room, key:string, idPlayerMove:number, client:Socket}) {
+		let player:Player | null;
+		param.room.playerLeft?.socket === param.client ? player = param.room.playerLeft : player = param.room.playerRight;
+		if (!player) return ;
+		player.idPlayerMove = param.idPlayerMove;
+		switch (param.key){
+			case 'KeyW':
+				player.posY = Math.max(this.gameParam.paddleHeight / 2, player.posY - this.gameParam.paddleSpeed);
+				break;
+			case 'KeyS':
+				player.posY = Math.min(1 - this.gameParam.paddleHeight / 2,  player.posY + this.gameParam.paddleSpeed);
+				break;
+			case 'Space':
+				player.readyToPlay = true;
+				break;
+			default:
+				return; 
+		}
 	}
 
 	updateRoomGameStatus(room:Room) {
@@ -247,7 +267,7 @@ export class RoomsService {
 	playGameLoop() {
 		this.rooms.forEach(room => {
 			this.updateRoomGameStatus(room);
-			this.movePlayers(room);
+			//this.movePlayers(room);
 			this.moveBall(room);
 		});
 	};
@@ -257,21 +277,17 @@ export class RoomsService {
 			const data = {
 				ball:room.ball,
 				playerLeft:{
-					upArrowDown:room.playerLeft?.upArrowDown,
-					downArrowDown:room.playerLeft?.downArrowDown,
 					name:room.playerLeft?.name,
 					socket_id: room.playerLeft?.socket.id,
-					readyToPlay:room.playerLeft?.readyToPlay
+					readyToPlay:room.playerLeft?.readyToPlay,
+					idPlayerMove:room.playerLeft?.idPlayerMove
 				},
 				playerRight:{
-					upArrowDown:room.playerRight?.upArrowDown,
-					downArrowDown:room.playerRight?.downArrowDown,
 					name:room.playerRight?.name,
 					socket_id: room.playerRight?.socket.id,
-					readyToPlay:room.playerRight?.readyToPlay
+					readyToPlay:room.playerRight?.readyToPlay,
+					idPlayerMove:room.playerRight?.idPlayerMove
 				},
-				posYLeft:room.posYLeft,
-				posYRight:room.posYRight,
 				scoreLeft:room.scoreLeft, 
 				scoreRight:room.scoreRight,
 				gameStatus:room.gameStatus,

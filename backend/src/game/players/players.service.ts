@@ -38,22 +38,16 @@ export class PlayersService {
 		}
 		console.log('Players:',this.players);
 	};
-
-	processPlayerKeyEvent(param:{socket: Socket, key:string, move:boolean}) {
+	//A deplacer dans room pour avoir les parametres.
+	/*processPlayerKeyEvent(param:{socket: Socket, key:string, idPlayerMove:number}) {
 		let player = this.findOne(param.socket);
 		if (!player) return; 
 		switch (param.key){
 			case 'KeyW':
-				player.upArrowDown = param.move;
+				player.posY = Math.max(pong.paddleHeight / 2, MyPlayer.posY - pong.paddleSpeed);
 				break;
 			case 'KeyS':
-				player.downArrowDown = param.move;
-				break;
-			case 'ArrowUp':
-				player.upArrowDown = param.move;
-				break;
-			case 'ArrowDown':
-				player.downArrowDown = param.move;
+				player.posY = param.move;
 				break;
 			case 'Space':
 				player.readyToPlay = true;
@@ -61,7 +55,7 @@ export class PlayersService {
 			default:
 				return; 
 		}
-	}
+	}*/
 
 
 }

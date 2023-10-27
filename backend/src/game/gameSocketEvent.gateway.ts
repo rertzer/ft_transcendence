@@ -9,7 +9,7 @@ import { Logger } from "@nestjs/common";
 @WebSocketGateway({
     namespace: '/game_socket',
 	cors: {
-        origin: 'http://localhost:3000',
+        origin: '*',
     },
 	
 })
@@ -30,12 +30,12 @@ export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, On
 	handleConnection(client:Socket){
 		console.log(`GameSocket Client connected: ${client.id}`);
 		this.playersService.create({
-			upArrowDown:false,
-			downArrowDown:false,
-			name:'', 
+			name:'',
+			posY: 0.5,
 			readyToPlay:false,
 			socket: client, 
-			room:null
+			room:null,
+			idPlayerMove:-1
 		});
     }
 	//Deconnexion 
@@ -56,10 +56,10 @@ export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, On
 		} 
 	}
 	@SubscribeMessage('keyevent')
-	handlePlayerKeyEvent(@MessageBody() data:{move:boolean, key:string}, @ConnectedSocket() client:Socket){
-		const player = this.playersService.findOne(client);
-		if (player) {
-			this.playersService.processPlayerKeyEvent({socket:client, key: data.key, move:data.move});
+	handlePlayerKeyEvent(@MessageBody() data:{key:string, idPlayerMove:number}, @ConnectedSocket() client:Socket){
+		const room = this.roomsService.findRoomOfPlayerBySocket(client)
+		if (room) {
+			this.roomsService.movePlayerOnEvent({room, key:data.key, idPlayerMove:data.idPlayerMove, client});
 		}
 	}
 

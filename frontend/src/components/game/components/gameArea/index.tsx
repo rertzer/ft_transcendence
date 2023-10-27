@@ -4,10 +4,14 @@ import gameContext from '../../../../context/gameContext';
 import printMenu from "./printMenu";
 import printGame from "./printGame";
 import { gameSocket } from "../../services/gameSocketService";
-import { GameStatus } from "./interfacesGame";
+import { GameStatus, IPlayer } from "./interfacesGame";
 
 function GameArea(props:any) {
 	const {roomName, gameWidth, gameHeight, playerName } = useContext(gameContext);
+	const [timeLastFrame, setTimeLastFrame] = useState(new Date());
+	const [idPlayerMove, setIdPlayerMove] = useState(0);
+	const [myPlayerMoves, setMyPlayerMoves] = useState<{idPlayerMove: number, dy:number}[]>([]);
+
 	const [pong, setPong] = useState({
 		idRoom: '',
 		ballRadius: 0,
@@ -86,9 +90,16 @@ function GameArea(props:any) {
 			console.log("Disconnected");
 		}
 
+		function upDatePlayerPos(){
+
+		}
+
 		function onGameState(data:any) {
-			console.log('gamestate')
+			
 			setBall((prev) => ({ ...prev, pos: data.ball.pos, dir:data.ball.dir, speed:data.ball.speed}))
+			/** Ici je dois regarder l'id de move que le back me renvoie, supprimer tous les mouvements du tableau qui sont 
+			 * avant cet id, puis appliquer les mouvements qui restent a chacun.  */
+			upDatePlayerPos();
 			setFrontEndPlayerLeft((prev) => ({ ...prev, posY: data.posYLeft, score: data.scoreLeft, readyToPlay:data.playerLeft.readyToPlay}));
 			setFrontEndPlayerRight((prev) => ({ ...prev, posY: data.posYRight, score: data.scoreRight, readyToPlay:data.playerRight.readyToPlay}));
 			setPong((prev) => ({ ...prev, gameStatus:data.gameStatus, startingCount: data.startingCount}))
@@ -144,27 +155,45 @@ function GameArea(props:any) {
 			
 	}, [playerName, roomName ]);
 
+/** Client interpolation .. \
+ * il faut que j'enregistre le mouse down ou mouse up cote front. et dans la boucle du jeu, 
+ * je regarde si c'est down et si c'est le cas, je deplace mon joueur et j'envoie un message pour dire que j'ai fait le 
+ * deplacement, avec un id de mouvement. et je stocke en local les mouvements realises. 
+ * 
+ * Au niveau du back, je deplace immediatement le joueur quand je suis au courant de l'event, et pas a chaque tour de boucle de back. 
+ * 
+ * Quand je recoit les infos sur les positions de la part de mon seurveur, je recoit aussi l'id du dernier mouvement qu'il a pris en compte. 
+ * Du coup, dans mon tableau, je supprime les mouvements faits par le seurveurs dans la liste des mouvements du player. 
+ * Et je rajoute a la position que me donne le serveurs, les mouvements suivants avant d'afficher l'image. 
+ * 
+ * Gestion des FPS des clients. 
+ * Sur les DELL de l'ecole les annimations canvas sont render avec un fps de 60. Mais sur mon mac, je suis a 120. Du coup si j'envoie un 
+ * event pour dire de me deplacer a chaque tour de boucle, je vais aller deux fois plus vite... 
+ * ==> solution, calculer le temps ecoule entre deux tours de boucle et si c'est trop faible, ne rien faire cette fois ci.
+ * 
+ */
 	useEffect(() => {
 		const handleKey = (event: KeyboardEvent) => {
-			let move:boolean = false
+			let move:boolean = false;
 			if (event.type === 'keydown') {
 				move = true;
 			}
+			const mySide = frontEndPlayerLeft.socketId === gameSocket.id ? 'left' : 'right';
 			switch (event.code){
 				case 'KeyW':
-					gameSocket.emit('keyevent', {move:move, key:'KeyW'});
+					mySide === 'left' ? setFrontEndPlayerLeft((prev) => ({...prev, upArrowDown: move})) : setFrontEndPlayerRight((prev) => ({...prev, upArrowDown: move}))
 					break;
 				case 'KeyS':
-					gameSocket.emit('keyevent', {move:move, key:'KeyS'});
+					mySide === 'left' ? setFrontEndPlayerLeft((prev) => ({...prev, downArrowDown: move})) : setFrontEndPlayerRight((prev) => ({...prev, downArrowDown: move}))
 					break;
 				case 'ArrowUp':
-					gameSocket.emit('keyevent', {move:move, key:'ArrowUp'});
+					mySide === 'left' ? setFrontEndPlayerLeft((prev) => ({...prev, upArrowDown: move})) : setFrontEndPlayerRight((prev) => ({...prev, upArrowDown: move}))
 					break;
 				case 'ArrowDown':
-					gameSocket.emit('keyevent', {move:move, key:'ArrowDown'});
+					mySide === 'left' ? setFrontEndPlayerLeft((prev) => ({...prev, downArrowDown: move})) : setFrontEndPlayerRight((prev) => ({...prev, downArrowDown: move}))
 					break;
 				case 'Space':
-					gameSocket.emit('keyevent', {move:move, key:'Space'});
+					gameSocket.emit('keyevent', {key:'Space'});
 					break;
 				default:
 					return;
@@ -179,7 +208,40 @@ function GameArea(props:any) {
 		});
 	}, [frontEndPlayerLeft.posY, frontEndPlayerRight.posY, pong.endgame, pong.ballInitSpeed, pong.ballInitDir]);
 
+	function moveMyPlayerImediately() {
+		const now = new Date();
+		const timePastSinceLastFrame = now.getTime() - timeLastFrame.getTime();
+		if (timePastSinceLastFrame < 15) return;
+		setTimeLastFrame(now);
+
+		if (pong.gameStatus !== 'PLAYING') return;
+
+		let MyPlayer:IPlayer;
+		frontEndPlayerLeft.socketId === gameSocket.id ? MyPlayer = frontEndPlayerLeft : MyPlayer = frontEndPlayerRight;
+		let MyPlayerMove = {
+			idPlayerMove : idPlayerMove,
+			dy:0
+		};
+		if (MyPlayer.upArrowDown || MyPlayer.downArrowDown) {
+			if (MyPlayer.upArrowDown) {
+				MyPlayer.posY = Math.max(pong.paddleHeight / 2, MyPlayer.posY - pong.paddleSpeed);
+				MyPlayerMove.dy -= pong.paddleSpeed;
+				gameSocket.emit('keyevent', {key:'KeyW', idPlayerMove:idPlayerMove});
+			}
+			if (MyPlayer.downArrowDown) {
+				MyPlayer.posY = Math.min(1 - pong.paddleHeight / 2,  MyPlayer.posY + pong.paddleSpeed);
+				MyPlayerMove.dy += pong.paddleSpeed;
+				gameSocket.emit('keyevent', {key:'KeyS', idPlayerMove:idPlayerMove});
+			}
+			myPlayerMoves.push(MyPlayerMove);
+			setMyPlayerMoves(myPlayerMoves);
+			console.log(myPlayerMoves);
+			setIdPlayerMove(idPlayerMove + 1);
+		}
+	};
+
 	function render(context:CanvasRenderingContext2D):void {
+		moveMyPlayerImediately();
 		context.clearRect(0, 0, context.canvas.width, context.canvas.height)
 		printGame({context:context, pong:pong, playerLeft:frontEndPlayerLeft, playerRight:frontEndPlayerRight, ball:ball, gameWidth:gameWidth, gameHeight:gameHeight});
 		printMenu({pong:pong, context:context, gameWidth:gameWidth, gameHeight:gameHeight, frontEndPlayerLeft:frontEndPlayerLeft, frontEndPlayerRight:frontEndPlayerRight,});
