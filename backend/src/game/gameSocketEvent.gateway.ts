@@ -14,9 +14,8 @@ import { Logger } from "@nestjs/common";
 	
 })
 export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect{
-
+	
 	private readonly logger = new Logger(GameSocketEvents.name);
-
 
 	@Inject(PlayersService)
 	private readonly playersService: PlayersService;
@@ -64,7 +63,7 @@ export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, On
 		}
 	}
 
-	@Interval(15)
+	@Interval(1000/60)
 	handleInterval() {
 		this.roomsService.playGameLoop()
 		this.roomsService.broadcastGameState();

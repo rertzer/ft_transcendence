@@ -1,8 +1,8 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useContext} from 'react';
 import { JoinRoom } from './components/joinRoom';
 import GameContext, { IGameContextProps } from '../../context/gameContext';
 import GameArea from './components/gameArea';
-import { SetUserName } from './components/setUserName';
+import ConnectionContext from '../../context/authContext'
 
 function Game() {
 	const [roomName, setRoomName] = useState('');
@@ -10,12 +10,12 @@ function Game() {
 	const [gameWidth, setGameWidth] = useState(0);
 	const [gameHeight, setGameHeight] = useState(0);
 
+	const {username} = useContext(ConnectionContext);
+
 	useEffect(() => {
-		/*const width = 300 * 1;
-		setGameWidth(width);
-		setGameHeight((width * 1) /2);*/
+		setPlayerName(username);
 	}, []);
-	
+
 	const gameContextValue :IGameContextProps = {
 		roomName,
 		setRoomName,
@@ -29,7 +29,6 @@ function Game() {
 
 	return (
 		<GameContext.Provider value={gameContextValue}>
-			{playerName === '' && <SetUserName />}
 			{playerName!== '' && roomName === '' && <JoinRoom />}
 			{playerName!== '' && roomName !== '' && <GameArea />}
 		</GameContext.Provider>

@@ -8,8 +8,6 @@ import { GameStatus } from "./interfacesGame";
 
 function GameArea(props:any) {
 	const {roomName, gameWidth, gameHeight, playerName } = useContext(gameContext);
-	console.log(gameWidth);
-	console.log(gameHeight);
 	const [pong, setPong] = useState({
 		idRoom: '',
 		ballRadius: 0,
@@ -89,6 +87,7 @@ function GameArea(props:any) {
 		}
 
 		function onGameState(data:any) {
+			console.log('gamestate')
 			setBall((prev) => ({ ...prev, pos: data.ball.pos, dir:data.ball.dir, speed:data.ball.speed}))
 			setFrontEndPlayerLeft((prev) => ({ ...prev, posY: data.posYLeft, score: data.scoreLeft, readyToPlay:data.playerLeft.readyToPlay}));
 			setFrontEndPlayerRight((prev) => ({ ...prev, posY: data.posYRight, score: data.scoreRight, readyToPlay:data.playerRight.readyToPlay}));
@@ -191,11 +190,13 @@ function GameArea(props:any) {
 			<Canvas draw = {render} style={styleCanvas} />
 			<div><strong>You play on the {frontEndPlayerLeft.socketId === gameSocket.id ? 'left' : 'right'} !</strong></div>
 			<div><strong>Ball speed {ball.speed} </strong></div>
-			<div> <strong>Pong : </strong><br/>{JSON.stringify(pong, null, 4)}</div>
-			<div> <strong>PlayerLeft : </strong><br/>{JSON.stringify(frontEndPlayerLeft, null, 4)}</div>
-			<div> <strong>PlayerRight : </strong><br/>{JSON.stringify(frontEndPlayerRight, null, 4)}</div>
 		</>
 	);
 };
 
 export default GameArea
+
+/*			<div> <strong>Pong : </strong><br/>{JSON.stringify(pong, null, 4)}</div>
+			<div> <strong>PlayerLeft : </strong><br/>{JSON.stringify(frontEndPlayerLeft, null, 4)}</div>
+			<div> <strong>PlayerRight : </strong><br/>{JSON.stringify(frontEndPlayerRight, null, 4)}</div>
+*/
