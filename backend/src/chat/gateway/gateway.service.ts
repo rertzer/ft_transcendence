@@ -158,8 +158,16 @@ export class MyGateway {
 			if (idOfUser !== undefined)
 			{
 				const newChatId = await addChat(messageData.chatName, messageData.chatType,idOfUser, encodedPassword );
-				addChanelUser(newChatId, idOfUser, 'admin', getDate(), null);
-				console.log("new chat : ", newChatId);
+				const chatType = {
+					id: newChatId,
+					channelName: messageData.chatName,
+					chatPicture: 'avatarOfOwner',// need to be change
+					username: null,
+					msg: null,
+					dateSend: null,
+				}
+				client.emit('newChat', chatType)
+				await addChanelUser(newChatId, idOfUser, 'admin', getDate(), null).then(()=> client.emit('chatList', messageData.username));
 			}
 		}
 	}
