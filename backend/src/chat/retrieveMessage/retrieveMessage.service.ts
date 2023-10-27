@@ -30,6 +30,7 @@ export class RetrieveMessageService {
 						username: username,
 						date: element.date_sent,
 						id: element.id,
+						chatId: element.chat_channels_id,
 					}
 					messageHistory.push(msg);
 				};
