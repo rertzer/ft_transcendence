@@ -8,6 +8,7 @@ import { AuthDto, LoginDto, EditDto } from './dto';
 import * as argon from 'argon2';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { User } from '@prisma/client';
+import { Express } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -75,4 +76,10 @@ export class AuthService {
     if (!user) throw new ForbiddenException('Bad login');
     return user;
   } // end of edit
+
+  async editAvatar(file: Express.Multer.File) {
+    console.log('Editing avatar');
+    console.log(file);
+    return {file};
+  } // end of editAvatar
 }

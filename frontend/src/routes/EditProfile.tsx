@@ -1,7 +1,7 @@
 import "./EditProfile.scss";
 import { Link, Navigate } from "react-router-dom";
 import UserContext from "../context/userContext";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, MouseEvent } from "react";
 
 function Register() {
   const { user, setUser } = useContext(UserContext);
@@ -10,32 +10,56 @@ function Register() {
   const [newUsername, setnewUsername] = useState(user.username);
   const [newPassword, setNewPassword] = useState("");
   const [confPassword, setConfPassword] = useState("");
-  const [newEmail, setnewEmail] = useState(user.email);
+  const [newEmail, setNewEmail] = useState(user.email);
   const [confPasswordClass, setConfPasswordClass] = useState("NA");
+  const [newAvatar, setNewAvatar] = useState<File>();
+  const [avatarName, setAvatarName] = useState("");
 
-  interface IToSend
-  {
-    login : string,
-    username?: string,
-    password?: string,
-    email?:string,
+  interface IToSend {
+    login: string;
+    username?: string;
+    password?: string;
+    email?: string;
+    avatar?: string;
   }
+  const handleAvatar = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { files } = event.target;
+    const selectedFiles = files as FileList;
+    const avatar = selectedFiles?.[0];
+    if (avatar) {
+      console.log("avatar is", avatar, " __ ", avatar.name);
+      setNewAvatar(avatar);
+      setAvatarName(avatar.name);
+      console.log("avatar found 1", avatarName);
+    }
+  };
 
-  
-  
-  const editUser = async () => {
-    if (confPasswordClass !== 'KO')
-    {
-      
+
+  const editUser = async (event: MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    console.log("Editing the user");
+    if (confPasswordClass !== "KO") {
+      if (newAvatar) {
+        console.log("new Avatar");
+        let formData = new FormData();
+        formData.append("file", newAvatar, newAvatar.name);
+        console.log(formData);
+
+        const fileData = await fetch("http://localhost:4000/auth/editAvatar", {
+          method: "POST",
+          mode: "cors",
+          body: formData,
+        });
+        const answer = await fileData.json();
+        console.log("Answer", JSON.stringify(answer));
+      }
+
       //const login = user.login;
-      let tosend: IToSend = {login: user.login};
-      if (newUsername)
-        tosend.username = newUsername;
-      if (newPassword)
-        tosend.password = newPassword;
-      if (newEmail)
-        tosend.email = newEmail;
-      
+      let tosend: IToSend = { login: user.login };
+      if (newUsername) tosend.username = newUsername;
+      if (newPassword) tosend.password = newPassword;
+      if (newEmail) tosend.email = newEmail;
+
       console.log(JSON.stringify(tosend));
       const data = await fetch("http://localhost:4000/auth/edit", {
         method: "POST",
@@ -51,19 +75,22 @@ function Register() {
         setConfPasswordClass("NA");
       } else {
         setUser(newUser);
-        setEditOk(true);
+        //setEditOk(true);
       }
-    }
-    else
-    console.log("BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD");
-  }
-  
+    } else console.log("BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD");
+  };
+
   useEffect(() => {
+    console.log("useEffect");
     if (confPassword && newPassword) {
       if (confPassword === newPassword) setConfPasswordClass("OK");
       else setConfPasswordClass("KO");
     } else setConfPasswordClass("NA");
-  }, [newPassword, confPassword]);
+  }, [confPassword, newPassword]);
+
+  useEffect(() => {
+    console.log("useEffect", avatarName, "file");
+  }, [avatarName]);
 
   return (
     <div className="register">
@@ -103,11 +130,17 @@ function Register() {
               type="text"
               placeholder="E-mail"
               value={newEmail}
-              onChange={(e) => setnewEmail(e.target.value)}
+              onChange={(e) => setNewEmail(e.target.value)}
             />
-            
+            <input
+              type="file"
+              onChange={(e) => {
+                handleAvatar(e);
+              }}
+            />
+
             <button onClick={editUser}>Edit</button>
-          {editOk && <Navigate to="/profile"></Navigate>}
+            {editOk && <Navigate to="/profile"></Navigate>}
           </form>
         </div>
       </div>

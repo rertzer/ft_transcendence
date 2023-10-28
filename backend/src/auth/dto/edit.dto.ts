@@ -17,4 +17,7 @@ import {
 
     @IsEmail()
     email?: string;
+
+    @IsString()
+    avatar?: string;
   }
