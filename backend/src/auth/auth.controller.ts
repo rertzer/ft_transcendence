@@ -1,8 +1,19 @@
-import { Body, Controller, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  FileTypeValidator,
+  MaxFileSizeValidator,
+  ParseFilePipe,
+  Post,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthDto, EditDto } from './dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Express } from 'express';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
 
 @Controller('auth')
 export class AuthController {
@@ -18,9 +29,25 @@ export class AuthController {
   }
 
   @Post('editAvatar')
-  @UseInterceptors(FileInterceptor('file'))
-  editAvatar(@UploadedFile() file : Express.Multer.File){
+  @UseInterceptors(FileInterceptor('file', {
+    storage: diskStorage({
+      destination: '/var/avatar',
+      filename: (req, file, cb)=>{
+        cb(null, `${Date.now()}${extname(file.originalname)}`)
+      } 
+    })
+  }))
+  editAvatar(
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new FileTypeValidator({ fileType: '.(png|jpeg|jpg|gif)' }),
+          new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 4 }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
+  ) {
     return this.authService.editAvatar(file);
   }
-
 }
