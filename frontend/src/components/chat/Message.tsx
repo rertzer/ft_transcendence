@@ -1,11 +1,9 @@
 import React from 'react';
 import "./Message.scss"
-import { useContext } from "react";
-import  ConnectionContext from "../../context/authContext"
 
 const Message = (props: any) => {
 
-    const {login} = useContext(ConnectionContext);
+    const login = sessionStorage.getItem("Login");
 
     return (
         <div className={login === props.login ? "message owner" : "message"}>

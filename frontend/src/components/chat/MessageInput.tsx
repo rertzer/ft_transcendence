@@ -1,7 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import "./MessageInput.scss"
 import ChatContext, { WebsocketContext } from '../../Chat/contexts/ChatContext';
-import  ConnectionContext from "../../context/authContext"
 
 type MessagePayload = {
 	msg: string;
@@ -22,7 +21,7 @@ const MessageInput = () => {
 	const [value, setValue] = useState('');
 	const socket = useContext(WebsocketContext);
 	const { setIsInChat, chatId} = useContext(ChatContext);
-	const {login} = useContext(ConnectionContext);
+	const login = sessionStorage.getItem("Login");
 
 	useEffect(() => {
 

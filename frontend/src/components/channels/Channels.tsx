@@ -14,7 +14,7 @@ const Channels = () => {
 
     const socket = useContext(WebsocketContext);
 	const [idChatRoom, setIdChatRoom] = useState<JoinChatRoomPayload[]>([]);
-	const {login} = useContext(ConnectionContext);
+	const login = sessionStorage.getItem("Login");
 	const {setChatId} = useContext(ChatContext);
 	const [id, setId] = useState('');
 

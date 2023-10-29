@@ -1,7 +1,7 @@
 import "./Login.scss";
 import { Link, Navigate } from "react-router-dom";
-import { useContext, useEffect, useState } from "react";
-import ConnectionContext from "../context/authContext";
+import { MouseEvent, useContext, useEffect, useState } from "react";
+
 import { IUser, IContextUser } from "../context/userContext";
 import UserContext from "../context/userContext";
 
@@ -12,14 +12,19 @@ type UserConnection = {
 };
 
 function Login() {
+ 
+  
+    const [login, setLogin] = useState("");
 
-  const { login, setLogin, password, setPassword } =
-    useContext(ConnectionContext);
+  
+
+  const [password, setPassword] = useState("");
+  
   const { user, setUser } = useContext(UserContext);
 
   const [userOk, setUserOk] = useState(false);
 
-  const sendUserConnection = async () => {
+  const sendUserConnection = async (event: MouseEvent<HTMLButtonElement>) => {
     const data = await fetch("http://localhost:4000/auth/login", {
       method: "POST",
       mode: "cors",
@@ -35,11 +40,15 @@ function Login() {
     } else {
       setUser(user);
       setUserOk(true);
+      sessionStorage.setItem("Login", user.login);
+      console.log("login in Login is now", sessionStorage.getItem("Login"));
     }
   };
 
   useEffect(() => {
-   
+    let stored_login : string | null = sessionStorage.getItem("Login");
+    if (stored_login != null)
+      setLogin(stored_login);
   }, []);
 
   return (
@@ -72,7 +81,7 @@ function Login() {
               onChange={(e) => setPassword(e.target.value)}
             />
           </form>
-          <button onClick={sendUserConnection}>Log in</button>
+          <button onClick={(e)=>{sendUserConnection(e)}}>Log in</button>
           {userOk && <Navigate to="/"></Navigate>}
         </div>
       </div>

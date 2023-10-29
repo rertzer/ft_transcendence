@@ -10,8 +10,7 @@ import UserContext from "../context/userContext";
 import { useContext, useEffect, useState } from "react";
 
 function Profile() {
-  const { login, setLogin, password, setPassword } =
-    useContext(ConnectionContext);
+ 
   const { user, setUser } = useContext(UserContext);
 
   const [modifier, setModifier] = useState(false);
@@ -36,7 +35,7 @@ function Profile() {
         <div className="uInfo">
           <div className="left">{user && <p>{user.username}</p>}</div>
           <div className="center">
-            <span>{login}</span>
+            <span>{user.login}</span>
             <div className="info">
               <div className="item">
                 <VictoryIcon />

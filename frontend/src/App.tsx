@@ -27,8 +27,9 @@ import UserContext from "./context/userContext";
 import Channels from "./components/channels/Channels";
 
 function App() {
-  const [login, setLogin] = useState("");
-  const [password, setPassword] = useState("");
+  const login :string | null =sessionStorage.getItem("Login");
+  console.log("Login in App is", login);
+  //const [password, setPassword] = useState("");
   const [user, setUser] = useState({
     id: 0,
     username: "",
@@ -50,12 +51,12 @@ function App() {
     setChatId,
   };
 
-  const ConnectionValue: IConnected = {
-    login,
-    setLogin,
-    password,
-    setPassword,
-  };
+  // const ConnectionValue: IConnected = {
+  //   login,
+  //   setLogin,
+  //   password,
+  //   setPassword,
+  // };
 
   const UserValue: IContextUser = {
     user,
@@ -134,12 +135,19 @@ function App() {
     <div>
       <UserContext.Provider value={UserValue}>
         <ChatContext.Provider value={ChatContextValue}>
-          <ConnectionContext.Provider value={ConnectionValue}>
-            <RouterProvider router={router} />
-          </ConnectionContext.Provider>
+          <RouterProvider router={router} />
         </ChatContext.Provider>
       </UserContext.Provider>
     </div>
+    //   <div>
+    //   <UserContext.Provider value={UserValue}>
+    //     <ChatContext.Provider value={ChatContextValue}>
+    //       <ConnectionContext.Provider value={ConnectionValue}>
+    //         <RouterProvider router={router} />
+    //       </ConnectionContext.Provider>
+    //     </ChatContext.Provider>
+    //   </UserContext.Provider>
+    // </div>
   );
 }
 

@@ -10,11 +10,10 @@ import ForumIcon from '@mui/icons-material/ForumOutlined';
 import LeaderboardIcon from '@mui/icons-material/LeaderboardOutlined';
 import FriendsIcon from '@mui/icons-material/Diversity1Outlined';
 import { Tooltip } from "@mui/material";
-import  ConnectionContext from "../../context/authContext"
 
 function Navbar(props: any) {
 
-    const {login} = useContext(ConnectionContext);
+    const login = sessionStorage.getItem("Login");
 
     function handleClickFriends() {
         if (props.RightBar !== "friends") {
