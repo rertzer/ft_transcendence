@@ -14,6 +14,7 @@ import Leaderboards from './components/leaderboards/Leaderboards';
 import {IChatContext, WebsocketProvider, socket } from './context/chatContext';
 import ChatContext from './context/chatContext';
 import ConnectionContext from './context/authContext'
+import Desktop1 from './pages/Desktop1';
 
 function App() {
 	const [username, setUsername] = useState('')
@@ -41,7 +42,7 @@ function App() {
   }
 
   const Layout = ()=> {
-
+    return (<Desktop1 />);
     const [RightBar, setRightBar] = useState("none");
 	  console.log("username", username)
     return (
@@ -49,7 +50,7 @@ function App() {
          <Navbar RightBar={RightBar} setRightBar={setRightBar}/>
          <div style={{display: "flex"}}>
            <Leftbar />
-           <div style={{flex: 7}}>
+           <div style={{flex: 8}}>
              <Outlet />
            </div>
            {rightBarSwitch(RightBar)}

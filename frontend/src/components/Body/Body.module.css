@@ -1,0 +1,118 @@
+.body {
+  width: 100%;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  position: fixed;
+  height: calc(100% - 112px);
+  top: 112px;
+  overflow: hidden;
+}
+.background {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 1px;
+  right: 0;
+  bottom: -1px;
+  left: 0;
+  background-color: var(--color-white);
+}
+.grid {
+  position: absolute;
+  overflow: hidden;
+  height: calc(100% - 58px);
+  width: calc(100% - 50px);
+  top: 17px;
+  right: 12px;
+  bottom: 41px;
+  left: 38px;
+}
+.rightLettersBackground {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: var(--color-darkslategray-100);
+  width: 25px;
+  height: 100%;
+  bottom: 0;
+}
+.rightLettersFrame {
+  position: absolute;
+  box-sizing: border-box;
+  top: 17px;
+  left: 12px;
+  border-left: 1px solid var(--color-gray-100);
+  width: 25px;
+  height: 100%;
+}
+.up {
+  position: absolute;
+  box-sizing: border-box;
+  top: 113px;
+  left: 12px;
+  background-color: var(--color-darkslategray-100);
+  border-right: 1px solid var(--color-gray-100);
+  width: 26px;
+  height: 16px;
+  position: fixed;
+}
+.letters {
+  top: 113px;
+  left: 38px;
+  width: 3172px;
+  text-align: center;
+  position: fixed;
+}
+.racket2 {
+  position: absolute;
+  top: 406px;
+  left: 2px;
+  border-radius: var(--br-6xs);
+  background-color: var(--color-darkgray);
+  width: 8px;
+  height: 237px;
+}
+.racketPlayer2 {
+  position: absolute;
+  height: calc(100% - 42px);
+  top: 1px;
+  bottom: 41px;
+  left: 0;
+  width: 12px;
+}
+.racket1 {
+  position: absolute;
+  top: 108px;
+  right: 2px;
+  border-radius: var(--br-6xs);
+  background-color: var(--color-darkgray);
+  width: 8px;
+  height: 237px;
+}
+.racketPlayer1 {
+  position: absolute;
+  height: calc(100% - 42px);
+  top: 1px;
+  right: 0;
+  bottom: 41px;
+  width: 12px;
+}
+.rightScrollZone {
+  position: absolute;
+  height: 100%;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  background-color: var(--color-darkslategray-100);
+  width: 12px;
+}
+.rightScrollZone1 {
+  position: absolute;
+  height: 100%;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--color-darkslategray-100);
+  width: 12px;
+}
