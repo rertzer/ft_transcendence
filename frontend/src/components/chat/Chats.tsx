@@ -1,6 +1,6 @@
 import "./Chats.scss";
 import { WebsocketContext } from "../../context/chatContext";
-import { useContext, useState, useEffect, useRef } from 'react';
+import React, { useContext, useState, useEffect, useRef, Component } from 'react';
 import ConnectionContext from '../../context/authContext'
 import { allChatOfUser } from './ChatComponent';
 import { Active } from './ChatComponent';
@@ -17,11 +17,17 @@ const Chats = (props: {activeChat: Active, setActiveChat: Function, chatsOfUser:
         socket.on("ListOfChat", (channelsListReceive : allChatOfUser[]) => {
 			console.log(channelsListReceive);
             props.setChatsOfUser(channelsListReceive);
-			console.log("chat of user = ", props.chatsOfUser);
         });
+
+		socket.on("newChat", (newChat: allChatOfUser) => {
+			console.log("new chat received :", newChat);
+			props.setChatsOfUser([...props.chatsOfUser, newChat]);
+		});
 
         return () => {
             console.log('Unregistering Events...');
+			socket.off("ListOfChat");
+			socket.off("newChat")
         }
     }, [])
 
@@ -29,8 +35,9 @@ const Chats = (props: {activeChat: Active, setActiveChat: Function, chatsOfUser:
 
     function trigger() {
        socket.emit('chatList', username);
+	   console.log("in func trigger");
     }
-        
+
     useEffect(() => {
         if (props.chatsOfUser.length > 0) {
             startRef.current?.scrollIntoView({
@@ -38,6 +45,7 @@ const Chats = (props: {activeChat: Active, setActiveChat: Function, chatsOfUser:
                 block: "end",
             });
         }
+		console.log("hey trigger me")
     }, [props.chatsOfUser.length]);
 
     return (

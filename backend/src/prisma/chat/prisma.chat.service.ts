@@ -47,6 +47,33 @@ export async function getIdOfChatChannelsUser(login: string, chat_channels_id: n
 	}
 }
 
+export async function changeChatUserRole(chat_channels_id: number, username : string, user_role: string)
+{
+	const id = await getIdOfLogin(username);
+	if (id)
+	{
+		console.log("id : ", id);
+		const user = await prismaService.chatChannelsUser.findFirst({
+			where: {
+				user_id: id,
+				channel_id: chat_channels_id,
+			}
+		})
+		if (user)
+		{
+			console.log("user : ", user);
+			await prismaService.chatChannelsUser.update({
+				where: {
+					id: user.id,
+				},
+				data: {
+					user_role: user_role,
+				}
+			})
+		}
+	}
+}
+
 export async function RetrievePrivateMessage(login:string) {
 	const id = await getIdOfLogin(login);
 	const userDirectMessages = await prismaService.directMsg.findMany({
@@ -66,6 +93,7 @@ export async function RetrievePrivateMessage(login:string) {
 
 export async function RetrieveChatMessage(chat_channels_id: number) {
 		// Find the chat channel by its ID
+		console.log("prisam side chat id : ", chat_channels_id)
 		const chatChannel = await prismaService.chatChannels.findUnique({
 		  where: {
 			id: chat_channels_id,
@@ -127,6 +155,7 @@ export async function addChatMessage(chatChanelId: number, chat_channels_usernam
 				date_left: date_left,
 			}
 		})
+		return (newMessage.id)
 	}
 }
 

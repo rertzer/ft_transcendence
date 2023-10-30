@@ -5,12 +5,23 @@ import { useContext, useState } from 'react';
 import { WebsocketContext } from "../../context/chatContext";
 import userEvent from '@testing-library/user-event';
 import  ConnectionContext from "../../context/authContext"
+import { Console } from 'console';
+import { render } from '@testing-library/react';
 
 type ChatHistory = {
 	msg: string;
 	username: string;
 	date: string;
 	id: number;
+	chatId: number;
+}
+
+type ChatMessage = {
+	msg: string;
+	username: string;
+	date: string;
+	id: number;
+	chatId: number;
 }
 
 type trigger = {
@@ -21,67 +32,83 @@ type trigger = {
 const Messages = (props: {chatId: number, isOwner: boolean, isAdmin: boolean}) => {
 
 	const {username} = useContext(ConnectionContext);
+	const [render, setRender] = useState(false);
 	const socket = useContext(WebsocketContext);
 	const [chatHistory, setChatHistory] = useState<ChatHistory[]>([]);
+	const [chatMessages,setChatMessages] = useState<ChatMessage[]>([]);
 	const [toTrigger, setTrigger] = useState<trigger>({numberMsgToDisplay: 15, chatId: props.chatId});
 
 	useEffect(() => {
-
-		funcTrigger();
-
-		socket.on('retrieveMessage', (chatHistoryReceive :{msg: string, username: string, date: Date, id: number}) => {
+			socket.on('chatMsgHistory', (chatHistoryReceive : ChatHistory[]) => {
 			console.log("trigger reterieve message, what i receive :", chatHistoryReceive)
-			let newDateString = chatHistoryReceive.date.toString();
-			newDateString = newDateString.slice(newDateString.indexOf("T") + 1, newDateString.indexOf("T") + 9);
-			const add : ChatHistory = {msg: chatHistoryReceive.msg, username: chatHistoryReceive.username, date: newDateString, id: chatHistoryReceive.id}
-			setChatHistory((prevMessages) => [...prevMessages, add]);
-			// Debugging: Check the updated chatHistory
-		});
-		socket.on('newMessage', (chatHistoryReceive :{msg: string, username: string, date: Date, id: number}) => {
+			setChatHistory(chatHistoryReceive);
+			console.log(chatHistory);
+			setRender(true);
 
+		});
+		socket.on('newMessage', (chatHistoryReceive :{msg: string, username: string, date: Date, id: number, idOfChat:number}) => {
+			console.log("chatHistoryReceive.idOfChat : ", chatHistoryReceive.idOfChat, "props.chatId : ", props.chatId)
 			let newDateString = chatHistoryReceive.date.toString();
 			newDateString = newDateString.slice(newDateString.indexOf("T") + 1, newDateString.indexOf("T") + 9);
-			const add : ChatHistory = {msg: chatHistoryReceive.msg, username: chatHistoryReceive.username, date: newDateString, id: chatHistoryReceive.id}
-			setChatHistory((prevMessages) => [...prevMessages, add]);
+			const add : ChatMessage = {msg: chatHistoryReceive.msg, username: chatHistoryReceive.username, date: newDateString, id: chatHistoryReceive.id, chatId: chatHistoryReceive.idOfChat}
+			setChatMessages((prevMessages) => [...prevMessages, add]);
 			console.log("cat id : ", chatHistoryReceive.id);
 			// Debugging: Check the updated chatHistory
+
 		});
 		return () => {
 			console.log('Unregistering Events...');
+			socket.off('chatMsgHistory');
+			socket.off('newMessage');
 		}
 	}, [])
 
 	useEffect(() => {
+		if (render == true)
+		{
+			for (const element of chatHistory)
+				{
+					console.log("yo tesytt");
+					let newDateString = element.date.toString();
+					newDateString = newDateString.slice(newDateString.indexOf("T") + 1, newDateString.indexOf("T") + 9);
+					const add : ChatMessage = {msg: element.msg, username: element.username, date: newDateString, id: element.id, chatId: element.chatId}
+					setChatMessages((prevMessages) => [...prevMessages, add]);
+				}
+				console.log("fuckkk	")
+			setRender(false);
+		}
+	}, [chatHistory]);
+
+	useEffect(() => {
 		console.log("hey i am trigger")
-		setChatHistory([]);
+		setChatMessages([]);
+		console.log("props.chatid = ",props.chatId)
 	}, [props.chatId])
-
-
-	const funcTrigger = ()  => {
-		console.log("object send :", toTrigger)
-		socket.emit('retrieveMessage', toTrigger );
-	}
 
 	const endRef = useRef<HTMLDivElement>(null); //ref to empty div to autoscroll to bottom
 
 	useEffect(() => {
-		if (chatHistory.length > 0) {
+		if (chatMessages.length > 0) {
 			endRef.current?.scrollIntoView({
 				behavior: "smooth",
 				block: "end",
 			});
 		}
-	}, [chatHistory.length]);
+		console.log("chatMessages.length : ", chatMessages.length)
+	}, [chatMessages.length]);
 
-    return (
+	return (
         <div className='messages'>
-			{chatHistory.length === 0 ? (
-				<div>No messages</div>
+			{chatMessages.length === 0 ? (
+				<div></div>
 				) : (
 					<div>
-						{chatHistory.map((chat) => (
+
+						{chatMessages.map((chat) => (
 							<div key={chat.id}>
-				 				 <Message date={chat.date} username={chat.username} msg={chat.msg} isOwner={props.isOwner} isAdmin={props.isAdmin}/>
+								{chat.chatId === props.chatId && (
+									 <Message date={chat.date} username={chat.username} msg={chat.msg} isOwner={props.isOwner} isAdmin={props.isAdmin} chatId={props.chatId}/>
+								)}
 							</div>
 			  			))}
 			  		</div>
@@ -90,5 +117,6 @@ const Messages = (props: {chatId: number, isOwner: boolean, isAdmin: boolean}) =
 		</div>
     )
 }
+
 
 export default Messages;

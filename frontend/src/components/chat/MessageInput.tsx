@@ -35,7 +35,6 @@ const MessageInput = (props: {chatId: number}) => {
 		return () => {
 			console.log('Unregistering Events...');
 			socket.off('onMessage');
-			socket.off('retrieveMessage');
 		};
 	}, []);
 
@@ -48,6 +47,7 @@ const MessageInput = (props: {chatId: number}) => {
 			idOfChat: props.chatId,
 		}
 		console.log(" username send ", username)
+		console.log("props chat id send ", props.chatId)
 		socket.emit('newMessage', messageData);
 		socket.emit('chatList', username); // super bizarre, des fois ca marche et des fois un temps de retard
 		setValue('');

@@ -4,7 +4,7 @@ import { MyGateway } from './gateway/gateway.service';
 import { RetrieveMessageService } from './retrieveMessage/retrieveMessage.service';
 
 @Module({
-  providers: [MyGateway],
+  providers: [MyGateway, ],
   exports: [MyGateway],
 })
 export class ChatModule {}
