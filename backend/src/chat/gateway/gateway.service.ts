@@ -10,6 +10,7 @@ import { JoinChatService } from "../joinChat/joinChat.service";
 import { RetrieveMessageService } from "../retrieveMessage/retrieveMessage.service";
 import {ChatLister} from "../chatLister/chatLister.service";
 import { Socket } from "socket.io";
+import { CreateChatService } from "../createchat/createchat.service";
 let lastMessageId = 0;
 
 
@@ -72,7 +73,8 @@ export class MyGateway {
 		if (targetSocket !== undefined)
 		{
 			console.log("found a socket")
-			this.server.emit('newMessage', {
+			console.log("id of chat : ", messageData.idOfChat.toString())
+			this.server.to(messageData.idOfChat.toString()).emit('newMessage', {
 				msg: messageData.content,
 				username: messageData.username,
 				date: getDate(),
@@ -148,27 +150,8 @@ export class MyGateway {
 		const targetSocket = this.sockets.find((socket) => socket === client);
 		if (targetSocket !== undefined)
 		{
-			const idOfUser = await getIdOfLogin(messageData.username);
-			console.log("id of user : ", idOfUser);
-			let encodedPassword : string | null = null;
-			if (messageData.chatPassword)
-				encodedPassword = await encodePassword(messageData.chatPassword);
-			console.log("encoded password : ", encodedPassword);
-			console.log("id of user : ", idOfUser);
-			if (idOfUser !== undefined)
-			{
-				const newChatId = await addChat(messageData.chatName, messageData.chatType,idOfUser, encodedPassword );
-				const chatType = {
-					id: newChatId,
-					channelName: messageData.chatName,
-					chatPicture: 'avatarOfOwner',// need to be change
-					username: null,
-					msg: null,
-					dateSend: null,
-				}
-				client.emit('newChat', chatType)
-				await addChanelUser(newChatId, idOfUser, 'admin', getDate(), null).then(()=> client.emit('chatList', messageData.username));
-			}
+			const CreateRoom = new CreateChatService(this);
+			CreateRoom.createChat(messageData.username, messageData.chatPassword, messageData.chatName, messageData.chatType, targetSocket);
 		}
 	}
 

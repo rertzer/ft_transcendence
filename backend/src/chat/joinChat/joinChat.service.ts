@@ -19,7 +19,9 @@ export class JoinChatService{
 			return;
 		if (this.checkChatExist(chat_id, sock) === null)
 			return;
-		this.addUserToChat(username, chat_id, user_role, passeword);
+		await this.addUserToChat(username, chat_id, user_role, passeword)
+		console.log("chat id in join chat : ", chat_id);
+		sock.join(chat_id)
 	}
 	//async addUserToChat(username: string, chat_id:string, user_role:string, passeword:string)
 
@@ -70,8 +72,12 @@ export class JoinChatService{
 		if (userId !== undefined)
 		{
 			// console.log("date now : ", new Date(Date.now())));
-			addChanelUser(parseInt(chat_id),userId, user_role, getDate(), null);
 			console.log("Chat asked have been found");
+			const chatId = await addChanelUser(parseInt(chat_id),userId, user_role, getDate(), null);
+			console.log("chat id upper : ", chatId);
+			if (chatId !== undefined)
+				return (chatId.toString());
 		}
+		return ("-1")
 	}
 }

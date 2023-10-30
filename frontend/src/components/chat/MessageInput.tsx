@@ -35,7 +35,6 @@ const MessageInput = (props: {chatId: number}) => {
 		return () => {
 			console.log('Unregistering Events...');
 			socket.off('onMessage');
-			socket.off('retrieveMessage');
 		};
 	}, []);
 
