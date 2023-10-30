@@ -48,14 +48,6 @@ export class MyGateway {
 		return this.server;
 	}
 
-	/*onModuleInit() {
-
-		this.server.on('connection', (client: Socket) => {
-			this.sockets.push(client)
-			console.log(client.id);
-			console.log('connected');
-		})
-	}*/
 	findSocketByUsername(username: string): Socket | undefined {
 		return this.sockets.find((socket) => {
 		  // Implement your logic to match the socket with the given username
