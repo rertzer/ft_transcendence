@@ -153,6 +153,7 @@ export async function addChatMessage(chatChanelId: number, chat_channels_usernam
 				user_role: user_role,
 				date_joined: date_joined,
 				date_left: date_left,
+				muted:false,
 			}
 		})
 		return (newMessage.id)

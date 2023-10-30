@@ -11,6 +11,8 @@ import { RetrieveMessageService } from "../retrieveMessage/retrieveMessage.servi
 import {ChatLister} from "../chatLister/chatLister.service";
 import { Socket } from "socket.io";
 import { CreateChatService } from "../createchat/createchat.service";
+import { MutedUserService } from "../mutedUser/mutedUser.service";
+
 let lastMessageId = 0;
 
 
@@ -26,6 +28,7 @@ let lastMessageId = 0;
 @Injectable()
 export class MyGateway {
 
+	constructor (private mutedUserService: MutedUserService){}
 	private sockets: Socket[] = [];
 
 	@WebSocketServer()
@@ -57,20 +60,23 @@ export class MyGateway {
 		console.log(messageData);
 		console.log('gateway side');
 		console.log(messageData.idOfChat)
-		lastMessageId++; // probleme with that in multi client. need to have an increment front end
-		const targetSocket = this.sockets.find((socket) => socket === client);
-		if (targetSocket !== undefined)
+		if (!this.mutedUserService.IsMutedUser(messageData.username, messageData.idOfChat))
 		{
-			console.log("found a socket")
-			console.log("id of chat : ", messageData.idOfChat.toString())
-			this.server.to(messageData.idOfChat.toString()).emit('newMessage', {
-				msg: messageData.content,
-				username: messageData.username,
-				date: getDate(),
-				id: lastMessageId,
-				idOfChat: messageData.idOfChat
-			});
-			await addChatMessage(messageData.idOfChat, messageData.username, messageData.content, getDate());
+			const targetSocket = this.sockets.find((socket) => socket === client);
+			if (targetSocket !== undefined)
+			{
+				lastMessageId++; // probleme with that in multi client. need to have an increment front end
+				console.log("found a socket")
+				console.log("id of chat : ", messageData.idOfChat.toString())
+				this.server.to(messageData.idOfChat.toString()).emit('newMessage', {
+					msg: messageData.content,
+					username: messageData.username,
+					date: getDate(),
+					id: lastMessageId,
+					idOfChat: messageData.idOfChat
+				});
+				await addChatMessage(messageData.idOfChat, messageData.username, messageData.content, getDate());
+			}
 		}
 	}
 

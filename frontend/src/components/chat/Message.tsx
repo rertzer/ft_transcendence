@@ -26,8 +26,41 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 			body: JSON.stringify({ username: props.username, chatId: props.chatId})
 		};
 		console.log("requestOptions", requestOptions)
-		fetch('http://localhost:4000/setAdmin/', requestOptions)
+		fetch('http://localhost:4000/chatOption/setAdmin/', requestOptions)
 		console.log("send new admin")
+	}
+
+	function muteUser() {
+		const requestOptions = {
+			method: 'post',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ username: props.username, chatId: props.chatId, time: 10})
+		};
+		console.log("requestOptions", requestOptions)
+		fetch('http://localhost:4000/chatOption/muteUser/', requestOptions)
+		console.log("mute user")
+	}
+
+	function banUser() {
+		const requestOptions = {
+			method: 'post',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ username: props.username, chatId: props.chatId})
+		};
+		console.log("requestOptions", requestOptions)
+		fetch('http://localhost:4000/chatOption/banUser/', requestOptions)
+		console.log("Banned user")
+	}
+
+	function kickUser() {
+		const requestOptions = {
+			method: 'post',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ username: props.username, chatId: props.chatId})
+		};
+		console.log("requestOptions", requestOptions)
+		fetch('http://localhost:4000/chatOption/kickUser/', requestOptions)
+		console.log("kickUser user")
 	}
 
     return (
@@ -51,10 +84,10 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
                 <div>Add to friends</div>
                 <div>Send DM</div>
                 <div>Show profile</div>
-                {(props.isAdmin || props.isOwner) && <div>Kick</div>}
-                {(props.isAdmin || props.isOwner) && <div>Ban</div>}
-                {(props.isAdmin || props.isOwner) && <div>Mute</div>}
-                {props.isOwner && <div onClick={() => sendNewAdmin()}>
+                {(props.isAdmin || props.isOwner) && <div onClick={kickUser}>Kick</div>}
+                {(props.isAdmin || props.isOwner) && <div onClick={banUser}>Ban</div>}
+                {(props.isAdmin || props.isOwner) && <div onClick={muteUser}>Mute</div>}
+                {props.isOwner && <div onClick={sendNewAdmin}>
 					Set as admin </div>}
             </div>
             <div className='messageContent'>
