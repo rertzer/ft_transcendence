@@ -15,23 +15,21 @@ const Chats = (props: {activeChat: Active, setActiveChat: Function, chatsOfUser:
         trigger();
 
         socket.on("ListOfChatOfUser", (channelsListReceive : allChatOfUser[]) => {
-			//console.log(channelsListReceive);
             props.setChatsOfUser(channelsListReceive);
         });
 
 		socket.on("newChat", (newChat: allChatOfUser) => {
-			//console.log("new chat received :", newChat);
 			props.setChatsOfUser([...props.chatsOfUser, newChat]);
 		});
 		socket.on('chatList', (listOfChat: allChatOfUser[]) => {
-			console.log(listOfChat);
-
+			console.log(listOfChat); // here is to receive the list of chat
 		})
 
         return () => {
             //console.log('Unregistering Events...');
 			socket.off("ListOfChat");
 			socket.off("newChat")
+			socket.off("chatList")
         }
     }, [])
 
@@ -39,7 +37,7 @@ const Chats = (props: {activeChat: Active, setActiveChat: Function, chatsOfUser:
 
     function trigger() {
        socket.emit('chatListOfUser', username);
-	   socket.emit('chatList');
+	   socket.emit('chatList'); // here is for the public chat.
 	   //console.log("in func trigger");
     }
 

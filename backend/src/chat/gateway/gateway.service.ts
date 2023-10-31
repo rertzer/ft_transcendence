@@ -11,6 +11,7 @@ import { Socket } from "socket.io";
 import { CreateChatService } from "../createchat/createchat.service";
 import { MutedUserService } from "../mutedUser/mutedUser.service";
 import { subscribe } from "diagnostics_channel";
+import { SignKeyObjectInput } from "crypto";
 
 let lastMessageId = 0;
 
@@ -76,6 +77,17 @@ export class MyGateway {
 				});
 				await this.prismaChatService.addChatMessage(messageData.idOfChat, messageData.username, messageData.content, getDate());
 			}
+		}
+	}
+
+	@SubscribeMessage('retrievePrivateMessage')
+	async onRetrieveMp(@MessageBody() username:string, client: Socket)
+	{
+		const targetSocket = this.sockets.find((socket) => socket === client);
+		if (targetSocket !== undefined)
+		{
+			const ReceiveAndSendMp = await this.prismaChatService.RetrievePrivateMessage(username);
+			client.emit("retrievePrivateMessage", targetSocket);
 		}
 	}
 
