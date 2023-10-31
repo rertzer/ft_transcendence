@@ -8,10 +8,9 @@ import {
   Navigate,
 } from "react-router-dom";
 import Login from "./routes/Login";
-import Register from "./routes/EditProfile";
+import EditProfile from "./routes/EditProfile.old";
 import Home from "./routes/Home";
 import Profile from "./routes/Profile";
-import EditProfile from "./routes/EditProfile";
 import Navbar from "./components/menus/Navbar";
 import Leftbar from "./components/menus/Leftbar";
 import FriendsComponent from "./components/friendlist/FriendsComponent";
@@ -27,7 +26,7 @@ import UserContext from "./context/userContext";
 import Channels from "./components/channels/Channels";
 
 function App() {
-  const login :string | null =sessionStorage.getItem("Login");
+  const login: string | null = sessionStorage.getItem("Login");
   console.log("Login in App is", login);
   //const [password, setPassword] = useState("");
   const [user, setUser] = useState({
@@ -116,14 +115,14 @@ function App() {
           element: <Home />,
         },
         {
-          path: "/profile/:id",
+          path: "/profile",
           element: <Profile />,
         },
-        {
-          path: "/profile/edit",
-          element: <EditProfile />,
-        },
       ],
+    },
+    {
+      path: "/edit",
+      element: <EditProfile />,
     },
     {
       path: "/login",

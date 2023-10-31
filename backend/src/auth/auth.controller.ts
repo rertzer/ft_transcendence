@@ -28,9 +28,6 @@ export class AuthController {
     return this.authService.edit(dto);
   }
 
-  
-  
-
   @Post('editAvatar')
   @UseInterceptors(FileInterceptor('file', {
     limits: { fileSize: 2 * 1024 * 1024 } ,

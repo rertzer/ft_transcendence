@@ -10,16 +10,31 @@ import UserContext from "../context/userContext";
 import { useContext, useEffect, useState } from "react";
 
 function Profile() {
- 
+
+  const login :string | null =sessionStorage.getItem("Login");
+
   const { user, setUser } = useContext(UserContext);
 
   const [modifier, setModifier] = useState(false);
 
- 
+  if (user.login == "") {
+    const getUser = async () => {
+      const data = await fetch("http://localhost:4000/user/" + login, {
+        method: "GET",
+        mode: "cors",
+      });
+      const user = await data.json();
+      if (user.message) {
+        console.log("Bad Bad");
+      } else {
+        setUser(user);
+        console.log("User", user.login, "fetched");
+      }
+    };
+    getUser();
+  }
 
-  useEffect(() => {
-    /*fetchUser();*/
-  }, []);
+  useEffect(() => {}, []);
 
   console.log(user);
   let image: string =
@@ -47,7 +62,7 @@ function Profile() {
               </div>
             </div>
             <button onClick={() => setModifier(true)}>Edit profile</button>
-            {modifier && <Navigate to="/profile/edit"></Navigate>}
+            {modifier && <Navigate to="/edit"></Navigate>}
           </div>
           <div className="right">
             <ChatIcon />

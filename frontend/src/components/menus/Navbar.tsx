@@ -59,7 +59,7 @@ function Navbar(props: any) {
                 </div>
             </div>
             <div className="right">
-                <Link to="/profile/1" style={{textDecoration:"none"}}>
+                <Link to="/profile" style={{textDecoration:"none"}}>
                     <div className="user">
                         <img src={""}/>
                         <span>{login}</span>

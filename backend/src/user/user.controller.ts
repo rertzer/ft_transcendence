@@ -9,6 +9,6 @@ export class UserController {
 
   @Get(':login')
   fetchByLogin(@Param('login') login: string) {
-    return this.userService.login(login);
+    return this.userService.fetchByLogin(login);
   }
 }

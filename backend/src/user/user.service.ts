@@ -9,7 +9,7 @@ import { PrismaService } from '../prisma/prisma.service';
 export class UserService {
   constructor(private prisma: PrismaService) {}
 
-  async login(login: string) {
+  async fetchByLogin(login: string) {
     // log existing user
     console.log('UserService received: ', login);
     let user = await this.prisma.user.findUnique({
