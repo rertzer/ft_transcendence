@@ -43,8 +43,15 @@ export class ChatLister{
 				chatList.push(chatType);
 			}
 			//console.log("chatList : ", chatList);
-			sock.emit('ListOfChat', chatList);
+			sock.emit('ListOfChatOfUser', chatList);
 		}
+	}
+
+	async listAllPublicChat(sock: Socket)
+	{
+		const chats = await this.prismaService.getListOfChat();
+		console.log("found some cats", chats);
+		sock.emit('chatList', chats);
 	}
 }
 

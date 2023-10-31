@@ -171,14 +171,25 @@ export class MyGateway {
 		}
 	}
 
-	@SubscribeMessage('chatList')
-	async onChatList(@MessageBody() username: string, @ConnectedSocket() client:Socket) {
+	@SubscribeMessage('chatListOfUser')
+	async onChatListOfUser(@MessageBody() username: string, @ConnectedSocket() client:Socket) {
 		const targetSocket = this.sockets.find((socket) => socket === client);
 		if (targetSocket !== undefined)
 		{
 			//console.log("username receive : ", username)
 			const chatLister = new ChatLister(this.prismaChatService);
 			chatLister.listChatOfUser(username, targetSocket);
+		}
+	}
+
+	@SubscribeMessage('chatList')
+	async onChatList( @ConnectedSocket() client:Socket) {
+		const targetSocket = this.sockets.find((socket) => socket === client);
+		if (targetSocket !== undefined)
+		{
+			console.log("chat List ");
+			const chatLister = new ChatLister(this.prismaChatService);
+			chatLister.listAllPublicChat(client);
 		}
 	}
 }

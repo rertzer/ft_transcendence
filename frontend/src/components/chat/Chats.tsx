@@ -14,7 +14,7 @@ const Chats = (props: {activeChat: Active, setActiveChat: Function, chatsOfUser:
 
         trigger();
 
-        socket.on("ListOfChat", (channelsListReceive : allChatOfUser[]) => {
+        socket.on("ListOfChatOfUser", (channelsListReceive : allChatOfUser[]) => {
 			//console.log(channelsListReceive);
             props.setChatsOfUser(channelsListReceive);
         });
@@ -23,6 +23,10 @@ const Chats = (props: {activeChat: Active, setActiveChat: Function, chatsOfUser:
 			//console.log("new chat received :", newChat);
 			props.setChatsOfUser([...props.chatsOfUser, newChat]);
 		});
+		socket.on('chatList', (listOfChat: allChatOfUser[]) => {
+			console.log(listOfChat);
+
+		})
 
         return () => {
             //console.log('Unregistering Events...');
@@ -34,7 +38,8 @@ const Chats = (props: {activeChat: Active, setActiveChat: Function, chatsOfUser:
     const startRef = useRef<HTMLDivElement>(null); //ref to empty div to autoscroll to bottom
 
     function trigger() {
-       socket.emit('chatList', username);
+       socket.emit('chatListOfUser', username);
+	   socket.emit('chatList');
 	   //console.log("in func trigger");
     }
 

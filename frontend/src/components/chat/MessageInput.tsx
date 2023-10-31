@@ -49,7 +49,7 @@ const MessageInput = (props: {chatId: number}) => {
 		//console.log(" username send ", username)
 		//console.log("props chat id send ", props.chatId)
 		socket.emit('newMessage', messageData);
-		socket.emit('chatList', username); // super bizarre, des fois ca marche et des fois un temps de retard
+		socket.emit('chatListOfUser', username); // super bizarre, des fois ca marche et des fois un temps de retard
 		setValue('');
 	  };
 
