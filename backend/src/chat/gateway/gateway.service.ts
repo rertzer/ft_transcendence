@@ -12,6 +12,7 @@ import {ChatLister} from "../chatLister/chatLister.service";
 import { Socket } from "socket.io";
 import { CreateChatService } from "../createchat/createchat.service";
 import { MutedUserService } from "../mutedUser/mutedUser.service";
+import { subscribe } from "diagnostics_channel";
 
 let lastMessageId = 0;
 
@@ -28,7 +29,7 @@ let lastMessageId = 0;
 @Injectable()
 export class MyGateway {
 
-	constructor (private mutedUserService: MutedUserService){}
+	constructor (private readonly mutedUserService: MutedUserService){}
 	private sockets: Socket[] = [];
 
 	@WebSocketServer()
@@ -80,6 +81,12 @@ export class MyGateway {
 		}
 	}
 
+	@SubscribeMessage('newMuttedUser')
+	async newMuttedUser(@MessageBody() user:{username:string, chatId: number, time: number})
+	{
+		console.log("ploo trigger")
+		this.mutedUserService.addMutedUser({username: user.username, chatId: user.chatId, timeStart: getDate(), duration: user.time});
+	}
 
 	@SubscribeMessage('JoinChatRoom')
 	async onJoinChatRoom(@MessageBody() messageData:{username: string, chat_id:string, user_role:string, passeword:string}, @ConnectedSocket() client:Socket) {

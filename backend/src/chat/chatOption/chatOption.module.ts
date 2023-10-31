@@ -1,12 +1,14 @@
 import { GatewayModule } from "../gateway/gateway.module";
 import { Module } from "@nestjs/common";
-import { AdminController } from "./chatOption.controller";
+import { ChatOptController } from "./chatOption.controller";
 import { ChatModule } from "../chat.module";
 import { MutedUserService } from "../mutedUser/mutedUser.service";
+import { MutedUserModule } from "../mutedUser/mutedUser.module";
 
 @Module({
-	controllers: [AdminController],
+	imports:[],
+	controllers: [ChatOptController],
 	providers: [MutedUserService]
 })
 
-export class AdminModule{}
+export class ChatOptModule{}

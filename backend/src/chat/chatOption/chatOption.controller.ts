@@ -5,10 +5,10 @@ import { getDate } from "../utils/utils.service";
 
 
 @Controller('chatOption')
-export class AdminController {
-	constructor(private mutedUserService: MutedUserService) {}
+export class ChatOptController {
+	constructor(private readonly mutedUserService: MutedUserService) {}
 
-	@Post('/setAdmin')
+	@Post('setAdmin')
 	async setUserAsAdmin(@Body() user:{username:string, chatId: number}){
 		await changeChatUserRole(user.chatId, user.username, "admin");
 	}
@@ -27,6 +27,4 @@ export class AdminController {
 	async kickUser(@Body() user:{username:string, chatId: number}){
 
 	}
-
-
 }
