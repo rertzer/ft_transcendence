@@ -31,14 +31,7 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 	}
 
 	function muteUser() {
-		const requestOptions = {
-			method: 'post',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ username: props.username, chatId: props.chatId, time: 200})
-		};
-		console.log("requestOptions", requestOptions)
-		fetch('http://localhost:4000/chatOption/muteUser/', requestOptions)
-		console.log("mute user")
+		socket.emit("mutedUser", {username: props.username, chatId: props.chatId, time: 30 })
 	}
 
 	function banUser() {

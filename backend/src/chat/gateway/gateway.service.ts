@@ -169,6 +169,11 @@ export class MyGateway {
 		}
 	}
 
+	@SubscribeMessage('mutedUser')
+	mutedUser(@MessageBody() user:{username:string, chatId: number, time: number}) {
+		this.mutedUserService.addMutedUser({username: user.username, chatId: user.chatId, timeStart: getDate(), duration: user.time});
+	}
+	
 	@SubscribeMessage('chatList')
 	async onChatList(@MessageBody() username: string, @ConnectedSocket() client:Socket) {
 		const targetSocket = this.sockets.find((socket) => socket === client);

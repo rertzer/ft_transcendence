@@ -30,12 +30,14 @@ export class MutedUserService {
 		if (isMutted !== undefined)
 		{
 			const time = new Date();
+			time.setHours(time.getHours() + 1);
 			const timeStart = isMutted.timeStart;
 			const timeDiff = Math.abs(time.getTime() - timeStart.getTime());
-			const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
-			console.log("time start of mutted duration = ", timeStart, "time diff = ", timeDiff);
-			if (diffDays >= isMutted.duration)
+			console.log("time start of mutted duration = ", timeDiff);
+			console.log("Is mutted duration : ", isMutted.duration)
+			if (timeDiff >= (isMutted.duration * 1000))
 			{
+				console.log("LLLLLLLL---------user unmuted------------llllllllllll");
 				this.removeMutedUser(username, chatId);
 				return false;
 			}
