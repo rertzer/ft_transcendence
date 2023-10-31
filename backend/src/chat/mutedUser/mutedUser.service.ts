@@ -6,45 +6,50 @@ export class MutedUserService {
   mutedUsers: MutedUser[] = [];
 
   constructor() {
-	console.log("create an array of muted user")
+	//console.log("create an array of muted user")
   }
 
   addMutedUser(user: MutedUser) {
-	console.log("in add muted user : ", user)
-    this.mutedUsers.push(user);
-	console.log("MutedUser === ", this.mutedUsers);
+	const isMutted = this.IsMutedUser(user.username, user.chatId)
+	if (isMutted)
+	{
+		//console.log("stop force mute")
+		return (false);
+	}
+	else
+	{
+    	this.mutedUsers.push(user);
+		return (true)
+	}
   }
 
   removeMutedUser(username: string, chatId: number) {
     this.mutedUsers = this.mutedUsers.filter((user) => !(user.username === username && user.chatId === chatId));
-  }
+
+}
 
   IsMutedUser(username: string, chatId: number): boolean {
-	console.log("username i receive = ", username, "chatId i receive = ", chatId);
-	console.log("all muted user = ", this.mutedUsers);
+	//console.log("username i receive = ", username, "chatId i receive = ", chatId);
+	//console.log("all muted user = ", this.mutedUsers);
 	const isMutted =  this.mutedUsers.find((user) => user.username === username && user.chatId === chatId);
 
-	console.log("is muteeddd : ", isMutted)
-	if (isMutted)
-	{
+	//console.log("is muteeddd : ", isMutted)
 		if (isMutted !== undefined)
 		{
 			const time = new Date();
 			time.setHours(time.getHours() + 1);
 			const timeStart = isMutted.timeStart;
 			const timeDiff = Math.abs(time.getTime() - timeStart.getTime());
-			console.log("time start of mutted duration = ", timeDiff);
-			console.log("Is mutted duration : ", isMutted.duration)
+			//console.log("time start of mutted duration = ", timeDiff);
+			//console.log("Is mutted duration : ", isMutted.duration)
 			if (timeDiff >= (isMutted.duration * 1000))
 			{
-				console.log("LLLLLLLL---------user unmuted------------llllllllllll");
+				//console.log("LLLLLLLL---------user unmuted------------llllllllllll");
 				this.removeMutedUser(username, chatId);
 				return false;
 			}
 			return true;
 		}
-	}
-
 	return false;
 }
 

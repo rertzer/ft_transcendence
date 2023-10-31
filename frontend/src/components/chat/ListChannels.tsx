@@ -24,21 +24,21 @@ export const ListChannels = (props: {chatsOfUser: allChatOfUser[], showSubMenu: 
 
 	useEffect(() => {
 		socket.on('onJoinChatRoom', (idChatRoom: JoinChatRoomPayload) => {
-			console.log('onJoinChatRoom event received!');
-			console.log(idChatRoom.id);
+			//////console.log('onJoinChatRoom event received!');
+			//////console.log(idChatRoom.id);
 			if (idChatRoom.id === '-1')
 			{
-				console.log("wrong id")
+				//////console.log("wrong id")
 				setId('Doesnt exist')
 			}
 			else{
 				setChatId(parseInt(idChatRoom.id));
-				console.log("id chat room", idChatRoom.id);
+				//////console.log("id chat room", idChatRoom.id);
 				setIdChatRoom((prev) => [...prev, idChatRoom]);
 			}
 		  });
 		  return () => {
-			console.log('Unregistering Events...');
+			//////console.log('Unregistering Events...');
 			socket.off('onJoinChatRoom');
 		};
 	}, []);
@@ -51,8 +51,8 @@ export const ListChannels = (props: {chatsOfUser: allChatOfUser[], showSubMenu: 
 			chat_id: id,
 			user_role: "user",
 		}
-		console.log("send id chat")
-		console.log("id chat room", id);
+		//////console.log("send id chat")
+		//////console.log("id chat room", id);
 		socket.emit('JoinChatRoom', messageData);
 	}
 
@@ -76,7 +76,7 @@ export const ListChannels = (props: {chatsOfUser: allChatOfUser[], showSubMenu: 
                 ou par ordre alphabetique ? Fonction de recherche a implementer ?
                 Chacun de ces elements pourra avoir un onClick qui permet de rejoindre
                 le channel et d'updater le allChatOfUser (avec un sous-sous menu pour input
-                le mot de passe quand y en a un...) 
+                le mot de passe quand y en a un...)
                 Le fichier se trouve dans frontend/src/components/chat/ListChannels.tsx
                 </p>
                 <hr/>

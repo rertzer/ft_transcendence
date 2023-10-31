@@ -1,5 +1,5 @@
 import "./Message.scss"
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import  ConnectionContext from "../../context/authContext"
 import CloseIcon from '@mui/icons-material/Close';
 import { WebsocketContext } from "../../context/chatContext";
@@ -10,6 +10,19 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
     const [showUserActionsMenu, setShowUserActionsMenu] = useState(false);
    const socket = useContext(WebsocketContext);
 	let isMessageOwner = false;
+
+	useEffect(() => {
+		socket.on("userIsMute", (userIsMute:boolean) => {
+			//console.log("receive something");
+			if(!userIsMute) // il faudra afficher un truc dans ca cas la
+				console.log("user already mutted");
+		})
+        return () => {
+            //console.log('Unregistering Events...');
+			socket.off("userIsMute");
+		}
+    }, [])
+
     if (username === props.username) {
         isMessageOwner = true;
     }
@@ -25,12 +38,12 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ username: props.username, chatId: props.chatId})
 		};
-		console.log("requestOptions", requestOptions)
+		//console.log("requestOptions", requestOptions)
 		fetch('http://localhost:4000/chatOption/setAdmin/', requestOptions)
-		console.log("send new admin")
+		//console.log("send new admin")
 	}
 
-	function muteUser() {
+	function muteUser() { // il faudra que client remplisse le time
 		socket.emit("mutedUser", {username: props.username, chatId: props.chatId, time: 30 })
 	}
 
@@ -40,9 +53,9 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ username: props.username, chatId: props.chatId})
 		};
-		console.log("requestOptions", requestOptions)
+		//console.log("requestOptions", requestOptions)
 		fetch('http://localhost:4000/chatOption/banUser/', requestOptions)
-		console.log("Banned user")
+		//console.log("Banned user")
 	}
 
 	function kickUser() {
@@ -51,9 +64,9 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ username: props.username, chatId: props.chatId})
 		};
-		console.log("requestOptions", requestOptions)
+		//console.log("requestOptions", requestOptions)
 		fetch('http://localhost:4000/chatOption/kickUser/', requestOptions)
-		console.log("kickUser user")
+		//console.log("kickUser user")
 	}
 
     return (

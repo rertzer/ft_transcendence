@@ -1,23 +1,23 @@
 import { Injectable } from "@nestjs/common";
 import {MyGateway } from "../gateway/gateway.service";
-import {getListOfChat, getLastMessages,getOwnerOfChatAvatar, getLastMessagesUsername } from "../../prisma/chat/prisma.chat.service";
+import { PrismaChatService} from "../../prisma/chat/prisma.chat.service";
 import { Socket } from "socket.io";
 @Injectable()
 export class ChatLister{
-	constructor(private gatewayModule: MyGateway){
+	constructor(private prismaService:PrismaChatService){
 	}
 
 	async listChatOfUser(username: string, sock: Socket)
 	{
 		const chatList = [];
-		const retrieveChat = await getListOfChat(username);
+		const retrieveChat = await this.prismaService.getListOfChatByUsername(username);
 		sock.emit('ListerUsername', username);
 		if (retrieveChat !== undefined)
 		{
 			for (const chat of retrieveChat)
 			{
-				console.log("chat : ", chat)
-				const lastMessagesOfChat = await getLastMessages(chat.id);
+				//console.log("chat : ", chat)
+				const lastMessagesOfChat = await this.prismaService.getLastMessages(chat.id);
 				let lastMessageUsername = null;
 				let date = null;
 				let lastMessage = null;
@@ -28,10 +28,10 @@ export class ChatLister{
 					//console.log("lastMessage : ", lastMessage)
 					date = lastMessage.date_sent;
 					message = lastMessage.message;
-					lastMessageUsername =  await getLastMessagesUsername(chat.id);
+					lastMessageUsername =  await this.prismaService.getLastMessagesUsername(chat.id);
 				}
 				//console.log("lastMessages : ", lastMessage);
-				const avatarOfOwner = await getOwnerOfChatAvatar(chat.id);
+				const avatarOfOwner = await this.prismaService.getOwnerOfChatAvatar(chat.id);
 				const chatType = {
 					id: chat.channel.id,
 					channelName: chat.channel.name,
@@ -42,7 +42,7 @@ export class ChatLister{
 				}
 				chatList.push(chatType);
 			}
-			console.log("chatList : ", chatList);
+			//console.log("chatList : ", chatList);
 			sock.emit('ListOfChat', chatList);
 		}
 	}

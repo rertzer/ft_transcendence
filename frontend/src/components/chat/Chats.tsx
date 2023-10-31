@@ -15,17 +15,17 @@ const Chats = (props: {activeChat: Active, setActiveChat: Function, chatsOfUser:
         trigger();
 
         socket.on("ListOfChat", (channelsListReceive : allChatOfUser[]) => {
-			console.log(channelsListReceive);
+			//console.log(channelsListReceive);
             props.setChatsOfUser(channelsListReceive);
         });
 
 		socket.on("newChat", (newChat: allChatOfUser) => {
-			console.log("new chat received :", newChat);
+			//console.log("new chat received :", newChat);
 			props.setChatsOfUser([...props.chatsOfUser, newChat]);
 		});
 
         return () => {
-            console.log('Unregistering Events...');
+            //console.log('Unregistering Events...');
 			socket.off("ListOfChat");
 			socket.off("newChat")
         }
@@ -35,7 +35,7 @@ const Chats = (props: {activeChat: Active, setActiveChat: Function, chatsOfUser:
 
     function trigger() {
        socket.emit('chatList', username);
-	   console.log("in func trigger");
+	   //console.log("in func trigger");
     }
 
     useEffect(() => {
@@ -45,7 +45,7 @@ const Chats = (props: {activeChat: Active, setActiveChat: Function, chatsOfUser:
                 block: "end",
             });
         }
-		console.log("hey trigger me")
+		//console.log("hey trigger me")
     }, [props.chatsOfUser.length]);
 
     return (
