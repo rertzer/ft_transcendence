@@ -48,7 +48,7 @@ function Grid() {
         const dynamicLeft = `${(i) * 80}px`;
         const dynamicTop = `${(j) * 16}px`;
         components.push(
-          <input size={1} onMouseDown={() => handleUpdateCoords(i, j)} style={{
+          <input key={`x:${i} y:${j}`} size={1} onMouseDown={() => handleUpdateCoords(i, j)} style={{
               position: 'absolute',
               top: dynamicTop,
               left: dynamicLeft,
@@ -59,7 +59,8 @@ function Grid() {
               borderRight: '1px solid #C0C0C0',
               borderBottom: 'none',
               borderLeft: 'none',
-              fontSize: '10px', 
+              fontSize: '10px',
+              textIndent: '3px',
           }}
           onFocus={(e) =>   {
             e.target.style.outline = 'none';
@@ -68,7 +69,7 @@ function Grid() {
     }
   }
   components.push(
-    <div style={{
+    <div key={"highlight"} style={{
         position: 'absolute',
         top: `${y * 16}px`,
         left: `${x * 80}px`,
@@ -81,7 +82,7 @@ function Grid() {
         boxShadow: 'none',
     }}>
     </div>);
-  components.push(<div style={{position: 'relative', top: `${y * 16 + 14}px`, left: `${x * 80 + 77}px`, width: '5px', height: '5px', backgroundColor:'#15539E',}}></div>);
+  components.push(<div key={"bluesquare"} style={{position: 'relative', top: `${y * 16 + 14}px`, left: `${x * 80 + 77}px`, width: '5px', height: '5px', backgroundColor:'#15539E',}}></div>);
   return (
     <div>
         {components}

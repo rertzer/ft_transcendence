@@ -41,7 +41,7 @@ function RepeatingNumbers() {
     if (i == localCoordY + 1)
     {
       components.push(
-      <div style={{
+      <div key={`y:${i}`}style={{
           position: 'absolute',
           top: dynamicTop,
           left: '0px',
@@ -58,7 +58,7 @@ function RepeatingNumbers() {
     else
     {
       components.push(
-        <div style={{
+        <div key={`y:${i}`} style={{
             position: 'absolute',
             top: dynamicTop,
             left: '0px',

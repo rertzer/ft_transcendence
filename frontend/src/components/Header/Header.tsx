@@ -55,7 +55,7 @@ function Header({}) {
             <img className={styles.userChild} alt="" src="/ellipse-1@2x.png" style={{cursor:"pointer"}}/>
             <span className={styles.user1}>{username}</span>
             <Tooltip className={styles.crossButton}title="Log out" arrow>
-              <img className={styles.crossIcon} alt="" src="/cross.svg" style={{cursor:"pointer"}}/>
+              <img className={styles.crossIcon} alt="" src="/cross.svg" style={{cursor:"pointer", right: "8px"}}/>
             </Tooltip>
           </div>
         </div>

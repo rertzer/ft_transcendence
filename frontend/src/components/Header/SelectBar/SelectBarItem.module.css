@@ -1,24 +1,27 @@
 .file1 {
     align-items: center;
-    width: 45px;
-    height: 18px;
+    width: 60px;
+    height: 28px;
     position: absolute;
     top: 2px;
     text-align: center;
     cursor:default;
+    margin-top: 2px;
+    font-size: 14px;
   }
-  .file1:hover{
+  /* .file1:hover{
     background-color: #474747;
-  }
+  } */
   .file {
     position: absolute;
-    top: 0;
+    top: 0px;
     left: 0px;
-    width: 45px;
-    height: 17px;
+    width: 60px;
+    height: 27px;
     overflow: hidden;
+    color: white;
   }
   .file:hover {
-    color: white;
+    color:#15539e;
     border-bottom: solid 2px #15539e;
   }

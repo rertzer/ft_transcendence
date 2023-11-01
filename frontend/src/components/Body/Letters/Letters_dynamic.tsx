@@ -52,7 +52,7 @@ function RepeatingLetters() {
     if (i == localCoordX)
     {
       components.push(
-      <div style={{
+      <div key={`x:${i}+${string}`}style={{
           position: 'absolute',
           top: '0px',
           left: dynamicLeft,
@@ -69,7 +69,7 @@ function RepeatingLetters() {
     else
     {
       components.push(
-        <div style={{
+        <div key={`x:${i}+${string}`}style={{
             position: 'absolute',
             top: '0px',
             left: dynamicLeft,
