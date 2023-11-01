@@ -4,11 +4,13 @@ import { ChatOptController } from "./chatOption.controller";
 import { ChatModule } from "../chat.module";
 import { MutedUserService } from "../mutedUser/mutedUser.service";
 import { MutedUserModule } from "../mutedUser/mutedUser.module";
+import { JoinChatService } from "../joinChat/joinChat.service";
+import { MyGateway } from "../gateway/gateway.service";
 
 @Module({
 	imports:[],
 	controllers: [ChatOptController],
-	providers: [MutedUserService]
+	providers: [JoinChatService, MyGateway]
 })
 
 export class ChatOptModule{}

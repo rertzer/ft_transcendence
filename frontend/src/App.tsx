@@ -43,7 +43,7 @@ function App() {
   const Layout = ()=> {
 
     const [RightBar, setRightBar] = useState("none");
-	  console.log("username", username)
+
     return (
     <div>
          <Navbar RightBar={RightBar} setRightBar={setRightBar}/>

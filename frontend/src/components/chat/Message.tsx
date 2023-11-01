@@ -13,12 +13,12 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 
 	useEffect(() => {
 		socket.on("userIsMute", (userIsMute:boolean) => {
-			//console.log("receive something");
+
 			if(!userIsMute) // il faudra afficher un truc dans ca cas la
-				console.log("user already mutted");
+				console.log("print something")
 		})
         return () => {
-            //console.log('Unregistering Events...');
+
 			socket.off("userIsMute");
 		}
     }, [])
@@ -38,9 +38,9 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ username: props.username, chatId: props.chatId})
 		};
-		//console.log("requestOptions", requestOptions)
+
 		fetch('http://localhost:4000/chatOption/setAdmin/', requestOptions)
-		//console.log("send new admin")
+
 	}
 
 	function muteUser() { // il faudra que client remplisse le time
@@ -53,9 +53,9 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ username: props.username, chatId: props.chatId})
 		};
-		//console.log("requestOptions", requestOptions)
+
 		fetch('http://localhost:4000/chatOption/banUser/', requestOptions)
-		//console.log("Banned user")
+
 	}
 
 	function kickUser() {
@@ -64,9 +64,9 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ username: props.username, chatId: props.chatId})
 		};
-		//console.log("requestOptions", requestOptions)
+
 		fetch('http://localhost:4000/chatOption/kickUser/', requestOptions)
-		//console.log("kickUser user")
+
 	}
 
     return (

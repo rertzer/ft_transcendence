@@ -16,7 +16,7 @@ export class ChatLister{
 		{
 			for (const chat of retrieveChat)
 			{
-				//console.log("chat : ", chat)
+
 				const lastMessagesOfChat = await this.prismaService.getLastMessages(chat.id);
 				let lastMessageUsername = null;
 				let date = null;
@@ -25,12 +25,12 @@ export class ChatLister{
 				if (lastMessagesOfChat !== undefined && lastMessagesOfChat && lastMessagesOfChat.length > 0)
 				{
 					lastMessage = lastMessagesOfChat[0];
-					//console.log("lastMessage : ", lastMessage)
+
 					date = lastMessage.date_sent;
 					message = lastMessage.message;
 					lastMessageUsername =  await this.prismaService.getLastMessagesUsername(chat.id);
 				}
-				//console.log("lastMessages : ", lastMessage);
+
 				const avatarOfOwner = await this.prismaService.getOwnerOfChatAvatar(chat.id);
 				const chatType = {
 					id: chat.channel.id,
@@ -42,7 +42,7 @@ export class ChatLister{
 				}
 				chatList.push(chatType);
 			}
-			//console.log("chatList : ", chatList);
+
 			sock.emit('ListOfChatOfUser', chatList);
 		}
 	}
@@ -50,7 +50,7 @@ export class ChatLister{
 	async listAllPublicChat(sock: Socket)
 	{
 		const chats = await this.prismaService.getListOfChat();
-		console.log("found some cats", chats);
+
 		sock.emit('chatList', chats);
 	}
 }

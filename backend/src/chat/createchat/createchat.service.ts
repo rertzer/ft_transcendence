@@ -14,17 +14,17 @@ export class CreateChatService {
 	async createChat(username:string, chatPassword: string, chatName: string, chatType: string, targetSocket: Socket)
 	{
 		const idOfUser = await this.prismaService.getIdOfLogin(username);
-			//console.log("id of user : ", idOfUser);
+
 			let encodedPassword : string | null = null;
 			if (chatPassword)
 				encodedPassword = await encodePassword(chatPassword);
-			//console.log("encoded password : ", encodedPassword);
-			//console.log("id of user : ", idOfUser);
+
+
 			if (idOfUser !== undefined)
 			{
 				const chatId = (await this.emitAndCreateRoom(username, encodedPassword, chatName, chatType, targetSocket, idOfUser)).toString();
 				targetSocket.join(chatId.toString());
-				//console.log("someone trying to join chat id : ", chatId.toString());
+
 			}
 	}
 

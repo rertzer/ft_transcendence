@@ -6,6 +6,7 @@ import { Socket } from "socket.io";
 import { ChatType } from "src/prisma/chat/prisma.chat.service";
 
 
+
 @Injectable()
 export class JoinChatService{
 	constructor(private prismaService:PrismaChatService ){
@@ -13,55 +14,48 @@ export class JoinChatService{
 
 	async joinChat(username: string, chat_id:string, user_role:string, passeword:string, sock : Socket)
 	{
-		//console.log("in join chat class");
-		if (this.checkNumber(chat_id, sock) === -1)
-			return;
-		if (this.checkChatExist(chat_id, sock) === null)
-			return;
+
+		if (this.checkNumber(chat_id) === -1)
+			return "-1";
+		const value = await this.checkChatExist(chat_id);
+		if (parseInt(value) < 0)
+		{
+			// here if return value = -2 need to check password
+			return (value);
+
+		}
 		await this.addUserToChat(username, chat_id, user_role, passeword)
-		//console.log("chat id in join chat : ", chat_id);
 		sock.join(chat_id)
+		return value;
 	}
 	//async addUserToChat(username: string, chat_id:string, user_role:string, passeword:string)
 
-	checkNumber(chat_id: string, sock : Socket) : Number
+	checkNumber(chat_id: string) : Number
 	{
+		console.log(chat_id);
 		if (Number.isNaN(parseInt(chat_id)))
 		{
-			//console.log("Chat asked is not a number")
-			sock.emit('onJoinChatRoom', {
-				id : '-1'
-			});
 			return (-1)
 		}
 		return (0);
 	}
 
-	async checkChatExist(chat_id: string, sock : Socket) {
+	async checkChatExist(chat_id: string) {
 		const chatExist = await this.prismaService.checkChatId(parseInt(chat_id));
 		if (chatExist == ChatType.NotExisting) {
-			sock.emit('onJoinChatRoom', {
-				id : '-1'
-			});
+		  console.log("here 1");
+			return "-1";
+		} else if (chatExist == ChatType.Private) {
+			console.log("here 2");
+		  return '-3';
+		} else if (chatExist == ChatType.Password) {
+			console.log("here 3");
+			return '-2';
+		} else {
+			console.log("here 4");
+		  return chat_id; // Convert chat_id to a string
 		}
-		else if  (chatExist == ChatType.Private) {
-			sock.emit('onJoinChatRoom', {
-				id : '-3'
-			});
-		}
-		else if  (chatExist == ChatType.Password) {
-			sock.emit('onJoinChatRoom', {
-				id : '-2'
-			});
-		}
-		else {
-			sock.emit('onJoinChatRoom', {
-				id : chat_id
-			});
-			return (chat_id)
-		}
-		return (null)
-	}
+	  }
 
 	async addUserToChat(username: string, chat_id:string, user_role:string, passeword:string)
 	{
@@ -70,10 +64,7 @@ export class JoinChatService{
 		//if not then :
 		if (userId !== undefined)
 		{
-			// //console.log("date now : ", new Date(Date.now())));
-			//console.log("Chat asked have been found");
 			const chatId = await this.prismaService.addChanelUser(parseInt(chat_id),userId, user_role, getDate(), null);
-			//console.log("chat id upper : ", chatId);
 			if (chatId !== undefined)
 				return (chatId.toString());
 		}

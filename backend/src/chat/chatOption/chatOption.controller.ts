@@ -2,15 +2,17 @@ import { Body, Controller, Post, Get } from "@nestjs/common";
 import { PrismaChatService } from "src/prisma/chat/prisma.chat.service";
 import { MutedUserService } from "../mutedUser/mutedUser.service";
 import { getDate } from "../utils/utils.service";
+import { MyGateway } from "../gateway/gateway.service";
+import { JoinChatService } from "../joinChat/joinChat.service";
 
 
 @Controller('chatOption')
 export class ChatOptController {
-	constructor(private readonly mutedUserService: MutedUserService, private prismaService:PrismaChatService) {}
+	constructor(private prismaChatService:PrismaChatService, private gateway: MyGateway, private joinChatservice : JoinChatService) {}
 
 	@Post('setAdmin')
 	async setUserAsAdmin(@Body() user:{username:string, chatId: number}){
-		await this.prismaService.changeChatUserRole(user.chatId, user.username, "admin");
+		await this.prismaChatService.changeChatUserRole(user.chatId, user.username, "admin");
 	}
 
 	@Post('banUser')
@@ -21,5 +23,18 @@ export class ChatOptController {
 	@Post('kickUser')
 	async kickUser(@Body() user:{username:string, chatId: number}){
 
+	}
+
+	@Post('joinChat')
+	async joinChat(@Body() user: {username:string, chat_id: string, user_role:string, passeword:string })
+	{
+		console.log("join chat object receive ", user);
+		const SockArray = this.gateway.getSocketsArray()
+		const targetSocket = SockArray.find((socket) => socket.login === user.username);
+		if (targetSocket !== undefined)
+		{
+			const value = this.joinChatservice.joinChat(user.username, user.chat_id, user.user_role, user.passeword, targetSocket.sock);
+			return value;
+		}
 	}
 }

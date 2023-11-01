@@ -27,25 +27,25 @@ function Login() {
 
 	useEffect(() => {
 		socket.on('onUserConnection', (UserConnection: UserConnection) => {
-			//console.log('userConnection event received!');
-			////console.log(UserConnection.username);
-			////console.log(UserConnection.id);
+
+
+
 			if (UserConnection.id === '-1')
 			{
-				//console.log("wrong id")
+
 				setUsername('');
 				setuserOk(false)
 
 			}
 			else{
-				//console.log("username before set", username	)
+
 				setUsername(UserConnection.username);
-				//console.log("here");
+
 				setuserOk(true)
 			}
 		  },);
 		  return () => {
-			//console.log('Unregistering Events...');
+
 			socket.off('onUserConnection');
 	};
 	}, []);
