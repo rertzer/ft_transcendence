@@ -8,7 +8,7 @@ import {
   Navigate,
 } from "react-router-dom";
 import Login from "./routes/Login";
-import EditProfile from "./routes/EditProfile.old";
+import EditProfile from "./routes/EditProfile";
 import Home from "./routes/Home";
 import Profile from "./routes/Profile";
 import Navbar from "./components/menus/Navbar";
@@ -118,11 +118,11 @@ function App() {
           path: "/profile",
           element: <Profile />,
         },
+        {
+          path: "/edit",
+          element: <EditProfile />,
+        },
       ],
-    },
-    {
-      path: "/edit",
-      element: <EditProfile />,
     },
     {
       path: "/login",

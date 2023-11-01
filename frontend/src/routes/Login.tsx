@@ -13,7 +13,6 @@ function Login() {
     event.preventDefault();
 
     const data = await fetch("http://localhost:4000/auth/login", {
-      
       method: "POST",
       mode: "cors",
       headers: { "Content-Type": "application/json; charset=utf-8" },
@@ -30,7 +29,7 @@ function Login() {
       setUserOk(true);
       sessionStorage.setItem("Login", user.login);
       console.log("login in Login is now", sessionStorage.getItem("Login"));
-      console.log("user ok in SUC is", userOk);
+      console.log("User is", user);
     }
   };
 
