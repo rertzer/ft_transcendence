@@ -1,18 +1,21 @@
 import { Injectable, Global } from "@nestjs/common";
+import { PrismaChatService } from "src/prisma/chat/prisma.chat.service";
 
 @Global()
 @Injectable()
 export class MutedUserService {
   mutedUsers: MutedUser[] = [];
 
-  constructor() {
+  constructor(private prismaService: PrismaChatService) {
 	//console.log("create an array of muted user")
   }
 
-  addMutedUser(user: MutedUser) {
+  async addMutedUser(user: MutedUser) {
 	const isMutted = this.IsMutedUser(user.username, user.chatId)
-	if (isMutted)
+	const isOwner = await this.prismaService.isOwner(user.username, user.chatId)
+	if (isMutted || isOwner)
 	{
+		console.log("owner")
 		//console.log("stop force mute")
 		return (false);
 	}

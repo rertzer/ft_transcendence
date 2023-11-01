@@ -90,6 +90,25 @@ export class PrismaChatService {
 		}
 	}
 
+	async isOwner(usermame : string, chatId: number)
+	{
+		const heIsOwner = await this.prismaService.chatChannels.findUnique({
+			where: {
+				id: chatId,
+			  },
+			  select: {
+				channelOwner: {
+				  select: {
+					username: true,
+				  },
+				},
+			  },
+			});
+		if (!heIsOwner)
+			return false;
+		return heIsOwner.channelOwner.username === usermame
+	}
+
 	async RetrievePrivateMessage(login:string) {
 		const id = await this.getIdOfLogin(login);
 		const userDirectMessages = await this.prismaService.directMsg.findMany({
