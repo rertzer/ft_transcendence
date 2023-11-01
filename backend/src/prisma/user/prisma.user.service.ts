@@ -1,15 +1,14 @@
+import { ConfigService } from '@nestjs/config';
+import { PrismaService } from '../prisma.service';
 
-import {PrismaService} from "../prisma.service";
+const config = new ConfigService();
+const prismaService = new PrismaService(config);
 
-const prismaService = new PrismaService;
-
-export async function getIdOfLogin(login: string){
-	const user = await prismaService.user.findFirst({
-		where: {
-			username: login,
-		}
-	})
-	if (user)
-		return user.id;
+export async function getIdOfLogin(login: string) {
+  const user = await prismaService.user.findFirst({
+    where: {
+      username: login,
+    },
+  });
+  if (user) return user.id;
 }
-

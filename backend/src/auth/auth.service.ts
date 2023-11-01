@@ -3,16 +3,24 @@ import {
   ImATeapotException,
   Injectable,
 } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuthDto, LoginDto, EditDto } from './dto';
 import * as argon from 'argon2';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+
 import { User } from '@prisma/client';
 import { Express } from 'express';
+import { ConfigService } from '@nestjs/config';
+import { promises } from 'dns';
 
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private jwt: JwtService,
+    private config: ConfigService,
+  ) {}
 
   async login(dto: LoginDto) {
     // log existing user
@@ -55,10 +63,24 @@ export class AuthService {
         console.log('Bad password');
         throw new ForbiddenException('Bad password');
       } else console.log('password ok');
-    } else throw new ImATeapotException("For real: I'm a Teapot");
-    user.password = 'nop!';
-    return user;
-  } // end of login
+    } else
+      throw new ImATeapotException("For real: I'm a Teapot");
+
+    return this.signToken(user.login);
+  } // end of login()
+
+  async signToken(
+    login: string,
+  ): Promise<{ access_token: string }> {
+    const payload = {
+      sub: login,
+    };
+    const access_token = await this.jwt.signAsync(payload, {
+      expiresIn: '59m',
+      secret: this.config.get('JWT_SECRET'),
+    });
+    return { access_token };
+  } // end of signToken()
 
   async edit(dto: EditDto) {
     console.log('edit received dto: ', dto.login);
@@ -80,6 +102,6 @@ export class AuthService {
   async editAvatar(file: Express.Multer.File) {
     console.log('Editing avatar');
     console.log(file);
-    return {file};
+    return { file };
   } // end of editAvatar
 }
