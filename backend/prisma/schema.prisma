@@ -11,11 +11,11 @@ datasource db {
 }
 
 model User {
-  id                     Int                @id @default(autoincrement())
+  id                     Int                  @id @default(autoincrement())
   username               String?
   first_name             String?
   last_name              String?
-  login                  String             @unique
+  login                  String               @unique
   email                  String
   avatar                 String?
   role                   String
@@ -23,14 +23,24 @@ model User {
   game_won               Int?
   game_lost              Int?
   game_played            Int?
-  friends                Friend[]           @relation("UserToFriends")
-  sentDirectMessages     DirectMsg[]        @relation("SenderMessages")
-  receivedDirectMessages DirectMsg[]        @relation("ReceiverMessages")
-  blockedUsers           BlockedUser[]      @relation("BlockingUser")
-  usersBlockedBy         BlockedUser[]      @relation("BlockedByUser")
-  twoFA                  TwoFA?             @relation("TwoFactorAuth")
-  chatChannelsUser       ChatChannelsUser[] @relation("chatChanelUser")
-  channelOwner           ChatChannels[]     @relation("ChatChannelsOwner")
+  banned_chats           UsersBannedToChats[]
+  friends                Friend[]             @relation("UserToFriends")
+  sentDirectMessages     DirectMsg[]          @relation("SenderMessages")
+  receivedDirectMessages DirectMsg[]          @relation("ReceiverMessages")
+  blockedUsers           BlockedUser[]        @relation("BlockingUser")
+  usersBlockedBy         BlockedUser[]        @relation("BlockedByUser")
+  twoFA                  TwoFA?               @relation("TwoFactorAuth")
+  chatChannelsUser       ChatChannelsUser[]   @relation("chatChanelUser")
+  channelOwner           ChatChannels[]       @relation("ChatChannelsOwner")
+}
+
+model UsersBannedToChats {
+  user   User         @relation(fields: [userId], references: [id])
+  userId Int
+  chat   ChatChannels @relation(fields: [chatId], references: [id])
+  chatId Int
+
+  @@id([userId, chatId])
 }
 
 model ChatChannelsUser {
@@ -44,18 +54,22 @@ model ChatChannelsUser {
   channel          ChatChannels     @relation("ChatChannelsUser", fields: [channel_id], references: [id])
   messagesSent     ChatMsgHistory[] @relation("ChatMessagesSender")
 
+  ChatChannels   ChatChannels? @relation(fields: [chatChannelsId], references: [id])
+  chatChannelsId Int?
 }
 
 model ChatChannels {
-  id            Int                @id @default(autoincrement())
-  owner         Int
-  type          String
-  name          String?
-  password      String?
-  chatMessages  ChatMsgHistory[]   @relation("ChatMessages")
-  channelOwner  User               @relation("ChatChannelsOwner", fields: [owner], references: [id])
-  channelsUsers ChatChannelsUser[] @relation("ChatChannelsUser")
+  id                 Int                  @id @default(autoincrement())
+  owner              Int
+  type               String
+  name               String?
+  password           String?
+  userBanned         ChatChannelsUser[]
+  chatMessages       ChatMsgHistory[]     @relation("ChatMessages")
+  channelOwner       User                 @relation("ChatChannelsOwner", fields: [owner], references: [id])
+  channelsUsers      ChatChannelsUser[]   @relation("ChatChannelsUser")
   // Add other fields...
+  UsersBannedToChats UsersBannedToChats[]
 }
 
 model ChatMsgHistory {

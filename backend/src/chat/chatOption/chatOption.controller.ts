@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Get } from "@nestjs/common";
+import { Body, Controller, Post, Get, Param } from "@nestjs/common";
 import { PrismaChatService } from "src/prisma/chat/prisma.chat.service";
 import { MutedUserService } from "../mutedUser/mutedUser.service";
 import { getDate } from "../utils/utils.service";
@@ -18,6 +18,15 @@ export class ChatOptController {
 	@Post('banUser')
 	async banUser(@Body() user:{username:string, chatId: number}){
 
+	}
+
+	@Get(':username/banned/:chatId')
+	async isUserBanned(
+		@Param('username') username: string,
+		@Param('chatId') chatId: string,
+	) {
+		const isBanned = await this .prismaChatService.checkIfUserIsBanned(parseInt(chatId),username);
+	return { isBanned };
 	}
 
 	@Post('kickUser')

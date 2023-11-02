@@ -17,11 +17,32 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 			if(!userIsMute) // il faudra afficher un truc dans ca cas la
 				console.log("print something")
 		})
+		// socket.on("BannedUser", (chat_id: Number)=> {
+		// 	console.log("yo i have been banned");
+		// })
         return () => {
 
 			socket.off("userIsMute");
 		}
     }, [])
+
+	function checkIfUserIsBanned() { //this is the function to check if the username Is banned
+		// implements it where u want
+		fetch(`http://localhost:4000/chatOption/${username}/banned/${props.chatId}`)
+		  .then((response) => response.json())
+		  .then((data) => {
+			if (data.isBanned) {
+			  // Handle the case where the user is banned
+			  console.log('You are banned.');
+			} else {
+			  // Handle the case where the user is not banned
+			  console.log('You are not banned.');
+			}
+		  })
+		  .catch((error) => {
+			console.error('Error checking user status:', error);
+		  });
+	  }
 
     if (username === props.username) {
         isMessageOwner = true;
@@ -40,11 +61,16 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 		};
 
 		fetch('http://localhost:4000/chatOption/setAdmin/', requestOptions)
+		.catch((error) => {
+			console.error('Error checking user status:', error);
+		  });
 
 	}
 
 	function muteUser() { // il faudra que client remplisse le time
+		console.log("plop try to muted")
 		socket.emit("mutedUser", {username: props.username, chatId: props.chatId, time: 30 })
+		checkIfUserIsBanned()
 	}
 
 	function banUser() {
@@ -53,9 +79,7 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ username: props.username, chatId: props.chatId})
 		};
-
 		fetch('http://localhost:4000/chatOption/banUser/', requestOptions)
-
 	}
 
 	function kickUser() {
@@ -64,9 +88,7 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ username: props.username, chatId: props.chatId})
 		};
-
 		fetch('http://localhost:4000/chatOption/kickUser/', requestOptions)
-
 	}
 
     return (

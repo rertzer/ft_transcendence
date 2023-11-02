@@ -40,13 +40,28 @@ export class PrismaChatService {
 			return chat.password;
 	}
 
-
+	async checkIfUserIsBanned(chat_channels_id: number, username: string)
+	{
+		console.log("hey what did i recerive : ", chat_channels_id, username);
+		const user_id = await this.getIdOfLogin(username);
+		if (user_id)
+		{
+			const isBanned = await this.prismaService.usersBannedToChats.findFirst({
+				where: {
+					userId: user_id,
+					chatId: chat_channels_id,
+				}
+			})
+			if (isBanned)
+				return true;
+			else
+				return false;
+		}
+		return false;
+	}
 
 	async getIdOfChatChannelsUser(login: string, chat_channels_id: number){
-
-
 		const idOfUser = await this.getIdOfLogin(login);
-
 
 		const user = await this.prismaService.chatChannelsUser.findFirst({
 			where: {
