@@ -23,7 +23,17 @@ export class ChatOptController {
 			console.log("passed this step");
 			const banWorks = await this.prismaChatService.banUser(user.username, user.chatId);
 			if (banWorks)
-				return true
+			{
+				const SockArray = this.gateway.getSocketsArray()
+				const targetSocket = SockArray.find((socket) => socket.login === user.username);
+				if (targetSocket)
+				{
+					console.log("removed the socket of :",user.username, "from the sock room number:", user.chatId)
+					targetSocket.sock.leave(user.chatId.toString())
+					return true
+				}
+				return false;
+			}
 			else
 				return false
 		}

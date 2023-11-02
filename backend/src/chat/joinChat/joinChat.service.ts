@@ -23,7 +23,8 @@ export class JoinChatService{
 			return (value);
 
 		}
-		await this.addUserToChat(username, chat_id, user_role, passeword)
+		if (!await this.prismaService.checkIfUserIsBanned(parseInt(chat_id), username))
+			await this.addUserToChat(username, chat_id, user_role, passeword)
 		sock.join(chat_id)
 		return value;
 	}
