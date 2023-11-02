@@ -53,9 +53,6 @@ model ChatChannelsUser {
   chatChannelsUser User             @relation("chatChanelUser", fields: [user_id], references: [id], map: "chat_channels_user")
   channel          ChatChannels     @relation("ChatChannelsUser", fields: [channel_id], references: [id])
   messagesSent     ChatMsgHistory[] @relation("ChatMessagesSender")
-
-  ChatChannels   ChatChannels? @relation(fields: [chatChannelsId], references: [id])
-  chatChannelsId Int?
 }
 
 model ChatChannels {
@@ -64,7 +61,6 @@ model ChatChannels {
   type               String
   name               String?
   password           String?
-  userBanned         ChatChannelsUser[]
   chatMessages       ChatMsgHistory[]     @relation("ChatMessages")
   channelOwner       User                 @relation("ChatChannelsOwner", fields: [owner], references: [id])
   channelsUsers      ChatChannelsUser[]   @relation("ChatChannelsUser")

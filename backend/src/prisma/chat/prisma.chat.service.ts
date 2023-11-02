@@ -1,5 +1,7 @@
 import { PrismaClient } from '@prisma/client'
 import { Injectable } from "@nestjs/common";
+import e from 'express';
+import { get } from 'http';
 
 
 export enum ChatType {
@@ -30,6 +32,24 @@ export class PrismaChatService {
 			return user.id;
 	}
 
+	async banUser(login: string, chatId : number)
+	{
+		const getId = await this.getIdOfLogin(login);
+		if (getId && ! await this.checkIfUserIsBanned(chatId, login))
+		{
+
+			const banned = await this.prismaService.usersBannedToChats.create({
+				data: {
+					userId :getId,
+					chatId : chatId,
+				}
+			})
+			if (banned)
+				return true;
+		}
+		return false;
+	}
+
 	async getPasswordOfChat(chat_channels_id: number){
 		const chat = await this.prismaService.chatChannels.findFirst({
 			where: {
@@ -52,6 +72,7 @@ export class PrismaChatService {
 					chatId: chat_channels_id,
 				}
 			})
+			console.log("isBanned = ", isBanned);
 			if (isBanned)
 				return true;
 			else
@@ -120,27 +141,51 @@ export class PrismaChatService {
 				},
 			  },
 			});
+		console.log("heisowner = ", heIsOwner);
 		if (!heIsOwner)
 			return false;
 		return heIsOwner.channelOwner.username === usermame
 	}
 
-	async RetrievePrivateMessage(login:string) {
-		const id = await this.getIdOfLogin(login);
-		const userDirectMessages = await this.prismaService.directMsg.findMany({
-			where: {
-			  OR: [
-				{ sender_id: id},    // Messages where the user is the sender
-				{ receiver_id: id},  // Messages where the user is the receiver
-			  ],
-			},
-			include: {
-			  sender: true,
-			  receiver: true,
-			},
-		  });
-		return userDirectMessages;
+	async isAdmin(login:string, chatId:number)
+	{
+		const idToLogin = await this.getIdOfLogin(login);
+		if (idToLogin)
+		{
+			const heIsAdmin = await this.prismaService.chatChannelsUser.findFirst({
+				where: {
+					channel_id: chatId,
+					user_id: idToLogin,
+				  },
+				});
+			console.log("heisAdmin = ", heIsAdmin);
+			if (!heIsAdmin)
+				return false;
+			if (heIsAdmin.user_role == "admin")
+				return true;
+		}
+		return false;
 	}
+
+	// async RetrievePrivateMessage(login:string) {
+	// 	const id = await this.getIdOfLogin(login);
+	// 	if (id)
+	// 	{
+	// 		const userDirectMessages = await this.prismaService.directMsg.findUnique({
+	// 			where: {
+	// 			  OR: [
+	// 				{ sender_id: id},    // Messages where the user is the sender
+	// 				{ receiver_id: id},  // Messages where the user is the receiver
+	// 			  ],
+	// 			},
+	// 			include: {
+	// 			  sender: true,
+	// 			  receiver: true,
+	// 			},
+	// 		  });
+	// 		return userDirectMessages;
+	// 	}
+	// }
 
 	async RetrieveChatMessage(chat_channels_id: number) {
 			// Find the chat channel by its ID

@@ -15,8 +15,6 @@ export class MutedUserService {
 	const isOwner = await this.prismaService.isOwner(user.username, user.chatId)
 	if (isMutted || isOwner)
 	{
-
-
 		return (false);
 	}
 	else
@@ -32,10 +30,7 @@ export class MutedUserService {
 }
 
   IsMutedUser(username: string, chatId: number): boolean {
-
-
 	const isMutted =  this.mutedUsers.find((user) => user.username === username && user.chatId === chatId);
-
 
 		if (isMutted !== undefined)
 		{
@@ -43,11 +38,8 @@ export class MutedUserService {
 			time.setHours(time.getHours() + 1);
 			const timeStart = isMutted.timeStart;
 			const timeDiff = Math.abs(time.getTime() - timeStart.getTime());
-
-
 			if (timeDiff >= (isMutted.duration * 1000))
 			{
-
 				this.removeMutedUser(username, chatId);
 				return false;
 			}

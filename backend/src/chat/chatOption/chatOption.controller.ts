@@ -17,7 +17,18 @@ export class ChatOptController {
 
 	@Post('banUser')
 	async banUser(@Body() user:{username:string, chatId: number}){
-
+		console.log("in ban user");
+		if (! await this.prismaChatService.isAdmin(user.username, user.chatId) && ! await this.prismaChatService.isOwner(user.username, user.chatId))
+		{
+			console.log("passed this step");
+			const banWorks = await this.prismaChatService.banUser(user.username, user.chatId);
+			if (banWorks)
+				return true
+			else
+				return false
+		}
+		else
+			return false;
 	}
 
 	@Get(':username/banned/:chatId')

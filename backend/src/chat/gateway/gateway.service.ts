@@ -79,7 +79,7 @@ export class MyGateway {
 		const targetSocket = this.socketsLogin.find((socket) => socket.sock === client);
 		if (targetSocket !== undefined)
 		{
-			const ReceiveAndSendMp = await this.prismaChatService.RetrievePrivateMessage(username);
+			//const ReceiveAndSendMp = await this.prismaChatService.RetrievePrivateMessage(username);
 			client.emit("retrievePrivateMessage", targetSocket);
 		}
 	}

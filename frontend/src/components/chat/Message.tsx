@@ -70,7 +70,7 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 	function muteUser() { // il faudra que client remplisse le time
 		console.log("plop try to muted")
 		socket.emit("mutedUser", {username: props.username, chatId: props.chatId, time: 30 })
-		checkIfUserIsBanned()
+
 	}
 
 	function banUser() {
