@@ -26,9 +26,11 @@ import UserContext from "./context/userContext";
 import Channels from "./components/channels/Channels";
 
 function App() {
-  const login: string | null = sessionStorage.getItem("Login");
-  console.log("Login in App is", login);
-  //const [password, setPassword] = useState("");
+  const raw_token: string | null = sessionStorage.getItem("Token");
+  let token = { login: "", access_token: "" };
+  if (raw_token) token = JSON.parse(raw_token);
+  console.log("Token in App is", token);
+
   const [user, setUser] = useState({
     id: 0,
     username: "",
@@ -44,18 +46,30 @@ function App() {
     game_played: 0,
   });
 
+  if (token.login && user.login == "") {
+    console.log("Geting user", user.login);
+    const getUser = async () => {
+      const bearer = "Bearer " + token.access_token;
+      const data = await fetch("http://localhost:4000/user/" + token.login, {
+        method: "GET",
+        headers: { Authorization: bearer },
+        mode: "cors",
+      });
+      const user = await data.json();
+      if (user.message) {
+        console.log("Bad Bad");
+      } else {
+        setUser(user);
+        console.log("User", user.login, "fetched");
+      }
+    };
+    getUser();
+  }
   const [chatId, setChatId] = useState(-1);
   const ChatContextValue: IChatContext = {
     chatId,
     setChatId,
   };
-
-  // const ConnectionValue: IConnected = {
-  //   login,
-  //   setLogin,
-  //   password,
-  //   setPassword,
-  // };
 
   const UserValue: IContextUser = {
     user,
@@ -79,7 +93,7 @@ function App() {
 
   const Layout = () => {
     const [RightBar, setRightBar] = useState("none");
-    console.log("login", login);
+    console.log("login", token.login);
     return (
       <div>
         <Navbar RightBar={RightBar} setRightBar={setRightBar} />
@@ -95,7 +109,8 @@ function App() {
   };
 
   const ProtectedRoute = ({ children }: any) => {
-    if (!login) {
+    console.log("Going through ProtectedRoute");
+    if (!token.login) {
       return <Navigate to="/login" />;
     }
     return children;
@@ -138,15 +153,6 @@ function App() {
         </ChatContext.Provider>
       </UserContext.Provider>
     </div>
-    //   <div>
-    //   <UserContext.Provider value={UserValue}>
-    //     <ChatContext.Provider value={ChatContextValue}>
-    //       <ConnectionContext.Provider value={ConnectionValue}>
-    //         <RouterProvider router={router} />
-    //       </ConnectionContext.Provider>
-    //     </ChatContext.Provider>
-    //   </UserContext.Provider>
-    // </div>
   );
 }
 

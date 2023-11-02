@@ -10,17 +10,21 @@ import UserContext from "../context/userContext";
 import { useContext, useEffect, useState } from "react";
 
 function Profile() {
-
-  const login :string | null =sessionStorage.getItem("Login");
+  const raw_token: string | null = sessionStorage.getItem("Token");
+  let token = { login: "", access_token: "" };
+  if (raw_token) token = JSON.parse(raw_token);
+  console.log("Token in Profile is", token);
 
   const { user, setUser } = useContext(UserContext);
 
   const [modifier, setModifier] = useState(false);
 
   if (user.login == "") {
+    const bearer = "Bearer " + token.access_token;
     const getUser = async () => {
-      const data = await fetch("http://localhost:4000/user/" + login, {
+      const data = await fetch("http://localhost:4000/user/" + token.login, {
         method: "GET",
+        headers: { Authorization: bearer },
         mode: "cors",
       });
       const user = await data.json();

@@ -71,7 +71,7 @@ export class AuthService {
 
   async signToken(
     login: string,
-  ): Promise<{ access_token: string }> {
+  ): Promise<{ login: string, access_token: string }> {
     const payload = {
       sub: login,
     };
@@ -79,7 +79,7 @@ export class AuthService {
       expiresIn: '59m',
       secret: this.config.get('JWT_SECRET'),
     });
-    return { access_token };
+    return { login, access_token };
   } // end of signToken()
 
   async edit(dto: EditDto) {

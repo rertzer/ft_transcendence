@@ -39,10 +39,14 @@ function Register() {
     event.preventDefault();
     console.log("Editing the user");
     if (confPasswordClass !== "KO") {
+      //let newUser: IUser | undefined;
 
-    //let newUser: IUser | undefined;
-
-    if (newAvatar) {
+      const raw_token: string | null = sessionStorage.getItem("Token");
+      let token = { login: "", access_token: "" };
+      if (raw_token) token = JSON.parse(raw_token);
+      console.log("Token in EditProfile is", token);
+      const bearer = "Bearer " + token.access_token;
+      if (newAvatar) {
         console.log("new Avatar");
         let formData = new FormData();
         formData.append("file", newAvatar, newAvatar.name);
@@ -51,51 +55,53 @@ function Register() {
         const fileData = await fetch("http://localhost:4000/auth/editAvatar", {
           method: "POST",
           mode: "cors",
+          headers: { Authorization: bearer },
           body: formData,
         });
         const answer = await fileData.json();
         console.log("Answer", JSON.stringify(answer));
         setUserOk(true);
       }
-     
-    let tosend: IToSend = { login: user.login };
-    if (newUsername) tosend.username = newUsername;
-    if (newPassword) tosend.password = newPassword;
-    if (newEmail) tosend.email = newEmail;
 
-    console.log("fetching", tosend);
-    const data = await fetch("http://localhost:4000/auth/edit", {
-      method: "POST",
-      mode: "cors",
-      headers: { "Content-Type": "application/json; charset=utf-8" },
-      body: JSON.stringify(tosend),
-    });
-    const newUser = await data.json();
-    console.log("nouveau", newUser);
+      let tosend: IToSend = { login: user.login };
+      if (newUsername) tosend.username = newUsername;
+      if (newPassword) tosend.password = newPassword;
+      if (newEmail) tosend.email = newEmail;
 
-    if (newUser && newUser.message) {
-      console.log("Bad request");
-      setNewPassword("");
-      setConfPassword("");
-      setConfPasswordClass("NA");
-      setUserOk(false);
-    } else
-    console.log("before", user.username, userOk);
+      console.log("fetching", tosend);
+      const data = await fetch("http://localhost:4000/auth/edit", {
+        method: "POST",
+        mode: "cors",
+        headers: {
+          Authorization: bearer,
+          "Content-Type": "application/json; charset=utf-8",
+        },
+        body: JSON.stringify(tosend),
+      });
+      const newUser = await data.json();
+      console.log("nouveau", newUser);
 
-    if (newUser) {
-      setUser(newUser);
-      setUserOk(true);
-      console.log("Edited!!!",  userOk);
-    }
+      if (newUser && newUser.message) {
+        console.log("Bad request");
+        setNewPassword("");
+        setConfPassword("");
+        setConfPasswordClass("NA");
+        setUserOk(false);
+      } else console.log("before", user.username, userOk);
 
-     } else console.log("BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD");
+      if (newUser) {
+        setUser(newUser);
+        setUserOk(true);
+        console.log("Edited!!!", userOk);
+      }
+    } else console.log("BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD");
   };
 
   useEffect(() => {
     let stored_login: string | null = sessionStorage.getItem("Login");
     if (stored_login != null) setLogin(stored_login);
   }, []);
-  
+
   useEffect(() => {
     console.log("useEffect");
     if (confPassword && newPassword) {
@@ -109,7 +115,7 @@ function Register() {
     console.log("edit ok in Effect is", userOk);
   }, [avatarName]);
 
-  console.log("edit ok is", userOk,);
+  console.log("edit ok is", userOk);
   return (
     <div className="register">
       <div className="card">
@@ -160,8 +166,7 @@ function Register() {
               {user.username} {userOk}
             </h2>
 
-
-        {userOk && <Navigate to="/profile"></Navigate>}
+            {userOk && <Navigate to="/profile"></Navigate>}
             <button onClick={handleUser}>Edit</button>
           </form>
         </div>

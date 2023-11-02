@@ -1,13 +1,11 @@
 import "./Login.scss";
 import { Navigate } from "react-router-dom";
-import { MouseEvent, useContext, useEffect, useState } from "react";
-import UserContext from "../context/userContext";
+import { MouseEvent, useEffect, useState } from "react";
 
 function Login() {
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
-  const { user, setUser } = useContext(UserContext);
-  const [userOk, setUserOk] = useState(false);
+  const [tokenOk, setTokenOk] = useState(false);
 
   const handleSubmit = async (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -18,28 +16,32 @@ function Login() {
       headers: { "Content-Type": "application/json; charset=utf-8" },
       body: JSON.stringify({ login, password }),
     });
-    const user = await data.json();
-    if (user.message) {
+    const token = await data.json();
+    if (token.message) {
       console.log("Bad password");
       setLogin("");
       setPassword("");
-      setUserOk(false);
+      setTokenOk(false);
     } else {
-      setUser(user);
-      setUserOk(true);
-      sessionStorage.setItem("Login", user.login);
-      console.log("login in Login is now", sessionStorage.getItem("Login"));
-      console.log("User is", user);
+      setTokenOk(true);
+      sessionStorage.setItem("Token", JSON.stringify(token));
+      console.log("token in Login is now", sessionStorage.getItem("Token"));
     }
   };
 
   useEffect(() => {
-    let stored_login: string | null = sessionStorage.getItem("Login");
-    if (stored_login != null) setLogin(stored_login);
+    const tk: string | null = sessionStorage.getItem("Token");
+    console.log("Login Effect");
+    if (tk != null)
+    {
+      const stored_token = JSON.parse(tk);
+      setLogin(stored_token.login);
+    }
+    console.log("In Effect login is now", login);
   }, []);
 
   
-  console.log("Log user ok is", userOk);
+  console.log("Log user ok is", tokenOk);
   return (
     <div className="login">
       <div className="card">
@@ -66,7 +68,7 @@ function Login() {
           >
             Log in
           </button>
-          {userOk && <Navigate to="/"></Navigate>}
+          {tokenOk && <Navigate to="/"></Navigate>}
         </div>
       </div>
     </div>
