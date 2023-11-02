@@ -36,6 +36,7 @@ const Chats = (props: {activeChat: Active, setActiveChat: Function, chatsOfUser:
     const startRef = useRef<HTMLDivElement>(null); //ref to empty div to autoscroll to bottom
 
     function trigger() {
+		console.log("chatList");
        socket.emit('chatListOfUser', username);
 	   socket.emit('chatList'); // here is for the public chat.
 

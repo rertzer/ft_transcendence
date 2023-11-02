@@ -8,9 +8,9 @@ import { JoinChatService } from "../joinChat/joinChat.service";
 import { MyGateway } from "../gateway/gateway.service";
 
 @Module({
-	imports:[],
+	imports:[GatewayModule],
 	controllers: [ChatOptController],
-	providers: [JoinChatService, MyGateway]
+	providers: [JoinChatService]
 })
 
 export class ChatOptModule{}

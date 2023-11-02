@@ -1,5 +1,4 @@
 import { Injectable } from "@nestjs/common";
-import {MyGateway } from "../gateway/gateway.service";
 import { PrismaChatService } from "../../prisma/chat/prisma.chat.service";
 import { parse } from "path";
 import { Socket } from "socket.io";
@@ -12,10 +11,8 @@ export class RetrieveMessageService {
 
 	async retrieveMessage(chat_id: number, NumToDisplay: number, sock : Socket)
 	{
-
-
 		const messageHistory = [];
-
+		console.log("hey");
 		if (chat_id !== undefined)
 		{
 			const messageReceived = await this.prismaService.RetrieveChatMessage(chat_id);
@@ -34,7 +31,7 @@ export class RetrieveMessageService {
 					}
 					messageHistory.push(msg);
 				};
-
+				console.log('message history = ', messageHistory)
 				sock.emit('chatMsgHistory', messageHistory);
 			}
 		}

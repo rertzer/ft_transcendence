@@ -17,12 +17,10 @@ let lastMessageId = 0;
 
 @WebSocketGateway({
 	cors: {
-		origin: '*'
+		origin: 'http://localhost:3000'
 	},
 })
 
-//implements mean that it will contains the metho onModuleInit and will be executed
-// the init of my gatewAY
 
 @Injectable()
 export class MyGateway {
@@ -48,7 +46,11 @@ export class MyGateway {
 	@SubscribeMessage('newChatConnection')
 	async newChatConnection(@MessageBody() login:string, @ConnectedSocket() client:Socket)
 	{
-		this.socketsLogin.push({login : login , sock: client})
+		if (!this.socketsLogin.find((item) => item.login === login && item.sock === client))
+		{
+			console.log("plop trigger0");
+			this.socketsLogin.push({login : login , sock: client})
+		}
 	}
 
 	@SubscribeMessage('newMessage')
@@ -59,8 +61,6 @@ export class MyGateway {
 			if (targetSocket !== undefined)
 			{
 				lastMessageId++; // probleme with that in multi client. need to have an increment front end
-
-
 				this.server.to(messageData.idOfChat.toString()).emit('newMessage', {
 					msg: messageData.content,
 					username: messageData.username,
@@ -157,7 +157,7 @@ export class MyGateway {
 		const targetSocket = this.socketsLogin.find((socket) => socket.sock === client);
 		if (targetSocket !== undefined)
 		{
-
+			console.log("trigger twice ??")
 			const RetrieveMessage = new RetrieveMessageService(this.prismaChatService);
 			RetrieveMessage.retrieveMessage(messageData.chatId, messageData.numberMsgToDisplay, targetSocket.sock);
 		}
@@ -176,9 +176,10 @@ export class MyGateway {
 	@SubscribeMessage('chatListOfUser')
 	async onChatListOfUser(@MessageBody() username: string, @ConnectedSocket() client:Socket) {
 		const targetSocket = this.socketsLogin.find((socket) => socket.sock === client);
+		console.log("plop")
 		if (targetSocket !== undefined)
 		{
-
+			console.log("hey chat list");
 			const chatLister = new ChatLister(this.prismaChatService);
 			chatLister.listChatOfUser(username, targetSocket.sock);
 		}

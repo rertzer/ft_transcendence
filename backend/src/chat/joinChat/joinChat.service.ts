@@ -1,5 +1,4 @@
 import { Injectable } from "@nestjs/common";
-import {MyGateway } from "../gateway/gateway.service";
 import { PrismaChatService } from "src/prisma/chat/prisma.chat.service";
 import { getDate } from "../utils/utils.service";
 import { Socket } from "socket.io";

@@ -20,16 +20,19 @@ function Login() {
     // }
 	const socket = useContext(WebsocketContext);
 
+	useEffect(() => {
+		socket.connect();
+		console.log("fuck");
+	  }, []);
+
 	const sendUserConnection = () => {
+
 		socket.emit('onUserConnection', username);
 		setUsername(username);
 	}
 
 	useEffect(() => {
 		socket.on('onUserConnection', (UserConnection: UserConnection) => {
-
-
-
 			if (UserConnection.id === '-1')
 			{
 
@@ -38,9 +41,7 @@ function Login() {
 
 			}
 			else{
-
 				setUsername(UserConnection.username);
-
 				setuserOk(true)
 			}
 		  },);
