@@ -1,9 +1,10 @@
 .addchat {
     .submenu {
         width: 460px;
-        background-color: #2f2d52;
-        top: 100px;
-        position: absolute;
+        background-color: #555555;
+        bottom: 40px;
+        right: 19px;
+        position:fixed;
         border-radius: 0px 10px 10px 10px;
         overflow:auto;
         color: #ddddf7;
@@ -18,7 +19,7 @@
             button {
                 padding: 10px;
                 margin: 20px;
-                background-color: #5d5b8d;
+                background-color: #5b5d73;
                 color: #ddddf7;
                 border-radius: 10px;
                 height: 70px;

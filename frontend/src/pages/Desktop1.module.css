@@ -1,17 +1,6 @@
-.bottom {
-  bottom: 0;
-  background-color: var(--color-darkslategray-100);
-  box-shadow: 0 2px 0#585857 inset;
-  height: 41px;
-  position: fixed;
-  width: 100%;
-  right: 0;
-  left: 0;
-  bottom: 0;
-}
 .desktop1 {
-  width: 100%;
-  overflow: hidden;
+  width: 0px;
+  height: 0px;
   text-align: left;
   font-size: var(--font-size-3xs);
   color: var(--color-white);

@@ -1,0 +1,39 @@
+.bottom {
+    bottom: 0;
+    background-color: var(--color-darkslategray-100);
+    box-shadow: 0 2px 0#585857 inset;
+    height: 41px;
+    position: fixed;
+    width: 100%;
+    right: 0;
+    left: 0;
+    bottom: 0;
+}
+.icon {
+    cursor:pointer;
+    position:fixed;
+    right:20px;
+    bottom: 9px;
+    height:20px;
+    width: 20px;
+}
+.contact {
+    font-weight: bold;
+    position:fixed;
+    right:48px;
+    bottom:12px;
+}
+.button {
+    color: white;
+}
+.button:hover {
+    color: #15539e;
+}
+.slidder {
+    position:fixed;
+    bottom:14px;
+    right:80px;
+}
+.plus {
+    height:5px;
+}

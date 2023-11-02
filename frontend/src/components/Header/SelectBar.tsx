@@ -8,6 +8,6 @@ export function SelectBar({}) {
           <SelectBarItem labelText="Project" left="12px" />
           <SelectBarItem labelText="Data" left="72px" />
           <SelectBarItem labelText="Friends" left="132px" />
-          <SelectBarItem labelText="Chat" left="192px" />
+          <SelectBarItem labelText="Profile" left="192px" />
         </div>;
 }
