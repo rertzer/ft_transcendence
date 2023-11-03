@@ -7,7 +7,7 @@ import ConversationBar from "./ConversationBar";
 const Chat = (props: {toDisplay: allChatOfUser, setActiveChat: Function}) => {
 
     let isOwner = true;
-    let isAdmin = false;
+    let isAdmin = true;
 
     // if (props.toDisplay.ownerUid === currentUser.uid) {
     //     isOwner = true; }

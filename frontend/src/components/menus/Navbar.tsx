@@ -49,7 +49,7 @@ function Navbar(props: {RightBar: string, setRightBar: Function}) {
                 </div>
             </div>
             <div className="right">
-                <Link to="/profile/1" style={{textDecoration:"none"}}>
+                <Link to="/profile/1" style={{textDecoration:"none", color: "#3e3c61"}}>
                     <div className="user">
                         <img src={""}/>
                         <span>{username}</span>

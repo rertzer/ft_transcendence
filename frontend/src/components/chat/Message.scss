@@ -58,7 +58,18 @@
         font-size: 12px;
         .menuHeader {
             display: flex;
+            justify-content: space-between;
             gap: 10px;
+        }
+        .menuItems {
+            div {
+                cursor: pointer;
+                padding-left: 10px;
+                &:hover {
+                    background-color: #ddddf7;
+                    color: black;
+                }
+            }
         }
     }
     .userActions-hidden {

@@ -3,6 +3,7 @@ import { useContext, useEffect, useState } from "react";
 import  ConnectionContext from "../../context/authContext"
 import CloseIcon from '@mui/icons-material/Close';
 import { WebsocketContext } from "../../context/chatContext";
+import { Link } from "react-router-dom";
 
 const  Message = (props: {username: string, date: string, msg: string, isOwner: boolean, isAdmin: boolean, chatId: number}) => {
 
@@ -107,16 +108,20 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
                     <h4>{props.username}</h4>
                     <CloseIcon style={{cursor:"pointer"}} onClick={toggleUserActionsMenu}/>
                 </div>
-                <hr></hr>
-                <div>Invite to play</div>
-                <div>Add to friends</div>
-                <div>Send DM</div>
-                <div>Show profile</div>
-                {(props.isAdmin || props.isOwner) && <div onClick={kickUser}>Kick</div>}
-                {(props.isAdmin || props.isOwner) && <div onClick={banUser}>Ban</div>}
-                {(props.isAdmin || props.isOwner) && <div onClick={muteUser}>Mute</div>}
-                {props.isOwner && <div onClick={sendNewAdmin}>
-					Set as admin </div>}
+				<hr></hr>
+				<div className="menuItems">
+					<div>Invite to play</div>
+					<div>Add to friends</div>
+					<div>Send DM</div>
+					<Link to="/profile/1" style={{textDecoration:"none", color: "#ddddf7"}}>
+						<div onClick={toggleUserActionsMenu}>Show profile</div>
+					</Link>
+					{(props.isAdmin || props.isOwner) && <div onClick={kickUser}>Kick</div>}
+					{(props.isAdmin || props.isOwner) && <div onClick={banUser}>Ban</div>}
+					{(props.isAdmin || props.isOwner) && <div onClick={muteUser}>Mute</div>}
+					{props.isOwner && <div onClick={sendNewAdmin}>
+						Set as admin </div>}
+				</div>
             </div>
             <div className='messageContent'>
                 <p>{props.msg}</p>
