@@ -17,6 +17,8 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 
 			if(!userIsMute) // il faudra afficher un truc dans ca cas la
 				console.log("print something")
+			else
+				console.log(" i am mute");
 		})
 		// socket.on("BannedUser", (chat_id: Number)=> {
 		// 	console.log("yo i have been banned");
@@ -89,6 +91,7 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ username: props.username, chatId: props.chatId})
 		};
+		// toggleUserActionsMenu();
 		fetch('http://localhost:4000/chatOption/kickUser/', requestOptions)
 	}
 

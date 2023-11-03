@@ -166,8 +166,7 @@ export class MyGateway {
 	@SubscribeMessage('mutedUser')
 	mutedUser(@MessageBody() user:{username:string, chatId: number, time: number}, @ConnectedSocket() client:Socket) {
 		const userIsMute = this.mutedUserService.addMutedUser({username: user.username, chatId: user.chatId, timeStart: getDate(), duration: user.time});
-
-		if (!userIsMute)
+		if (userIsMute)
 		{
 			client.emit("userIsMute",userIsMute );
 		}
