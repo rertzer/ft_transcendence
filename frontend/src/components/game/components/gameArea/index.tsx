@@ -5,12 +5,14 @@ import printMenu from "./printMenu";
 import printGame from "./printGame";
 import { gameSocket } from "../../services/gameSocketService";
 import { GameStatus, IPlayer } from "./interfacesGame";
+import gsap from "gsap";
 
 function GameArea(props:any) {
 	const {roomName, gameWidth, gameHeight, playerName } = useContext(gameContext);
 	const [timeLastFrame, setTimeLastFrame] = useState(new Date());
 	const [idPlayerMove, setIdPlayerMove] = useState(0);
 	const [myPlayerMoves, setMyPlayerMoves] = useState<{idPlayerMove: number, dy:number}[]>([]);
+	const [mySide, setMySide] = useState('');
 
 	const [pong, setPong] = useState({
 		idRoom: '',
@@ -90,18 +92,29 @@ function GameArea(props:any) {
 			console.log("Disconnected");
 		}
 
-		function upDatePlayerPos(){
-
+		function updatePendingMoves(data:any){
+			let idLimit:number;
+			idLimit = (mySide === 'left' ?  data.playerLeft.idPlayerMove : data.playerRight.idPlayerMove);
+			const myNewPlayerMove = myPlayerMoves.filter((val) => {return (val.idPlayerMove > idLimit)});
+			setMyPlayerMoves(myNewPlayerMove);
 		}
 
 		function onGameState(data:any) {
-			
 			setBall((prev) => ({ ...prev, pos: data.ball.pos, dir:data.ball.dir, speed:data.ball.speed}))
-			/** Ici je dois regarder l'id de move que le back me renvoie, supprimer tous les mouvements du tableau qui sont 
-			 * avant cet id, puis appliquer les mouvements qui restent a chacun.  */
-			upDatePlayerPos();
-			setFrontEndPlayerLeft((prev) => ({ ...prev, posY: data.posYLeft, score: data.scoreLeft, readyToPlay:data.playerLeft.readyToPlay}));
-			setFrontEndPlayerRight((prev) => ({ ...prev, posY: data.posYRight, score: data.scoreRight, readyToPlay:data.playerRight.readyToPlay}));
+			updatePendingMoves(data);
+			let myPosY:number = (mySide === 'left' ? data.playerLeft.posY : data.playerRight.posY);
+			let otherPlayerPosY:number = (mySide === 'left' ? data.playerRight.posY : data.playerLeft.posY );
+			myPlayerMoves.forEach((playerMove) => {
+				myPosY += playerMove.dy;
+			});
+			if (mySide === 'left') {
+				setFrontEndPlayerLeft((prev) => ({ ...prev, posY: myPosY, score: data.scoreLeft, readyToPlay:data.playerLeft.readyToPlay}));
+				setFrontEndPlayerRight((prev) => ({ ...prev, posY: otherPlayerPosY, score: data.scoreRight, readyToPlay:data.playerRight.readyToPlay}));
+			}
+			else {
+				setFrontEndPlayerRight((prev) => ({ ...prev, posY: myPosY, score: data.scoreRight, readyToPlay:data.playerRight.readyToPlay}));
+				setFrontEndPlayerLeft((prev) => ({ ...prev, posY: otherPlayerPosY, score: data.scoreLeft, readyToPlay:data.playerLeft.readyToPlay}));
+			}
 			setPong((prev) => ({ ...prev, gameStatus:data.gameStatus, startingCount: data.startingCount}))
 		}
 
@@ -122,6 +135,7 @@ function GameArea(props:any) {
 				setFrontEndPlayerLeft((prev) => ({...prev, 
 				name: data.playerLeft.name, 
 				socketId: data.playerLeft.socketId}));
+				if (data.playerLeft.socketId === gameSocket.id) setMySide('left');
 			}
 			else {
 				setFrontEndPlayerLeft((prev) => ({...prev, 
@@ -132,6 +146,7 @@ function GameArea(props:any) {
 				setFrontEndPlayerRight((prev) => ({...prev, 
 				name: data.playerRight.name, 
 				socketId: data.playerRight.socketId}));
+				if (data.playerRight.socketId === gameSocket.id) setMySide('right');
 			}
 			else {
 				setFrontEndPlayerRight((prev) => ({...prev, 
@@ -178,7 +193,6 @@ function GameArea(props:any) {
 			if (event.type === 'keydown') {
 				move = true;
 			}
-			const mySide = frontEndPlayerLeft.socketId === gameSocket.id ? 'left' : 'right';
 			switch (event.code){
 				case 'KeyW':
 					mySide === 'left' ? setFrontEndPlayerLeft((prev) => ({...prev, upArrowDown: move})) : setFrontEndPlayerRight((prev) => ({...prev, upArrowDown: move}))
@@ -193,7 +207,7 @@ function GameArea(props:any) {
 					mySide === 'left' ? setFrontEndPlayerLeft((prev) => ({...prev, downArrowDown: move})) : setFrontEndPlayerRight((prev) => ({...prev, downArrowDown: move}))
 					break;
 				case 'Space':
-					gameSocket.emit('keyevent', {key:'Space'});
+					gameSocket.emit('keyevent', {key:'Space', idPlayerMove:idPlayerMove});
 					break;
 				default:
 					return;
@@ -217,25 +231,25 @@ function GameArea(props:any) {
 		if (pong.gameStatus !== 'PLAYING') return;
 
 		let MyPlayer:IPlayer;
-		frontEndPlayerLeft.socketId === gameSocket.id ? MyPlayer = frontEndPlayerLeft : MyPlayer = frontEndPlayerRight;
+		MyPlayer = (frontEndPlayerLeft.socketId === gameSocket.id ? frontEndPlayerLeft : frontEndPlayerRight);
 		let MyPlayerMove = {
 			idPlayerMove : idPlayerMove,
 			dy:0
 		};
 		if (MyPlayer.upArrowDown || MyPlayer.downArrowDown) {
+			const previousPosY = MyPlayer.posY;
 			if (MyPlayer.upArrowDown) {
 				MyPlayer.posY = Math.max(pong.paddleHeight / 2, MyPlayer.posY - pong.paddleSpeed);
-				MyPlayerMove.dy -= pong.paddleSpeed;
 				gameSocket.emit('keyevent', {key:'KeyW', idPlayerMove:idPlayerMove});
 			}
 			if (MyPlayer.downArrowDown) {
 				MyPlayer.posY = Math.min(1 - pong.paddleHeight / 2,  MyPlayer.posY + pong.paddleSpeed);
-				MyPlayerMove.dy += pong.paddleSpeed;
 				gameSocket.emit('keyevent', {key:'KeyS', idPlayerMove:idPlayerMove});
 			}
+			MyPlayerMove.dy = MyPlayer.posY - previousPosY;
 			myPlayerMoves.push(MyPlayerMove);
 			setMyPlayerMoves(myPlayerMoves);
-			console.log(myPlayerMoves);
+			//console.log(myPlayerMoves);
 			setIdPlayerMove(idPlayerMove + 1);
 		}
 	};

@@ -278,12 +278,14 @@ export class RoomsService {
 				ball:room.ball,
 				playerLeft:{
 					name:room.playerLeft?.name,
+					posY:room.playerLeft?.posY,
 					socket_id: room.playerLeft?.socket.id,
 					readyToPlay:room.playerLeft?.readyToPlay,
 					idPlayerMove:room.playerLeft?.idPlayerMove
 				},
 				playerRight:{
 					name:room.playerRight?.name,
+					posY:room.playerRight?.posY,
 					socket_id: room.playerRight?.socket.id,
 					readyToPlay:room.playerRight?.readyToPlay,
 					idPlayerMove:room.playerRight?.idPlayerMove

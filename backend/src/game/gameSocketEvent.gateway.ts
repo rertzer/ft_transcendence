@@ -65,7 +65,7 @@ export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, On
 
 	@Interval(1000/60)
 	handleInterval() {
-		this.roomsService.playGameLoop()
+		this.roomsService.playGameLoop();
 		this.roomsService.broadcastGameState();
 	};
 
