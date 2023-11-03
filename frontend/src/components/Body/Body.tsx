@@ -7,109 +7,67 @@ import { MyContext } from "../../context/PageContext";
 import React, { createContext, useContext, useState, useRef, useEffect } from 'react';
 import Desktop1 from "../../pages/Desktop1";
 
-function CreateCell (coordX : number, coordY : number, width : number, height : number, text : string, border: string) {
-  return (<div style={{
-      position: 'absolute',
-      top: `${16 + 16 * coordX}px`,
-      left: `${38 + 80 * coordY}px`,
-      width: `${80 * width}px`,
-      height: `${16 * height}px`,
-      color: `black`,
-      font: '10px',
-      backgroundColor: 'lightGrey',
-      border: border,
-      textAlign: 'center',
-    }}>{text}</div>);
-}
 
-function Project () {
-  return (
-    <div>
-      {CreateCell(1, 1, 2, 1, "Points", "2px solid black")}
-      {CreateCell(2, 1, 1, 1, "User1", "1px solid black")}
-      {CreateCell(2, 2, 1, 1, "User2", "1px solid black")}
-      {CreateCell(3, 1, 1, 1, "1", "1px solid black")}
-      {CreateCell(3, 2, 1, 1, "4", "1px solid black")}
-      {CreateCell(3, 100, 1, 1, "4", "1px solid black")}
-    </div>);
-}
-
-function Data () {
-  return (
-    <div>
-      {CreateCell(1, 1, 4, 1, "Statistics", "2px solid black")}
-      {CreateCell(3, 1, 1, 1, "Wins", "1px solid black")}
-      {CreateCell(4, 1, 1, 1, "150", "1px solid black")}
-      {CreateCell(3, 2, 1, 1, "Looses", "1px solid black")}
-      {CreateCell(4, 2, 1, 1, "4", "1px solid black")}
-      {CreateCell(3, 4, 1, 1, "Classement", "1px solid black")}
-      {CreateCell(4, 4, 1, 1, "18000e", "1px solid black")}
-    </div>);
-}
-
-function Friends () {
-  return (
-    <div>
-      {CreateCell(1, 1, 3, 1, "Amis", "1px solid black")}
-      {CreateCell(2, 1, 1, 1, "Richard", "0.5px solid black")}
-      {CreateCell(2, 2, 1, 1, "Block", "0.5px solid red")}
-      {CreateCell(2, 3, 1, 1, "Message", "0.5px solid green")}
-      {CreateCell(3, 1, 1, 1, "Patrick", "0.5px solid black")}
-      {CreateCell(3, 2, 1, 1, "Block", "0.5px solid red")}
-      {CreateCell(3, 3, 1, 1, "Message", "0.5px solid green")}
-    </div>);
-}
-
-function BarSwitch () {
-
-  const context = useContext(MyContext);
-  switch(context?.page) {
-    case "Project" :
-      return Project();
-    case "Data" :
-      return Data();
-    case "Friends" :
-      return Friends();
-    case "Chat" :
-      return ;
-    default :
-      return;
-  }
-}
 
 export function Body({}) {
   const context = useContext(MyContext);
-  const scrollableRef = useRef<HTMLDivElement | null>(null);
-  const [scrollPosition, setScrollPosition] = useState({ scrollTop: 0, scrollLeft: 0 });
+
+  //HANDLE COORD CHANGE
+  if (!context) {
+    throw new Error('useContext must be used within a MyProvider');
+  }
+
+  const { coords, updateCoords } = context;
+  const { coordX, coordY } = coords;
+
+  const [x, setNewCoordX] = useState(coordX);
+  const [y, setNewCoordY] = useState(coordY);
+
+  const handleUpdateCoords = (a: number, b: number) => {
+    setNewCoordX(a);
+    setNewCoordY(b);
+    updateCoords({ coordX: a, coordY: b });
+  };
 
   useEffect(() => {
-    const handleScroll = () => {
-      if (scrollableRef.current) {
-        const scrollTop = scrollableRef.current.scrollTop;
-        const scrollLeft = scrollableRef.current.scrollLeft;
-        setScrollPosition({ scrollTop, scrollLeft });
-        console.log(`ScrollTop: ${scrollTop}, ScrollLeft: ${scrollLeft}`);
-      }
-    };
-    if (scrollableRef.current) {
-      scrollableRef.current.addEventListener('scroll', handleScroll);
-    }
+    setNewCoordX(coordX);
+    setNewCoordY(coordY);
+  }, [coordX, coordY]);
 
-    return () => {
-      if (scrollableRef.current) {
-        scrollableRef.current.removeEventListener('scroll', handleScroll);
-      }
-    };
-  }, []);
+  //HANDLE SCROLL CHANGE
+  const { scroll, updateScroll } = context;
+  const { scrollX, scrollY } = scroll;
+
+  const [sx, setNewScrollX] = useState(scrollX);
+  const [sy, setNewScrollY] = useState(scrollY);
+  
+  const handleUpdateScroll = (event: any) => {
+    let i = 0;
+    if (event.deltaY < 0)
+      i = -1;
+    if (event.deltaY > 0)
+      i = 1;
+    if (event.shiftKey && sy + i >= 0)
+      setNewScrollY(sy + i);
+    else if (sx + i >= 0)
+      setNewScrollX(sx + i);
+    updateScroll({ scrollX: sx, scrollY: sy});
+    console.log(sx, sy);
+  };
+  
+  useEffect(() => {
+    setNewScrollX(scrollX);
+    setNewScrollY(scrollY);
+  }, [scrollX, scrollY]);
+
   return (
-      <div className={styles.body} ref={scrollableRef}>
+      <div className={styles.body} onWheel={handleUpdateScroll}>
+
         <div className={styles.grid}>
           <Grid />
         </div>
 
-        {BarSwitch()}
-
-        <div className={styles.up} />
+        <div className={styles.up} onMouseDown={() => handleUpdateCoords(-1, -1)}/>
         <div className={styles.rightLettersFrame}>
           <div className={styles.rightLettersBackground} />
           <Numbers />
@@ -128,4 +86,3 @@ export function Body({}) {
       </div>
   )
 }
-  

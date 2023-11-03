@@ -4,8 +4,8 @@ import styles from "./Footer.module.css";import * as React from 'react';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Slider from '@mui/material/Slider';
-import ControlPointIcon from '@mui/icons-material/ControlPoint';
-import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import { createTheme } from '@mui/material/styles';
 import { ThemeProvider } from '@emotion/react';
 
@@ -32,6 +32,22 @@ const marks = [
 
 function ContinuousSlider() {
   const [value, setValue] = React.useState<number>(30);
+  const increment = 5;
+  function add_zoom() {
+    if (value + increment > 200)
+      setValue(200);
+    else
+      setValue(value + increment);
+    console.log(value); 
+  }
+
+  function reduce_zoom() {
+    if (value - increment < 0)
+      setValue(0);
+    else
+      setValue(value - increment);
+    console.log(value); 
+  }
 
   const handleChange = (event: Event, newValue: number | number[]) => {
     setValue(newValue as number);
@@ -39,9 +55,12 @@ function ContinuousSlider() {
 
   return (
     <div className={styles.slidder}>
-      <Box sx={{ width: 200, height: 20 }}>
+      <Box sx={{ width: 150, height: 20 }}>
         <Stack spacing={0.5} direction="row" sx={{ mb: 1 }} alignItems="center">
-          <RemoveCircleOutlineIcon fontSize='small' style={{color:'#AAAAAA', position:'relative', top:'0.5px', height:'14px'}}/>
+          <RemoveCircleIcon
+            fontSize='small'
+            style={{color:'#AAAAAA', position:'relative', top:'0.5px', height:'14px'}}
+            onClick={reduce_zoom}/>
             <ThemeProvider theme={theme}>
               <Slider 
                 size="small"
@@ -54,7 +73,10 @@ function ContinuousSlider() {
                 marks={marks}
                 sx={{width:100, height:3}}/>
             </ThemeProvider>
-          <ControlPointIcon fontSize='small' style={{color:'#AAAAAA', position:'relative', top:'0.5px', height:'14px'}}/>
+          <AddCircleIcon 
+            fontSize='small' 
+            style={{color:'#AAAAAA', position:'relative', top:'0.5px', height:'14px'}}
+            onClick={add_zoom}/>
         </Stack>
       </Box>
     </div>

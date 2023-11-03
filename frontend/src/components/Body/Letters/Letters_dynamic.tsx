@@ -26,39 +26,62 @@ function RepeatingLetters() {
     throw new Error('useContext must be used within a MyProvider');
   }
 
-  const { coords } = context;
+  const { coords, updateCoords } = context;
   const { coordX, coordY } = coords;
 
   const [localCoordX, setLocalCoordX] = useState(coordX);
+  const [localCoordY, setLocalCoordY] = useState(coordY);
+
+  const handleUpdateCoords = (a: number, b: number) => {
+    setLocalCoordX(a);
+    setLocalCoordY(b);
+    updateCoords({ coordX: a, coordY: b });
+  };
 
   useEffect(() => {
     setLocalCoordX(coordX);
+    setLocalCoordY(coordY);
   }, [coordX, coordY]);
 
   const components = [];
+
+  const { scroll, updateScroll } = context;
+  const { scrollX, scrollY } = scroll;
+
+  const [sx, setNewScrollX] = useState(scrollX);
+  const [sy, setNewScrollY] = useState(scrollY);
+    
+  useEffect(() => {
+    setNewScrollX(scrollX);
+    setNewScrollY(scrollY);
+  }, [scrollX, scrollY]);
+  
   for (let i = 0; i * 80 < windowWidthRef.current; i++) {
+    const n = i + sy;
     const dynamicLeft = `${(i) * 80}px`;
     let string = "";
-    if (i == 0 || i == 26)
+    if (n == 0 || n == 26)
       string = "A";
-    let j = i;
+    let j = n;
     if (j >= 26)
       j = j - 26;
     for (; j > 0; j = Math.floor(j / 26)) {
       string = String.fromCharCode((j%26)+65) + string;
     }
-    if (i >= 26 && i < 52)
+    if (n >= 26 && n < 52)
       string = "A" + string;
-    if (i == localCoordX)
+    if (n  == localCoordX || localCoordX == -1)
     {
       components.push(
-      <div key={`x:${i}+${string}`}style={{
-          position: 'absolute',
-          top: '0px',
-          left: dynamicLeft,
-          width: '25px',
-          height: '13px',
-        }}>
+      <div  key={`x:${i}+${string}`}
+            style={{
+              fontSize: '14px',
+              position: 'absolute',
+              top: '0px',
+              left: dynamicLeft,
+              width: '80px',
+              height: '24px',}}
+            onMouseDown={() => handleUpdateCoords(i, -1)}>
           <div className={styles.background } style={{
           backgroundColor: '#15539E',
           fontWeight:'bold',
@@ -69,13 +92,15 @@ function RepeatingLetters() {
     else
     {
       components.push(
-        <div key={`x:${i}+${string}`}style={{
-            position: 'absolute',
-            top: '0px',
-            left: dynamicLeft,
-            width: '25px',
-            height: '13px',
-          }}>
+        <div  key={`x:${i}+${string}`}
+              style={{
+                fontSize: '14px',
+                position: 'absolute',
+                top: '0px',
+                left: dynamicLeft,
+                width: '80px',
+                height: '24px',}}
+              onMouseDown={() => handleUpdateCoords(i, -1)}>
             <div className={styles.background}>{string}</div>
             <div className={styles.letter} />
         </div>);

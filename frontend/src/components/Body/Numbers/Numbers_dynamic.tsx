@@ -26,31 +26,52 @@ function RepeatingNumbers() {
     throw new Error('useContext must be used within a MyProvider');
   }
 
-  const { coords } = context;
+  const { coords, updateCoords } = context;
   const { coordX, coordY } = coords;
 
+  const [localCoordX, setLocalCoordX] = useState(coordX);
   const [localCoordY, setLocalCoordY] = useState(coordY);
+  
+  const handleUpdateCoords = (a: number, b: number) => {
+    setLocalCoordX(a);
+    setLocalCoordY(b);
+    updateCoords({ coordX: a, coordY: b });
+  };
 
   useEffect(() => {
+    setLocalCoordX(coordX);
     setLocalCoordY(coordY);
   }, [coordX, coordY]);
 
+  const { scroll, updateScroll } = context;
+  const { scrollX, scrollY } = scroll;
+
+  const [sx, setNewScrollX] = useState(scrollX);
+  const [sy, setNewScrollY] = useState(scrollY);
+    
+  useEffect(() => {
+    setNewScrollX(scrollX);
+    setNewScrollY(scrollY);
+  }, [scrollX, scrollY]);
+
   const components = [];
-  for (let i = 1; i * 16 < windowHeightRef.current; i++) {
-    const dynamicTop = `${(i) * 16 - 16}px`;
-    if (i == localCoordY + 1)
+  for (let index = 1; index * 16 < windowHeightRef.current; index++) {
+    const i = index + sx;
+    const dynamicTop = `${(index) * 20 - 20}px`;
+    if (i == localCoordY + 1 || localCoordY == -1)
     {
       components.push(
-      <div key={`y:${i}`}style={{
-          position: 'absolute',
-          top: dynamicTop,
-          left: '0px',
-          width: '25px',
-          height: '16px',
-          backgroundColor: '#15539E',
-          fontWeight:'bold',
-          outline:'0px solid #104482',
-        }}>
+      <div  key={`y:${i}`}
+            style={{
+              position: 'absolute',
+              top: dynamicTop,
+              left: '0px',
+              width: '31px',
+              height: '20px',
+              backgroundColor: '#15539E',
+              fontWeight:'bold',
+              outline:'0px solid #104482',}}
+            onMouseDown={() => handleUpdateCoords(-1, i - 1)}>
           <div className={styles.numberGroupChild} />
           <div className={styles.numbers}>{i}</div>
       </div>
@@ -58,13 +79,14 @@ function RepeatingNumbers() {
     else
     {
       components.push(
-        <div key={`y:${i}`} style={{
-            position: 'absolute',
-            top: dynamicTop,
-            left: '0px',
-            width: '25px',
-            height: '16px',
-          }}>
+        <div  key={`y:${i}`}
+              style={{
+                position: 'absolute',
+                top: dynamicTop,
+                left: '0px',
+                width: '31px',
+                height: '30px',}}
+            onMouseDown={() => handleUpdateCoords(-1, i - 1)}>
             <div className={styles.numberGroupChild} />
             <div className={styles.numbers}>{i}</div>
         </div>

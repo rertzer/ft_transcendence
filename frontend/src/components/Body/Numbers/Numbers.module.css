@@ -1,10 +1,11 @@
 .numbers {
+  font-size: 12px;
   position: absolute;
   top: 1px;
   width: 18px;
   height: 8px;
-  width: 25px;
-  height: 16px;
+  width: 31px;
+  height: 20px;
   text-align: center;
 }
 
@@ -12,8 +13,8 @@
   position: absolute;
   top: 0px;
   left: 0;
-  width: 25px;
-  height: 13px;
+  width: 31px;
+  height: 20px;
   border-top: 0.5px solid var(--color-gray-100);
   border-bottom: 0.5px solid var(--color-gray-100);
   border-right: 1px solid var(--color-gray-100);
@@ -26,6 +27,6 @@
   border-bottom: 0.5px solid var(--color-gray-100);
   border-right: 1px solid var(--color-gray-100);
   box-sizing: border-box;
-  height: 16px;
-  width: 25px;
+  height: 20px;
+  width: 31px;
 }
