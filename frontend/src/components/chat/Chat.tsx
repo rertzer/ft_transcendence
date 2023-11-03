@@ -8,6 +8,7 @@ const Chat = (props: {toDisplay: allChatOfUser, setActiveChat: Function}) => {
 
     let isOwner = true;
     let isAdmin = true;
+    let isMuted = false; //3 variables a mettre dans des useState ?
 
     // if (props.toDisplay.ownerUid === currentUser.uid) {
     //     isOwner = true; }

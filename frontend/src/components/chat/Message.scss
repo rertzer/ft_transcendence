@@ -76,3 +76,24 @@
         display: none;
     }
 }
+
+.service-message {
+    p {
+        background-color: #2f2d52;
+        color: white;
+        font-size: 12px;
+        padding: 10px 20px;
+        border-radius: 0px 10px 10px 10px;
+    }
+    padding-bottom: 10px;
+    .name-time {
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+        justify-content: left;
+        span{
+            font-size: small;
+            color: gray;
+        }
+    }
+}
