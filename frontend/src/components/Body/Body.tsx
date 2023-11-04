@@ -47,9 +47,9 @@ export function Body({}) {
       i = -1;
     if (event.deltaY > 0)
       i = 1;
-    if (event.shiftKey && sy + i >= 0)
+    if (event.shiftKey && !event.ctrlKey && sy + i >= 0)
       setNewScrollY(sy + i);
-    else if (sx + i >= 0)
+    else if (sx + i >= 0 && !event.ctrlKey)
       setNewScrollX(sx + i);
     updateScroll({ scrollX: sx, scrollY: sy});
     console.log(sx, sy);

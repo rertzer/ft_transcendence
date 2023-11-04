@@ -22,12 +22,13 @@
     position:fixed;
     right:48px;
     bottom:12px;
+    cursor: pointer;
 }
 .button {
     color: white;
 }
 .button:hover {
-    color: #15539e;
+    color: #3580dc;
 }
 .slidder {
     position:fixed;

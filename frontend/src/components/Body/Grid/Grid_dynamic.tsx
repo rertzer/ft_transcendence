@@ -189,10 +189,10 @@ function Grid() {
     }
   }
   let x_square = x - sy;
-  if (x_square == -1)
+  if (x == -1)
     x_square = 0;
   let y_square = y - sx;
-  if (y_square == -1)
+  if (y == -1)
     y_square = 0;
   components.push(
     <div key={"highlight_cell"} style={{
@@ -213,21 +213,31 @@ function Grid() {
   //HIGHLIGHT COLUMN, LINE OR EVERYTHING
   let div_width = '80px';
   let div_height = '20px';
+  let div_top = `${y_square * 20}px`;
+  let div_left = `${x_square * 80}px`;
   if (x == -1 && y == -1)
   {
     div_height = '100%';
     div_width = '100%';
+    div_top = '0px';
+    div_left = '0px';
   }
   else if (x == -1)
+  {
     div_width = '100%';
+    div_left = '0px';
+  }
   else if (y == -1)
+  {
     div_height = '100%';
+    div_top = '0px';
+  }
   if (x == -1 || y == -1)
     components.push(
         <div key={"highlight_column"} style={{
           position: 'absolute',
-          top: `${y_square * 20}px`,
-          left: `${x_square * 80}px`,
+          top: div_top,
+          left: div_left,
           width: div_width,
           height: div_height,
           outline: '0.5px solid #15539E',

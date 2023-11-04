@@ -26,16 +26,6 @@ function Header({}) {
           </div>
         </div>
         <div className={styles.line2}>
-          <div className={styles.menu1}>
-            <div className={styles.menuBackground} />
-            <div className={styles.buttpn}>
-              <div className={styles.buttonBackground} />
-              <img className={styles.buttpnChild} alt="" src="/star-1.svg" />
-            </div>
-            <div className={styles.frameText1}>
-              <div className={styles.pt}>0 pt</div>
-            </div>
-          </div>
           <div className={styles.menu2}>
             <div className={styles.menuBackground} />
             <div className={styles.buttpn}>

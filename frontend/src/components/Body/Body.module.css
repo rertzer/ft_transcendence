@@ -3,7 +3,7 @@
   height: 100%;
   right: 0;
   left: 0;
-  top: 119px;
+  top: 143px;
   bottom: 0;
   overflow: hidden;
   position: relative;
@@ -13,7 +13,7 @@
   position:fixed;
   height: calc(100% - 58px);
   width: calc(100% - 50px);
-  top: 143px;
+  top: 166px;
   right: 12px;
   bottom: 41px;
   left: 43px;
@@ -30,7 +30,7 @@
 .rightLettersFrame {
   position: fixed;
   box-sizing: border-box;
-  top: 143px;
+  top: 166px;
   left: 12px;
   border-left: 1px solid var(--color-gray-100);
   width: 25px;
@@ -39,7 +39,7 @@
 .up {
   position: fixed;
   box-sizing: border-box;
-  top: 119px;
+  top: 142px;
   left: 12px;
   background-color: var(--color-darkslategray-100);
   border-right: 0.5px solid var(--color-gray-100);
@@ -48,7 +48,7 @@
   height: 24px;
 }
 .letters {
-  top: 119px;
+  top: 142px;
   left: 43px;
   width: 32px;
   text-align: center;
