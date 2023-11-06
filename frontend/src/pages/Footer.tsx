@@ -1,6 +1,6 @@
 import { Tooltip } from '@mui/material'
 import ContactSupportIcon from '@mui/icons-material/ContactSupport'
-import styles from "./Footer.module.css";import * as React from 'react';
+import styles from "./Footer.module.css";
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Slider from '@mui/material/Slider';
@@ -8,6 +8,8 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import { createTheme } from '@mui/material/styles';
 import { ThemeProvider } from '@emotion/react';
+import { MyContext } from '../context/PageContext';
+import React, { useContext, useState, useEffect } from 'react';
 
 const theme = createTheme({
   palette: {
@@ -84,18 +86,26 @@ function ContinuousSlider() {
   );
 }
 
-function Footer(Chat : string, setChat: any) {
+function Footer() {
+  const context = useContext(MyContext);
+  if (!context) {
+    throw new Error('useContext must be used within a MyProvider');
+  }
+  const { chat, updateChat } = context;
+  const handleChat = (str : string) => {
+    updateChat(str);
+  }
   return (
 	<footer className={styles.bottom} >
     {
-      Chat === "Chat" ?
-      <div className={styles.button} onClick={() => setChat("none")}>
+      chat === "Chat" ?
+      <div className={styles.button} onClick={() => handleChat("none")}>
        <ContactSupportIcon className={styles.icon} /> 
         <span className={styles.contact}>
           Contacts
         </span>
       </div> :
-      <div className={styles.button} onClick={() => setChat("Chat")}>
+      <div className={styles.button} onClick={() => handleChat("Chat")}>
         <ContactSupportIcon className={styles.icon} /> 
         <span className={styles.contact}>
           Contacts

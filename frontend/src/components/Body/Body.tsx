@@ -48,11 +48,9 @@ export function Body({}) {
     if (event.deltaY > 0)
       i = 1;
     if (event.shiftKey && !event.ctrlKey && sy + i >= 0)
-      setNewScrollY(sy + i);
+      updateScroll({scrollX: sx, scrollY:sy + i})
     else if (sx + i >= 0 && !event.ctrlKey)
-      setNewScrollX(sx + i);
-    updateScroll({ scrollX: sx, scrollY: sy});
-    console.log(sx, sy);
+      updateScroll({ scrollX: sx + i, scrollY: sy});
   };
   
   useEffect(() => {

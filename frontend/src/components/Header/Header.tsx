@@ -3,10 +3,18 @@ import { Tooltip } from "@mui/material";
 import LogoutIcon from '@mui/icons-material/MeetingRoomOutlined';
 import styles from "./Header.module.css";
 import { useContext } from "react";
-import  ConnectionContext from "../../context/authContext"
+import  ConnectionContext from "../../context/authContext";
+import { MyContext } from '../../context/PageContext';
 
 function Header({}) {
-
+  const context = useContext(MyContext);
+  if (!context) {
+    throw new Error('useContext must be used within a MyProvider');
+  }
+  const { menu, updateMenu } = context;
+  function handleClick(str : string) {
+    updateMenu(str);
+  }
   const {username} = useContext(ConnectionContext);
 
   return <header className={styles.headerFrame}>
@@ -38,7 +46,7 @@ function Header({}) {
           </div>
         </div>
         <SelectBar     />
-        <div className={styles.titleBar}>
+        <div className={styles.titleBar} onMouseEnter={() => handleClick("none")}>
           <div className={styles.titleBarBackground} />
           <div className={styles.untitled1}>Untitled 1 - PongOffice Calc</div>
           <div className={styles.user}>

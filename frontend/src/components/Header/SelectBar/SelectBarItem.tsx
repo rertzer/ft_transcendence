@@ -5,23 +5,25 @@ import { MyContext } from '../../../context/PageContext';
 interface SelectBarProps {
   labelText: string;
   left: string;
+  width: string;
 }
 
-export function SelectBarItem( { labelText, left}  : SelectBarProps) {
+export function SelectBarItem( { labelText, left, width }  : SelectBarProps) {
   const context = useContext(MyContext);
   if (!context) {
     throw new Error('useContext must be used within a MyProvider');
   }
-  const { page, updatePage } = context;
+  const { menu, updateMenu } = context;
   const handleUpdate = () => {
-    updatePage(labelText);
+    updateMenu(labelText);
   };
 
   const divStyle = {
     left: left,
+    width: width,
   };
-  return (<div className={styles.file} style={divStyle} onMouseDown={handleUpdate}>
-            <div className={styles.file1}>{labelText}</div>
+  return (<div className={styles.file} style={divStyle} onTouchMoveCapture={handleUpdate}>
+            <div className={styles.file1} style={{width: width}}> {labelText}</div>
           </div>);
 }
   

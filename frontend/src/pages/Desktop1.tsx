@@ -7,24 +7,28 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { MyContext, MyProvider } from '../context/PageContext';
 import ChatComponent from '../components/chat/ChatComponent';
 
-const displayChat = (state: string) => {
-  switch(state) {
-    case "Chat" :
-      return (<ChatComponent />);
-    default :
-      return;
-  }
-}
-
 function Desktop1() {
+  function DisplayChat() {
+    const context = useContext(MyContext);
+    if (!context) {
+      throw new Error('useContext must be used within a MyProvider');
+    }
+    const { chat, updateChat } = context;
+    switch (chat) {
+      case "Chat":
+        return (<ChatComponent />);
+      default:
+        return (<div/>);
+    }
+  }
   const [Chat, setChat] = useState("none");
   return (
     <div className={styles.desktop1}>
       <MyProvider>
         <Body />
         <Header />
-        { Footer (Chat, setChat)}
-        { displayChat(Chat) }
+        <Footer/>
+        <DisplayChat />
       </MyProvider>
     </div>
   );

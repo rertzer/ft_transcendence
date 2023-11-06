@@ -46,6 +46,17 @@ function Project (sx : number, sy : number) {
     </div>);
 }
 
+function Profile (sx : number, sy : number) {
+  return (
+    <div key={"project"}>
+      {CreateCell(2, 1, 1, 1, "User1", "1px solid black", sx, sy)}
+      {CreateCell(2, 2, 1, 1, "User2", "1px solid black", sx, sy)}
+      {CreateCell(3, 1, 1, 1, "1", "1px solid black", sx, sy)}
+      {CreateCell(3, 2, 1, 1, "4", "1px solid black", sx, sy)}
+      {CreateCell(3, 100, 1, 1, "4", "1px solid black", sx, sy)}
+    </div>);
+}
+
 function Data (sx : number, sy : number) {
   return (
     <div key={"data"}>
@@ -59,9 +70,9 @@ function Data (sx : number, sy : number) {
     </div>);
 }
 
-function Friends (sx : number, sy : number) {
+function Contacts (sx : number, sy : number) {
   return (
-    <div key={"friends"}>
+    <div key={"contacts"}>
       {CreateCell(1, 1, 3, 1, "Amis", "1px solid black", sx, sy)}
       {CreateCell(2, 1, 1, 1, "Richard", "0.5px solid black", sx, sy)}
       {CreateCell(2, 2, 1, 1, "Block", "0.5px solid red", sx, sy)}
@@ -92,12 +103,12 @@ function BarSwitch () {
   switch(context?.page) {
     case "Project" :
       return Project(sx, sy);
+    case "Profile" :
+      return Profile(sx, sy);
     case "Data" :
       return Data(sx, sy);
-    case "Friends" :
-      return Friends(sx, sy);
-    case "Chat" :
-      return ;
+    case "Contacts" :
+      return Contacts(sx, sy);
     default :
       return;
   }
@@ -205,7 +216,7 @@ function Grid() {
         outline: '1px solid #15539E',
         pointerEvents:'none',
     }} />);
-  if (x != -1 && y != -1)
+  if (y_square != -1 && x_square != -1)
     components.push(<div key={"bluesquare"} style={{position: 'relative', top: `${y_square * 20 + 18}px`, left: `${x_square * 80 + 77}px`, width: '5px', height: '5px', backgroundColor:'#15539E',}}></div>);
   
   components.push(BarSwitch());
