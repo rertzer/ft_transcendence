@@ -54,7 +54,7 @@ export const ListChannels = (props: {chatsOfUser: allChatOfUser[], showSubMenu: 
 
 	  const SendIdChat = async () => {
 		if (id === "") {
-		  return ""; // Return an empty string or another default value
+		  return "-1"; // Return an empty string or another default value
 		}
 		const messageData = {
 		  username: username,
