@@ -16,6 +16,7 @@ import ContentCut from '@mui/icons-material/ContentCut';
 import ContentCopy from '@mui/icons-material/ContentCopy';
 import ContentPaste from '@mui/icons-material/ContentPaste';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+import CheckBoxOutlinedIcon from '@mui/icons-material/CheckBoxOutlined';
 import ZoomInIcon from '@mui/icons-material/ZoomIn';
 import ZoomOutIcon from '@mui/icons-material/ZoomOut';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
@@ -57,6 +58,13 @@ function BasicMenu() {
     );
   }
   function  Edit() {
+    const context = useContext(MyContext);
+    if (!context) {
+      throw new Error('useContext must be used within a MyProvider');
+    }
+
+    const { coords, updateCoords, updateCoordsMenu } = context;
+    const { coordX, coordY } = coords;
     return (
       <List dense onMouseLeave={() => handleClick("none")} sx={{color: 'white',}} style={{position: 'fixed', top:'64px', left:'45px', width:200, paddingTop: "0px", paddingBottom: "0px", backgroundColor: '#2f2f2f', border:'1px solid black'}} >
         <ListItem button>
@@ -75,19 +83,44 @@ function BasicMenu() {
           <Typography fontSize="12px" color="text.disabled">Ctrl+V</Typography>
         </ListItem>
         <Divider/>
-        <ListItem button><ListItemText>Select All </ListItemText></ListItem>
-        <ListItem button><ListItemText>Select Row </ListItemText></ListItem>
-        <ListItem button><ListItemText>Select Column </ListItemText></ListItem>
+        <ListItem button onClick={() => updateCoordsMenu({coordX: -1,coordY: coordY}, 'none')}><ListItemText>Select Row </ListItemText></ListItem>
+        <ListItem button onClick={() => updateCoordsMenu({coordX: coordX,coordY: -1},'none')}><ListItemText>Select Column </ListItemText></ListItem>
+        <ListItem button onClick={() => updateCoordsMenu({coordX: -1,coordY: -1}, 'none')}><ListItemText>Select All </ListItemText></ListItem>
       </List>
     );
   }
   function  View() {
+    const context = useContext(MyContext);
+    if (!context) {
+      throw new Error('useContext must be used within a MyProvider');
+    }
+    const { zoom, updateZoom } = context;
+    const increment = 10;
+    function add_zoom() {
+      if (zoom + increment > 200)
+        updateZoom(200);
+
+      else
+        updateZoom(zoom + increment);
+      console.log(zoom);
+    }
+    function reduce_zoom() {
+      if (zoom - increment < 50)
+        updateZoom(50);
+
+      else
+        updateZoom(zoom - increment);
+    }
+    const { toolbar, updateToolbar } = context;
+    function toggleToolbar() {
+      updateToolbar(!toolbar);
+    }
     return (
       <List dense onMouseLeave={() => handleClick("none")} sx={{color: 'white',}} style={{position: 'fixed', top:'64px', left:'90px', width:200, paddingTop: "0px", paddingBottom: "0px", backgroundColor: '#2f2f2f', border:'1px solid black'}} >
-        <ListItem button><CheckBoxOutlineBlankIcon fontSize="small"/><ListItemText style={{position:'relative', left:'10px'}}>Toolbar </ListItemText></ListItem>
+        <ListItem button onClick={toggleToolbar}>{toolbar ? <CheckBoxOutlineBlankIcon fontSize="small"/>: <CheckBoxOutlinedIcon fontSize="small"/>} <ListItemText style={{position:'relative', left:'10px'}}>Toolbar </ListItemText></ListItem>
         <Divider/>
-        <ListItem button><ZoomInIcon/><ListItemText style={{position:'relative', left:'10px'}}>Zoom In </ListItemText></ListItem>
-        <ListItem button><ZoomOutIcon/><ListItemText style={{position:'relative', left:'10px'}}>Zoom Out </ListItemText></ListItem>
+        <ListItem button onClick={add_zoom}><ZoomInIcon /><ListItemText style={{position:'relative', left:'10px'}}>Zoom In </ListItemText></ListItem>
+        <ListItem button onClick={reduce_zoom}><ZoomOutIcon /><ListItemText style={{position:'relative', left:'10px'}}>Zoom Out </ListItemText></ListItem>
       </List>
     );
   }
@@ -242,53 +275,7 @@ export function SelectBar({}) {
   return <div>
           <div className={styles.textBar}>
             <div className={styles.textBar1} onMouseEnter={() => handleClick("none")}/>
-            {/* <SelectBarItem labelText="File" left="0px" width='40px' /> */}
-            <BasicMenu />
-            {/* <SelectBarItem labelText="Edit" left="40px" width='45px' />
-            <SelectBarItem labelText="View" left="85px" width='45px' />
-            <SelectBarItem labelText="Styles" left="130px" width='50px' />
-            <SelectBarItem labelText="Window" left="180px" width='65px' /> */}
-            {/* <SelectBarItem labelText="Help" left="245px" width='45px' /> */}
-          </div>
-          {/* <ThemeProvider theme={darkTheme}>
-            <Paper sx={{ position:'fixed', top:'65px' ,width: 320, maxWidth: '100%'}} >
-                <MenuList dense>
-                  <MenuItem >
-                    <ListItemIcon>
-                      <ContentCut fontSize="small" style={{color:"white"}}/>
-                    </ListItemIcon>
-                    <ListItemText>Cut</ListItemText>
-                    <Typography variant="body2" color="text.secondary">
-                      ⌘X
-                    </Typography>
-                  </MenuItem>
-                  <MenuItem>
-                    <ListItemIcon>
-                      <ContentCopy fontSize="small" style={{color:"white"}}/>
-                    </ListItemIcon>
-                    <ListItemText>Copy</ListItemText>
-                    <Typography variant="body2" color="text.secondary">
-                      ⌘C
-                    </Typography>
-                  </MenuItem>
-                  <MenuItem>
-                    <ListItemIcon>
-                      <ContentPaste fontSize="small" style={{color:"white"}}/>
-                    </ListItemIcon>
-                    <ListItemText>Paste</ListItemText>
-                    <Typography variant="body2" color="text.secondary">
-                      ⌘V
-                    </Typography>
-                  </MenuItem>
-                  <Divider />
-                  <MenuItem > 
-                    <ListItemIcon>
-                      <Cloud fontSize="small" style={{color:"white"}}/>
-                    </ListItemIcon>
-                    <ListItemText>Web Clipboard</ListItemText>
-                  </MenuItem>
-                </MenuList>
-              </Paper>
-            </ThemeProvider> */}
+              <BasicMenu />
+            </div>
           </div>;
 }

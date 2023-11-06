@@ -27,32 +27,36 @@ const theme = createTheme({
 
 const marks = [
   {
-    value: 100,
+    value: 125,
     label: '',
   }
 ];
 
 function ContinuousSlider() {
-  const [value, setValue] = React.useState<number>(30);
+
+  const context = useContext(MyContext);
+  if (!context) {
+    throw new Error('useContext must be used within a MyProvider');
+  }
+  const { zoom, updateZoom } = context;
   const increment = 5;
   function add_zoom() {
-    if (value + increment > 200)
-      setValue(200);
-    else
-      setValue(value + increment);
-    console.log(value); 
-  }
+    if (zoom + increment > 200)
+      updateZoom(200);
 
+    else
+      updateZoom(zoom + increment);
+    console.log(zoom);
+  }
   function reduce_zoom() {
-    if (value - increment < 0)
-      setValue(0);
-    else
-      setValue(value - increment);
-    console.log(value); 
-  }
+    if (zoom - increment < 50)
+      updateZoom(50);
 
+    else
+      updateZoom(zoom - increment);
+  }
   const handleChange = (event: Event, newValue: number | number[]) => {
-    setValue(newValue as number);
+    updateZoom(newValue as number);
   };
 
   return (
@@ -67,9 +71,9 @@ function ContinuousSlider() {
               <Slider 
                 size="small"
                 aria-label="Zoom"
-                value={value}
+                value={zoom}
                 onChange={handleChange}
-                min={0}
+                min={50}
                 max={200}
                 defaultValue={100}
                 marks={marks}

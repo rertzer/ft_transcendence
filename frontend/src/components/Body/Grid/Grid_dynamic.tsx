@@ -20,14 +20,19 @@ import { MyContext } from '../../../context/PageContext';
 // }, [scrollX, scrollY]);
 
 function CreateCell (coordX : number, coordY : number, width : number, height : number, text : string, border: string, sx : number, sy : number) {
+  const context = useContext(MyContext);
+  if (!context) {
+    throw new Error('useContext must be used within a MyProvider');
+  }
+  const { zoom, updateZoom } = context;
   return (<div key={`x:${coordX} y:${coordY}${text}${border}`} style={{
       position: 'absolute',
-      top: `${20 * (coordX - sx)}px`,
-      left: `${0 + 80 * (coordY - sy)}px`,
-      width: `${80 * width}px`,
-      height: `${20 * height}px`,
+      top: `${(20 + (zoom - 100)/8) * (coordX - sx)}px`,
+      left: `${0 + (80 + (zoom - 100)/2) * (coordY - sy)}px`,
+      width: `${(80 + (zoom - 100)/2) * width}px`,
+      height: `${(20 + (zoom - 100)/8) * height}px`,
       color: `black`,
-      font: '10px',
+      fontSize: `${10 +((zoom - 100)/16)}px`,
       backgroundColor: 'lightGrey',
       border: border,
       textAlign: 'center',
@@ -158,7 +163,7 @@ function Grid() {
     throw new Error('useContext must be used within a MyProvider');
   }
 
-  const { coords, updateCoords } = context;
+  const { zoom, coords, updateZoom, updateCoords } = context;
   const { coordX, coordY } = coords;
 
   const [x, setNewCoordX] = useState(coordX);
@@ -176,21 +181,21 @@ function Grid() {
   }, [coordX, coordY]);
 
   const components = [];
-  for (let i:number = sy; (i - sy) * 80 < windowWidthRef.current; i++) {
-    for (let j:number = sx; (j - sx) * 16 < windowHeightRef.current; j++)
+  for (let i:number = sy; (i - sy) * (80 + ((zoom - 100))/2) < windowWidthRef.current; i++) {
+    for (let j:number = sx; (j - sx) * (20 + ((zoom - 100))/8) < windowHeightRef.current; j++)
     {
-        const dynamicLeft = `${(i - sy) * 80}px`;
-        const dynamicTop = `${(j - sx) * 20}px`;
+        const dynamicLeft = `${(i - sy) * (80 + ((zoom - 100))/2)}px`;
+        const dynamicTop = `${(j - sx) * (20 + ((zoom - 100))/8)}px`;
         components.push(
           <input key={`x:${i} y:${j}`} size={1} onMouseDown={() => handleUpdateCoords(i, j)} style={{
               position: 'absolute',
               top: dynamicTop,
               left: dynamicLeft,
-              width: '80px',
-              height: '20px',
+              width: `${80 + ((zoom - 100))/2}px`,
+              height: `${20 + ((zoom - 100))/8}px`,
               boxSizing: 'border-box',
               border: '0.5px solid #C0C0C0',
-              fontSize: '10px',
+              fontSize: `${10 +((zoom - 100)/16)}px`,
               textIndent: '3px',
           }}
           onFocus={(e) =>   {
@@ -208,24 +213,24 @@ function Grid() {
   components.push(
     <div key={"highlight_cell"} style={{
         position: 'absolute',
-        top: `${y_square * 20}px`,
-        left: `${x_square * 80}px`,
-        width: '80px',
-        height: '20px',
+        left: `${x_square * (80 + ((zoom - 100)/2))}px`,
+        top: `${y_square * (20 + ((zoom - 100)/8))}px`,
+        width: `${80 + ((zoom - 100)/2)}px`,
+        height: `${20 + ((zoom - 100)/8)}px`,
         border: '1px solid #15539E',
         outline: '1px solid #15539E',
         pointerEvents:'none',
     }} />);
   if (y_square != -1 && x_square != -1)
-    components.push(<div key={"bluesquare"} style={{position: 'relative', top: `${y_square * 20 + 18}px`, left: `${x_square * 80 + 77}px`, width: '5px', height: '5px', backgroundColor:'#15539E',}}></div>);
+    components.push(<div key={"bluesquare"} style={{position: 'relative', top: `${(y_square * (20 + (zoom - 100)/8)) + (18 + (zoom - 100)/8)}px`, left: `${((x_square * (80 + (zoom - 100)/2)) + (77 + (zoom - 100)/2))}px`, width: '5px', height: '5px', backgroundColor:'#15539E',}}></div>);
   
   components.push(BarSwitch());
 
   //HIGHLIGHT COLUMN, LINE OR EVERYTHING
-  let div_width = '80px';
-  let div_height = '20px';
-  let div_top = `${y_square * 20}px`;
-  let div_left = `${x_square * 80}px`;
+  let div_width = `${(80 + ((zoom - 100)/2))}px`;
+  let div_height = `${(20 + ((zoom - 100)/8))}px`;
+  let div_top = `${y_square * (20 + ((zoom - 100)/8))}px`;
+  let div_left = `${x_square * (80 + ((zoom - 100)/2))}px`;
   if (x == -1 && y == -1)
   {
     div_height = '100%';

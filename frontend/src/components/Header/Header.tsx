@@ -12,13 +12,14 @@ function Header({}) {
     throw new Error('useContext must be used within a MyProvider');
   }
   const { menu, updateMenu } = context;
+  const { toolbar } = context;
   function handleClick(str : string) {
     updateMenu(str);
   }
   const {username} = useContext(ConnectionContext);
 
-  return <header className={styles.headerFrame}>
-        <div className={styles.headerBackground} />
+  return <header className={styles.headerFrame} style={{ height: toolbar ? '65px' : '142px' }}>
+        <div className={styles.headerBackground} style={{ height: toolbar ? '65px' : '142px' }}/>
         <div className={styles.line3}>
           <input className={styles.tchatbox} />
           <img className={styles.buttonsIcon} alt="" src="/buttons.svg" />

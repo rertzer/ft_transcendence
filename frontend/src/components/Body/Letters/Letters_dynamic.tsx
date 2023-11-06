@@ -47,18 +47,18 @@ function RepeatingLetters() {
 
   const { scroll, updateScroll } = context;
   const { scrollX, scrollY } = scroll;
-
   const [sx, setNewScrollX] = useState(scrollX);
   const [sy, setNewScrollY] = useState(scrollY);
+  const { zoom, updateZoom } = context;
     
   useEffect(() => {
     setNewScrollX(scrollX);
     setNewScrollY(scrollY);
   }, [scrollX, scrollY]);
   
-  for (let i = 0; i * 80 < windowWidthRef.current; i++) {
+  for (let i = 0; i * (80 + (zoom - 100)/2) < windowWidthRef.current; i++) {
     const n = i + sy;
-    const dynamicLeft = `${(i) * 80}px`;
+    const dynamicLeft = `${(i) * (80 + (zoom - 100)/2)}px`;
     let string = "";
     if (n == 0 || n == 26)
       string = "A";
@@ -79,14 +79,17 @@ function RepeatingLetters() {
               position: 'absolute',
               top: '0px',
               left: dynamicLeft,
-              width: '80px',
+              width: `${(80 + (zoom - 100)/2)}px`,
               height: '24px',}}
             onMouseDown={() => handleUpdateCoords(i, -1)}>
           <div className={styles.background } style={{
+          width: `${(80 + (zoom - 100)/2)}px`,
           backgroundColor: '#15539E',
           fontWeight:'bold',
         }}>{string}</div>
-          <div className={styles.letter} />
+          <div className={styles.letter} style={{
+            width: `${(80 + (zoom - 100)/2)}px`,
+          }}/>
       </div>);
     }
     else
@@ -98,10 +101,10 @@ function RepeatingLetters() {
                 position: 'absolute',
                 top: '0px',
                 left: dynamicLeft,
-                width: '80px',
+                width: `${(80 + (zoom - 100)/2)}`,
                 height: '24px',}}
               onMouseDown={() => handleUpdateCoords(i, -1)}>
-            <div className={styles.background}>{string}</div>
+            <div className={styles.background} style={{width: `${(80 + (zoom - 100)/2)}px`,}}>{string}</div>
             <div className={styles.letter} />
         </div>);
     }

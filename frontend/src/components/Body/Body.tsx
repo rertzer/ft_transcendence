@@ -40,6 +40,7 @@ export function Body({}) {
 
   const [sx, setNewScrollX] = useState(scrollX);
   const [sy, setNewScrollY] = useState(scrollY);
+  const {toolbar} = context;
   
   const handleUpdateScroll = (event: any) => {
     let i = 0;
@@ -52,25 +53,24 @@ export function Body({}) {
     else if (sx + i >= 0 && !event.ctrlKey)
       updateScroll({ scrollX: sx + i, scrollY: sy});
   };
-  
   useEffect(() => {
     setNewScrollX(scrollX);
     setNewScrollY(scrollY);
   }, [scrollX, scrollY]);
 
   return (
-      <div className={styles.body} onWheel={handleUpdateScroll}>
+      <div className={styles.body} onWheel={handleUpdateScroll} >
 
-        <div className={styles.grid}>
+        <div className={styles.grid} style={{top: toolbar ? '89px' : '166px' }}>
           <Grid />
         </div>
 
-        <div className={styles.up} onMouseDown={() => handleUpdateCoords(-1, -1)}/>
-        <div className={styles.rightLettersFrame}>
+        <div className={styles.up} style={{top: toolbar ? '65px' : '142px' }} onMouseDown={() => handleUpdateCoords(-1, -1)}/>
+        <div className={styles.rightLettersFrame} style={{top: toolbar ? '89px' : '166px' }}>
           <div className={styles.rightLettersBackground} />
           <Numbers />
         </div>
-        <div className={styles.letters}>
+        <div className={styles.letters} style={{top: toolbar ? '65px' : '142px' }}>
           <Letters />
         </div>
         <div className={styles.racketPlayer2}>

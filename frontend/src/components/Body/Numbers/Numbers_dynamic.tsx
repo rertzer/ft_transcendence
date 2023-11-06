@@ -45,6 +45,8 @@ function RepeatingNumbers() {
 
   const { scroll, updateScroll } = context;
   const { scrollX, scrollY } = scroll;
+  const { zoom, updateZoom } = context;
+  const { toolbar } = context;
 
   const [sx, setNewScrollX] = useState(scrollX);
   const [sy, setNewScrollY] = useState(scrollY);
@@ -55,9 +57,9 @@ function RepeatingNumbers() {
   }, [scrollX, scrollY]);
 
   const components = [];
-  for (let index = 1; index * 16 < windowHeightRef.current; index++) {
+  for (let index = 1; index * (20 + (zoom - 100)/8) < windowHeightRef.current; index++) {
     const i = index + sx;
-    const dynamicTop = `${(index) * 20 - 20}px`;
+    const dynamicTop = `${(index) * (20 + (zoom - 100)/8) - (20 + (zoom - 100)/8)}px`;
     if (i == localCoordY + 1 || localCoordY == -1)
     {
       components.push(
@@ -67,13 +69,13 @@ function RepeatingNumbers() {
               top: dynamicTop,
               left: '0px',
               width: '31px',
-              height: '20px',
+              height: `${(20 + (zoom - 100)/8)}px`,
               backgroundColor: '#15539E',
               fontWeight:'bold',
               outline:'0px solid #104482',}}
             onMouseDown={() => handleUpdateCoords(-1, i - 1)}>
-          <div className={styles.numberGroupChild} />
-          <div className={styles.numbers}>{i}</div>
+          <div className={styles.numberGroupChild} style={{height: `${(20 + (zoom - 100)/8)}px`,}}/>
+          <div className={styles.numbers} style={{height: `${(20 + (zoom - 100)/8)}px`, fontSize: `${14 +((zoom - 100)/32)}px`,}}>{i}</div>
       </div>
     );}
     else
@@ -85,17 +87,18 @@ function RepeatingNumbers() {
                 top: dynamicTop,
                 left: '0px',
                 width: '31px',
-                height: '30px',}}
+                height: `${(20 + (zoom - 100)/8)}px`,}}
             onMouseDown={() => handleUpdateCoords(-1, i - 1)}>
-            <div className={styles.numberGroupChild} />
-            <div className={styles.numbers}>{i}</div>
+            <div className={styles.numberGroupChild} style={{height: `${(20 + (zoom - 100)/8)}px`,}} />
+            <div className={styles.numbers} style={{height: `${(20 + (zoom - 100)/8)}px`,
+          fontSize: `${14 +((zoom - 100)/32)}px`,}}>{i}</div>
         </div>
       );
     }
   }
 
   return (
-    <div>
+    <div >
         {components}
     </div>
   );
