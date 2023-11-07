@@ -7,13 +7,13 @@ import { MutedUserModule } from './chat/mutedUser/mutedUser.module';
 import { GameSocketModule } from './game/gameSocket.module';
 import { PlayersModule } from './game/players/players.module';
 import { RoomsModule } from './game/rooms/rooms.module';
-import { GameService } from './game/services/game.service';
+
 import { PlayersService } from './game/players/players.service';
 import { RoomsService } from './game/rooms/rooms.service';
 
 @Module({
   imports: [/*AuthModule,*/ UserModule, PrismaModule, ChatModule, MutedUserModule, GameSocketModule, PlayersModule, RoomsModule],
   controllers: [],
-  providers: [GameService, PlayersService, RoomsService],
+  providers: [PlayersService, RoomsService],
 })
 export class AppModule {}

@@ -4,20 +4,7 @@ import { Player } from '../Interface/player.interface';
 import { Ball } from '../Interface/ball.interface';
 import { IGameParamBackEnd } from '../Interface/gameparam.interface';
 import { Socket } from 'socket.io';
-
-/* function leftboard(room:Room):boolean {
-    let retVal:boolean = false;
-	room.balls.forEach((ball) => {
-		if ((ball.pos.x > 1 || ball.pos.x < 0)) {
-			retVal = true;
-		}
-	})
-	return (retVal);
-} */
-
-function leftboard(ball:Ball):boolean {
-	return ((ball.pos.x > 1 || ball.pos.x < 0));
-}
+import { PrismaGameService } from 'src/prisma/game/prisma.game.service';
 
 function colision(playerPosY: number, ball:Ball, pong:IGameParamBackEnd, sidePlayer:string):boolean {
     const ballTop:number = ball.pos.y - pong.ballRadius;
@@ -36,6 +23,8 @@ function colision(playerPosY: number, ball:Ball, pong:IGameParamBackEnd, sidePla
 
 @Injectable()
 export class RoomsService {
+	constructor(private prismaService: PrismaGameService){}
+
 	private rooms: Room[] = [];
 	private initBall : Ball = {
 		id: 0,
@@ -174,6 +163,7 @@ export class RoomsService {
 			}
 			player.room = room;
 			room.gameStatus = 'WAITING_TO_START';
+			console.log('Room full and ready to ');
 			console.log('Player ', player.socket.id, ' added to Room ', room.id);
 		}
 		this.sendRoomStatus(room);
