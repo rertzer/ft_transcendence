@@ -14,28 +14,32 @@ const Chats = (props: {activeChat: Active, setActiveChat: Function, chatsOfUser:
 
         trigger();
 
-        socket.on("ListOfChat", (channelsListReceive : allChatOfUser[]) => {
-			console.log(channelsListReceive);
+        socket.on("ListOfChatOfUser", (channelsListReceive : allChatOfUser[]) => {
             props.setChatsOfUser(channelsListReceive);
         });
 
 		socket.on("newChat", (newChat: allChatOfUser) => {
-			console.log("new chat received :", newChat);
 			props.setChatsOfUser([...props.chatsOfUser, newChat]);
 		});
+		socket.on('chatList', (listOfChat: allChatOfUser[]) => {
+
+		})
 
         return () => {
-            console.log('Unregistering Events...');
+
 			socket.off("ListOfChat");
 			socket.off("newChat")
+			socket.off("chatList")
         }
     }, [])
 
     const startRef = useRef<HTMLDivElement>(null); //ref to empty div to autoscroll to bottom
 
     function trigger() {
-       socket.emit('chatList', username);
-	   console.log("in func trigger");
+		console.log("chatList");
+       socket.emit('chatListOfUser', username);
+	   socket.emit('chatList'); // here is for the public chat.
+
     }
 
     useEffect(() => {
@@ -45,7 +49,7 @@ const Chats = (props: {activeChat: Active, setActiveChat: Function, chatsOfUser:
                 block: "end",
             });
         }
-		console.log("hey trigger me")
+
     }, [props.chatsOfUser.length]);
 
     return (
@@ -56,12 +60,12 @@ const Chats = (props: {activeChat: Active, setActiveChat: Function, chatsOfUser:
 					<div>
                         <div ref={startRef} />
 						{props.chatsOfUser.map((channel) => (
-                            <div onClick={() => {
+                            <div key={channel.id} onClick={() => {
                                     if (channel.id != props.activeChat.id) {
                                     props.setActiveChat({id: channel.id, name: channel.channelName});
                                     socket.emit('retrieveMessage', {chatId: channel.id, messageToDisplay: 15 })
                                     }}}>
-                                <div key={channel.id} className={props.activeChat.id === channel.id ? "userChat active" : "userChat"}>
+                                <div className={props.activeChat.id === channel.id ? "userChat active" : "userChat"}>
                                     <img src={channel.chatPicture === null ? "" : channel.chatPicture} />
                                     <div className='userChatInfo'>
                                         <h1>{channel.channelName}</h1>

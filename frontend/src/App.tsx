@@ -14,6 +14,7 @@ import Leaderboards from './components/leaderboards/Leaderboards';
 import {IChatContext, WebsocketProvider, socket } from './context/chatContext';
 import ChatContext from './context/chatContext';
 import ConnectionContext from './context/authContext'
+import Game from './components/game/Game';
 import Desktop1 from './pages/Desktop1';
 
 function App() {
@@ -44,7 +45,7 @@ function App() {
   const Layout = ()=> {
     return (<Desktop1 />);
     const [RightBar, setRightBar] = useState("none");
-	  console.log("username", username)
+
     return (
     <div>
          <Navbar RightBar={RightBar} setRightBar={setRightBar}/>
@@ -79,7 +80,11 @@ function App() {
         {
           path:"/profile/:id",
           element: <Profile />
-        }
+        },
+		{
+			path:"/game",
+			element: <Game />
+		}
       ]
     },
     {

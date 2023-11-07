@@ -8,53 +8,83 @@ import { WebsocketContext } from '../../context/chatContext';
 import  ConnectionContext from "../../context/authContext";
 import ChatContext from '../../context/chatContext';
 
-type JoinChatRoomPayload = {
-	id: string;
-	username: string;
-	user_role: string;
-}
-
 export const ListChannels = (props: {chatsOfUser: allChatOfUser[], showSubMenu: string, setShowSubMenu: Function}) => {
 
     const socket = useContext(WebsocketContext);
-	const [idChatRoom, setIdChatRoom] = useState<JoinChatRoomPayload[]>([]);
+	// const [idChatRoom, setIdChatRoom] = useState<JoinChatRoomPayload[]>([]);
 	const {username} = useContext(ConnectionContext);
 	const {setChatId} = useContext(ChatContext);
 	const [id, setId] = useState('');
 
-	useEffect(() => {
-		socket.on('onJoinChatRoom', (idChatRoom: JoinChatRoomPayload) => {
-			console.log('onJoinChatRoom event received!');
-			console.log(idChatRoom.id);
-			if (idChatRoom.id === '-1')
-			{
-				console.log("wrong id")
+	// useEffect(() => {
+	// 	socket.on('onJoinChatRoom', (idChatRoom: JoinChatRoomPayload) => {
+	// 		if (idChatRoom.id === '-1')
+	// 		{
+
+	// 			setId('Doesnt exist')
+	// 		}
+	// 		else{
+	// 			// ici c'est faux si je te renvoie -2 c'est protege par du password
+	// 			// -3 c'est prive
+	// 			//sinon c'est good
+
+
+
+	// 			setChatId(parseInt(idChatRoom.id));
+	// 			setIdChatRoom((prev) => [...prev, idChatRoom]);
+	// 		}
+	// 	  });
+	// 	  return () => {
+	// 		socket.off('onJoinChatRoom');
+	// 	};
+	// }, []);
+
+	const DealWithIdChat = async () => {
+		const returnValue = await SendIdChat();
+		if (returnValue === "-1") {
+		 		// ici c'est faux si je te renvoie -2 c'est protege par du password
+				// -3 c'est prive
+				//sinon c'est good
 				setId('Doesnt exist')
-			}
-			else{
-				setChatId(parseInt(idChatRoom.id));
-				console.log("id chat room", idChatRoom.id);
-				setIdChatRoom((prev) => [...prev, idChatRoom]);
-			}
-		  });
-		  return () => {
-			console.log('Unregistering Events...');
-			socket.off('onJoinChatRoom');
-		};
-	}, []);
-	const SendIdChat = () => {
+		} else {
+		  // Handle other cases
+			setChatId(parseInt(returnValue.id));
+		}
+	  }
+
+	  const SendIdChat = async () => {
 		if (id === "") {
-			return;
+		  return ""; // Return an empty string or another default value
 		}
 		const messageData = {
-			username: username,
-			chat_id: id,
-			user_role: "user",
+		  username: username,
+		  chat_id: id,
+		  user_role: "user",
+		};
+
+		const requestOptions = {
+		  method: 'post',
+		  headers: { 'Content-Type': 'application/json' },
+		  body: JSON.stringify(messageData),
+		};
+
+		try {
+		  const response = await fetch('http://localhost:4000/chatOption/joinChat/', requestOptions);
+
+		  if (!response.ok) {
+			throw new Error('Request failed');
+		  }
+
+		  const data = await response.json();
+		  console.log('Success:', data);
+
+		  // Return the data or a specific value from the response
+		  return data; // You can return a specific field if needed
+		} catch (error) {
+		  console.error('Error:', error);
+		  return "-1"; // Return "-1" or another specific value to indicate an error
 		}
-		console.log("send id chat")
-		console.log("id chat room", id);
-		socket.emit('JoinChatRoom', messageData);
-	}
+	  }
 
     const toggleForm = () => {
         if (props.showSubMenu !== "list") {
@@ -76,7 +106,7 @@ export const ListChannels = (props: {chatsOfUser: allChatOfUser[], showSubMenu: 
                 ou par ordre alphabetique ? Fonction de recherche a implementer ?
                 Chacun de ces elements pourra avoir un onClick qui permet de rejoindre
                 le channel et d'updater le allChatOfUser (avec un sous-sous menu pour input
-                le mot de passe quand y en a un...) 
+                le mot de passe quand y en a un...)
                 Le fichier se trouve dans frontend/src/components/chat/ListChannels.tsx
                 </p>
                 <hr/>
@@ -90,7 +120,7 @@ export const ListChannels = (props: {chatsOfUser: allChatOfUser[], showSubMenu: 
 					value={id}
 					onChange={(e) => setId(e.target.value)}
 				  />
-				  <button onClick={SendIdChat}>Join</button>
+				  <button onClick={DealWithIdChat}>Join</button>
         </div>
     </div>
     );

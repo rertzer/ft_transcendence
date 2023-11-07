@@ -1,30 +1,27 @@
 import { Injectable } from "@nestjs/common";
-import {MyGateway } from "../gateway/gateway.service";
-import { RetrieveChatMessage, findUser } from "../../prisma/chat/prisma.chat.service";
+import { PrismaChatService } from "../../prisma/chat/prisma.chat.service";
 import { parse } from "path";
 import { Socket } from "socket.io";
 
 
 @Injectable()
 export class RetrieveMessageService {
-	constructor(private gatewayModule: MyGateway){
+	constructor(private prismaService:PrismaChatService){
 	}
 
 	async retrieveMessage(chat_id: number, NumToDisplay: number, sock : Socket)
 	{
-		console.log(chat_id)
-		console.log(chat_id)
 		const messageHistory = [];
-		console.log("pleasae : ", chat_id)
+		console.log("hey");
 		if (chat_id !== undefined)
 		{
-			const messageReceived = await RetrieveChatMessage(chat_id);
-			console.log("messageReceived : ", messageReceived);
+			const messageReceived = await this.prismaService.RetrieveChatMessage(chat_id);
+
 			if (messageReceived !== undefined)
 			{
 				for (const element of messageReceived) {
-					const username = await findUser(element.chat_channels_user_id);
-					console.log("in send ")
+					const username = await this.prismaService.findUser(element.chat_channels_user_id);
+
 					const msg = {
 						msg: element.message,
 						username: username,
@@ -34,7 +31,7 @@ export class RetrieveMessageService {
 					}
 					messageHistory.push(msg);
 				};
-				console.log("messageHistory : ", messageHistory);
+				console.log('message history = ', messageHistory)
 				sock.emit('chatMsgHistory', messageHistory);
 			}
 		}

@@ -35,7 +35,7 @@ const ChatComponent = () => {
         <div className="chatcomponent">
             <div className='container'>
                 <Sidebar activeChat={activeChat} setActiveChat={setActiveChat} chatsOfUser={chatsOfUser} setChatsOfUser={setChatsOfUser}/>
-                <Chat toDisplay={chatToDisplay} setActiveChat={setActiveChat}/> :
+                <Chat toDisplay={chatToDisplay} setActiveChat={setActiveChat}/>
             </div>
         </div>
     )

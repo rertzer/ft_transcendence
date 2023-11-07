@@ -34,7 +34,7 @@ export const AddChat = (props: {chatsOfUser: allChatOfUser[], showSubMenu: strin
 	};
 
 	const onSubmit = () => {
-		console.log("username :", username);
+
 		let createChatData: CreateaChatPayload;
 		if (chatName === "")
 			return ;
@@ -56,7 +56,7 @@ export const AddChat = (props: {chatsOfUser: allChatOfUser[], showSubMenu: strin
 				chatPassword: password,
 			}
 		}
-		console.log("object send :", createChatData);
+
 		socket.emit('createChat', createChatData);
 		setChatName('');
 		setPassword('');

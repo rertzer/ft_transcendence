@@ -1,5 +1,5 @@
 import * as bcrypt from 'bcrypt';
-import { getPasswordOfChat } from '../../prisma/chat/prisma.chat.service';
+import { PrismaChatService } from '../../prisma/chat/prisma.chat.service';
 
 
 export async function encodePassword(rawPassword: string) {
@@ -8,9 +8,9 @@ export async function encodePassword(rawPassword: string) {
 }
 
 export function checkPassword(password: string, idOfChat: number): string {
-
+	const prismaService = new PrismaChatService
 	const passwordHashed = encodePassword(password);
-	const passwordSaved = getPasswordOfChat(idOfChat);
+	const passwordSaved = prismaService.getPasswordOfChat(idOfChat);
 	if (passwordHashed === passwordSaved) {
 		return 'true';
 	} else {

@@ -27,15 +27,14 @@ const MessageInput = (props: {chatId: number}) => {
 	useEffect(() => {
 
 		socket.on('onMessage', (newMessage: MessagePayload) => {
-			console.log('onMessage event received!');
-			console.log(newMessage);
+
+
 			setMessages((prev) => [...prev, newMessage]);
 			});
 
 		return () => {
-			console.log('Unregistering Events...');
+
 			socket.off('onMessage');
-			socket.off('retrieveMessage');
 		};
 	}, []);
 
@@ -47,10 +46,10 @@ const MessageInput = (props: {chatId: number}) => {
 			content: value,
 			idOfChat: props.chatId,
 		}
-		console.log(" username send ", username)
-		console.log("props chat id send ", props.chatId)
+
+
 		socket.emit('newMessage', messageData);
-		socket.emit('chatList', username); // super bizarre, des fois ca marche et des fois un temps de retard
+		socket.emit('chatListOfUser', username);
 		setValue('');
 	  };
 
@@ -64,6 +63,7 @@ const MessageInput = (props: {chatId: number}) => {
         <div className='messageinput'>
             <input
 				type="text"
+				placeholder='Write...'
 				value={value}
 				onChange={(e) => setValue(e.target.value)}
 				onKeyDown={handleKeyDown} // gestion du bouton Enter pour envoyer
