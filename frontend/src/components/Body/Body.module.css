@@ -1,10 +1,10 @@
 .body {
   width: 100%;
-  height: 100%;
+  height:calc(100% - 182px);
   right: 0;
   left: 0;
-  top: 143px;
-  bottom: 0;
+  top: 142px;
+  bottom: 30px;
   overflow: hidden;
   position: relative;
   background-color: var(--color-white);
@@ -14,9 +14,8 @@
   height: calc(100% - 58px);
   width: calc(100% - 50px);
   top: 166px;
-  right: 12px;
   bottom: 41px;
-  left: 43px;
+  left: calc(1% + 31px);
 }
 .rightLettersBackground {
   position: absolute;
@@ -31,7 +30,7 @@
   position: fixed;
   box-sizing: border-box;
   top: 166px;
-  left: 12px;
+  left: 1%;
   border-left: 1px solid var(--color-gray-100);
   width: 25px;
   height: 100%;
@@ -40,7 +39,7 @@
   position: fixed;
   box-sizing: border-box;
   top: 142px;
-  left: 12px;
+  left: 1%;
   background-color: var(--color-darkslategray-100);
   border-right: 0.5px solid var(--color-gray-100);
   border-bottom: 0.5px solid var(--color-gray-100);
@@ -49,19 +48,10 @@
 }
 .letters {
   top: 142px;
-  left: 43px;
+  left: calc(1% + 31px);
   width: 32px;
   text-align: center;
   position: fixed;
-}
-.racket2 {
-  position: fixed;
-  top: 406px;
-  left: 2px;
-  border-radius: var(--br-6xs);
-  background-color: var(--color-darkgray);
-  width: 8px;
-  height: 237px;
 }
 .racketPlayer2 {
   position: fixed;
@@ -69,16 +59,7 @@
   top: 0px;
   bottom: 41px;
   left: 0;
-  width: 12px;
-}
-.racket1 {
-  position: fixed;
-  top: 208px;
-  right: 2px;
-  border-radius: var(--br-6xs);
-  background-color: var(--color-darkgray);
-  width: 8px;
-  height: 237px;
+  width: 1%;
 }
 .racketPlayer1 {
   position: fixed;
@@ -86,7 +67,7 @@
   top: 0px;
   right: 0;
   bottom: 41px;
-  width: 12px;
+  width: 1%;
 }
 .rightScrollZone {
   position: absolute;
@@ -95,7 +76,7 @@
   bottom: 0;
   left: 0;
   background-color: var(--color-darkslategray-100);
-  width: 12px;
+  width: 100%;
 }
 .rightScrollZone1 {
   position: absolute;
@@ -104,5 +85,5 @@
   right: 0;
   bottom: 0;
   background-color: var(--color-darkslategray-100);
-  width: 12px;
+  width: 100%;
 }

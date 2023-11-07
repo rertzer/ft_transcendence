@@ -27,7 +27,7 @@ type MyProviderProps = {
 
 function MyProvider({ children }: MyProviderProps) {
   const [sharedData, setSharedData] = useState({
-    page:'Project',
+    page:'none',
     menu:'none',
     chat:'none',
     zoom:125,

@@ -1,30 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useContext } from 'react';
 import { MyContext } from '../../../context/PageContext';
-import Game from '../../game/Game';
-// //GET SCROLL VALUE
-// const context = useContext(MyContext);
-// if (!context) {
-//   throw new Error('useContext must be used within a MyProvider');
-// }
-
-// const { scroll, updateScroll } = context;
-// const { scrollX, scrollY } = scroll;
-
-// const [sx, setNewScrollX] = useState(scrollX);
-// const [sy, setNewScrollY] = useState(scrollY);
-  
-// useEffect(() => {
-//   setNewScrollX(scrollX);
-//   setNewScrollY(scrollY);
-// }, [scrollX, scrollY]);
 
 function CreateCell (coordX : number, coordY : number, width : number, height : number, text : string, border: string, sx : number, sy : number) {
   const context = useContext(MyContext);
   if (!context) {
     throw new Error('useContext must be used within a MyProvider');
   }
-  const { zoom, updateZoom } = context;
+  const { zoom } = context;
   return (<div key={`x:${coordX} y:${coordY}${text}${border}`} style={{
       position: 'absolute',
       top: `${(20 + (zoom - 100)/8) * (coordX - sx)}px`,
@@ -40,6 +23,7 @@ function CreateCell (coordX : number, coordY : number, width : number, height : 
 }
 
 function Project (sx : number, sy : number) {
+  
   return (
     <div key={"project"} style={{width: '100%', height:'100%'}}>
       {CreateCell(1, 1, 2, 1, "Points", "2px solid black", sx, sy)}
@@ -89,22 +73,22 @@ function Contacts (sx : number, sy : number) {
 }
 
 function BarSwitch () {
-    //GET SCROLL VALUE
-    const context = useContext(MyContext);
-    if (!context) {
-      throw new Error('useContext must be used within a MyProvider');
-    }
-  
-    const { scroll, updateScroll } = context;
-    const { scrollX, scrollY } = scroll;
-  
-    const [sx, setNewScrollX] = useState(scrollX);
-    const [sy, setNewScrollY] = useState(scrollY);
-      
-    useEffect(() => {
-      setNewScrollX(scrollX);
-      setNewScrollY(scrollY);
-    }, [scrollX, scrollY]);
+  //GET SCROLL VALUE
+  const context = useContext(MyContext);
+  if (!context) {
+    throw new Error('useContext must be used within a MyProvider');
+  }
+
+  const { scroll, updateScroll } = context;
+  const { scrollX, scrollY } = scroll;
+
+  const [sx, setNewScrollX] = useState(scrollX);
+  const [sy, setNewScrollY] = useState(scrollY);
+    
+  useEffect(() => {
+    setNewScrollX(scrollX);
+    setNewScrollY(scrollY);
+  }, [scrollX, scrollY]);
   switch(context?.page) {
     case "Project" :
       return Project(sx, sy);

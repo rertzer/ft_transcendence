@@ -67,12 +67,9 @@ function printGame(params:{
 	
 	// Print Game elements
 	params.balls?.forEach((ball) => {
-		drawCircle({
-			center: {x:ball.pos.x * params.gameWidth, 
-					y:ball.pos.y * params.gameHeight}, 
-			radius: params.pong.ballRadius * params.gameWidth,
-			color: params.pong.ballColor
-		}, params.context);
+		const img = new Image();
+		img.src = "../../../../../mouse.png";
+		params.context.drawImage( img, ball.pos.x * params.gameWidth, ball.pos.y * params.gameHeight, 20, 20);
 	});
 	
 	drawRect({

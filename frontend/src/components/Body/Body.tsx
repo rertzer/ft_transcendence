@@ -67,7 +67,8 @@ export function Body({}) {
         </div>
 
         <div className={styles.up} style={{top: toolbar ? '65px' : '142px' }} onMouseDown={() => handleUpdateCoords(-1, -1)}/>
-        <div className={styles.rightLettersFrame} style={{top: toolbar ? '89px' : '166px' }}>
+        <div className
+={styles.rightLettersFrame} style={{top: toolbar ? '89px' : '166px' }}>
           <div className={styles.rightLettersBackground} />
           <Numbers />
         </div>
@@ -76,13 +77,11 @@ export function Body({}) {
         </div>
         <div className={styles.racketPlayer2}>
           <div className={styles.rightScrollZone} />
-          <div className={styles.racket2} />
         </div>
         <div className={styles.racketPlayer1}>
           <div className={styles.rightScrollZone1} />
-          <div className={styles.racket1} />
         </div>
-		<Game/>
+		    { context?.page == "Project" && <Game/>}
       </div>
   )
 }

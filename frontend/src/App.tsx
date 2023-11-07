@@ -98,7 +98,7 @@ function App() {
   ]);
 
   return (
-    <div >
+    <div>
 		{/* <AuthContextProvider> */}
 			<ChatContext.Provider value={ChatContextValue}>
 				<ConnectionContext.Provider value={ConnectionValue}>

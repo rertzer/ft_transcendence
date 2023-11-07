@@ -1,3 +1,4 @@
+import { responsiveFontSizes } from "@mui/material";
 import { drawRect, drawText } from "./draw";
 import { IGameParam, IPlayer } from "./interfacesGame";
 
@@ -39,7 +40,7 @@ function printMenu(param:{pong:IGameParam, context:CanvasRenderingContext2D, gam
 		color: param.pong.menuTextColor, 
 		font: param.pong.menuFont, 
 		fontDecoration: param.pong.menuFontDecoration, 
-		fontPx: param.pong.menuFontPx * param.gameHeight
+		fontPx: param.pong.menuFontPx * param.gameHeight / 2
 	}, param.context);
 	drawText({
 		str: line2, 
@@ -47,7 +48,7 @@ function printMenu(param:{pong:IGameParam, context:CanvasRenderingContext2D, gam
 		color: param.pong.menuTextColor, 
 		font: param.pong.menuFont, 
 		fontDecoration: param.pong.menuFontDecoration, 
-		fontPx: param.pong.menuFontPx * param.gameHeight
+		fontPx: param.pong.menuFontPx * param.gameHeight / 3
 	}, param.context); 
 }
 
