@@ -30,6 +30,10 @@ const ChatComponent = () => {
     const [activeChat, setActiveChat] = useState<Active>({id: -1, name: "none"})
 
     let chatToDisplay = chatsOfUser.find(element => element.id === activeChat.id);
+
+
+
+    
     if (chatToDisplay !== undefined) {
     return (
         <div className="chatcomponent">

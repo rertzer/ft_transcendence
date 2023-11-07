@@ -21,10 +21,6 @@ export const AddChat = (props: {chatsOfUser: allChatOfUser[], showSubMenu: strin
 	const [chatType, setChatType] = useState('public');
 	const [chatInfo, setChatInfo] = useState({}); // Define the state for chat information
 
-	function trigger() {
-		socket.emit('chatList', username);
-	}
-
 	const toggleForm = () => {
 		if (props.showSubMenu !== "add") {
 	  		props.setShowSubMenu("add");
@@ -60,8 +56,8 @@ export const AddChat = (props: {chatsOfUser: allChatOfUser[], showSubMenu: strin
 		socket.emit('createChat', createChatData);
 		setChatName('');
 		setPassword('');
+		socket.emit('chatListOfUser', username);
 		toggleForm();
-		// trigger(); // tout s'update avec un temps de retard, quand je cree un nouveau channel, je vois le precedent apparaitre
 	}
 	return (
 		<div className='addchat'>
