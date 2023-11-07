@@ -50,6 +50,7 @@ function App() {
     "https://img.lamontagne.fr/c6BQg2OSHIeQEv4GJfr_br_8h5DGcOy84ruH2ZResWQ/fit/657/438/sm/0/bG9jYWw6Ly8vMDAvMDAvMDMvMTYvNDYvMjAwMDAwMzE2NDYxMQ.jpg"
   );
   const bearer = "Bearer " + token.access_token;
+
   if (token.login && user.login == "") {
     console.log("Geting user", user.login);
 
@@ -69,7 +70,7 @@ function App() {
     };
     getUser();
   }
-  
+
   const fetchImage = async () => {
     console.log("getting image", user.login, user.avatar);
     const res = await fetch(
@@ -134,6 +135,7 @@ function App() {
   const ProtectedRoute = ({ children }: any) => {
     console.log("Going through ProtectedRoute");
     if (!token.login) {
+      console.log("The login path follow you should");
       return <Navigate to="/login" />;
     }
     return children;
@@ -169,7 +171,10 @@ function App() {
   ]);
 
   useEffect(() => {
-    fetchImage().catch((e) => console.log("Failed to fetch the avatar"));
+    if (user.avatar !== "") {
+      console.log("AVATAR ISSSSS", user.avatar);
+      fetchImage().catch((e) => console.log("Failed to fetch the avatar"));
+    }
   }, [user]);
 
   return (

@@ -125,8 +125,6 @@ export class AuthService {
         }
       });}
      
-      
-
       const user = await this.prisma.user.update({
       where: {
         login: user_login,

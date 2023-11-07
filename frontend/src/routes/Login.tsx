@@ -30,17 +30,16 @@ function Login() {
   };
 
   useEffect(() => {
-    const tk: string | null = sessionStorage.getItem("Token");
-    console.log("Login Effect");
-    if (tk != null)
-    {
-      const stored_token = JSON.parse(tk);
-      setLogin(stored_token.login);
-    }
-    console.log("In Effect login is now", login);
+    // const tk: string | null = sessionStorage.getItem("Token");
+    // console.log("Login Effect");
+    // if (tk != null)
+    // {
+    //   const stored_token = JSON.parse(tk);
+    //   setLogin(stored_token.login);
+    // }
+    // console.log("In Effect login is now", login);
   }, []);
 
-  
   console.log("Log user ok is", tokenOk);
   return (
     <div className="login">
