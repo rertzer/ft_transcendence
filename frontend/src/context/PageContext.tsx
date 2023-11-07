@@ -31,7 +31,7 @@ function MyProvider({ children }: MyProviderProps) {
     menu:'none',
     chat:'none',
     zoom:125,
-    toolbar:true,
+    toolbar:false,
     coords: { coordX: 0, coordY: 0 },
     scroll: { scrollX: 0, scrollY: 0 },
   });

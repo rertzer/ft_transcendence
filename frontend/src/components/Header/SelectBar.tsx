@@ -1,9 +1,8 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect, useRef } from 'react';
 import styles from "./Header.module.css";
 import style from "./SelectBar.module.css"
 import { SelectBarItem } from './SelectBar/SelectBarItem';
 import { MyContext } from '../../context/PageContext';
-
 
 import Divider from '@mui/material/Divider';
 import Paper from '@mui/material/Paper';
@@ -39,7 +38,21 @@ import ListItem from '@mui/material/ListItem';
 //import ListItemText from '@mui/material/ListItemText';
 
 function BasicMenu() {
-  function  File() {
+function  File() {
+    const context = useContext(MyContext);
+    if (!context) {
+      throw new Error('useContext must be used within a MyProvider');
+    }
+    const { updateMenu } = context;
+
+    function print() {
+      updateMenu('none');
+      window.print();
+    }
+    function closeTab() {
+      window.close();
+    }
+
     return (
       <List dense onMouseLeave={() => handleClick("none")} sx={{color: 'white',}} style={{position: 'fixed', top:'64px', width:200, paddingTop: "0px", paddingBottom: "0px", backgroundColor: '#2f2f2f', border:'1px solid black'}} >
         <ListItem button>
@@ -51,9 +64,9 @@ function BasicMenu() {
         <Divider/>
         <ListItem button onClick={() => handleChat("Chat")}><ListItemText>Toggle Chat </ListItemText></ListItem>
         <Divider/>
-        <ListItem button><ListItemText>Print </ListItemText></ListItem>
+        <ListItem button onClick={print}><ListItemText>Print </ListItemText></ListItem>
         <ListItem button><ListItemText>Logout </ListItemText></ListItem>
-        <ListItem button><ListItemText>Exit PongOffice </ListItemText></ListItem>
+        <ListItem button onClick={closeTab}><ListItemText>Exit PongOffice </ListItemText></ListItem>
       </List>
     );
   }
@@ -65,9 +78,10 @@ function BasicMenu() {
 
     const { coords, updateCoords, updateCoordsMenu } = context;
     const { coordX, coordY } = coords;
+
     return (
       <List dense onMouseLeave={() => handleClick("none")} sx={{color: 'white',}} style={{position: 'fixed', top:'64px', left:'45px', width:200, paddingTop: "0px", paddingBottom: "0px", backgroundColor: '#2f2f2f', border:'1px solid black'}} >
-        <ListItem button>
+        <ListItem button >
           <ContentCopy fontSize="small"/>
           <ListItemText style={{position:'relative', left:'10px'}}>Copy</ListItemText>
           <Typography fontSize="12px" color="text.disabled">Ctrl+C</Typography>
@@ -133,12 +147,17 @@ function BasicMenu() {
     );
   }
   function  Window() {
+    function openNewTab() {
+      const url = 'http://localhost:3000/';
+      window.open(url, '_blank');
+    }
+    function closeTab() {
+      window.close();
+    }
     return (
       <List dense onMouseLeave={() => handleClick("none")} sx={{color: 'white',}} style={{position: 'fixed', top:'64px', left:'190px', width:200, paddingTop: "0px", paddingBottom: "0px", backgroundColor: '#2f2f2f', border:'1px solid black'}} >
-        <ListItem button><ListItemText>New Window </ListItemText></ListItem>
-        <ListItem button><ListItemText>New Private Window </ListItemText></ListItem>
-        <Divider/>
-        <ListItem button><ListItemText>Close Window </ListItemText></ListItem>
+        <ListItem button onClick={openNewTab}><ListItemText>New Window </ListItemText></ListItem>
+        <ListItem button onClick={closeTab}><ListItemText>Close Window </ListItemText></ListItem>
       </List>
     );
   }function  Help() {
@@ -180,7 +199,6 @@ function BasicMenu() {
   const { page, menu, chat, updatePageMenuChat, updatePage, updateMenu, updateChat } = context;
   function handleClick(str : string) {
     updateMenu(str);
-    console.log("clicked");
   }
   function handlePage(str : string) {
     updatePageMenuChat(str, "none", chat);
