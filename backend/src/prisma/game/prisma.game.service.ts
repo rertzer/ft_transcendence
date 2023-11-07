@@ -31,6 +31,31 @@ export class PrismaGameService {
 		return 0 ;
 	}
 
+	async finishGameNormal(room:Room) {
+		if (!room.playerLeft || !room.playerRight ) return ;
+		if (room.bddGameId > 0) {
+			const userNameWinner = (room.scoreLeft > room.scoreRight ? room.playerLeft.name : room.playerRight.name);
+			const winnerId = await this.getIdOfLogin((userNameWinner));
+			await this.prismaService.game.update({
+				where: {
+					id: room.bddGameId
+				},
+				data: {
+					winner_id: winnerId,
+					game_status:'FINISHED', 
+					player_one_score:room.scoreLeft,
+					player_two_score:room.scoreRight
+				}
+			})
+		}
+	}
+
+	async finishGameForfait(room:Room) {
+		if (room.bddGameId > 0) {
+			
+		}
+	}
+
 	async getIdOfLogin(login: string){
 
 		const user = await this.prismaService.user.findFirst({
