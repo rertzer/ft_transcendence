@@ -29,11 +29,13 @@ export function Canvas(props:any) {
 		//ATTENTION LE RESIZE NE FONCTIONNE QUE POUR ELARGIR LA PAGE, IL FAUDRAIT VOIR AVEC THIBAUT POUR GERER EN CSS LA TAILLE DE L'ELEMENT GAMEAREA 
 		const handleResize = () => {
 			const width = canvasRef.current?.parentElement?.clientWidth;
-			if (typeof(width) !== 'undefined') {
+			const height = canvasRef.current?.parentElement?.clientHeight;
+			console.log("my parent is", canvasRef.current?.parentElement);
+			if (typeof(width) !== 'undefined' && typeof(height) !== 'undefined') {
 				context.canvas.width = width;
-				context.canvas.height = width /2;
+				context.canvas.height = height;
 				setGameWidth(width)
-				setGameHeight(width / 2)
+				setGameHeight(height)
 			}
 			else {
 				context.canvas.width = 300;
@@ -51,6 +53,6 @@ export function Canvas(props:any) {
 	},[]);
 
 	return (
-		<canvas ref={canvasRef} {...rest} />
+		<canvas style={{positon: 'fixed'}} ref={canvasRef} {...rest} />
 	);
 };

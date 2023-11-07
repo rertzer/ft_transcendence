@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useContext } from 'react';
 import { MyContext } from '../../../context/PageContext';
-
+import Game from '../../game/Game';
 // //GET SCROLL VALUE
 // const context = useContext(MyContext);
 // if (!context) {
@@ -41,7 +41,7 @@ function CreateCell (coordX : number, coordY : number, width : number, height : 
 
 function Project (sx : number, sy : number) {
   return (
-    <div key={"project"}>
+    <div key={"project"} style={{width: '100%', height:'100%'}}>
       {CreateCell(1, 1, 2, 1, "Points", "2px solid black", sx, sy)}
       {CreateCell(2, 1, 1, 1, "User1", "1px solid black", sx, sy)}
       {CreateCell(2, 2, 1, 1, "User2", "1px solid black", sx, sy)}

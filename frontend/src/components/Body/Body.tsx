@@ -6,6 +6,7 @@ import Grid from "./Grid/Grid_dynamic";
 import { MyContext } from "../../context/PageContext";
 import React, { createContext, useContext, useState, useRef, useEffect } from 'react';
 import Desktop1 from "../../pages/Desktop1";
+import Game from "../game/Game";
 
 
 
@@ -81,6 +82,7 @@ export function Body({}) {
           <div className={styles.rightScrollZone1} />
           <div className={styles.racket1} />
         </div>
+		<Game/>
       </div>
   )
 }

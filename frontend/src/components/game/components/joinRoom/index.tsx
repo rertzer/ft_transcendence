@@ -29,7 +29,7 @@ export function JoinRoom(props:IJoinRoomProps) {
 	};
 
 	return (
-		<form onSubmit={joinRoom}>
+		<form onSubmit={joinRoom} style={{position: 'fixed'}}>
 			<h4>Enter room name to join the game</h4>
 			Id Room <input 
 				id="roomID"
