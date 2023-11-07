@@ -51,7 +51,9 @@ function App() {
            <div style={{flex: 7}}>
              <Outlet />
            </div>
-           {rightBarSwitch(RightBar)}
+           <div>
+            {rightBarSwitch(RightBar)}
+           </div>
          </div>
     </div>
     );

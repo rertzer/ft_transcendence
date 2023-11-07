@@ -39,12 +39,22 @@ const ChatComponent = () => {
             </div>
         </div>
     )
-    } else {
+    } else if (activeChat.id === -1) {
+        return (
+        <div className="chatcomponent">
+            <div className='container'>
+                <Sidebar activeChat={activeChat} setActiveChat={setActiveChat} chatsOfUser={chatsOfUser} setChatsOfUser={setChatsOfUser}/>
+                <div className='noChat'>Pong Chat</div>
+            </div>
+        </div>
+        )
+    }
+    else {
         return (
             <div className="chatcomponent">
             <div className='container'>
                 <Sidebar activeChat={activeChat} setActiveChat={setActiveChat} chatsOfUser={chatsOfUser} setChatsOfUser={setChatsOfUser}/>
-                <div className='noChat'>Pong Chat</div>
+                <div className='noChat'>{activeChat.name}</div>
             </div>
         </div>
         )

@@ -46,8 +46,6 @@ const MessageInput = (props: {chatId: number}) => {
 			content: value,
 			idOfChat: props.chatId,
 		}
-
-
 		socket.emit('newMessage', messageData);
 		socket.emit('chatListOfUser', username);
 		setValue('');

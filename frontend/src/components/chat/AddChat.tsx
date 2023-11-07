@@ -61,7 +61,7 @@ export const AddChat = (props: {chatsOfUser: allChatOfUser[], showSubMenu: strin
 		setChatName('');
 		setPassword('');
 		toggleForm();
-		trigger(); // tout s'update avec un temps de retard, quand je cree un nouveau channel, je vois le precedent apparaitre
+		// trigger(); // tout s'update avec un temps de retard, quand je cree un nouveau channel, je vois le precedent apparaitre
 	}
 	return (
 		<div className='addchat'>

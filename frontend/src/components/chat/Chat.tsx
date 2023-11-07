@@ -18,7 +18,7 @@ const Chat = (props: {toDisplay: allChatOfUser, setActiveChat: Function}) => {
     return (
         <div className='chat'>
             <ConversationBar toDisplay={props.toDisplay} setActiveChat={props.setActiveChat} isOwner={isOwner}/>
-            <Messages chatId={props.toDisplay.id} isOwner={isOwner} isAdmin={isAdmin}/>
+            <Messages chatId={props.toDisplay.id} isOwner={isOwner} isAdmin={isAdmin} setActiveChat={props.setActiveChat}/>
             <MessageInput chatId={props.toDisplay.id}/>
         </div>
     )

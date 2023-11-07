@@ -29,7 +29,7 @@ type trigger = {
 	numberMsgToDisplay: number;
 }
 
-const Messages = (props: {chatId: number, isOwner: boolean, isAdmin: boolean}) => {
+const Messages = (props: {chatId: number, isOwner: boolean, isAdmin: boolean, setActiveChat: Function}) => {
 
 	const {username} = useContext(ConnectionContext);
 	const [render, setRender] = useState(false);
@@ -104,13 +104,18 @@ const Messages = (props: {chatId: number, isOwner: boolean, isAdmin: boolean}) =
 				) : (
 					<div>
 
-						{chatMessages.map((chat) => (
+						{chatMessages.map((chat) => {
+							if (chat.msg === username + " has been banned from this channel") // ajouter la verification du service message
+								props.setActiveChat({id: -42, name: "You have been banned from this channel"})
+							else if (chat.msg === username + " has been kicked from this channel")
+								props.setActiveChat({id: -42, name: "You have been kicked from this channel"})
+							return (
 							<div key={chat.id}>
 								{chat.chatId === props.chatId && (
 									 <Message date={chat.date} username={chat.username} msg={chat.msg} isOwner={props.isOwner} isAdmin={props.isAdmin} chatId={props.chatId}/>
 								)}
-							</div>
-			  			))}
+							</div>)
+			  			})}
 			  		</div>
 				)}
 				<div ref={endRef} />
