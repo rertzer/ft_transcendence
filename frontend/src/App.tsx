@@ -68,7 +68,11 @@ function App() {
         console.log("User", user.login, "fetched");
       }
     };
-    getUser();
+    try {
+      getUser();
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   const fetchImage = async () => {
@@ -84,9 +88,10 @@ function App() {
     const imageBlob = await res.blob();
     const imageObjectURL = URL.createObjectURL(imageBlob);
     setImage(imageObjectURL);
-
-    console.log("User is", user.login, "avatar is", user.avatar);
   };
+
+  console.log("User is", user.login, "avatar is", user.avatar);
+
   const [chatId, setChatId] = useState(-1);
   const ChatContextValue: IChatContext = {
     chatId,
@@ -171,18 +176,22 @@ function App() {
   ]);
 
   useEffect(() => {
-    if (user.avatar !== "") {
+    if (user.avatar !== null && user.avatar !== '') {
       console.log("AVATAR ISSSSS", user.avatar);
-      fetchImage().catch((e) => console.log("Failed to fetch the avatar"));
+      try {
+        fetchImage().catch((e) => console.log("Failed to fetch the avatar"));
+      } catch (e) {
+        console.log(e);
+      }
     }
   }, [user]);
 
   return (
     <div>
       <UserContext.Provider value={UserValue}>
-        <ChatContext.Provider value={ChatContextValue}>
+        
           <RouterProvider router={router} />
-        </ChatContext.Provider>
+     
       </UserContext.Provider>
     </div>
   );

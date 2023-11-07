@@ -10,6 +10,7 @@ function Login() {
   const handleSubmit = async (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
 
+    try{
     const data = await fetch("http://localhost:4000/auth/login", {
       method: "POST",
       mode: "cors",
@@ -26,7 +27,8 @@ function Login() {
       setTokenOk(true);
       sessionStorage.setItem("Token", JSON.stringify(token));
       console.log("token in Login is now", sessionStorage.getItem("Token"));
-    }
+    }}
+    catch(e){console.log(e);}
   };
 
   useEffect(() => {

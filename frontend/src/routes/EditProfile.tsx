@@ -12,10 +12,16 @@ interface IToSend {
 }
 
 function Register() {
+
   const { user, setUser } = useContext(UserContext);
+
+  let tmp = user.username;
+  if (tmp == null)
+    tmp = ''; 
+
   const [login, setLogin] = useState("");
   const [userOk, setUserOk] = useState(false);
-  const [newUsername, setnewUsername] = useState(user.username);
+  const [newUsername, setnewUsername] = useState(tmp);
   const [newPassword, setNewPassword] = useState("");
   const [confPassword, setConfPassword] = useState("");
   const [newEmail, setNewEmail] = useState(user.email);
@@ -23,6 +29,8 @@ function Register() {
   const [newAvatar, setNewAvatar] = useState<File>();
   const [avatarName, setAvatarName] = useState("");
 
+
+ 
   const handleAvatar = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { files } = event.target;
     const selectedFiles = files as FileList;
@@ -102,9 +110,14 @@ function Register() {
     if (stored_login != null) setLogin(stored_login);
   }, []);
 
+  useEffect(()=>{
+    if (!newUsername && user.username)
+    setnewUsername(user.username);
+  }, [user.username])
+
   useEffect(() => {
     console.log("useEffect");
-    if (confPassword && newPassword) {
+    if ((confPassword && newPassword) || confPassword) {
       if (confPassword === newPassword) setConfPasswordClass("OK");
       else setConfPasswordClass("KO");
     } else setConfPasswordClass("NA");
@@ -131,7 +144,7 @@ function Register() {
           <h1>Edit profile</h1>
           <h2>{user.login}</h2>
           <form>
-            <input
+          <input
               type="text"
               placeholder="Username"
               value={newUsername}
@@ -141,6 +154,7 @@ function Register() {
               type="password"
               placeholder="Password"
               value={newPassword}
+              autoComplete="on"
               onChange={(e) => setNewPassword(e.target.value)}
             />
             <input
@@ -148,6 +162,7 @@ function Register() {
               type="password"
               placeholder="Confirm Password"
               value={confPassword}
+              autoComplete="on"
               onChange={(e) => setConfPassword(e.target.value)}
             />
             <input
@@ -162,10 +177,6 @@ function Register() {
                 handleAvatar(e);
               }}
             />
-            <h2>
-              {user.username} {userOk}
-            </h2>
-
             {userOk && <Navigate to="/profile"></Navigate>}
             <button onClick={handleUser}>Edit</button>
           </form>

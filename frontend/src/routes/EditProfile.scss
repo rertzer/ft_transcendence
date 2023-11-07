@@ -12,7 +12,7 @@
         background-color: white;
         border-radius: 10px;
         min-height: 600px;
-        color: white;
+        
         overflow: hidden;
 
         .left {
@@ -23,6 +23,7 @@
             flex-direction: column;
             gap: 30px;
             flex: 1;
+            color: white;
             h1{
                 font-size: 100px;
                 line-height: 100px;
