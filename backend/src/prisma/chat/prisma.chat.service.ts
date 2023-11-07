@@ -20,7 +20,6 @@ export class PrismaChatService {
 		this.prismaService = new PrismaClient();
 	  }
 
-
 	async getIdOfLogin(login: string){
 
 		const user = await this.prismaService.user.findFirst({
@@ -32,12 +31,92 @@ export class PrismaChatService {
 			return user.id;
 	}
 
+	async BanUserFromChannel(login: string, chatId: number)
+	{
+		const getId = await this.getIdOfLogin(login);
+		if (getId) {
+			// Fetch the ID of the record to delete based on user_id and channel_id
+			const recordToDelete = await this.prismaService.chatChannelsUser.findFirst({
+			  where: {
+				user_id: getId,
+				channel_id: chatId,
+			  },
+			});
+
+			if (recordToDelete) {
+			  // Use the ID to delete the record
+			  console.log("record to delete id = ", recordToDelete.id);
+			  const removedUser = await this.prismaService.chatChannelsUser.update({
+				where: {
+				  id: recordToDelete.id,
+				},
+				  data: {
+					banned: true,
+				  } // Use the ID to uniquely identify the record
+			  });
+			}
+		}
+	}
+
+	async userHasbeenKickedInChat(user_id:number, chat_id:number) {
+		const userExistInChat = await this.prismaService.chatChannelsUser.findFirst({
+			where: {
+			  user_id: user_id,
+			  channel_id: chat_id,
+			  kicked:true,
+			},
+		})
+		if (userExistInChat)
+		{
+			const worked = await this.prismaService.chatChannelsUser.update({
+				where: {
+					id : userExistInChat.id,
+				},
+				data : {
+					kicked : false
+				}
+			})
+			return true;
+		}
+		return false;
+	}
+
+	async kickUserFromChat(login:string, chatId: number)
+	{
+		const getId = await this.getIdOfLogin(login);
+		if (getId) {
+			// Fetch the ID of the record to delete based on user_id and channel_id
+			const recordToDelete = await this.prismaService.chatChannelsUser.findFirst({
+			  where: {
+				user_id: getId,
+				channel_id: chatId,
+			  },
+			});
+
+			if (recordToDelete) {
+			  // Use the ID to delete the record
+			  console.log("record to delete id = ", recordToDelete.id);
+			  const removedUser = await this.prismaService.chatChannelsUser.update({
+				where: {
+				  id: recordToDelete.id,
+				},
+				  data: {
+					kicked: true,
+				  } // Use the ID to uniquely identify the record
+			  });
+			  if (recordToDelete)
+			  	return true;
+			}
+			return false;
+		}
+		return false;
+	}
+
 	async banUser(login: string, chatId : number)
 	{
 		const getId = await this.getIdOfLogin(login);
 		if (getId && ! await this.checkIfUserIsBanned(chatId, login))
 		{
-
 			const banned = await this.prismaService.usersBannedToChats.create({
 				data: {
 					userId :getId,
@@ -45,7 +124,10 @@ export class PrismaChatService {
 				}
 			})
 			if (banned)
+			{
+				this.BanUserFromChannel(login, chatId);
 				return true;
+			}
 		}
 		return false;
 	}
@@ -240,6 +322,8 @@ export class PrismaChatService {
 					user_role: user_role,
 					date_joined: date_joined,
 					date_left: date_left,
+					kicked: false,
+					banned: false,
 				}
 			})
 			return (newMessage.id)
@@ -252,6 +336,8 @@ export class PrismaChatService {
 		const userChatChannels = await this.prismaService.chatChannelsUser.findMany({
 			where: {
 				user_id: id,
+				banned: false,
+				kicked:false,
 			},
 			include: {
 				channel: true,
@@ -262,6 +348,7 @@ export class PrismaChatService {
 
 	async getListOfChat()
 	{
+		//ajouter les password protected
 		const chatChanel = await this.prismaService.chatChannels.findMany({
 			where:{
 				type: "public"

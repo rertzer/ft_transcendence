@@ -50,6 +50,8 @@ model ChatChannelsUser {
   user_role        String
   date_joined      DateTime
   date_left        DateTime?
+  kicked           Boolean
+  banned           Boolean
   chatChannelsUser User             @relation("chatChanelUser", fields: [user_id], references: [id], map: "chat_channels_user")
   channel          ChatChannels     @relation("ChatChannelsUser", fields: [channel_id], references: [id])
   messagesSent     ChatMsgHistory[] @relation("ChatMessagesSender")

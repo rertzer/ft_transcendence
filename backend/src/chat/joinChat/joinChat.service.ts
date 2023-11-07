@@ -57,13 +57,18 @@ export class JoinChatService{
 		}
 	  }
 
-	async addUserToChat(username: string, chat_id:string, user_role:string, passeword:string)
+
+
+	async addUserToChat(login: string, chat_id:string, user_role:string, passeword:string)
 	{
-		const userId = await this.prismaService.getIdOfLogin(username);
+		const userId = await this.prismaService.getIdOfLogin(login);
 		//need to check if the user is already in the chat
 		//if not then :
 		if (userId !== undefined)
 		{
+			if (await this.prismaService.userHasbeenKickedInChat(userId, parseInt(chat_id)) == true) //user updated to removed kicked value
+				return (0)
+
 			const chatId = await this.prismaService.addChanelUser(parseInt(chat_id),userId, user_role, getDate(), null);
 			if (chatId !== undefined)
 				return (chatId.toString());

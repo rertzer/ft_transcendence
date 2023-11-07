@@ -12,6 +12,7 @@ export class ChatOptController {
 
 	@Post('setAdmin')
 	async setUserAsAdmin(@Body() user:{username:string, chatId: number}){
+		//check if owner here
 		await this.prismaChatService.changeChatUserRole(user.chatId, user.username, "admin");
 	}
 
@@ -46,13 +47,33 @@ export class ChatOptController {
 		@Param('username') username: string,
 		@Param('chatId') chatId: string,
 	) {
-		const isBanned = await this .prismaChatService.checkIfUserIsBanned(parseInt(chatId),username);
+		const isBanned = await this.prismaChatService.checkIfUserIsBanned(parseInt(chatId),username);
 	return { isBanned };
 	}
 
 	@Post('kickUser')
-	async kickUser(@Body() user:{username:string, chatId: number}){
+	async kickUser(@Body() user:{login:string, chatId: number}) {
+		console.log("in kick user ");
+		if (! await this.prismaChatService.isAdmin(user.login, user.chatId) && ! await this.prismaChatService.isOwner(user.login, user.chatId))
+		{
+			console.log("passed this step");
+			const kicked = await this.prismaChatService.kickUserFromChat(user.login, user.chatId);
+			if (kicked)
+			{
+				const SockArray = this.gateway.getSocketsArray()
+				const targetSocket = SockArray.find((socket) => socket.login === user.login);
+				if (targetSocket)
+				{
+					console.log("removed the socket of :",user.login, "from the sock room number:", user.chatId)
+					targetSocket.sock.leave(user.chatId.toString())
+					return true
+				}
+				return false;
+			}
+			else
+				return false
 
+		}
 	}
 
 	@Post('joinChat')
