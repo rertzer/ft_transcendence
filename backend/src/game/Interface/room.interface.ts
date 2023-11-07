@@ -16,4 +16,5 @@ export interface Room {
 	finishOn: Date | null;
 	startingCountDownStart: Date | null;
 	startingCount: number;
+	bddGameId:number;
   }

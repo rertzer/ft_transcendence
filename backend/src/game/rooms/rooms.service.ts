@@ -55,7 +55,8 @@ export class RoomsService {
 			createdOn: new Date(),
 			finishOn: null,
 			startingCountDownStart: null,
-			startingCount: 0
+			startingCount: 0,
+			bddGameId:0
 		}
 		for (let i = 0; i < nbBalls; i++) {
 			this.addNewBall(newRoom);
@@ -142,7 +143,7 @@ export class RoomsService {
 		room.playerRight?.socket.emit('room_status', data_to_send);
 	}
 
-	addPlayerToRoom(player:Player, roomName:string, nbBalls:number) {
+	async addPlayerToRoom(player:Player, roomName:string, nbBalls:number) {
 		let room = this.findRoomById(roomName);
 		if (room === null) {
 			room = this.createRoom(roomName, player, nbBalls)
@@ -163,7 +164,8 @@ export class RoomsService {
 			}
 			player.room = room;
 			room.gameStatus = 'WAITING_TO_START';
-			console.log('Room full and ready to ');
+			console.log('Creating a new reccord on the BDD');
+			room.bddGameId = await this.prismaService.addNewGame(room);
 			console.log('Player ', player.socket.id, ' added to Room ', room.id);
 		}
 		this.sendRoomStatus(room);
