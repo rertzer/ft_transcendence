@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "./styles.scss";
 import {
   createBrowserRouter,
@@ -46,10 +46,14 @@ function App() {
     game_played: 0,
   });
 
+  const [image, setImage] = useState(
+    "https://img.lamontagne.fr/c6BQg2OSHIeQEv4GJfr_br_8h5DGcOy84ruH2ZResWQ/fit/657/438/sm/0/bG9jYWw6Ly8vMDAvMDAvMDMvMTYvNDYvMjAwMDAwMzE2NDYxMQ.jpg"
+  );
+  const bearer = "Bearer " + token.access_token;
   if (token.login && user.login == "") {
     console.log("Geting user", user.login);
+
     const getUser = async () => {
-      const bearer = "Bearer " + token.access_token;
       const data = await fetch("http://localhost:4000/user/" + token.login, {
         method: "GET",
         headers: { Authorization: bearer },
@@ -65,6 +69,23 @@ function App() {
     };
     getUser();
   }
+  
+  const fetchImage = async () => {
+    console.log("getting image", user.login, user.avatar);
+    const res = await fetch(
+      "http://localhost:4000/user/avatar/" + user.avatar,
+      {
+        method: "GET",
+        headers: { Authorization: bearer },
+        mode: "cors",
+      }
+    );
+    const imageBlob = await res.blob();
+    const imageObjectURL = URL.createObjectURL(imageBlob);
+    setImage(imageObjectURL);
+
+    console.log("User is", user.login, "avatar is", user.avatar);
+  };
   const [chatId, setChatId] = useState(-1);
   const ChatContextValue: IChatContext = {
     chatId,
@@ -74,6 +95,8 @@ function App() {
   const UserValue: IContextUser = {
     user,
     setUser,
+    image,
+    setImage,
   };
 
   const rightBarSwitch = (state: string) => {
@@ -144,6 +167,10 @@ function App() {
       element: <Login />,
     },
   ]);
+
+  useEffect(() => {
+    fetchImage().catch((e) => console.log("Failed to fetch the avatar"));
+  }, [user]);
 
   return (
     <div>

@@ -3,6 +3,8 @@ import {
   ImATeapotException,
   Injectable,
 } from '@nestjs/common';
+import { join } from 'path';
+import * as fs from 'fs';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
@@ -22,7 +24,16 @@ export class UserService {
       user.password = 'nop!';
       return user;
     } else {
-      throw new ForbiddenException("No way");
+      throw new ForbiddenException('No way');
     }
+  }
+
+  async fetchAvatar(avatar: string) {
+    avatar = join('/var/avatar', avatar);
+    fs.stat(avatar, (e, s) => {
+      console.log('size', s.size);
+    });
+    console.log('reading file', avatar);
+    return fs.createReadStream(avatar);
   }
 }

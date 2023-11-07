@@ -13,7 +13,7 @@ import UserContext from "../../context/userContext";
 
 function Navbar(props: any) {
 
-    const { user, setUser } = useContext(UserContext);
+    const { user, setUser, image, setImage } = useContext(UserContext);
 
     function handleClickFriends() {
         if (props.RightBar !== "friends") {
@@ -61,7 +61,7 @@ function Navbar(props: any) {
             <div className="right">
                 <Link to="/profile" style={{textDecoration:"none"}}>
                     <div className="user">
-                        <img src={""}/>
+                        <img src={image}/>
                         <span>{user.login}</span>
                     </div>
                 </Link>

@@ -18,6 +18,8 @@ export interface IUser {
 export interface IContextUser {
   user: IUser;
   setUser: (user: IUser) => void;
+  image: string;
+  setImage: (image: string) => void;
 }
 
 const defaultState: IContextUser = {
@@ -36,6 +38,8 @@ const defaultState: IContextUser = {
     game_played: 0,
   },
   setUser: () => {},
+  image: "",
+  setImage: () => {},
 };
 
 export default React.createContext(defaultState);

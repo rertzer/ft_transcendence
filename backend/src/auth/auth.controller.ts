@@ -16,6 +16,7 @@ import { Express } from 'express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { JwtGuard } from './guard';
+import { GetUser } from './decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -67,9 +68,10 @@ export class AuthController {
     }),
   )
   editAvatar(
+    @GetUser('login') user_login: string,
     @UploadedFile()
     file: Express.Multer.File,
   ) {
-    return this.authService.editAvatar(file);
+    return this.authService.editAvatar(file, user_login);
   }
 }
