@@ -1,7 +1,7 @@
 import { Ball } from "./ball.interface";
 import { Player } from "./player.interface";
 
-export type GameStatus = 'WAITING_FOR_PLAYER' | 'WAITING_TO_START' | 'STARTING' | 'PLAYING' | 'FINISHED';
+export type GameStatus = 'WAITING_FOR_PLAYER' | 'WAITING_TO_START' | 'STARTING' | 'PLAYING' | 'FINISHED' | 'FINISH_BY_FORFAIT';
 
 export interface Room {
 	id:string;

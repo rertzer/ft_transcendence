@@ -182,12 +182,13 @@ export class RoomsService {
 		else return 'none';
 	};
 
-	removePlayerFromRoom(player:Player) {
+	async removePlayerFromRoom(player:Player) {
 		let room = this.findRoomOfPlayer(player);
 		if (room === null) return ;
 		if (this.getNumberOfPlayersInRoom(room) != 2){
 			this.removeRoom(room);
 		}
+		
 		/**
 		 * Besoin de tester si le jeu est fini. 
 		 * Si le game est encore en cours, il faut indique un forfait dans la BDD.
