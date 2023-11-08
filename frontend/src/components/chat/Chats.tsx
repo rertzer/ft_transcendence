@@ -4,8 +4,9 @@ import React, { useContext, useState, useEffect, useRef, Component } from 'react
 import ConnectionContext from '../../context/authContext'
 import { allChatOfUser } from './ChatComponent';
 import { Active } from './ChatComponent';
+import { Message } from "./ChatComponent"
 
-const Chats = (props: {activeChat: Active, setActiveChat: Function, chatsOfUser: allChatOfUser[], setChatsOfUser: Function}) => {
+const Chats = (props: {activeChat: Active, setActiveChat: Function, chatsOfUser: allChatOfUser[], setChatsOfUser: Function, lastMessage: Message}) => {
 
     const socket = useContext(WebsocketContext);
     const {username} = useContext(ConnectionContext);
@@ -31,7 +32,7 @@ const Chats = (props: {activeChat: Active, setActiveChat: Function, chatsOfUser:
 			socket.off("newChat")
 			socket.off("chatList")
         }
-    }, [])
+    }, [props.lastMessage])
 
     const startRef = useRef<HTMLDivElement>(null); //ref to empty div to autoscroll to bottom
 
@@ -49,8 +50,20 @@ const Chats = (props: {activeChat: Active, setActiveChat: Function, chatsOfUser:
                 block: "end",
             });
         }
+        console.log("chats receive :", props.chatsOfUser)
 
     }, [props.chatsOfUser.length]);
+
+    // function moveMostRecentUp(chatsOfUser: allChatOfUser[]) {
+
+    //     let mostRecent = 0;
+    //     for (let i = mostRecent; i < chatsOfUser.length; i++)
+    //     {
+    //         if (chatsOfUser[i].dateSend === null)
+    //             continue;
+    //         if (chatsOfUser[mostRecent].dateSend > chatsOfUser[i].dateSend)
+    //     }
+    // }
 
     return (
         <div className='chats'>

@@ -46,7 +46,7 @@ const Messages = (props: {chatId: number, isOwner: boolean, isAdmin: boolean, se
 			setRender(true);
 
 		});
-		socket.on('newMessage', (chatHistoryReceive :{msg: string, username: string, date: Date, id: number, idOfChat:number}) => {
+		socket.on('newMessage', (chatHistoryReceive :{msg: string, username: string, date: Date, id: number, idOfChat:number, serviceMessage: boolean}) => {
 
 			console.log(chatHistoryReceive);
 			let newDateString = chatHistoryReceive.date.toString();
@@ -104,10 +104,10 @@ const Messages = (props: {chatId: number, isOwner: boolean, isAdmin: boolean, se
 					<div>
 
 						{chatMessages.map((chat) => {
-							if (chat.msg === username + " has been banned from this channel") // ajouter la verification du service message
-								props.setActiveChat({id: -42, name: "You have been banned from this channel"})
-							else if (chat.msg === username + " has been kicked from this channel")
-								props.setActiveChat({id: -42, name: "You have been kicked from this channel"})
+							// if (chat.msg === username + " has been banned from this channel") // ajouter la verification du service message
+							// 	props.setActiveChat({id: -42, name: "You have been banned from this channel"})
+							// else if (chat.msg === username + " has been kicked from this channel")
+							// 	props.setActiveChat({id: -42, name: "You have been kicked from this channel"})
 							return (
 							<div key={chat.id}>
 								{chat.chatId === props.chatId && (

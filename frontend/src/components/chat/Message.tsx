@@ -46,11 +46,12 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 	async function checkIfUserIsBanned(userName: string, chatID: number) {
 		
 		try {
-			const response = await fetch(`http://localhost:4000/chatOption/${userName}/banned/${chatID}`);
+			const response = await fetch(`http://localhost:4000/chatOption/${props.username}/banned/${chatID}`);
 			if (!response.ok) {
 				throw new Error("Request failed");
 			}
 			const data = await response.json();
+			console.log("is user banned = ", data.isBanned)
 			if (data.isBanned) {
 				return true;
 			} else {

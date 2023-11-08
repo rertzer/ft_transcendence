@@ -61,13 +61,17 @@ export class MyGateway {
 			if (targetSocket !== undefined)
 			{
 				lastMessageId++; // probleme with that in multi client. need to have an increment front end
-				this.server.to(messageData.idOfChat.toString()).emit('newMessage', {
+				const message = {
 					msg: messageData.content,
 					username: messageData.username,
 					date: getDate(),
 					id: lastMessageId,
 					idOfChat: messageData.idOfChat
-				});
+				}
+				
+				this.server.to(messageData.idOfChat.toString()).emit('newMessage', message);
+				this.server.to(messageData.idOfChat.toString()).emit('lastMessage', message);
+
 				await this.prismaChatService.addChatMessage(messageData.idOfChat, messageData.username, messageData.content, getDate());
 			}
 		}

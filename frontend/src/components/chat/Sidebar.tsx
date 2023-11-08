@@ -1,17 +1,18 @@
 import "./Sidebar.scss"
 import Chatbar from './Chatbar';
 import Chats from "./Chats";
-import { allChatOfUser } from './ChatComponent';
+import { Message } from "./ChatComponent";
+import ChatComponent, { allChatOfUser } from './ChatComponent';
 import { Active } from './ChatComponent';
 
-const Sidebar = (props: {activeChat: Active, setActiveChat: Function, chatsOfUser: allChatOfUser[], setChatsOfUser: Function}) => {
+const Sidebar = (props: {activeChat: Active, setActiveChat: Function, chatsOfUser: allChatOfUser[], setChatsOfUser: Function, lastMessage: Message}) => {
 
 
     return (
         <div className='sidebar'>
             <Chatbar chatsOfUser={props.chatsOfUser}/>
             <Chats activeChat={props.activeChat} setActiveChat={props.setActiveChat}
-                   chatsOfUser={props.chatsOfUser} setChatsOfUser={props.setChatsOfUser} />
+                   chatsOfUser={props.chatsOfUser} setChatsOfUser={props.setChatsOfUser} lastMessage={props.lastMessage} />
         </div>
     )
 }

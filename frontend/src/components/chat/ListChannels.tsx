@@ -60,7 +60,6 @@ export const ListChannels = (props: {chatsOfUser: allChatOfUser[], showSubMenu: 
 		const messageData = {
 		  username: username,
 		  chat_id: id,
-		  user_role: "user",
 		};
 
 		const requestOptions = {

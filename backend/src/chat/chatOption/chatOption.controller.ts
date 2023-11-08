@@ -47,7 +47,9 @@ export class ChatOptController {
 		@Param('username') username: string,
 		@Param('chatId') chatId: string,
 	) {
+		console.log("username receive : ", username, "chat id :", chatId);
 		const isBanned = await this.prismaChatService.checkIfUserIsBanned(parseInt(chatId),username);
+		console.log("is banned or not ?", isBanned);
 	return { isBanned };
 	}
 
@@ -84,7 +86,7 @@ export class ChatOptController {
 		const targetSocket = SockArray.find((socket) => socket.login === user.username);
 		if (targetSocket !== undefined)
 		{
-			const value = this.joinChatservice.joinChat(user.username, user.chat_id, user.user_role, user.passeword, targetSocket.sock);
+			const value = this.joinChatservice.joinChat(user.username, user.chat_id, "user", user.passeword, targetSocket.sock);
 			return value;
 		}
 	}

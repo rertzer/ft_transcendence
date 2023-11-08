@@ -40,7 +40,7 @@ export class CreateChatService {
 			dateSend: null,
 		}
 		targetSocket.emit('newChat', chatType)
-		await this.prismaService.addChanelUser(newChatId, idOfUser, 'admin', getDate(), null).then(()=> targetSocket.emit('chatList', username));
+		await this.prismaService.addChanelUser(newChatId, idOfUser, 'owner', getDate(), null).then(()=> targetSocket.emit('chatList', username));
 		return (newChatId);
 	}
 }

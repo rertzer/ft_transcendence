@@ -2,18 +2,19 @@ import "./Chat.scss";
 import Messages from "./Messages";
 import MessageInput from "./MessageInput";
 import { allChatOfUser } from "./ChatComponent";
+import  ConnectionContext from "../../context/authContext"
 import ConversationBar from "./ConversationBar";
+import { useContext } from "react";
+
 
 const Chat = (props: {toDisplay: allChatOfUser, setActiveChat: Function}) => {
 
-    let isOwner = true;
-    let isAdmin = true;
-    let isMuted = false; //3 variables a mettre dans des useState ?
-
-    // if (props.toDisplay.ownerUid === currentUser.uid) {
-    //     isOwner = true; }
-    // if (props.toDisplay.adminUids.indexOf(currentUser.uid) !== -1) {
-    //     isAdmin = true; }
+    let isOwner = false;
+    let isAdmin = false;
+    if (props.toDisplay.status === "owner") {
+        isOwner = true; }
+    if (props.toDisplay.status === "admin") {
+        isAdmin = true; }
 
     return (
         <div className='chat'>

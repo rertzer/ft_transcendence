@@ -1,7 +1,8 @@
 import "./ChatComponent.scss"
 import Sidebar from './Sidebar';
 import Chat from './Chat'
-import { useState } from 'react';
+import { WebsocketContext } from "../../context/chatContext";
+import { useState, useEffect, useContext } from 'react';
 
 export type Active = {
 	id: number;
@@ -16,29 +17,44 @@ export type allChatOfUser = {
     /*Nouvelles variables pour differencier l'interface en fonction de la situation */
     isChannel: boolean; // true si le chat est un channel avec potentiellement du monde dessus, false si c'est des DM entre deux users
     receiverUsername: string // si c'est une conversation DM, on veut afficher le nom du destinataire a la place du nom du channel
-    adminUids: number[];  // a ajouter pour afficher ou non l'interface administrateur (j'ai mis un array dans le cas ou il y a plusieurs admin)
-    ownerUid: number; // en relisant le sujet, il y a un seul owner (le createur, puis le premier admin si le createur quitte j'imagine), et c'est pas pareil que admin...
+    status : string;
     /*---------LastMessageReceive-------*/
     username: String | null; // bien differencier username et uid unique en cas de changement de username
     msg: string| null;
     dateSend: Date | null;
 }
 
+export type Message = {
+    msg: string;
+    username: string;
+    date: Date;
+    id: number;
+    idOfChat: number;
+}
+
 const ChatComponent = () => {
 
     const [chatsOfUser, setChatsOfUser] = useState<allChatOfUser[]>([])
     const [activeChat, setActiveChat] = useState<Active>({id: -1, name: "none"})
-
+    const socket = useContext(WebsocketContext);
     let chatToDisplay = chatsOfUser.find(element => element.id === activeChat.id);
+    const [lastMessage, setLastMessage] = useState<Message>({msg: "", username: "", date: new Date, id: 0, idOfChat: 0})
 
-
-
+    useEffect(() => {
+        socket.on('lastMessage', (lastMessage :{msg: string, username: string, date: Date, id: number, idOfChat:number}) => {
+            console.log("lasts mesage receive : ", lastMessage);
+            setLastMessage(lastMessage);
+        });
+        return () => {
+            socket.off("lastMessage")
+        } 
+    },[])
     
     if (chatToDisplay !== undefined) {
     return (
         <div className="chatcomponent">
             <div className='container'>
-                <Sidebar activeChat={activeChat} setActiveChat={setActiveChat} chatsOfUser={chatsOfUser} setChatsOfUser={setChatsOfUser}/>
+                <Sidebar activeChat={activeChat} setActiveChat={setActiveChat} chatsOfUser={chatsOfUser} setChatsOfUser={setChatsOfUser} lastMessage={lastMessage}/>
                 <Chat toDisplay={chatToDisplay} setActiveChat={setActiveChat}/>
             </div>
         </div>
@@ -47,7 +63,7 @@ const ChatComponent = () => {
         return (
         <div className="chatcomponent">
             <div className='container'>
-                <Sidebar activeChat={activeChat} setActiveChat={setActiveChat} chatsOfUser={chatsOfUser} setChatsOfUser={setChatsOfUser}/>
+                <Sidebar activeChat={activeChat} setActiveChat={setActiveChat} chatsOfUser={chatsOfUser} setChatsOfUser={setChatsOfUser} lastMessage={lastMessage}/>
                 <div className='noChat'>Pong Chat</div>
             </div>
         </div>
@@ -57,7 +73,7 @@ const ChatComponent = () => {
         return (
             <div className="chatcomponent">
             <div className='container'>
-                <Sidebar activeChat={activeChat} setActiveChat={setActiveChat} chatsOfUser={chatsOfUser} setChatsOfUser={setChatsOfUser}/>
+                <Sidebar activeChat={activeChat} setActiveChat={setActiveChat} chatsOfUser={chatsOfUser} setChatsOfUser={setChatsOfUser} lastMessage={lastMessage}/>
                 <div className='noChat'>{activeChat.name}</div>
             </div>
         </div>

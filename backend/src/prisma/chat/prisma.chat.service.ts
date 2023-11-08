@@ -374,6 +374,7 @@ export class PrismaChatService {
 
 	async getOwnerOfChatAvatar(id:number)
 	{
+		console.log("id =  ", id);
 		const owner = await this.prismaService.chatChannels.findUnique({
 			where:{
 				id: id,
