@@ -56,7 +56,6 @@ export const AddChat = (props: {chatsOfUser: allChatOfUser[], showSubMenu: strin
 		socket.emit('createChat', createChatData);
 		setChatName('');
 		setPassword('');
-		socket.emit('chatListOfUser', username);
 		toggleForm();
 	}
 	return (

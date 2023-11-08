@@ -11,12 +11,10 @@ export class ChatLister{
 	{
 		const chatList = [];
 		const retrieveChat = await this.prismaService.getListOfChatByUsername(username);
-		sock.emit('ListerUsername', username);
 		if (retrieveChat !== undefined)
 		{
 			for (const chat of retrieveChat)
 			{
-
 				const lastMessagesOfChat = await this.prismaService.getLastMessages(chat.id);
 				let lastMessageUsername = null;
 				let date = null;
@@ -42,7 +40,6 @@ export class ChatLister{
 				}
 				chatList.push(chatType);
 			}
-
 			sock.emit('ListOfChatOfUser', chatList);
 		}
 	}

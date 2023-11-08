@@ -49,6 +49,7 @@ export const ListChannels = (props: {chatsOfUser: allChatOfUser[], showSubMenu: 
 		} else {
 		  // Handle other cases
 			setChatId(parseInt(returnValue.id));
+
 		}
 	  }
 
@@ -77,6 +78,7 @@ export const ListChannels = (props: {chatsOfUser: allChatOfUser[], showSubMenu: 
 
 		  const data = await response.json();
 		  console.log('Success:', data);
+		  socket.emit('chatListOfUser', username);
 
 		  // Return the data or a specific value from the response
 		  return data; // You can return a specific field if needed
