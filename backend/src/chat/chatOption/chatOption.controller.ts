@@ -30,6 +30,7 @@ export class ChatOptController {
 				if (targetSocket)
 				{
 					console.log("removed the socket of :",user.username, "from the sock room number:", user.chatId)
+					this.gateway.onChatListOfUser(user.username, targetSocket.sock);
 					targetSocket.sock.leave(user.chatId.toString())
 					return true
 				}
@@ -67,6 +68,7 @@ export class ChatOptController {
 				if (targetSocket)
 				{
 					console.log("removed the socket of :",user.login, "from the sock room number:", user.chatId)
+					this.gateway.onChatListOfUser(user.login, targetSocket.sock);
 					targetSocket.sock.leave(user.chatId.toString())
 					return true
 				}
@@ -74,7 +76,6 @@ export class ChatOptController {
 			}
 			else
 				return false
-
 		}
 	}
 
