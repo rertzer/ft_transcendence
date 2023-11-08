@@ -10,25 +10,27 @@ function Login() {
   const handleSubmit = async (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
 
-    try{
-    const data = await fetch("/auth/login", {
-      method: "POST",
-      mode: "cors",
-      headers: { "Content-Type": "application/json; charset=utf-8" },
-      body: JSON.stringify({ login, password }),
-    });
-    const token = await data.json();
-    if (token.message) {
-      console.log("Bad password");
-      setLogin("");
-      setPassword("");
-      setTokenOk(false);
-    } else {
-      setTokenOk(true);
-      sessionStorage.setItem("Token", JSON.stringify(token));
-      console.log("token in Login is now", sessionStorage.getItem("Token"));
-    }}
-    catch(e){console.log(e);}
+    try {
+      const data = await fetch("/auth/login", {
+        method: "POST",
+        mode: "cors",
+        headers: { "Content-Type": "application/json; charset=utf-8" },
+        body: JSON.stringify({ login, password }),
+      });
+      const token = await data.json();
+      if (token.message) {
+        console.log("Bad password");
+        setLogin("");
+        setPassword("");
+        setTokenOk(false);
+      } else {
+        setTokenOk(true);
+        sessionStorage.setItem("Token", JSON.stringify(token));
+        console.log("token in Login is now", sessionStorage.getItem("Token"));
+      }
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   useEffect(() => {
@@ -59,6 +61,7 @@ function Login() {
               type="password"
               placeholder="Password"
               value={password}
+              autoComplete="on"
               onChange={(e) => setPassword(e.target.value)}
             />
           </form>
