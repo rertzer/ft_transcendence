@@ -11,7 +11,7 @@ function Login() {
     event.preventDefault();
 
     try{
-    const data = await fetch("http://localhost:4000/auth/login", {
+    const data = await fetch("/auth/login", {
       method: "POST",
       mode: "cors",
       headers: { "Content-Type": "application/json; charset=utf-8" },

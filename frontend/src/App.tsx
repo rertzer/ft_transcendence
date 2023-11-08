@@ -55,10 +55,9 @@ function App() {
     console.log("Geting user", user.login);
 
     const getUser = async () => {
-      const data = await fetch("http://localhost:4000/user/" + token.login, {
+      const data = await fetch("/user/" + token.login, {
         method: "GET",
         headers: { Authorization: bearer },
-        mode: "cors",
       });
       const user = await data.json();
       if (user.message) {
@@ -77,14 +76,10 @@ function App() {
 
   const fetchImage = async () => {
     console.log("getting image", user.login, user.avatar);
-    const res = await fetch(
-      "http://localhost:4000/user/avatar/" + user.avatar,
-      {
-        method: "GET",
-        headers: { Authorization: bearer },
-        mode: "cors",
-      }
-    );
+    const res = await fetch("/user/avatar/" + user.avatar, {
+      method: "GET",
+      headers: { Authorization: bearer },
+    });
     const imageBlob = await res.blob();
     const imageObjectURL = URL.createObjectURL(imageBlob);
     setImage(imageObjectURL);
@@ -176,7 +171,7 @@ function App() {
   ]);
 
   useEffect(() => {
-    if (user.avatar !== null && user.avatar !== '') {
+    if (user.avatar !== null && user.avatar !== "") {
       console.log("AVATAR ISSSSS", user.avatar);
       try {
         fetchImage().catch((e) => console.log("Failed to fetch the avatar"));
@@ -189,9 +184,7 @@ function App() {
   return (
     <div>
       <UserContext.Provider value={UserValue}>
-        
-          <RouterProvider router={router} />
-     
+        <RouterProvider router={router} />
       </UserContext.Provider>
     </div>
   );

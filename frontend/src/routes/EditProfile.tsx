@@ -60,9 +60,8 @@ function Register() {
         formData.append("file", newAvatar, newAvatar.name);
         console.log(formData);
 
-        const fileData = await fetch("http://localhost:4000/auth/editAvatar", {
+        const fileData = await fetch("/auth/editAvatar", {
           method: "POST",
-          mode: "cors",
           headers: { Authorization: bearer },
           body: formData,
         });
@@ -77,9 +76,8 @@ function Register() {
       if (newEmail) tosend.email = newEmail;
 
       console.log("fetching", tosend);
-      const data = await fetch("http://localhost:4000/auth/edit", {
+      const data = await fetch("/auth/edit", {
         method: "POST",
-        mode: "cors",
         headers: {
           Authorization: bearer,
           "Content-Type": "application/json; charset=utf-8",
