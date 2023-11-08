@@ -74,7 +74,7 @@ const ChatComponent = () => {
             <div className="chatcomponent">
             <div className='container'>
                 <Sidebar activeChat={activeChat} setActiveChat={setActiveChat} chatsOfUser={chatsOfUser} setChatsOfUser={setChatsOfUser} lastMessage={lastMessage}/>
-                <div className='noChat'>{activeChat.name}</div>
+                <div className='noChat'>You have been sent away from : {activeChat.name}</div>
             </div>
         </div>
         )

@@ -6,7 +6,7 @@ import { Tooltip } from  "@mui/material";
 import "./AddChat.scss";
 import { allChatOfUser } from './ChatComponent';
 
-type CreateaChatPayload = {
+type CreateChatPayload = {
 	username: string;
 	chatName: string;
 	chatPassword: string | null;
@@ -31,7 +31,7 @@ export const AddChat = (props: {chatsOfUser: allChatOfUser[], showSubMenu: strin
 
 	const onSubmit = () => {
 
-		let createChatData: CreateaChatPayload;
+		let createChatData: CreateChatPayload;
 		if (chatName === "")
 			return ;
 		if (password === "")

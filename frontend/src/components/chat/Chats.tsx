@@ -52,18 +52,23 @@ const Chats = (props: {activeChat: Active, setActiveChat: Function, chatsOfUser:
         }
         console.log("chats receive :", props.chatsOfUser)
 
-    }, [props.chatsOfUser.length]);
+    }, []);
 
-    // function moveMostRecentUp(chatsOfUser: allChatOfUser[]) {
+    function moveMostRecentUp(chatsOfUser: allChatOfUser[]) {
 
-    //     let mostRecent = 0;
-    //     for (let i = mostRecent; i < chatsOfUser.length; i++)
-    //     {
-    //         if (chatsOfUser[i].dateSend === null)
-    //             continue;
-    //         if (chatsOfUser[mostRecent].dateSend > chatsOfUser[i].dateSend)
-    //     }
-    // }
+        chatsOfUser.sort((a: allChatOfUser, b: allChatOfUser) => {
+            const aDate = a.dateSend;
+            const bDate = b.dateSend;
+            if (aDate === null || bDate === null)
+                return 0;
+            else if (aDate < bDate)
+                return 1;
+            else if (aDate > bDate)
+                return -1;
+            return 0;
+    })
+    return (chatsOfUser);
+    }
 
     return (
         <div className='chats'>
@@ -72,7 +77,7 @@ const Chats = (props: {activeChat: Active, setActiveChat: Function, chatsOfUser:
 				) : (
 					<div>
                         <div ref={startRef} />
-						{props.chatsOfUser.map((channel) => (
+						{moveMostRecentUp(props.chatsOfUser).map((channel) => (
                             <div key={channel.id} onClick={() => {
                                     if (channel.id != props.activeChat.id) {
                                     props.setActiveChat({id: channel.id, name: channel.channelName});
