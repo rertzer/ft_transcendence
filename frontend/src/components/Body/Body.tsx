@@ -4,8 +4,7 @@ import Numbers from "./Numbers/Numbers_dynamic";
 import Letters from "./Letters/Letters_dynamic";
 import Grid from "./Grid/Grid_dynamic";
 import { MyContext } from "../../context/PageContext";
-import React, { createContext, useContext, useState, useRef, useEffect } from 'react';
-import Desktop1 from "../../pages/Desktop1";
+import React, { useContext, useState, useEffect } from 'react';
 import Game from "../game/Game";
 
 

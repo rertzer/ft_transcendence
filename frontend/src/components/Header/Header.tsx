@@ -1,6 +1,5 @@
 import { SelectBar } from './SelectBar';
 import { Tooltip } from "@mui/material";
-import LogoutIcon from '@mui/icons-material/MeetingRoomOutlined';
 import styles from "./Header.module.css";
 import { useContext } from "react";
 import  ConnectionContext from "../../context/authContext";

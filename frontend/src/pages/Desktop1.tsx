@@ -1,9 +1,9 @@
 import Footer from './Footer'
 import Header from '../components/Header/Header';
 import { Body } from '../components/Body/Body';
-import { FunctionComponent, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import styles from "./Desktop1.module.css";
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import { useContext, useState } from 'react';
 import { MyContext, MyProvider } from '../context/PageContext';
 import ChatComponent from '../components/chat/ChatComponent';
 
@@ -37,7 +37,7 @@ function Desktop1() {
         return (<div/>);
     }
   }
-  const [Chat, setChat] = useState("none");
+  const [Chat] = useState("none");
   return (
     <div className={styles.desktop1} style={{height: windowHeighthRef.current}}>
       <MyProvider>

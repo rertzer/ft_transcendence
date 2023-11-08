@@ -1,15 +1,11 @@
-import React, { useContext, useState, useEffect, useRef } from 'react';
+import { useContext } from 'react';
 import styles from "./Header.module.css";
 import style from "./SelectBar.module.css"
-import { SelectBarItem } from './SelectBar/SelectBarItem';
 import { MyContext } from '../../context/PageContext';
 
 import Divider from '@mui/material/Divider';
-import Paper from '@mui/material/Paper';
-import MenuList from '@mui/material/MenuList';
 // import MenuItem from '@mui/material/MenuItem';
 import ListItemText from '@mui/material/ListItemText';
-import ListItemIcon from '@mui/material/ListItemIcon';
 import Typography from '@mui/material/Typography';
 import ContentCut from '@mui/icons-material/ContentCut';
 import ContentCopy from '@mui/icons-material/ContentCopy';
@@ -26,12 +22,6 @@ import PsychologyAltIcon from '@mui/icons-material/PsychologyAlt';
 
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 //import CssBaseline from '@mui/material/CssBaseline';
-
-import Button from '@mui/material/Button';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import { isWhiteSpaceLike } from 'typescript';
-import { withTheme } from '@emotion/react';
 
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -56,13 +46,13 @@ function  File() {
     return (
       <List dense onMouseLeave={() => handleClick("none")} sx={{color: 'white',}} style={{position: 'fixed', top:'64px', width:200, paddingTop: "0px", paddingBottom: "0px", backgroundColor: '#2f2f2f', border:'1px solid black'}} >
         <ListItem button>
-          <ListItemText onClick={() => handlePage("Project")}>New Project</ListItemText>
+          <ListItemText onClick={() => handlePage("Project")}>New Game</ListItemText>
         </ListItem>
         <ListItem button onClick={() => handlePage("Profile")}><ListItemText>Profile </ListItemText></ListItem>
         <ListItem button onClick={() => handlePage("Data")}><ListItemText>Data </ListItemText></ListItem>
         <ListItem button onClick={() => handlePage("Contacts")}><ListItemText>Contacts </ListItemText></ListItem>
         <Divider/>
-        <ListItem button onClick={() => handleChat("Chat")}><ListItemText>Toggle Chat </ListItemText></ListItem>
+        <ListItem button onClick={() => handleChat("Chat")}>{chat == "Chat" ? <CheckBoxOutlinedIcon fontSize="small"/>: <CheckBoxOutlineBlankIcon fontSize="small"/>} <ListItemText style={{position:'relative', left:'10px'}}>Chat </ListItemText></ListItem>
         <Divider/>
         <ListItem button onClick={print}><ListItemText>Print </ListItemText></ListItem>
         <ListItem button><ListItemText>Logout </ListItemText></ListItem>
@@ -76,7 +66,7 @@ function  File() {
       throw new Error('useContext must be used within a MyProvider');
     }
 
-    const { coords, updateCoords, updateCoordsMenu } = context;
+    const { coords, updateCoordsMenu } = context;
     const { coordX, coordY } = coords;
 
     return (
@@ -125,7 +115,7 @@ function  File() {
       else
         updateZoom(zoom - increment);
     }
-    const { toolbar, updateToolbar } = context;
+    const { toolbar, chat, updateToolbar, updateChat } = context;
     function toggleToolbar() {
       updateToolbar(!toolbar);
     }

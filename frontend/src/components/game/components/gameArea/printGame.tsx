@@ -69,20 +69,20 @@ function printGame(params:{
 	params.balls?.forEach((ball) => {
 		const img = new Image();
 		img.src = "../../../../../mouse.png";
-		params.context.drawImage( img, ball.pos.x * params.gameWidth, ball.pos.y * params.gameHeight, 20, 20);
+		params.context.drawImage( img, ball.pos.x * params.gameWidth, ball.pos.y * params.gameHeight, params.pong.ballRadius * params.gameWidth * 2, params.pong.ballRadius * params.gameWidth * 2);
 	});
 	
 	drawRect({
-		start: {x:0,
+		start: {x:(params.pong.paddleWidth * params.gameWidth < 10) ? 0 : (params.pong.paddleWidth * params.gameWidth - 10) / 2,
 				y:(params.playerLeft.posY - params.pong.paddleHeight / 2) * params.gameHeight}, 
-		width: params.pong.paddleWidth * params.gameWidth,
+		width: (params.pong.paddleWidth * params.gameWidth < 10) ? params.pong.paddleWidth * params.gameWidth : 10, //params.pong.paddleWidth * params.gameWidth - 10,
 		height: params.pong.paddleHeight * params.gameHeight, 
 		color: params.playerLeft.color
 	}, params.context);
 	drawRect({
-		start: {x:(1 - params.pong.paddleWidth) * params.gameWidth, 
+		start: {x: (params.pong.paddleWidth * params.gameWidth < 10) ? (1 - params.pong.paddleWidth) * params.gameWidth : (1 - params.pong.paddleWidth) * params.gameWidth + (params.pong.paddleWidth * params.gameWidth - 10) / 2, 
 			y:(params.playerRight.posY - params.pong.paddleHeight / 2) * params.gameHeight}, 
-		width: params.pong.paddleWidth * params.gameWidth,
+		width: (params.pong.paddleWidth * params.gameWidth < 10) ? params.pong.paddleWidth * params.gameWidth : 10,
 		height: params.pong.paddleHeight * params.gameHeight, 
 		color: params.playerRight.color
 	}, params.context);
