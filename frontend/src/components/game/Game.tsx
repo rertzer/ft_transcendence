@@ -10,6 +10,7 @@ function Game() {
 	const [gameWidth, setGameWidth] = useState(0);
 	const [gameHeight, setGameHeight] = useState(0);
 	const [nbBalls, setNbBalls] = useState(1);
+	const [modeGame, setModeGame] = useState('');
 
 	const {username} = useContext(ConnectionContext);
 
@@ -27,13 +28,15 @@ function Game() {
 		playerName,
 		setPlayerName, 
 		nbBalls,
-		setNbBalls
+		setNbBalls, 
+		modeGame,
+		setModeGame
 	};
 
 	return (
 		<GameContext.Provider value={gameContextValue}>
-			{playerName!== '' && roomName === '' && <JoinRoom />}
-			{playerName!== '' && roomName !== '' && <GameArea />}
+			{playerName!== '' && modeGame === '' && <JoinRoom />}
+			{playerName!== '' && modeGame !== '' && <GameArea />}
 		</GameContext.Provider>
 	)
 }

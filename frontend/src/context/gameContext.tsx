@@ -11,6 +11,8 @@ export interface IGameContextProps {
 	setPlayerName: (playerName:string) => void;
 	nbBalls: number;
 	setNbBalls: (nbBalls:number) => void;
+	modeGame: string;
+	setModeGame: (modeGame:string) => void;
 };
 
 const defaultState:IGameContextProps = {
@@ -23,7 +25,9 @@ const defaultState:IGameContextProps = {
 	playerName:'',
 	setPlayerName: () => {},
 	nbBalls: 1,
-	setNbBalls: () => {}
+	setNbBalls: () => {}, 
+	modeGame: '',
+	setModeGame: () => {}
 };
 
 export default React.createContext(defaultState);

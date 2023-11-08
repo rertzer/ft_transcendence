@@ -5,32 +5,36 @@ interface IJoinRoomProps {
 };
 
 export function JoinRoom(props:IJoinRoomProps) {
-	const {setRoomName, setNbBalls} = useContext(gameContext);
+	const {setRoomName, setNbBalls, setModeGame, modeGame} = useContext(gameContext);
+	const [TmpModeGame, setTmpModeGame] = useState('');
 	const [TmpRoomName, setTmpRoomName] = useState('');
 	const [TmpNbBall, setTmpNbBall] = useState(1);
 	
-
-	const handleRoomNameChange = (event:React.ChangeEvent<any>) => {
+	const handleSelectTypeGame = (event:React.ChangeEvent<any>) => {
 		const value = event.target.value;
-		setTmpRoomName(value);
-	};
-
-	const handleNbBallsChange = (event:React.ChangeEvent<any>) => {
-		const value :number = event.target.value;
-		setTmpNbBall(value);
+		setTmpModeGame(value);
+		console.log(TmpModeGame);
 	};
 
 	const joinRoom = (e: React.FormEvent) => {
 		e.preventDefault();
-		if (!TmpRoomName || TmpRoomName.trim() === "" ) return;
-		if (!TmpNbBall || TmpNbBall < 1 || TmpNbBall > 10 ) return;
-		setRoomName(TmpRoomName);
-		setNbBalls(TmpNbBall);
+		if (!TmpModeGame || TmpModeGame.trim() === "" ) return;
+		setModeGame(TmpModeGame);
 	};
 
 	return (
 		<form onSubmit={joinRoom}>
-			<h4>Enter room name to join the game</h4>
+			<h4>What type of Pong game do you want to play ?</h4>
+  			<label>Basic Game <input type="radio" name="typegame" value="basic" onClick={handleSelectTypeGame}/></label><br/>
+			<label>Advanced <input type="radio" name="typegame" value="advanced" onClick={handleSelectTypeGame}/></label><br/>
+			<button type="submit"> Join !</button>
+		</form>
+	)
+};
+
+/**
+ * <form onSubmit={joinRoom}>
+			<h4>What type of Pong game do you want to play ?</h4>
 			Id Room <input 
 				id="roomID"
 				placeholder='Room ID' 
@@ -46,5 +50,4 @@ export function JoinRoom(props:IJoinRoomProps) {
 				onChange={handleNbBallsChange}/><br/>
 			<button type="submit"> Join !</button>
 		</form>
-	)
-};
+ */

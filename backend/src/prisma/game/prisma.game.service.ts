@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client'
 import { Injectable } from "@nestjs/common";
 import { Room } from 'src/game/Interface/room.interface';
+import { Player } from 'src/game/Interface/player.interface';
 
 export type GameStatus = 'ONGOING' | 'FORFAIT' | 'FINISHED' ;
 
@@ -31,31 +32,32 @@ export class PrismaGameService {
 		return 0 ;
 	}
 
-	async finishGameNormal(room:Room) {
+	async finishGame(room:Room, forfaitPlayer:Player | null) {
 		if (!room.playerLeft || !room.playerRight ) return ;
 		if (room.bddGameId > 0) {
-			const userNameWinner = (room.scoreLeft > room.scoreRight ? room.playerLeft.name : room.playerRight.name);
+			let userNameWinner:string;
+			if (forfaitPlayer === null) {
+				userNameWinner = (room.scoreLeft > room.scoreRight ? room.playerLeft.name : room.playerRight.name);
+			}
+			else {
+				userNameWinner = (room.playerLeft === forfaitPlayer ? room.playerRight.name : room.playerLeft.name)
+			}
 			const winnerId = await this.getIdOfLogin((userNameWinner));
+			
 			await this.prismaService.game.update({
 				where: {
 					id: room.bddGameId
 				},
 				data: {
 					winner_id: winnerId,
-					game_status:'FINISHED', 
+					game_status:room.gameStatus, 
 					player_one_score:room.scoreLeft,
 					player_two_score:room.scoreRight
 				}
 			})
 		}
 	}
-
-	async finishGameForfait(room:Room) {
-		if (room.bddGameId > 0) {
-			
-		}
-	}
-
+	
 	async getIdOfLogin(login: string){
 
 		const user = await this.prismaService.user.findFirst({

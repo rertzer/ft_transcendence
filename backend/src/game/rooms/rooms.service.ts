@@ -188,19 +188,12 @@ export class RoomsService {
 		if (this.getNumberOfPlayersInRoom(room) != 2){
 			this.removeRoom(room);
 		}
-		
-		/**
-		 * Besoin de tester si le jeu est fini. 
-		 * Si le game est encore en cours, il faut indique un forfait dans la BDD.
-		 * et potentiellement aussi kicker l'autre joueur. 
-		 */
-		else if (room.playerLeft === player) {
-			room.playerLeft = null;
+		if (room.gameStatus !== 'FINISHED') {
+			room.gameStatus = 'FINISH_BY_FORFAIT';
+			this.prismaService.finishGame(room, player);
+			room.playerLeft = (room.playerLeft === player ? null : room.playerLeft);
+			room.playerRight = (room.playerRight === player ? null : room.playerRight)
 		}
-		else if (room.playerRight === player) {
-			room.playerRight = null;
-		}
-			room.gameStatus = 'WAITING_FOR_PLAYER';
 		this.sendRoomStatus(room);
 	};
 
@@ -283,7 +276,7 @@ export class RoomsService {
 		});
 		if (room.scoreRight >= this.gameParam.goal || room.scoreLeft >= this.gameParam.goal) {
 			room.gameStatus = 'FINISHED';
-			this.prismaService.finishGameNormal(room);
+			this.prismaService.finishGame(room, null);
 		}
 		for (let i = 0; i < ballsOut.length; i++) {
 			this.addNewBall(room);

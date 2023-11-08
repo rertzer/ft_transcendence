@@ -76,13 +76,6 @@ function GameArea(props:any) {
 		socketId: '', 
 		readyToPlay:false
 	});
-	
-	const [ball, setBall] = useState({
-		id:0,
-		pos: {x: 1 / 2, y: 1 / 2}, 
-    	speed: pong.ballInitSpeed, 
-    	dir: pong.ballInitDir
-	});
 
 	const [balls, setBalls] = useState<IBall[]>([{
 		id:0,
