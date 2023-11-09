@@ -137,7 +137,11 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 	}
 
 	function startDM() {
-
+		const messageData = {
+			sender: username,
+			receiver: props.username,
+		}
+		socket.emit('newPrivateConv', messageData);
 	}
 
 	if (messageType !== "service") {
