@@ -5,7 +5,6 @@ import { Ball } from '../Interface/ball.interface';
 import { IGameParamBackEnd } from '../Interface/gameparam.interface';
 import { Socket } from 'socket.io';
 import { PrismaGameService } from 'src/prisma/game/prisma.game.service';
-import { Obstacle } from '../Interface/ obstacle.interface';
 
 function colision(playerPosY: number, ball:Ball, pong:IGameParamBackEnd, sidePlayer:string):boolean {
     const ballTop:number = ball.pos.y - pong.ballRadius;
@@ -28,6 +27,8 @@ export class RoomsService {
 
 	private rooms: Room[] = [];
 	private roomMaxId:number = 1;
+	private waitingRoomBasic: Player | null = null;
+	private waitingRoomAdvanced: Player | null = null;
 
 	private initBall : Ball = {
 		id: 0,
@@ -45,7 +46,7 @@ export class RoomsService {
 		goal:3
 	};
 
-	createEmptyRoom(typeGame:TypeGame) {
+	async createEmptyRoom(typeGame:TypeGame) {
 		const newRoom: Room = {
 			id:this.roomMaxId,
 			balls: [],
@@ -65,42 +66,50 @@ export class RoomsService {
 		}
 		this.rooms.push(newRoom);
 		this.roomMaxId++;
-		console.log('Room ',newRoom.id, ' created');
-		return (newRoom.id);
+		return (await this.updateRoomForAdvanceGame(newRoom));
 	};
 
-	createRoom(idRoom:number, playerLeft:Player | null, playerRight:Player | null, typeGame:TypeGame) {
-		const newRoom: Room = {
-			id:idRoom,
-			balls: [],
-			obstacles: [],
-			ballHasLeft: false,
-			playerLeft:playerLeft,
-			playerRight:playerRight,
-			scoreLeft:0,
-			scoreRight:0,
-			gameStatus:'WAITING_FOR_PLAYER', 
-			createdOn: new Date(),
-			finishOn: null,
-			startingCountDownStart: null,
-			startingCount: 0,
-			bddGameId:0, 
-			typeGame:typeGame
+	async createRoom(playerLeft:Player, playerRight:Player, typeGame:TypeGame) {
+		return(await this.createEmptyRoom(typeGame).then(
+			(room) => {
+				room.gameStatus = 'WAITING_TO_START';
+				room.playerLeft = playerLeft;
+				room.playerRight = playerRight;
+				return (room);
+			})
+		)
+	};
+
+	async updateRoomForAdvanceGame(room:Room) : Promise<Room> {
+		return (
+			await this.prismaService.gameMaps.findMany({
+				include : {
+					obstacles:true
+				}
+			}).then((maps) =>{ 
+				const map = maps[Math.floor(Math.random() * maps.length)];
+				room.obstacles = map.obstacles;
+				for (let i = 0; i < map.nbBalls; i++) {
+					this.addNewBall(room);
+				}
+				console.log('Room :', room.id, ' has been updated with maps');
+				return (room);
+			})
+		);
+	}
+
+	joinWaitingRoom(player:Player, typeGame:TypeGame) {
+		const waitingPlayer = (typeGame === 'ADVANCED' ? this.waitingRoomAdvanced : this.waitingRoomBasic);
+		if (waitingPlayer === null) {
+			if (typeGame === 'ADVANCED') this.waitingRoomAdvanced = player;
+			else this.waitingRoomBasic = player;
+			player.socket.emit('advanced_waiting_room_joined');
 		}
-		
-		/*for (let i = 0; i < nbBalls; i++) {
-			this.addNewBall(newRoom);
-		}*/
-		this.rooms.push(newRoom);
-		console.log('Room created');
-		console.log('Rooms :', this.rooms);
-		return (newRoom);
-	};
-
-	updateRoomForAdvanceGame(room:Room) :Room {
-		const map:number = Math.floor(Math.random() * 4);
-
-		return (room);
+		else {
+			this.createRoom(player, waitingPlayer, typeGame);
+			if (typeGame === 'ADVANCED') this.waitingRoomAdvanced = null;
+			else this.waitingRoomBasic = null;
+		}
 	}
 
 	removeRoom(room: Room) {
@@ -178,31 +187,36 @@ export class RoomsService {
 		room.playerRight?.socket.emit('room_status', data_to_send);
 	}
 
-	async addPlayerToRoom(player:Player, roomId:number, nbBalls:number) {
+	async addPlayerToRoom(player:Player, roomId:number) {
 		let room = this.findRoomById(roomId);
-		if (room === null) {
-			room = this.createRoom(roomId, player, null, 'BASIC')
-			player.room = room;
-		}
-		else if (room.playerLeft === player || room.playerRight === player) {
+		if (room === null) return;  
+		if (room.playerLeft === player || room.playerRight === player) {
 			player.socket.emit('Error_player_already_in_room');
+			return;
 		}
-		else if (room.playerLeft != null  && room.playerRight != null) {
+		if (room.playerLeft != null  && room.playerRight != null) {
 			player.socket.emit('Error_room_full');
+			return;
+		}
+		if (room.playerLeft === null) {
+			room.playerLeft = player;
 		}
 		else {
-			if (room.playerLeft === null) {
-				room.playerLeft = player;
-			}
-			else {
-				room.playerRight = player;
-			}
-			player.room = room;
-			room.gameStatus = 'WAITING_TO_START';
-			console.log('Creating a new reccord on the BDD');
-			room.bddGameId = await this.prismaService.addNewGame(room);
-			console.log('Player ', player.socket.id, ' added to Room ', room.id);
+			room.playerRight = player;
 		}
+		player.room = room;
+		room.gameStatus = 'WAITING_TO_START';
+		console.log('Creating a new reccord on the BDD');
+		const roomToUpdate = room;
+		const bddGame = await this.prismaService.addNewGame(room).then(
+			(bddGame) => {
+				if (bddGame) {
+					roomToUpdate.bddGameId = bddGame.id;
+				}
+			}
+		);
+		console.log('Player ', player.socket.id, ' added to Room ', room.id);
+	
 		this.sendRoomStatus(room);
 	};
 
@@ -281,9 +295,11 @@ export class RoomsService {
 	}
 
 	updateRoomGameStatus(room:Room) : Room {
-		if (room.gameStatus === 'WAITING_FOR_PLAYER' || room.gameStatus === 'FINISHED'
-		|| !room.playerLeft || !room.playerRight ) return (room);
-		if (room.gameStatus === 'WAITING_TO_START' && room.playerLeft.readyToPlay && room.playerRight.readyToPlay) {
+		if (room.gameStatus === 'FINISHED' || !room.playerLeft || !room.playerRight ) return (room);
+		if (room.gameStatus === 'WAITING_FOR_PLAYER' && room.playerLeft && room.playerRight ) {
+			room.gameStatus = 'WAITING_TO_START';
+		}
+		else if (room.gameStatus === 'WAITING_TO_START' && room.playerLeft.readyToPlay && room.playerRight.readyToPlay) {
 			room.gameStatus = 'STARTING';
 		}
 		else if (room.gameStatus === 'STARTING' && room.startingCount >= 3) {
@@ -334,6 +350,7 @@ export class RoomsService {
 		this.rooms.forEach(room => {
 			const data = {
 				balls:room.balls,
+				obstacles:room.obstacles,
 				playerLeft:{
 					name:room.playerLeft?.name,
 					posY:room.playerLeft?.posY,

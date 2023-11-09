@@ -12,6 +12,10 @@ async function bootstrap() {
   const prismaGame = new PrismaGameService;
   
   prismaUser.createUser();//toDelete
+
+  prismaGame.initDB();
+ 
+
   // Define your CORS options here
   const corsOptions: CorsOptions = {
     origin: 'http://localhost:3000', // Replace with your React app's URL

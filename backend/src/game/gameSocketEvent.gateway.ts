@@ -48,12 +48,30 @@ export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, On
 	}
 
     //Recevoir un event 
-	@SubscribeMessage('join_game')
-	handleJoinGame(@MessageBody() data:{roomId:number, playerName:string, nbBalls:number}, @ConnectedSocket() client:Socket){
+	@SubscribeMessage('give_me_a_room')
+	handleGiveMeARoom(@MessageBody() data:{typeGame:TypeGame}, @ConnectedSocket() client:Socket){
+		const newRoomId = this.roomsService.createEmptyRoom(data.typeGame);
+		const responseData = {
+			roomId:newRoomId
+		}
+		client.emit('new_empty_room', responseData);
+	}
+
+	@SubscribeMessage('match_me')
+	handleJoinWaitingRoom(@MessageBody() data:{playerName:string, typeGame:TypeGame}, @ConnectedSocket() client:Socket){
 		const player = this.playersService.findOne(client);
 		if (player) {
 			this.playersService.changePlayerName(player, data.playerName);
-			this.roomsService.addPlayerToRoom(player, data.roomId, data.nbBalls);
+			this.roomsService.joinWaitingRoom(player, data.typeGame);
+		} 
+	}
+
+	@SubscribeMessage('join_game')
+	handleJoinGame(@MessageBody() data:{roomId:number, playerName:string}, @ConnectedSocket() client:Socket){
+		const player = this.playersService.findOne(client);
+		if (player) {
+			this.playersService.changePlayerName(player, data.playerName);
+			this.roomsService.addPlayerToRoom(player, data.roomId);
 		} 
 	}
 	@SubscribeMessage('keyevent')
@@ -64,10 +82,7 @@ export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, On
 		}
 	}
 
-	@SubscribeMessage('give_me_a_room')
-	handleGiveMeARoom(@MessageBody() data:{typeGame:TypeGame}, @ConnectedSocket() client:Socket){
-		this.roomsService.createEmptyRoom(data.typeGame);
-	}
+	
 
 	@Interval(1000/60)
 	handleInterval() {

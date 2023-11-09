@@ -131,6 +131,7 @@ model GameParams {
 model GameObstacles {
   id         Int       @id @default(autoincrement())
   posx       Float
+  posy       Float
   width      Float
   height     Float
   img        String?

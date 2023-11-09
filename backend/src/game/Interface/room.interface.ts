@@ -1,4 +1,4 @@
-import { Obstacle } from "./ obstacle.interface";
+import { GameObstacles } from "@prisma/client";
 import { Ball } from "./ball.interface";
 import { Player } from "./player.interface";
 
@@ -9,7 +9,7 @@ export type TypeGame = 'BASIC' | 'ADVANCED';
 export interface Room {
 	id:number;
 	balls:Ball[];
-	obstacles:Obstacle[];
+	obstacles:GameObstacles[];
 	ballHasLeft:boolean;
 	playerLeft:Player | null;
 	playerRight:Player | null;
