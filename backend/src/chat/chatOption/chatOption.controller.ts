@@ -22,7 +22,7 @@ export class ChatOptController {
 		if (! await this.prismaChatService.isAdmin(user.username, user.chatId) && ! await this.prismaChatService.isOwner(user.username, user.chatId))
 		{
 			console.log("passed this step");
-			const banWorks = await this.prismaChatService.banUser(user.username, user.chatId);
+			const banWorks = await this.prismaChatService.banUserPrism(user.username, user.chatId);
 			if (banWorks)
 			{
 				const SockArray = this.gateway.getSocketsArray()
@@ -63,12 +63,14 @@ export class ChatOptController {
 			const kicked = await this.prismaChatService.kickUserFromChat(user.login, user.chatId);
 			if (kicked)
 			{
+				console.log("kickk ????")
 				const SockArray = this.gateway.getSocketsArray()
 				const targetSocket = SockArray.find((socket) => socket.login === user.login);
+				console.log("targetSocket = ", targetSocket);
 				if (targetSocket)
 				{
 					console.log("removed the socket of :",user.login, "from the sock room number:", user.chatId)
-					this.gateway.onChatListOfUser(user.login, targetSocket.sock);
+					await this.gateway.onChatListOfUser(user.login, targetSocket.sock);
 					targetSocket.sock.leave(user.chatId.toString())
 					return true
 				}

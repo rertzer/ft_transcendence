@@ -18,22 +18,23 @@ const Chats = (props: {activeChat: Active, setActiveChat: Function, chatsOfUser:
         socket.on("ListOfChatOfUser", (channelsListReceive : allChatOfUser[]) => {
             props.setChatsOfUser(channelsListReceive);
             console.log("Console.logggegege");
+            console.log(channelsListReceive);
         });
 
 		socket.on("newChat", (newChat: allChatOfUser) => {
 			props.setChatsOfUser([...props.chatsOfUser, newChat]);
 		});
-		socket.on('chatList', (listOfChat: allChatOfUser[]) => {
+		// socket.on('chatList', (listOfChat: allChatOfUser[]) => {
 
-		})
+    // })
 
         return () => {
 
-			socket.off("ListOfChat");
+			socket.off("ListOfChatOfUser");
 			socket.off("newChat")
-			socket.off("chatList")
+			// socket.off("chatList")
         }
-    }, [props.lastMessage])
+    }, [])
 
     const startRef = useRef<HTMLDivElement>(null); //ref to empty div to autoscroll to bottom
 

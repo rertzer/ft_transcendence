@@ -101,7 +101,6 @@ export class MyGateway {
 
 	@SubscribeMessage('SendPrivateMessage')
 	async onSendMessage(@MessageBody() messageData: {msg: string, loginToSend: string, idOfUser: string}, @ConnectedSocket() client:Socket) {
-
 		const targetSocket = this.socketsLogin.find((socket) => socket.sock === client);
 		if (targetSocket !== undefined)
 		{
@@ -184,7 +183,7 @@ export class MyGateway {
 		{
 			console.log("hey chat list");
 			const chatLister = new ChatLister(this.prismaChatService);
-			chatLister.listChatOfUser(username, targetSocket.sock);
+			await chatLister.listChatOfUser(username, targetSocket.sock);
 		}
 	}
 

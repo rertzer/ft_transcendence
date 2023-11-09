@@ -85,7 +85,7 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 		socket.emit('newMessage', messageData);
 	}
 
-	function sendNewAdmin() {
+	async function sendNewAdmin() {
 
 		const requestOptions = {
 			method: 'post',
@@ -93,7 +93,7 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 			body: JSON.stringify({ username: props.username, chatId: props.chatId})
 		};
 		toggleUserActionsMenu();
-		fetch('http://localhost:4000/chatOption/setAdmin/', requestOptions)
+		await fetch('http://localhost:4000/chatOption/setAdmin/', requestOptions)
 		.catch((error) => {
 			console.error('Error checking user status:', error);
 		  });
@@ -118,21 +118,25 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 			setErrorMessage(props.username + " is already banned"); // ca ca marche po...
 		//bien sur faut aussi verifier si le user est owner auquel cas faut un autre error message
 		} else {
-			fetch('http://localhost:4000/chatOption/banUser/', requestOptions);
+			await fetch('http://localhost:4000/chatOption/banUser/', requestOptions);
 			toggleUserActionsMenu();
 			sendServiceMessage(props.username + " has been banned from this channel");
 		}
 	}
 
-	function kickUser() {
+	async function kickUser() {
 		const requestOptions = {
 			method: 'post',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ username: props.username, chatId: props.chatId})
 		};
 		toggleUserActionsMenu();
-		fetch('http://localhost:4000/chatOption/kickUser/', requestOptions)
+		await fetch('http://localhost:4000/chatOption/kickUser/', requestOptions)
 		sendServiceMessage(props.username + " has been kicked from this channel");
+	}
+
+	function startDM() {
+
 	}
 
 	if (messageType !== "service") {
@@ -151,7 +155,7 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 								<div className="menuItems">
 									<div>Invite to play</div>
 									<div>Add to friends</div>
-									<div>Send DM</div>
+									<div onClick={startDM}>Send DM</div>
 									<Link to="/profile/1" style={{textDecoration:"none", color: "#ddddf7"}}>
 										<div onClick={toggleUserActionsMenu}>Show profile</div>
 									</Link>

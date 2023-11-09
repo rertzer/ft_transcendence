@@ -9,7 +9,7 @@ import { allChatOfUser } from "./ChatComponent";
 import {Link} from "react-router-dom";
 
 
-const ConversationBar = (props: {toDisplay: allChatOfUser , setActiveChat: Function, isOwner: boolean}) => {
+const ConversationBar = (props: {toDisplay: allChatOfUser , setActiveChat: Function, isOwner: boolean, isAdmin: boolean}) => {
 
     // if (props.toDisplay.isChannel === false) {  //interface d'une fenetre de DM
     //     return (
@@ -40,6 +40,8 @@ const ConversationBar = (props: {toDisplay: allChatOfUser , setActiveChat: Funct
         return (
             <div className='chatInfo'>
             <span>{props.toDisplay.channelName}</span>
+            {props.isOwner ? <span>(owner)</span> : <span></span>}
+            {props.isAdmin ? <span>(admin)</span> : <span></span>}
             <div className="chatIcons">
                 {props.isOwner === true ? 
                 <div>

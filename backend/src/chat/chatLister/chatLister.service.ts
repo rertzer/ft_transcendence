@@ -42,6 +42,7 @@ export class ChatLister{
 				}
 				chatList.push(chatType);
 			}
+			console.log("i ve send the chat list",chatList);
 			sock.emit('ListOfChatOfUser', chatList);
 		}
 	}

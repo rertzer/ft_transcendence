@@ -104,7 +104,7 @@ export class PrismaChatService {
 					kicked: true,
 				  } // Use the ID to uniquely identify the record
 			  });
-			  if (recordToDelete)
+			  if (removedUser)
 			  	return true;
 			}
 			return false;
@@ -112,7 +112,7 @@ export class PrismaChatService {
 		return false;
 	}
 
-	async banUser(login: string, chatId : number)
+	async banUserPrism(login: string, chatId : number)
 	{
 		const getId = await this.getIdOfLogin(login);
 		if (getId && ! await this.checkIfUserIsBanned(chatId, login))
@@ -125,7 +125,7 @@ export class PrismaChatService {
 			})
 			if (banned)
 			{
-				this.BanUserFromChannel(login, chatId);
+				await this.BanUserFromChannel(login, chatId);
 				return true;
 			}
 		}
@@ -343,6 +343,7 @@ export class PrismaChatService {
 				channel: true,
 			},
 		})
+		console.log("chat list = ", userChatChannels);
 		return userChatChannels;
 	}
 
