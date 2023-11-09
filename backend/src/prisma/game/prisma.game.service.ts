@@ -12,6 +12,11 @@ export class PrismaGameService {
 	constructor() {
 		this.prismaService = new PrismaClient();
 	}
+
+	async initGameParams() { 
+		this.prismaService.
+	}
+	//ici je peux initialiser les donnes de jeu. 
 	
 	async addNewGame(room:Room) {
 		if (!room.playerLeft || !room.playerRight) return 0;

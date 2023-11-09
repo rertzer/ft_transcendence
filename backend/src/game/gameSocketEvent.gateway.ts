@@ -5,6 +5,7 @@ import { Inject } from "@nestjs/common";
 import { RoomsService } from "./rooms/rooms.service";
 import { Interval } from "@nestjs/schedule";
 import { Logger } from "@nestjs/common";
+import { TypeGame } from "./Interface/room.interface";
 
 @WebSocketGateway({
     namespace: '/game_socket',
@@ -48,11 +49,11 @@ export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, On
 
     //Recevoir un event 
 	@SubscribeMessage('join_game')
-	handleJoinGame(@MessageBody() data:{roomName:string, playerName:string, nbBalls:number}, @ConnectedSocket() client:Socket){
+	handleJoinGame(@MessageBody() data:{roomId:number, playerName:string, nbBalls:number}, @ConnectedSocket() client:Socket){
 		const player = this.playersService.findOne(client);
 		if (player) {
 			this.playersService.changePlayerName(player, data.playerName);
-			this.roomsService.addPlayerToRoom(player, data.roomName, data.nbBalls);
+			this.roomsService.addPlayerToRoom(player, data.roomId, data.nbBalls);
 		} 
 	}
 	@SubscribeMessage('keyevent')
@@ -61,6 +62,11 @@ export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, On
 		if (room) {
 			this.roomsService.movePlayerOnEvent({room, key:data.key, idPlayerMove:data.idPlayerMove, client});
 		}
+	}
+
+	@SubscribeMessage('give_me_a_room')
+	handleGiveMeARoom(@MessageBody() data:{typeGame:TypeGame}, @ConnectedSocket() client:Socket){
+		this.roomsService.createEmptyRoom(data.typeGame);
 	}
 
 	@Interval(1000/60)

@@ -106,13 +106,43 @@ model Friend {
 }
 
 model Game {
-  id               Int     @id @default(autoincrement())
+  id               Int       @id @default(autoincrement())
   player_one_id    Int
   player_two_id    Int
   winner_id        Int?
   game_status      String?
   player_one_score Int?
   player_two_score Int?
+  date_begin       DateTime  @default(now())
+  date_end         DateTime?
+}
+
+model GameParams {
+  id                Int    @id @default(autoincrement())
+  type              String @default("basic")
+  ballRadius        Float  @default(0.01)
+  paddleWidth       Float  @default(0.02)
+  paddleHeight      Float  @default(0.25)
+  ballSpeedIncrease Float  @default(0.0005)
+  paddleSpeed       Float  @default(0.01)
+  goal              Int    @default(5)
+}
+
+model GameObstacles {
+  id         Int       @id @default(autoincrement())
+  posx       Float
+  width      Float
+  height     Float
+  img        String?
+  lives      Int
+  GameMaps   GameMaps? @relation(fields: [gameMapsId], references: [id])
+  gameMapsId Int?
+}
+
+model GameMaps {
+  id        Int             @id @default(autoincrement())
+  nbBalls   Int             @default(1)
+  obstacles GameObstacles[]
 }
 
 model BlockedUser {

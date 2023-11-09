@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { Room } from '../Interface/room.interface';
+import { Room, TypeGame} from '../Interface/room.interface';
 import { Player } from '../Interface/player.interface';
 import { Ball } from '../Interface/ball.interface';
 import { IGameParamBackEnd } from '../Interface/gameparam.interface';
 import { Socket } from 'socket.io';
 import { PrismaGameService } from 'src/prisma/game/prisma.game.service';
+import { Obstacle } from '../Interface/ obstacle.interface';
 
 function colision(playerPosY: number, ball:Ball, pong:IGameParamBackEnd, sidePlayer:string):boolean {
     const ballTop:number = ball.pos.y - pong.ballRadius;
@@ -26,6 +27,8 @@ export class RoomsService {
 	constructor(private prismaService: PrismaGameService){}
 
 	private rooms: Room[] = [];
+	private roomMaxId:number = 1;
+
 	private initBall : Ball = {
 		id: 0,
 		pos: {x:1/2, y:1/2},
@@ -42,12 +45,13 @@ export class RoomsService {
 		goal:3
 	};
 
-	createRoom(idRoom:string, player:Player, nbBalls:number) {
+	createEmptyRoom(typeGame:TypeGame) {
 		const newRoom: Room = {
-			id:idRoom,
+			id:this.roomMaxId,
 			balls: [],
+			obstacles: [],
 			ballHasLeft: false,
-			playerLeft:player,
+			playerLeft:null,
 			playerRight:null,
 			scoreLeft:0,
 			scoreRight:0,
@@ -56,16 +60,48 @@ export class RoomsService {
 			finishOn: null,
 			startingCountDownStart: null,
 			startingCount: 0,
-			bddGameId:0
+			bddGameId:0,
+			typeGame:typeGame
 		}
-		for (let i = 0; i < nbBalls; i++) {
+		this.rooms.push(newRoom);
+		this.roomMaxId++;
+		console.log('Room ',newRoom.id, ' created');
+		return (newRoom.id);
+	};
+
+	createRoom(idRoom:number, playerLeft:Player | null, playerRight:Player | null, typeGame:TypeGame) {
+		const newRoom: Room = {
+			id:idRoom,
+			balls: [],
+			obstacles: [],
+			ballHasLeft: false,
+			playerLeft:playerLeft,
+			playerRight:playerRight,
+			scoreLeft:0,
+			scoreRight:0,
+			gameStatus:'WAITING_FOR_PLAYER', 
+			createdOn: new Date(),
+			finishOn: null,
+			startingCountDownStart: null,
+			startingCount: 0,
+			bddGameId:0, 
+			typeGame:typeGame
+		}
+		
+		/*for (let i = 0; i < nbBalls; i++) {
 			this.addNewBall(newRoom);
-		}
+		}*/
 		this.rooms.push(newRoom);
 		console.log('Room created');
 		console.log('Rooms :', this.rooms);
 		return (newRoom);
 	};
+
+	updateRoomForAdvanceGame(room:Room) :Room {
+		const map:number = Math.floor(Math.random() * 4);
+
+		return (room);
+	}
 
 	removeRoom(room: Room) {
 		this.rooms = this.rooms.filter((r) => {return r != room;});
@@ -94,7 +130,7 @@ export class RoomsService {
 		return room;
 	};
 
-	findRoomById(idToFind:string) : Room | null {
+	findRoomById(idToFind:number) : Room | null {
 		const room = this.rooms.find((element) => (element.id === idToFind));
 		if (typeof(room) === 'undefined') {
 			return null;
@@ -142,10 +178,10 @@ export class RoomsService {
 		room.playerRight?.socket.emit('room_status', data_to_send);
 	}
 
-	async addPlayerToRoom(player:Player, roomName:string, nbBalls:number) {
-		let room = this.findRoomById(roomName);
+	async addPlayerToRoom(player:Player, roomId:number, nbBalls:number) {
+		let room = this.findRoomById(roomId);
 		if (room === null) {
-			room = this.createRoom(roomName, player, nbBalls)
+			room = this.createRoom(roomId, player, null, 'BASIC')
 			player.room = room;
 		}
 		else if (room.playerLeft === player || room.playerRight === player) {

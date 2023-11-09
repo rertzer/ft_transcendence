@@ -6,7 +6,6 @@ import { PrismaGameService } from 'src/prisma/game/prisma.game.service';
 @Injectable()
 export class PlayersService {
 	
-
 	private players: Player[] = [];
 
 	create(player: Player) {

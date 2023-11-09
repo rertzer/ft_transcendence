@@ -1,11 +1,15 @@
+import { Obstacle } from "./ obstacle.interface";
 import { Ball } from "./ball.interface";
 import { Player } from "./player.interface";
 
 export type GameStatus = 'WAITING_FOR_PLAYER' | 'WAITING_TO_START' | 'STARTING' | 'PLAYING' | 'FINISHED' | 'FINISH_BY_FORFAIT';
 
+export type TypeGame = 'BASIC' | 'ADVANCED';
+
 export interface Room {
-	id:string;
+	id:number;
 	balls:Ball[];
+	obstacles:Obstacle[];
 	ballHasLeft:boolean;
 	playerLeft:Player | null;
 	playerRight:Player | null;
@@ -17,4 +21,5 @@ export interface Room {
 	startingCountDownStart: Date | null;
 	startingCount: number;
 	bddGameId:number;
+	typeGame:TypeGame;
   }
