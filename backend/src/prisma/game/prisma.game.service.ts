@@ -14,7 +14,7 @@ export class PrismaGameService {
 	}
 
 	async initGameParams() { 
-		this.prismaService.
+		
 	}
 	//ici je peux initialiser les donnes de jeu. 
 	
