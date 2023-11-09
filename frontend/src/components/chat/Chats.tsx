@@ -3,10 +3,9 @@ import { WebsocketContext } from "../../context/chatContext";
 import React, { useContext, useState, useEffect, useRef, Component } from 'react';
 import ConnectionContext from '../../context/authContext'
 import { allChatOfUser } from './ChatComponent';
-import { Active } from './ChatComponent';
 import { Message } from "./ChatComponent"
 
-const Chats = (props: {activeChat: Active, setActiveChat: Function, chatsOfUser: allChatOfUser[], setChatsOfUser: Function, lastMessage: Message}) => {
+const Chats = (props: {activeChat: allChatOfUser, setActiveChat: Function, chatsOfUser: allChatOfUser[], setChatsOfUser: Function, lastMessage: Message}) => {
 
     const socket = useContext(WebsocketContext);
     const {username} = useContext(ConnectionContext);
@@ -85,7 +84,7 @@ const Chats = (props: {activeChat: Active, setActiveChat: Function, chatsOfUser:
 						{moveMostRecentUp(props.chatsOfUser).map((channel) => (
                             <div key={channel.id} onClick={() => {
                                     if (channel.id != props.activeChat.id) {
-                                    props.setActiveChat({id: channel.id, name: channel.channelName});
+                                    props.setActiveChat(channel);
                                     socket.emit('retrieveMessage', {chatId: channel.id, messageToDisplay: 15 })
                                     }}}>
                                 <div className={props.activeChat.id === channel.id ? "userChat active" : "userChat"}>

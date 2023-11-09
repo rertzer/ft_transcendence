@@ -3,9 +3,8 @@ import Chatbar from './Chatbar';
 import Chats from "./Chats";
 import { Message } from "./ChatComponent";
 import ChatComponent, { allChatOfUser } from './ChatComponent';
-import { Active } from './ChatComponent';
 
-const Sidebar = (props: {activeChat: Active, setActiveChat: Function, chatsOfUser: allChatOfUser[], setChatsOfUser: Function, lastMessage: Message}) => {
+const Sidebar = (props: {activeChat: allChatOfUser, setActiveChat: Function, chatsOfUser: allChatOfUser[], setChatsOfUser: Function, lastMessage: Message}) => {
 
 
     return (

@@ -3,11 +3,7 @@ import Sidebar from './Sidebar';
 import Chat from './Chat'
 import { WebsocketContext } from "../../context/chatContext";
 import { useState, useEffect, useContext } from 'react';
-
-export type Active = {
-	id: number;
-    name: string
-}
+import { act } from "react-dom/test-utils";
 
 export type allChatOfUser = {
     id: number;
@@ -35,11 +31,8 @@ export type Message = {
 const ChatComponent = () => {
 
     const [chatsOfUser, setChatsOfUser] = useState<allChatOfUser[]>([])
-    const [activeChat, setActiveChat] = useState<Active>({id: -1, name: "none"})
+    const [activeChat, setActiveChat] = useState<allChatOfUser>({id: -1, channelName: "", chatPicture: "", isChannel: false, receiverUsername: "", status: "", username: null, dateSend: null, msg: null})
     const socket = useContext(WebsocketContext);
-    let chatToDisplay = chatsOfUser.find(element => element.id === activeChat.id);
-    if (chatToDisplay == undefined && chatsOfUser.length > 0)
-        chatToDisplay = chatsOfUser[0];
     const [lastMessage, setLastMessage] = useState<Message>({msg: "", username: "", date: new Date, id: 0, idOfChat: 0})
 
     useEffect(() => {
@@ -52,12 +45,12 @@ const ChatComponent = () => {
         } 
     },[])
     
-    if (chatToDisplay !== undefined && activeChat.id > 0) {
+    if (activeChat.id > 0) {
     return (
         <div className="chatcomponent">
             <div className='container'>
                 <Sidebar activeChat={activeChat} setActiveChat={setActiveChat} chatsOfUser={chatsOfUser} setChatsOfUser={setChatsOfUser} lastMessage={lastMessage}/>
-                <Chat toDisplay={chatToDisplay} setActiveChat={setActiveChat}/>
+                <Chat toDisplay={activeChat} setActiveChat={setActiveChat}/>
             </div>
         </div>
     )
@@ -66,7 +59,7 @@ const ChatComponent = () => {
         <div className="chatcomponent">
             <div className='container'>
                 <Sidebar activeChat={activeChat} setActiveChat={setActiveChat} chatsOfUser={chatsOfUser} setChatsOfUser={setChatsOfUser} lastMessage={lastMessage}/>
-                <div className='noChat'>No chat</div>
+                <div className='noChat'>Pong chat</div>
             </div>
         </div>
         )
@@ -76,7 +69,7 @@ const ChatComponent = () => {
             <div className="chatcomponent">
             <div className='container'>
                 <Sidebar activeChat={activeChat} setActiveChat={setActiveChat} chatsOfUser={chatsOfUser} setChatsOfUser={setChatsOfUser} lastMessage={lastMessage}/>
-                <div className='noChat'>You lost access to  :  {activeChat.name}</div>
+                <div className='noChat'>You lost access to this channel</div>
             </div>
         </div>
         )
