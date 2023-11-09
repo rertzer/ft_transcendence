@@ -53,6 +53,8 @@ const Messages = (props: {chatId: number, isOwner: boolean, isAdmin: boolean, se
 			newDateString = newDateString.slice(newDateString.indexOf("T") + 1, newDateString.indexOf("T") + 9);
 			const add : ChatMessage = {msg: chatHistoryReceive.msg, username: chatHistoryReceive.username, date: newDateString, id: chatHistoryReceive.id, chatId: chatHistoryReceive.idOfChat}
 			setChatMessages((prevMessages) => [...prevMessages, add]);
+			socket.emit("chatListOfUser",username);
+			console.log("pkop");
 			// Debugging: Check the updated chatHistory
 		});
 		return () => {
@@ -109,7 +111,7 @@ const Messages = (props: {chatId: number, isOwner: boolean, isAdmin: boolean, se
 							// else if (chat.msg === username + " has been kicked from this channel")
 							// 	props.setActiveChat({id: -42, name: "You have been kicked from this channel"})
 							return (
-							<div key={chat.id}>
+							<div key={chat.date + chat.id}>
 								{chat.chatId === props.chatId && (
 									 <Message date={chat.date} username={chat.username} msg={chat.msg} isOwner={props.isOwner} isAdmin={props.isAdmin} chatId={props.chatId}/>
 								)}

@@ -180,12 +180,8 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 		)
 	} else {
 		return (<div className="service-message" >
-			<p>{props.msg}</p>
-			{/* <div className="name-time">
-				<span>Channel Bot,</span>
-				<span>{props.date}</span>
-			</div> */}
-		</div>);
+					<p>{props.msg}</p>
+				</div>);
 	}
 }
 

@@ -11,6 +11,11 @@ const Chats = (props: {activeChat: Active, setActiveChat: Function, chatsOfUser:
     const socket = useContext(WebsocketContext);
     const {username} = useContext(ConnectionContext);
 
+
+    useEffect(() => {
+        console.log("chats of useeeeeeeer : ", props.chatsOfUser)
+    }, [props.chatsOfUser]);
+
     useEffect(() => {
 
         trigger();
@@ -24,7 +29,7 @@ const Chats = (props: {activeChat: Active, setActiveChat: Function, chatsOfUser:
 		socket.on("newChat", (newChat: allChatOfUser) => {
 			props.setChatsOfUser([...props.chatsOfUser, newChat]);
 		});
-		// socket.on('chatList', (listOfChat: allChatOfUser[]) => {
+	// 	socket.on('chatList', (listOfChat: allChatOfUser[]) => {
 
     // })
 
@@ -41,7 +46,6 @@ const Chats = (props: {activeChat: Active, setActiveChat: Function, chatsOfUser:
     function trigger() {
        socket.emit('chatListOfUser', username);
 	   socket.emit('chatList'); // here is for the public chat.
-
     }
 
     useEffect(() => {
@@ -88,7 +92,7 @@ const Chats = (props: {activeChat: Active, setActiveChat: Function, chatsOfUser:
                                     <img src={channel.chatPicture === null ? "" : channel.chatPicture} />
                                     <div className='userChatInfo'>
                                         <h1>{channel.channelName}</h1>
-                                        <p>{channel.msg === null ? "" : channel.msg}</p>
+                                        <p>{channel.msg ? channel.msg : ""}</p>
                                     </div>
                                 </div>
                             </div>

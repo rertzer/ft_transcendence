@@ -24,20 +24,6 @@ const MessageInput = (props: {chatId: number}) => {
 	const socket = useContext(WebsocketContext);
 	const {username} = useContext(ConnectionContext);
 
-	useEffect(() => {
-
-		socket.on('onMessage', (newMessage: MessagePayload) => {
-
-
-			setMessages((prev) => [...prev, newMessage]);
-			});
-
-		return () => {
-
-			socket.off('onMessage');
-		};
-	}, []);
-
 	const onSubmit = () => {
 		if (value === "" || props.chatId < 0)
 			return;
@@ -47,7 +33,6 @@ const MessageInput = (props: {chatId: number}) => {
 			idOfChat: props.chatId,
 		}
 		socket.emit('newMessage', messageData);
-		socket.emit('chatListOfUser', username);
 		setValue('');
 	  };
 

@@ -21,6 +21,7 @@ export class ChatLister{
 				let date = null;
 				let lastMessage = null;
 				let message = null;
+				console.log("last message of chat :", chatUser.channel_id, " is ", lastMessagesOfChat);
 				if (lastMessagesOfChat !== undefined && lastMessagesOfChat && lastMessagesOfChat.length > 0)
 				{
 					lastMessage = lastMessagesOfChat[0];

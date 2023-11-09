@@ -38,6 +38,8 @@ const ChatComponent = () => {
     const [activeChat, setActiveChat] = useState<Active>({id: -1, name: "none"})
     const socket = useContext(WebsocketContext);
     let chatToDisplay = chatsOfUser.find(element => element.id === activeChat.id);
+    if (chatToDisplay == undefined && chatsOfUser.length > 0)
+        chatToDisplay = chatsOfUser[0];
     const [lastMessage, setLastMessage] = useState<Message>({msg: "", username: "", date: new Date, id: 0, idOfChat: 0})
 
     useEffect(() => {
@@ -50,7 +52,7 @@ const ChatComponent = () => {
         } 
     },[])
     
-    if (chatToDisplay !== undefined) {
+    if (chatToDisplay !== undefined && activeChat.id > 0) {
     return (
         <div className="chatcomponent">
             <div className='container'>
@@ -64,7 +66,7 @@ const ChatComponent = () => {
         <div className="chatcomponent">
             <div className='container'>
                 <Sidebar activeChat={activeChat} setActiveChat={setActiveChat} chatsOfUser={chatsOfUser} setChatsOfUser={setChatsOfUser} lastMessage={lastMessage}/>
-                <div className='noChat'>Pong Chat</div>
+                <div className='noChat'>No chat</div>
             </div>
         </div>
         )
@@ -74,7 +76,7 @@ const ChatComponent = () => {
             <div className="chatcomponent">
             <div className='container'>
                 <Sidebar activeChat={activeChat} setActiveChat={setActiveChat} chatsOfUser={chatsOfUser} setChatsOfUser={setChatsOfUser} lastMessage={lastMessage}/>
-                <div className='noChat'>You lost permission to access : {activeChat.name}</div>
+                <div className='noChat'>You lost access to  :  {activeChat.name}</div>
             </div>
         </div>
         )

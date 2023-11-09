@@ -68,11 +68,9 @@ export class MyGateway {
 					id: lastMessageId,
 					idOfChat: messageData.idOfChat
 				}
-				
+				await this.prismaChatService.addChatMessage(messageData.idOfChat, messageData.username, messageData.content, getDate());
 				this.server.to(messageData.idOfChat.toString()).emit('newMessage', message);
 				this.server.to(messageData.idOfChat.toString()).emit('lastMessage', message);
-
-				await this.prismaChatService.addChatMessage(messageData.idOfChat, messageData.username, messageData.content, getDate());
 			}
 		}
 	}

@@ -31,7 +31,6 @@ export class RetrieveMessageService {
 					}
 					messageHistory.push(msg);
 				};
-				console.log('message history = ', messageHistory)
 				sock.emit('chatMsgHistory', messageHistory);
 			}
 		}
