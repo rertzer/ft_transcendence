@@ -56,7 +56,7 @@ export class ChatOptController {
 
 	@Post('kickUser')
 	async kickUser(@Body() user:{login:string, chatId: number}) {
-		console.log("in kick user ");
+		console.log("in kick user ", user.login);
 		if (! await this.prismaChatService.isAdmin(user.login, user.chatId) && ! await this.prismaChatService.isOwner(user.login, user.chatId))
 		{
 			console.log("passed this step");
@@ -65,8 +65,9 @@ export class ChatOptController {
 			{
 				console.log("kickk ????")
 				const SockArray = this.gateway.getSocketsArray()
+				console.log("user. login = ", user.login);
 				const targetSocket = SockArray.find((socket) => socket.login === user.login);
-				console.log("targetSocket = ", targetSocket);
+				console.log("targetSocket = ", targetSocket)
 				if (targetSocket)
 				{
 					console.log("removed the socket of :",user.login, "from the sock room number:", user.chatId)
