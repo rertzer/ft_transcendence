@@ -11,7 +11,6 @@ import {Link} from "react-router-dom";
 
 const ConversationBar = (props: {toDisplay: allChatOfUser , setActiveChat: Function, isOwner: boolean, isAdmin: boolean}) => {
 
-    console.log("LE CHAT A AFFICHER: ", props.toDisplay)
     // if (props.toDisplay.isChannel === false) {  //interface d'une fenetre de DM
     //     return (
     //     <div className='chatInfo'>
@@ -58,7 +57,7 @@ const ConversationBar = (props: {toDisplay: allChatOfUser , setActiveChat: Funct
                  </div>
                 <div>
                     <Tooltip title="Close conversation" arrow>
-                        <CloseIcon onClick={() => {props.setActiveChat({id: -1, channelName: "", chatPicture: "", isChannel: false, receiverUsername: "", status: "", username: null, dateSend: null, msg: null})}} />
+                        <CloseIcon onClick={() => {props.setActiveChat({id: -1, channelName: "Pong Chat", chatPicture: "", isChannel: false, receiverUsername: "", status: "", username: null, dateSend: null, msg: null})}} />
                     </Tooltip>
                  </div>
             </div>

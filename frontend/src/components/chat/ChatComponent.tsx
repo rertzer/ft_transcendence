@@ -3,6 +3,7 @@ import Sidebar from './Sidebar';
 import Chat from './Chat'
 import { WebsocketContext } from "../../context/chatContext";
 import { useState, useEffect, useContext } from 'react';
+import  ConnectionContext from "../../context/authContext"
 import { act } from "react-dom/test-utils";
 
 export type allChatOfUser = {
@@ -31,7 +32,7 @@ export type Message = {
 const ChatComponent = () => {
 
     const [chatsOfUser, setChatsOfUser] = useState<allChatOfUser[]>([])
-    const [activeChat, setActiveChat] = useState<allChatOfUser>({id: -1, channelName: "", chatPicture: "", isChannel: false, receiverUsername: "", status: "", username: null, dateSend: null, msg: null})
+    const [activeChat, setActiveChat] = useState<allChatOfUser>({id: -1, channelName: "Pong Chat", chatPicture: "", isChannel: false, receiverUsername: "", status: "", username: null, dateSend: null, msg: null})
     const socket = useContext(WebsocketContext);
     const [lastMessage, setLastMessage] = useState<Message>({msg: "", username: "", date: new Date, id: 0, idOfChat: 0})
 
@@ -45,35 +46,39 @@ const ChatComponent = () => {
         } 
     },[])
     
-    if (activeChat.id > 0) {
+    useEffect(() => {
+        if (chatsOfUser.indexOf(activeChat) === -1 && activeChat.id > 0)
+            setActiveChat({id: -2, channelName: "You lost access to this channel", chatPicture: "", isChannel: false, receiverUsername: "", status: "", username: null, dateSend: null, msg: null})
+    }, [chatsOfUser.length])
+
     return (
         <div className="chatcomponent">
             <div className='container'>
                 <Sidebar activeChat={activeChat} setActiveChat={setActiveChat} chatsOfUser={chatsOfUser} setChatsOfUser={setChatsOfUser} lastMessage={lastMessage}/>
-                <Chat toDisplay={activeChat} setActiveChat={setActiveChat}/>
+                {activeChat.id > 0 ? <Chat toDisplay={activeChat} setActiveChat={setActiveChat}/> : <NoChat message={activeChat.channelName}/>}
             </div>
         </div>
     )
-    } else if (activeChat.id === -1) {
-        return (
-        <div className="chatcomponent">
-            <div className='container'>
-                <Sidebar activeChat={activeChat} setActiveChat={setActiveChat} chatsOfUser={chatsOfUser} setChatsOfUser={setChatsOfUser} lastMessage={lastMessage}/>
-                <div className='noChat'>Pong chat</div>
-            </div>
-        </div>
-        )
-    }
-    else {
-        return (
-            <div className="chatcomponent">
-            <div className='container'>
-                <Sidebar activeChat={activeChat} setActiveChat={setActiveChat} chatsOfUser={chatsOfUser} setChatsOfUser={setChatsOfUser} lastMessage={lastMessage}/>
-                <div className='noChat'>You lost access to this channel</div>
-            </div>
-        </div>
-        )
-    }
 }
 
 export default ChatComponent;
+
+
+const NoChat = (props: {message: string}) => {
+
+    const {username} = useContext(ConnectionContext);
+    const socket = useContext(WebsocketContext);
+
+    useEffect(() => {
+
+    socket.on('newMessage', (chatHistoryReceive :{msg: string, username: string, date: Date, id: number, idOfChat:number, serviceMessage: boolean}) => {
+
+        socket.emit("chatListOfUser",username);
+    });
+    return () => {
+        socket.off('newMessage');
+    }
+}, [])
+
+    return (<div className='noChat'>{props.message}</div>);
+}
