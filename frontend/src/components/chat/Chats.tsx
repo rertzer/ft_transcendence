@@ -10,11 +10,6 @@ const Chats = (props: {activeChat: allChatOfUser, setActiveChat: Function, chats
     const socket = useContext(WebsocketContext);
     const {username} = useContext(ConnectionContext);
 
-
-    useEffect(() => {
-        console.log("chats of useeeeeeeer : ", props.chatsOfUser)
-    }, [props.chatsOfUser]);
-
     useEffect(() => {
 
         trigger();
@@ -74,6 +69,13 @@ const Chats = (props: {activeChat: allChatOfUser, setActiveChat: Function, chats
     return (chatsOfUser);
     }
 
+    function findReceiverName(names: string) {
+
+        let name = names.replace(username, "");
+        name.trim()
+        return (name)
+    }
+
     return (
         <div className='chats'>
             {props.chatsOfUser.length === 0 ? (
@@ -90,7 +92,7 @@ const Chats = (props: {activeChat: allChatOfUser, setActiveChat: Function, chats
                                 <div className={props.activeChat.id === channel.id ? "userChat active" : "userChat"}>
                                     <img src={channel.chatPicture === null ? "" : channel.chatPicture} />
                                     <div className='userChatInfo'>
-                                        <h1>{channel.channelName}</h1>
+                                        <h1>{channel.isChannel ? channel.channelName : findReceiverName(channel.channelName)}</h1>
                                         <p>{channel.msg ? channel.msg : ""}</p>
                                     </div>
                                 </div>

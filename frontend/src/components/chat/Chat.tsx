@@ -7,7 +7,7 @@ import ConversationBar from "./ConversationBar";
 import { useContext } from "react";
 
 
-const Chat = (props: {toDisplay: allChatOfUser, setActiveChat: Function}) => {
+const Chat = (props: { toDisplay: allChatOfUser, setActiveChat: Function}) => {
 
     let isOwner = false;
     let isAdmin = false;

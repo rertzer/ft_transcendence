@@ -47,11 +47,13 @@ const ChatComponent = () => {
     },[])
     
     useEffect(() => {
-        console.log("CHATS OF USER: ", chatsOfUser)
-        console.log("ACTIVE : ", activeChat)
-        console.log("INDEX: ", chatsOfUser.indexOf(activeChat))
-        if (chatsOfUser.indexOf(activeChat) === -1 && activeChat.id > 0)
-            setActiveChat({id: -2, channelName: "You lost access to this channel", chatPicture: "", isChannel: false, receiverUsername: "", status: "", username: null, dateSend: null, msg: null})
+
+        const id = activeChat.id;
+        const excluded = false;
+        if (chatsOfUser.length === 1)
+            setActiveChat(chatsOfUser[0]);
+        else if (id !== -1 && chatsOfUser.find(element => element.id === id) === undefined) 
+            setActiveChat({id: -1, channelName: "You have just lost access to this channel", chatPicture: "", isChannel: false, receiverUsername: "", status: "", username: null, dateSend: null, msg: null})
     }, [chatsOfUser.length])
 
     return (
