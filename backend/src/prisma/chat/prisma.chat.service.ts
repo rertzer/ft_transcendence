@@ -343,22 +343,21 @@ export class PrismaChatService {
 				channel: true,
 			},
 		})
-		console.log("chat list = ", userChatChannels);
 		return userChatChannels;
 	}
 
 	async getListOfChat()
-    {
-        //ajouter les password protected
-        const chatChanel = await this.prismaService.chatChannels.findMany({
-            where:{
-                type: {
-                    in: ["public", "protected by password"],
-                  },
-            }
-        })
-        return chatChanel;
-    }
+	{
+		//ajouter les password protected
+		const chatChanel = await this.prismaService.chatChannels.findMany({
+			where:{
+				type: {
+					in: ["public", "protected by password"],
+				  },
+			}
+		})
+		return chatChanel;
+	}
 
 	async getLastMessages(id:number)
 	{
@@ -419,21 +418,43 @@ export class PrismaChatService {
 		}
 	}
 
-
-	async addChat(chatName: string, chatType: string, chatOwnerId: number, chatPassword: string | null) {
-
-		const newChat = await this.prismaService.chatChannels.create({
-			data: {
+	async addDmChat(chatName: string, chatType: string, chatOwnerId: number)
+	{
+		const alreadyIn = await this.prismaService.chatChannels.findFirst({
+			where: {
 				type: chatType,
 				name: chatName,
-				password: chatPassword,
-				channelOwner: {
-					connect: { id: chatOwnerId }
-				}
 			}
 		})
-		return newChat.id;
+		if (!alreadyIn)
+		{
+			const newChat = await this.prismaService.chatChannels.create({
+				data: {
+					type: chatType,
+					name: chatName,
+					password: null,
+					channelOwner: {
+						connect: { id: chatOwnerId }
+					}
+				}
+			})
+			return newChat.id;
+		}
+	}
 
+
+	async addChat(chatName: string, chatType: string, chatOwnerId: number, chatPassword: string | null) {
+			const newChat = await this.prismaService.chatChannels.create({
+				data: {
+					type: chatType,
+					name: chatName,
+					password: chatPassword,
+					channelOwner: {
+						connect: { id: chatOwnerId }
+					}
+				}
+			})
+			return newChat.id;
 	}
 
 	async getLastMessagesUsername(chatId: number) {
