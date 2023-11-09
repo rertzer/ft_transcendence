@@ -13,7 +13,6 @@ export class ChatLister{
 		const retrieveChat = await this.prismaService.getListOfChatByUsername(username);
 		if (retrieveChat !== undefined)
 		{
-			console.log("chat receive", retrieveChat );
 			for (const chatUser of retrieveChat)
 			{
 				const lastMessagesOfChat = await this.prismaService.getLastMessages(chatUser.channel_id);
@@ -21,7 +20,7 @@ export class ChatLister{
 				let date = null;
 				let lastMessage = null;
 				let message = null;
-				console.log("last message of chat :", chatUser.channel_id, " is ", lastMessagesOfChat);
+
 				if (lastMessagesOfChat !== undefined && lastMessagesOfChat && lastMessagesOfChat.length > 0)
 				{
 					lastMessage = lastMessagesOfChat[0];
@@ -43,7 +42,6 @@ export class ChatLister{
 				}
 				chatList.push(chatType);
 			}
-			console.log("i ve send the chat list",chatList);
 			sock.emit('ListOfChatOfUser', chatList);
 		}
 	}

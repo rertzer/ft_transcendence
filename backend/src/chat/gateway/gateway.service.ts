@@ -10,6 +10,8 @@ import {ChatLister} from "../chatLister/chatLister.service";
 import { Socket } from "socket.io";
 import { CreateChatService } from "../createchat/createchat.service";
 import { MutedUserService } from "../mutedUser/mutedUser.service";
+import { subscribe } from "diagnostics_channel";
+import { PrivateConvService } from "../privateConv/privateConv.service";
 
 
 let lastMessageId = 0;
@@ -25,7 +27,9 @@ let lastMessageId = 0;
 @Injectable()
 export class MyGateway {
 
-	constructor (private readonly mutedUserService: MutedUserService, private prismaChatService: PrismaChatService){}
+	constructor (private readonly mutedUserService: MutedUserService,
+		 private prismaChatService: PrismaChatService,
+		 private privateConv : PrivateConvService ){}
 	private socketsLogin: { login: string; sock: Socket }[] = [];
 
 	@WebSocketServer()
@@ -142,6 +146,23 @@ export class MyGateway {
 			}
 	}
 
+	@SubscribeMessage('newPrivateConv')
+	async onNewPrivateConv(@MessageBody() messageData: {sender: string, receiver: string}, @ConnectedSocket() client:Socket)
+	{
+		console.log("on new dm");
+		const targetSocket = this.socketsLogin.find((socket) => socket.sock === client);
+		if (targetSocket !== undefined)
+		{
+			const receiverSocket = this.socketsLogin.find((socket) => socket.login === messageData.receiver)
+			if (receiverSocket)
+			{
+				const allGood = await this.privateConv.setDirectConv(messageData.sender, messageData.receiver, targetSocket.sock, receiverSocket.sock);
+				console.log("hey all good or nah :", allGood);
+			}
+		}
+
+	}
+
 	@SubscribeMessage('createChat')
 	async onCreateChat(@MessageBody() messageData: {username: string, chatName: string, chatType: string, chatPassword: string}, @ConnectedSocket() client:Socket) {
 		const targetSocket = this.socketsLogin.find((socket) => socket.sock === client);
@@ -179,7 +200,6 @@ export class MyGateway {
 		console.log("plop")
 		if (targetSocket !== undefined)
 		{
-			console.log("hey chat list");
 			const chatLister = new ChatLister(this.prismaChatService);
 			await chatLister.listChatOfUser(username, targetSocket.sock);
 		}

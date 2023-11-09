@@ -63,6 +63,7 @@ model ChatChannels {
   type               String
   name               String?
   password           String?
+  
   chatMessages       ChatMsgHistory[]     @relation("ChatMessages")
   channelOwner       User                 @relation("ChatChannelsOwner", fields: [owner], references: [id])
   channelsUsers      ChatChannelsUser[]   @relation("ChatChannelsUser")
