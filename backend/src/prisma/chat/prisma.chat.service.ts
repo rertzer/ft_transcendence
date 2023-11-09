@@ -348,15 +348,17 @@ export class PrismaChatService {
 	}
 
 	async getListOfChat()
-	{
-		//ajouter les password protected
-		const chatChanel = await this.prismaService.chatChannels.findMany({
-			where:{
-				type: "public"
-			}
-		})
-		return chatChanel;
-	}
+    {
+        //ajouter les password protected
+        const chatChanel = await this.prismaService.chatChannels.findMany({
+            where:{
+                type: {
+                    in: ["public", "protected by password"],
+                  },
+            }
+        })
+        return chatChanel;
+    }
 
 	async getLastMessages(id:number)
 	{

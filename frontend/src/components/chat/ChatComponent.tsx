@@ -47,6 +47,9 @@ const ChatComponent = () => {
     },[])
     
     useEffect(() => {
+        console.log("CHATS OF USER: ", chatsOfUser)
+        console.log("ACTIVE : ", activeChat)
+        console.log("INDEX: ", chatsOfUser.indexOf(activeChat))
         if (chatsOfUser.indexOf(activeChat) === -1 && activeChat.id > 0)
             setActiveChat({id: -2, channelName: "You lost access to this channel", chatPicture: "", isChannel: false, receiverUsername: "", status: "", username: null, dateSend: null, msg: null})
     }, [chatsOfUser.length])

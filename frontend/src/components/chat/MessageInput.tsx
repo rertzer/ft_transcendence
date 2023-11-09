@@ -4,11 +4,6 @@ import { WebsocketContext } from '../../context/chatContext';
 import  ConnectionContext from "../../context/authContext"
 import { allChatOfUser } from './ChatComponent';
 
-type MessagePayload = {
-	msg: string;
-	username: string;
-	id: string;
-  };
 
 type ChatHistory = {
 	msg: string;
@@ -17,8 +12,6 @@ type ChatHistory = {
 	id: number;
 }
 const MessageInput = (props: {chatId: number}) => {
-
-	const [messages, setMessages] = useState<MessagePayload[]>([]);
 
 	const [value, setValue] = useState('');
 	const socket = useContext(WebsocketContext);
