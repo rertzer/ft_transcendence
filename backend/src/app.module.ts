@@ -4,9 +4,10 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { MutedUserModule } from './chat/mutedUser/mutedUser.module';
+import { FriendModule } from './friend/friend.module';
 
 @Module({
-  imports: [/*AuthModule,*/ UserModule, PrismaModule, ChatModule, MutedUserModule],
+  imports: [/*AuthModule,*/ UserModule, PrismaModule, ChatModule, MutedUserModule,FriendModule],
   controllers: [],
   providers: [],
 })

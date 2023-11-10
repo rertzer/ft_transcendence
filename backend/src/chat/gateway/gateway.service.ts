@@ -28,7 +28,7 @@ export class MyGateway {
 	constructor (private readonly mutedUserService: MutedUserService,
 		 private prismaChatService: PrismaChatService,
 		 private privateConv : PrivateConvService ){}
-	private socketsLogin: { login: string; sock: Socket }[] = [];
+	private socketsLogin: { login: string; sock: Socket, idOfLogin: number }[] = [];
 
 	@WebSocketServer()
 	server: Server;
@@ -50,8 +50,9 @@ export class MyGateway {
 	{
 		if (!this.socketsLogin.find((item) => item.login === login && item.sock === client))
 		{
-			console.log("plop trigger0");
-			this.socketsLogin.push({login : login , sock: client})
+			const idOfLogin = await this.prismaChatService.getIdOfLogin(login);
+			if (idOfLogin)
+				this.socketsLogin.push({login : login , sock: client, idOfLogin: idOfLogin})
 		}
 	}
 
@@ -71,7 +72,7 @@ export class MyGateway {
 					idOfChat: messageData.idOfChat,
 					serviceMessage: messageData.serviceMessage
 				}
-				await this.prismaChatService.addChatMessage(messageData.idOfChat, messageData.username, messageData.content, getDate(), message.serviceMessage);
+				await this.prismaChatService.addChatMessage(messageData.idOfChat, targetSocket.idOfLogin, messageData.content, getDate(), messageData.serviceMessage);
 				this.server.to(messageData.idOfChat.toString()).emit('newMessage', message);
 				this.server.to(messageData.idOfChat.toString()).emit('lastMessage', message);
 			}
@@ -96,7 +97,7 @@ export class MyGateway {
 	// 	if (targetSocket !== undefined)
 	// 	{
 	// 		const joinClass = new JoinChatService(this.prismaChatService);
-	// 		joinClass.joinChat(messageData.username, messageData.chat_id, messageData.user_role, messageData.passeword, targetSocket.sock);
+	// 		joinClass.joinChat(targetSocket.idOfLogin, messageData.chat_id, messageData.user_role, messageData.passeword, targetSocket.sock);
 	// 	}
 	// }
 
@@ -115,10 +116,8 @@ export class MyGateway {
 			}
 			else {
 				const idToSend = await this.prismaChatService.getIdOfLogin(messageData.loginToSend);
-				const idOfSender = await this.prismaChatService.getIdOfLogin(messageData.idOfUser);
-
-				if (idOfSender !== undefined && idToSend !== undefined)
-					this.prismaChatService.addPrivateMessage(idOfSender, idToSend, messageData.msg);
+				if (idToSend !== undefined)
+					this.prismaChatService.addPrivateMessage(targetSocket.idOfLogin, idToSend, messageData.msg);
 			}
 		}
 	}
@@ -155,7 +154,7 @@ export class MyGateway {
 			const receiverSocket = this.socketsLogin.find((socket) => socket.login === messageData.receiver)
 			if (receiverSocket)
 			{
-				const allGood = await this.privateConv.setDirectConv(messageData.sender, messageData.receiver, targetSocket.sock, receiverSocket.sock);
+				const allGood = await this.privateConv.setDirectConv(messageData.sender, targetSocket.idOfLogin, messageData.receiver, targetSocket.sock, receiverSocket.sock);
 				console.log("hey all good or nah :", allGood);
 			}
 		}
@@ -168,7 +167,7 @@ export class MyGateway {
 		if (targetSocket !== undefined)
 		{
 			const CreateRoom = new CreateChatService(this.prismaChatService);
-			CreateRoom.createChat(messageData.username, messageData.chatPassword, messageData.chatName, messageData.chatType, targetSocket.sock);
+			CreateRoom.createChat(messageData.username, targetSocket.idOfLogin ,messageData.chatPassword, messageData.chatName, messageData.chatType, targetSocket.sock);
 		}
 	}
 
@@ -178,7 +177,6 @@ export class MyGateway {
 		const targetSocket = this.socketsLogin.find((socket) => socket.sock === client);
 		if (targetSocket !== undefined)
 		{
-			console.log("trigger twice ??")
 			const RetrieveMessage = new RetrieveMessageService(this.prismaChatService);
 			RetrieveMessage.retrieveMessage(messageData.chatId, messageData.numberMsgToDisplay, targetSocket.sock);
 		}
@@ -196,11 +194,10 @@ export class MyGateway {
 	@SubscribeMessage('chatListOfUser')
 	async onChatListOfUser(@MessageBody() username: string, @ConnectedSocket() client:Socket) {
 		const targetSocket = this.socketsLogin.find((socket) => socket.sock === client);
-		console.log("plop")
 		if (targetSocket !== undefined)
 		{
 			const chatLister = new ChatLister(this.prismaChatService);
-			await chatLister.listChatOfUser(username, targetSocket.sock);
+			await chatLister.listChatOfUser(targetSocket.idOfLogin, targetSocket.sock);
 		}
 	}
 

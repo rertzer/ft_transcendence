@@ -58,12 +58,12 @@ model ChatChannelsUser {
 }
 
 model ChatChannels {
-  id                 Int                  @id @default(autoincrement())
-  owner              Int
-  type               String
-  name               String?
-  password           String?
-  
+  id       Int     @id @default(autoincrement())
+  owner    Int
+  type     String
+  name     String?
+  password String?
+
   chatMessages       ChatMsgHistory[]     @relation("ChatMessages")
   channelOwner       User                 @relation("ChatChannelsOwner", fields: [owner], references: [id])
   channelsUsers      ChatChannelsUser[]   @relation("ChatChannelsUser")
@@ -105,7 +105,6 @@ model Friend {
   id                Int     @id @default(autoincrement())
   user_id           Int
   friend_id         Int
-  friendship_status String?
   user              User    @relation("UserToFriends", fields: [user_id], references: [id])
 }
 

@@ -7,10 +7,10 @@ export class ChatLister{
 	constructor(private prismaService:PrismaChatService){
 	}
 
-	async listChatOfUser(username: string, sock: Socket)
+	async listChatOfUser(idLogin: number, sock: Socket)
 	{
 		const chatList = [];
-		const retrieveChat = await this.prismaService.getListOfChatByUsername(username);
+		const retrieveChat = await this.prismaService.getListOfChatByUsername(idLogin);
 		if (retrieveChat !== undefined)
 		{
 			for (const chatUser of retrieveChat)
@@ -30,7 +30,6 @@ export class ChatLister{
 					lastMessageUsername =  await this.prismaService.getLastMessagesUsername(chatUser.channel_id);
 				}
 				const avatarOfOwner = await this.prismaService.getOwnerOfChatAvatar(chatUser.channel_id);
-				console.log("avatar the joined : ", avatarOfOwner);
 				const chatType = {
 					id: chatUser.channel.id,
 					channelName: chatUser.channel.name,

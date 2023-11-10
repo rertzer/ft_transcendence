@@ -12,7 +12,6 @@ export class RetrieveMessageService {
 	async retrieveMessage(chat_id: number, NumToDisplay: number, sock : Socket)
 	{
 		const messageHistory = [];
-		console.log("hey");
 		if (chat_id !== undefined)
 		{
 			const messageReceived = await this.prismaService.RetrieveChatMessage(chat_id);

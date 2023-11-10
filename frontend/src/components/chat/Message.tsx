@@ -44,7 +44,7 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
     }, [])
 
 	async function checkIfUserIsBanned(userName: string, chatID: number) {
-		
+
 		try {
 			const response = await fetch(`http://localhost:4000/chatOption/${props.username}/banned/${chatID}`);
 			if (!response.ok) {
@@ -146,6 +146,19 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 		socket.emit('newPrivateConv', messageData);
 	}
 
+	async function addToFriends()
+	{
+		const requestOptions = {
+			method: 'post',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ login: username, friendToAdd: props.username})
+		};
+		toggleUserActionsMenu();
+		await fetch('http://localhost:4000/friend/addFriend/', requestOptions)
+		sendServiceMessage(props.username + " has been kicked from this channel");
+
+	}
+
 	if (messageType !== "service") {
 		return (
 			<div className={messageType === "owner" ? "message owner" : "message"}>
@@ -161,7 +174,7 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 								<hr></hr>
 								<div className="menuItems">
 									<div>Invite to play</div>
-									<div>Add to friends</div>
+									<div onClick={addToFriends}>Add to friends</div>
 									<div onClick={startDM}>Send DM</div>
 									<Link to="/profile/1" style={{textDecoration:"none", color: "#ddddf7"}}>
 										<div onClick={toggleUserActionsMenu}>Show profile</div>

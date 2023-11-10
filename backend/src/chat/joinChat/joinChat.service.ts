@@ -11,12 +11,8 @@ export class JoinChatService{
 	constructor(private prismaService:PrismaChatService ){
 	}
 
-	async joinChat(username: string, chat_id:number, user_role:string, password:string, sock : Socket)
+	async joinChat(loginId:number, chat_id:number, user_role:string, password:string, sock : Socket)
 	{
-
-		// if (this.checkNumber(chat_id) === -1)
-		// 	return "-1";
-
 		const value = await this.checkChatExist(chat_id);
 		if (value < 0)
 		{
@@ -25,10 +21,10 @@ export class JoinChatService{
 
 		}
 		console.log("lol");
-		if (!await this.prismaService.checkIfUserIsBanned(chat_id, username))
+		if (!await this.prismaService.checkIfUserIsBanned(chat_id, loginId))
 		{
 			console.log("lol 2")
-			const added = await this.addUserToChat(username, chat_id, user_role, password);
+			const added = await this.addUserToChat(loginId, chat_id, user_role, password);
 			if (!added)
 			{
 				console.log("added failed")
@@ -66,24 +62,20 @@ export class JoinChatService{
 
 
 
-	async addUserToChat(login: string, chat_id:number, user_role:string, password:string)
+	async addUserToChat(loginId: number, chat_id:number, user_role:string, password:string)
 	{
-		const userId = await this.prismaService.getIdOfLogin(login);
-		//need to check if the user is already in the chat
-		//if not then :
-		if (userId !== undefined)
-		{
+
 			const getPasswordOfChat = await this.prismaService.getPasswordOfChat(chat_id)
+
 			console.log("password retrieve : ", getPasswordOfChat, "password receive = ", password);
-			if (getPasswordOfChat === password)
+			if (password == "" ||  getPasswordOfChat === password)
 			{
 				console.log("hey");
-				await this.prismaService.userHasbeenKickedInChat(userId, chat_id) == true //user updated to removed kicked value
-				const chatId = await this.prismaService.addChanelUser(chat_id,userId, user_role, getDate(), null);
+				await this.prismaService.userHasbeenKickedInChat(loginId, chat_id) == true //user updated to removed kicked value
+				const chatId = await this.prismaService.addChanelUser(chat_id, loginId, user_role, getDate(), null);
 				if (chatId !== undefined)
 					return (chatId.toString());
 			}
+			return (undefined)
 		}
-		return (undefined)
 	}
-}
