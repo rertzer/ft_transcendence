@@ -27,6 +27,7 @@ export const ListChannels = (props: {chatsOfUser: allChatOfUser[], showSubMenu: 
 	const [password, setPassword] = useState('');
 	const [chanToJoin, setChanToJoin] = useState<Channel>({id: 0, name: "", owner: "", type: "", password: null});
 	const [availableChannels, setAvailableChannels] = useState<Channel[]>([{id: -1, name: "", owner: "", type: "", password: ""}]);
+	const [errorMessage, setErrorMessage] = useState("");
 
 	// useEffect(() => {
 	// 	socket.on('onJoinChatRoom', (idChatRoom: JoinChatRoomPayload) => {
@@ -121,6 +122,13 @@ export const ListChannels = (props: {chatsOfUser: allChatOfUser[], showSubMenu: 
       }
     }
 
+	function checkIfWorked() {
+		if (props.chatsOfUser.find((element) => element.id.toString() === id))
+			setErrorMessage("")
+		else
+			setErrorMessage("You cannot access this channel, either because you entered a wrong password or because you're banned")
+	}
+
 	function isNotAlreadyIn(chan: Channel) {
 		if (props.chatsOfUser.find((element) => element.id === chan.id)) {
 			return (false);
@@ -145,7 +153,7 @@ export const ListChannels = (props: {chatsOfUser: allChatOfUser[], showSubMenu: 
 					onChange={(e) => setPassword(e.target.value)}
 					/>}
 				</div>
-				{ id !== "" && <button onClick={DealWithIdChat}>Join</button>}
+				{ id !== "" && <button onClick={() => {DealWithIdChat(); setId("")}}>Join</button>}
 			</div>
 			<hr/>
             {availableChannels.filter(isNotAlreadyIn).map((chan) => {return (
@@ -155,6 +163,11 @@ export const ListChannels = (props: {chatsOfUser: allChatOfUser[], showSubMenu: 
 			</div>
 			)
 			})}
+			{errorMessage !== "" ?
+			<div>
+				<hr/>
+				<p>{errorMessage}</p>
+			</div> : <div></div>}
         </div> : <div></div>}
     </div>
     );
