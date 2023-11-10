@@ -126,6 +126,11 @@ model GameParams {
   ballSpeedIncrease Float  @default(0.0005)
   paddleSpeed       Float  @default(0.01)
   goal              Int    @default(5)
+  ballInitPosx      Float  @default(0.5)
+  ballInitPosy      Float  @default(0.5)
+  BallInitDirx      Float  @default(0.5)
+  BallInitDiry      Float  @default(-1)
+  BallInitSpeed     Float  @default(0.006)
 }
 
 model GameObstacles {

@@ -2,7 +2,6 @@ import { Game, GameMaps, GameObstacles, GameParams, PrismaClient } from '@prisma
 import { Injectable, OnModuleInit } from "@nestjs/common";
 import { Room, TypeGame } from 'src/game/Interface/room.interface';
 import { Player } from 'src/game/Interface/player.interface';
-import { promises } from 'dns';
 
 export type GameStatus = 'ONGOING' | 'FORFAIT' | 'FINISHED' ;
 

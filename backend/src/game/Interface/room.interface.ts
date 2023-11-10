@@ -1,4 +1,4 @@
-import { GameObstacles } from "@prisma/client";
+import { GameObstacles, GameParams } from "@prisma/client";
 import { Ball } from "./ball.interface";
 import { Player } from "./player.interface";
 
@@ -22,4 +22,5 @@ export interface Room {
 	startingCount: number;
 	bddGameId:number;
 	typeGame:TypeGame;
+	gameParam: GameParams;
   }

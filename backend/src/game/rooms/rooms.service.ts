@@ -5,48 +5,30 @@ import { Ball } from '../Interface/ball.interface';
 import { IGameParamBackEnd } from '../Interface/gameparam.interface';
 import { Socket } from 'socket.io';
 import { PrismaGameService } from 'src/prisma/game/prisma.game.service';
-
-function colision(playerPosY: number, ball:Ball, pong:IGameParamBackEnd, sidePlayer:string):boolean {
-    const ballTop:number = ball.pos.y - pong.ballRadius;
-    const ballBtm:number = ball.pos.y + pong.ballRadius;
-    const ballLeft:number = ball.pos.x - pong.ballRadius;
-    const ballRight:number = ball.pos.x + pong.ballRadius;
-
-    const paddleTop:number =  playerPosY - pong.paddleHeight/2;
-    const paddleBtm:number = playerPosY + pong.paddleHeight/2;
-	
-    const paddleLeft:number = sidePlayer === 'left' ? 0 : 1 - pong.paddleWidth;
-    const paddleRight:number = sidePlayer === 'left' ? pong.paddleWidth : 1;
-
-    return (ballRight > paddleLeft && ballTop < paddleBtm && ballLeft < paddleRight && ballBtm > paddleTop)
-}
+import { GameService } from './game.service';
+import { OnModuleInit } from '@nestjs/common';
+import { GameParams } from '@prisma/client';
 
 @Injectable()
-export class RoomsService {
-	constructor(private prismaService: PrismaGameService){}
+export class RoomsService  implements OnModuleInit{
+	constructor(private prismaService: PrismaGameService, private gameService: GameService){}
+
+	async onModuleInit() {
+		await this.prismaService.gameParams.findMany({})
+		.then((gameParams) => {
+			this.gameParams = gameParams;
+		})
+	}
 
 	private rooms: Room[] = [];
 	private roomMaxId:number = 1;
+	private gameParams: GameParams[];
 	private waitingRoomBasic: Player | null = null;
 	private waitingRoomAdvanced: Player | null = null;
 
-	private initBall : Ball = {
-		id: 0,
-		pos: {x:1/2, y:1/2},
-		dir: {x: 0.5, y: -1},
-		speed:0.006,
-	};
-
-	private gameParam : IGameParamBackEnd = {
-		ballRadius: 0.01,
-		paddleWidth: 0.02,
-		paddleHeight: 0.25,
-		ballSpeedIncrease: 0.0005,
-		paddleSpeed:0.01,
-		goal:3
-	};
-
-	async createEmptyRoom(typeGame:TypeGame) {
+	async createEmptyRoom(typeGame:TypeGame) :Promise<Room | null> {
+		const gameParam = this.gameParams.find((gp) => {return (gp.type === typeGame)});
+		if (typeof(gameParam) === 'undefined') return null;
 		const newRoom: Room = {
 			id:this.roomMaxId,
 			balls: [],
@@ -62,16 +44,18 @@ export class RoomsService {
 			startingCountDownStart: null,
 			startingCount: 0,
 			bddGameId:0,
-			typeGame:typeGame
+			typeGame:typeGame,
+			gameParam: gameParam
 		}
 		this.rooms.push(newRoom);
 		this.roomMaxId++;
-		return (await this.updateRoomForAdvanceGame(newRoom));
+		return (await this.updateRoomForAdvancedGame(newRoom));
 	};
 
 	async createRoom(playerLeft:Player, playerRight:Player, typeGame:TypeGame) {
 		return(await this.createEmptyRoom(typeGame).then(
 			(room) => {
+				if (!room) return ; 
 				room.gameStatus = 'WAITING_TO_START';
 				room.playerLeft = playerLeft;
 				room.playerRight = playerRight;
@@ -80,7 +64,7 @@ export class RoomsService {
 		)
 	};
 
-	async updateRoomForAdvanceGame(room:Room) : Promise<Room> {
+	async updateRoomForAdvancedGame(room:Room) : Promise<Room> {
 		return (
 			await this.prismaService.gameMaps.findMany({
 				include : {
@@ -90,7 +74,7 @@ export class RoomsService {
 				const map = maps[Math.floor(Math.random() * maps.length)];
 				room.obstacles = map.obstacles;
 				for (let i = 0; i < map.nbBalls; i++) {
-					this.addNewBall(room);
+					room = this.gameService.addNewBall(room);
 				}
 				console.log('Room :', room.id, ' has been updated with maps');
 				return (room);
@@ -103,7 +87,7 @@ export class RoomsService {
 		if (waitingPlayer === null) {
 			if (typeGame === 'ADVANCED') this.waitingRoomAdvanced = player;
 			else this.waitingRoomBasic = player;
-			player.socket.emit('advanced_waiting_room_joined');
+			player.socket.emit('waiting_room_joined');
 		}
 		else {
 			this.createRoom(player, waitingPlayer, typeGame);
@@ -118,7 +102,7 @@ export class RoomsService {
 		console.log('Rooms :', this.rooms);
 	};
 
-	findAllRoom(): Room[] {
+	getAllRoom(): Room[] {
 		return this.rooms;
 	};
 
@@ -147,31 +131,18 @@ export class RoomsService {
 		return room;
 	};
 
-	addNewBall(room: Room) {
-		const newId:number = room.balls.length;
-		room.balls.push({
-			id: newId, 
-			pos: {x:this.initBall.pos.x, y:this.initBall.pos.y},
-			dir: {
-				x: Math.random() > 0.5 ? (Math.random() * 0.8) + 0.2 : -((Math.random() * 0.8) + 0.2 ), 
-				y: (Math.random() * 2) - 1
-			},
-			speed: this.initBall.speed
-		});
-	}
-
 	sendRoomStatus(room: Room) {
 		const data_to_send = {
 			idRoom:room.id,
 			gameParam: {
-				ballRadius: this.gameParam.ballRadius,
-				paddleWidth:this.gameParam.paddleWidth,
-				paddleHeight: this.gameParam.paddleHeight,
-				paddleSpeed: this.gameParam.paddleSpeed,
-				goal: this.gameParam.goal,
-				ballInitSpeed: this.initBall.speed,
-				ballInitDir: {x:this.initBall.dir.x, y:this.initBall.dir.y},
-				ballSpeedIncrease: this.gameParam.ballSpeedIncrease
+				ballRadius: room.gameParam.ballRadius,
+				paddleWidth: room.gameParam.paddleWidth,
+				paddleHeight: room.gameParam.paddleHeight,
+				paddleSpeed: room.gameParam.paddleSpeed,
+				goal: room.gameParam.goal,
+				ballInitSpeed: room.gameParam.BallInitSpeed,
+				ballInitDir: {x:room.gameParam.BallInitDirx, y: room.gameParam.BallInitDiry },
+				ballSpeedIncrease: room.gameParam.ballSpeedIncrease
 			},
 			playerLeft:{
 				name:room.playerLeft?.name,
@@ -247,105 +218,6 @@ export class RoomsService {
 		this.sendRoomStatus(room);
 	};
 
-	moveBalls(room:Room) : Room {
-		room.balls = room.balls.map((ball) => {
-			if(room.gameStatus !== 'PLAYING') return (ball);
-			ball.pos.x += (ball.speed / Math.sqrt(ball.dir.x**2 + ball.dir.y**2)) * ball.dir.x;
-			ball.pos.y += (ball.speed / Math.sqrt(ball.dir.x**2 + ball.dir.y**2)) * ball.dir.y;
-	
-			/*Top or bottom collision*/
-			if (ball.pos.y > 1 - this.gameParam.ballRadius 
-				|| ball.pos.y < this.gameParam.ballRadius) {
-					ball.dir.y = - ball.dir.y;
-			}
-			/* Paddle colision*/
-			let playerWithBallPosY = (ball.pos.x <= 1 / 2) ? room.playerLeft?.posY! : room.playerRight?.posY!;
-			let sidePlayer:string = (ball.pos.x <= 1 / 2) ? 'left' : 'right';
-			let direction = (ball.pos.x <= 1 / 2) ? 1 : -1;
-			if (colision(playerWithBallPosY, ball, this.gameParam, sidePlayer)) {
-				let colisionY = (ball.pos.y - (playerWithBallPosY)) / (this.gameParam.paddleHeight / 2);
-				let ang = colisionY * (Math.PI / 4);
-				ball.dir.x = direction * Math.cos(ang);
-				ball.dir.y = Math.sin(ang);
-				ball.speed += this.gameParam.ballSpeedIncrease;
-			}
-			return (ball);
-		});
-		return (room);		
-	}
-
-	movePlayerOnEvent(param :{room: Room, key:string, idPlayerMove:number, client:Socket}) {
-		let player:Player | null;
-		param.room.playerLeft?.socket === param.client ? player = param.room.playerLeft : player = param.room.playerRight;
-		if (!player) return ;
-		player.idPlayerMove = param.idPlayerMove;
-		switch (param.key){
-			case 'KeyW':
-				player.posY = Math.max(this.gameParam.paddleHeight / 2, player.posY - this.gameParam.paddleSpeed);
-				break;
-			case 'KeyS':
-				player.posY = Math.min(1 - this.gameParam.paddleHeight / 2,  player.posY + this.gameParam.paddleSpeed);
-				break;
-			case 'Space':
-				player.readyToPlay = true;
-				break;
-			default:
-				return; 
-		}
-	}
-
-	updateRoomGameStatus(room:Room) : Room {
-		if (room.gameStatus === 'FINISHED' || !room.playerLeft || !room.playerRight ) return (room);
-		if (room.gameStatus === 'WAITING_FOR_PLAYER' && room.playerLeft && room.playerRight ) {
-			room.gameStatus = 'WAITING_TO_START';
-		}
-		else if (room.gameStatus === 'WAITING_TO_START' && room.playerLeft.readyToPlay && room.playerRight.readyToPlay) {
-			room.gameStatus = 'STARTING';
-		}
-		else if (room.gameStatus === 'STARTING' && room.startingCount >= 3) {
-			room.gameStatus = 'PLAYING';
-			room.startingCount = 0;
-			room.startingCountDownStart = null;
-		}
-		else if (room.gameStatus === 'STARTING') {
-			if (room.startingCountDownStart === null) {
-				room.startingCountDownStart = new Date();
-			}
-			const newDate = new Date();
-			room.startingCount = (newDate.getTime() - room.startingCountDownStart.getTime()) / 1000;
-		}
-		return (room);
-	}
-
-	checkballsPositions(room: Room) : Room {
-
-		let ballsOut = room.balls.filter((ball) => {return ((ball.pos.x > 1 || ball.pos.x < 0))});
-		if (ballsOut.length === 0) return (room);
-		room.balls = room.balls.filter((ball) => {return (!(ball.pos.x > 1 || ball.pos.x < 0))});
-		ballsOut.forEach((ball) => {
-			let sidePlayer:string = (ball.pos.x <= 1 / 2) ? 'left' : 'right';
-			sidePlayer === 'left' ? room.scoreRight++ : room.scoreLeft++;
-		});
-		if (room.scoreRight >= this.gameParam.goal || room.scoreLeft >= this.gameParam.goal) {
-			room.gameStatus = 'FINISHED';
-			this.prismaService.finishGame(room, null);
-		}
-		for (let i = 0; i < ballsOut.length; i++) {
-			this.addNewBall(room);
-		}
-		return (room);
-	}
-
-	playGameLoop() {
-		const newRooms: Room[] = this.rooms.map((room) => {
-			room = this.updateRoomGameStatus(room);
-			room = this.moveBalls(room);
-			room = this.checkballsPositions(room);
-			return (room);
-		});
-		this.rooms = newRooms;
-	}
-
 	broadcastGameState() {
 		this.rooms.forEach(room => {
 			const data = {
@@ -373,6 +245,23 @@ export class RoomsService {
 			room.playerLeft?.socket.emit('game_state', data);
 			room.playerRight?.socket.emit('game_state', data);
 		});
+	}
+
+	playGameLoop() {
+		const newRooms: Room[] = this.rooms.map((room) => {
+			room = this.gameService.updateRoomGameStatus(room);
+			room = this.gameService.moveBalls(room);
+			room = this.gameService.checkballsPositions(room);
+			return (room);
+		});
+		this.rooms = newRooms;
+	}
+
+	handlePlayerKeyEvent(data:{key:string, idPlayerMove:number, client:Socket}){
+		const room = this.findRoomOfPlayerBySocket(data.client)
+		if (room) {
+			this.gameService.movePlayerOnEvent({room, key:data.key, idPlayerMove:data.idPlayerMove, client:data.client});
+		}
 	}
 
 }

@@ -24,3 +24,15 @@ On peut aussi indiquer si on est sur un jeu basic ou advance.
 
 - Si j'ai un type de jeu, mais pas de numero de room, j'indique que je suis en attente de matching. 
 
+
+Event a reprendre cote front : 
+
+give_me_a_room -> new_empty_room
+
+match_me ->  waiting_room_joined | room_status
+
+join_game ->  Error_player_already_in_room  | Error_room_full
+
+game_state
+
+keyevent -> 

@@ -6,6 +6,7 @@ import { RoomsService } from "./rooms/rooms.service";
 import { Interval } from "@nestjs/schedule";
 import { Logger } from "@nestjs/common";
 import { TypeGame } from "./Interface/room.interface";
+import { GameService } from "./rooms/game.service";
 
 @WebSocketGateway({
     namespace: '/game_socket',
@@ -23,6 +24,10 @@ export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, On
 
 	@Inject(RoomsService)
 	private readonly roomsService: RoomsService;
+
+	@Inject(RoomsService)
+	private readonly gameService: GameService;
+
 
 	@WebSocketServer()
 	server: Namespace;
@@ -76,13 +81,8 @@ export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, On
 	}
 	@SubscribeMessage('keyevent')
 	handlePlayerKeyEvent(@MessageBody() data:{key:string, idPlayerMove:number}, @ConnectedSocket() client:Socket){
-		const room = this.roomsService.findRoomOfPlayerBySocket(client)
-		if (room) {
-			this.roomsService.movePlayerOnEvent({room, key:data.key, idPlayerMove:data.idPlayerMove, client});
-		}
+		this.roomsService.handlePlayerKeyEvent({key:data.key, idPlayerMove:data.idPlayerMove, client});
 	}
-
-	
 
 	@Interval(1000/60)
 	handleInterval() {
