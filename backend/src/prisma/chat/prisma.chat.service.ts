@@ -313,7 +313,7 @@ export class PrismaChatService {
 	 async addChanelUser(channel_id : number, user_id : number, user_role:string, date_joined:Date, date_left:Date | null)
 	{
 		if (await this.userHasChatChannelsUser(user_id, channel_id)) {
-
+			return (0);
 		}
 		else {
 			const newMessage = await this.prismaService.chatChannelsUser.create ({

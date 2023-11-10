@@ -67,7 +67,6 @@ export class ChatOptController {
 				const SockArray = this.gateway.getSocketsArray()
 				console.log("user. login = ", user.login);
 				const targetSocket = SockArray.find((socket) => socket.login === user.login);
-				console.log("targetSocket = ", targetSocket)
 				if (targetSocket)
 				{
 					console.log("removed the socket of :",user.login, "from the sock room number:", user.chatId)
@@ -83,14 +82,15 @@ export class ChatOptController {
 	}
 
 	@Post('joinChat')
-	async joinChat(@Body() user: {username:string, chat_id: string, user_role:string, passeword:string })
+	async joinChat(@Body() user: {username:string, chat_id: number, password:string })
 	{
 		console.log("join chat object receive ", user);
 		const SockArray = this.gateway.getSocketsArray()
 		const targetSocket = SockArray.find((socket) => socket.login === user.username);
 		if (targetSocket !== undefined)
 		{
-			const value = this.joinChatservice.joinChat(user.username, user.chat_id, "user", user.passeword, targetSocket.sock);
+			console.log("???");
+			const value = this.joinChatservice.joinChat(user.username, user.chat_id, "user", user.password, targetSocket.sock);
 			return value;
 		}
 	}

@@ -3,14 +3,12 @@ import { SubscribeMessage, WebSocketGateway, MessageBody, WebSocketServer,Connec
 import { Server } from 'socket.io'
 import { PrismaChatService } from "src/prisma/chat/prisma.chat.service";
 import { getDate } from "../utils/utils.service";
-import { encodePassword, checkPassword } from "../password/password.service";
 import { JoinChatService } from "../joinChat/joinChat.service";
 import { RetrieveMessageService } from "../retrieveMessage/retrieveMessage.service";
 import {ChatLister} from "../chatLister/chatLister.service";
 import { Socket } from "socket.io";
 import { CreateChatService } from "../createchat/createchat.service";
 import { MutedUserService } from "../mutedUser/mutedUser.service";
-import { subscribe } from "diagnostics_channel";
 import { PrivateConvService } from "../privateConv/privateConv.service";
 
 
@@ -92,15 +90,15 @@ export class MyGateway {
 	}
 
 
-	@SubscribeMessage('JoinChatRoom')
-	async onJoinChatRoom(@MessageBody() messageData:{username: string, chat_id:string, user_role:string, passeword:string}, @ConnectedSocket() client:Socket) {
-		const targetSocket = this.socketsLogin.find((socket) => socket.sock === client);
-		if (targetSocket !== undefined)
-		{
-			const joinClass = new JoinChatService(this.prismaChatService);
-			joinClass.joinChat(messageData.username, messageData.chat_id, messageData.user_role, messageData.passeword, targetSocket.sock);
-		}
-	}
+	// @SubscribeMessage('JoinChatRoom')
+	// async onJoinChatRoom(@MessageBody() messageData:{username: string, chat_id:string, user_role:string, passeword:string}, @ConnectedSocket() client:Socket) {
+	// 	const targetSocket = this.socketsLogin.find((socket) => socket.sock === client);
+	// 	if (targetSocket !== undefined)
+	// 	{
+	// 		const joinClass = new JoinChatService(this.prismaChatService);
+	// 		joinClass.joinChat(messageData.username, messageData.chat_id, messageData.user_role, messageData.passeword, targetSocket.sock);
+	// 	}
+	// }
 
 	@SubscribeMessage('SendPrivateMessage')
 	async onSendMessage(@MessageBody() messageData: {msg: string, loginToSend: string, idOfUser: string}, @ConnectedSocket() client:Socket) {

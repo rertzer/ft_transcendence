@@ -3,7 +3,6 @@ import {MyGateway } from "../gateway/gateway.service";
 import { PrismaChatService} from "src/prisma/chat/prisma.chat.service";
 import { getDate } from "../utils/utils.service";
 import { Socket } from "socket.io";
-import {encodePassword} from '../password/password.service';
 import { ChatLister } from "../chatLister/chatLister.service";
 
 
@@ -16,12 +15,9 @@ export class CreateChatService {
 	{
 		const idOfUser = await this.prismaService.getIdOfLogin(login);
 
-			let encodedPassword : string | null = null;
-			if (chatPassword)
-				encodedPassword = await encodePassword(chatPassword);
 			if (idOfUser !== undefined)
 			{
-				const chatId = (await this.emitAndCreateRoom(login, encodedPassword, chatName, chatType, targetSocket, idOfUser)).toString();
+				const chatId = (await this.emitAndCreateRoom(login, chatPassword, chatName, chatType, targetSocket, idOfUser)).toString();
 				targetSocket.join(chatId.toString());
 				const chatlister = new ChatLister(this.prismaService);
 				chatlister.listChatOfUser(login, targetSocket);

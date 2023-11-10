@@ -11,22 +11,35 @@ export class JoinChatService{
 	constructor(private prismaService:PrismaChatService ){
 	}
 
-	async joinChat(username: string, chat_id:string, user_role:string, passeword:string, sock : Socket)
+	async joinChat(username: string, chat_id:number, user_role:string, password:string, sock : Socket)
 	{
 
-		if (this.checkNumber(chat_id) === -1)
-			return "-1";
+		// if (this.checkNumber(chat_id) === -1)
+		// 	return "-1";
+
 		const value = await this.checkChatExist(chat_id);
-		if (parseInt(value) < 0)
+		if (value < 0)
 		{
 			// here if return value = -2 need to check password
 			return (value);
 
 		}
-		if (!await this.prismaService.checkIfUserIsBanned(parseInt(chat_id), username))
-			await this.addUserToChat(username, chat_id, user_role, passeword)
-		sock.join(chat_id)
-		return value;
+		console.log("lol");
+		if (!await this.prismaService.checkIfUserIsBanned(chat_id, username))
+		{
+			console.log("lol 2")
+			const added = await this.addUserToChat(username, chat_id, user_role, password);
+			if (!added)
+			{
+				console.log("added failed")
+				return(-1)
+			}
+			console.log("chat_id to string = ", chat_id.toString());
+			sock.join(chat_id.toString())
+			return value;
+		}
+		else
+			return(-2) //pour indiquer au front que le user est ban du chat qu'il essaie de rejoindre
 	}
 	//async addUserToChat(username: string, chat_id:string, user_role:string, passeword:string)
 
@@ -40,17 +53,11 @@ export class JoinChatService{
 		return (0);
 	}
 
-	async checkChatExist(chat_id: string) {
-		const chatExist = await this.prismaService.checkChatId(parseInt(chat_id));
+	async checkChatExist(chat_id: number) {
+		const chatExist = await this.prismaService.checkChatId(chat_id);
 		if (chatExist == ChatType.NotExisting) {
 		  console.log("here 1");
-			return "-1";
-		} else if (chatExist == ChatType.Private) {
-			console.log("here 2");
-		  return '-3';
-		} else if (chatExist == ChatType.Password) {
-			console.log("here 3");
-			return '-2';
+			return -1;
 		} else {
 			console.log("here 4");
 		  return chat_id; // Convert chat_id to a string
@@ -59,20 +66,24 @@ export class JoinChatService{
 
 
 
-	async addUserToChat(login: string, chat_id:string, user_role:string, passeword:string)
+	async addUserToChat(login: string, chat_id:number, user_role:string, password:string)
 	{
 		const userId = await this.prismaService.getIdOfLogin(login);
 		//need to check if the user is already in the chat
 		//if not then :
 		if (userId !== undefined)
 		{
-			if (await this.prismaService.userHasbeenKickedInChat(userId, parseInt(chat_id)) == true) //user updated to removed kicked value
-				return (0)
-
-			const chatId = await this.prismaService.addChanelUser(parseInt(chat_id),userId, user_role, getDate(), null);
-			if (chatId !== undefined)
-				return (chatId.toString());
+			const getPasswordOfChat = await this.prismaService.getPasswordOfChat(chat_id)
+			console.log("password retrieve : ", getPasswordOfChat, "password receive = ", password);
+			if (getPasswordOfChat === password)
+			{
+				console.log("hey");
+				await this.prismaService.userHasbeenKickedInChat(userId, chat_id) == true //user updated to removed kicked value
+				const chatId = await this.prismaService.addChanelUser(chat_id,userId, user_role, getDate(), null);
+				if (chatId !== undefined)
+					return (chatId.toString());
+			}
 		}
-		return ("-1")
+		return (undefined)
 	}
 }

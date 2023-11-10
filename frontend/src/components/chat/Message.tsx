@@ -117,7 +117,7 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 		};
 		let banned = await checkIfUserIsBanned(username, props.chatId);
 		if (banned) {
-			setErrorMessage(props.username + " is already banned"); // ca ca marche po...
+			setErrorMessage(props.username + " is already banned");
 		//bien sur faut aussi verifier si le user est owner auquel cas faut un autre error message
 		} else {
 			await fetch('http://localhost:4000/chatOption/banUser/', requestOptions);
