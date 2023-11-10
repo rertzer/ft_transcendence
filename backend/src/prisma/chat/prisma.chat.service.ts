@@ -108,7 +108,7 @@ export class PrismaChatService {
 
 	async banUserPrism(idLogin:number, chatId : number)
 	{
-		if (await this.checkIfUserIsBanned(chatId, idLogin))
+		if (! await this.checkIfUserIsBanned(chatId, idLogin)) // changed
 		{
 			const banned = await this.prismaService.usersBannedToChats.create({
 				data: {
@@ -353,7 +353,6 @@ export class PrismaChatService {
 
 	async getOwnerOfChatAvatar(id:number)
 	{
-		console.log("id =  ", id);
 		const owner = await this.prismaService.chatChannels.findUnique({
 			where:{
 				id: id,

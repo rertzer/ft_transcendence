@@ -52,7 +52,6 @@ export class MyGateway {
 	{
 		if (!this.socketsLogin.find((item) => item.login === login && item.sock === client))
 		{
-			console.log("plop trigger0");
 			const idOfLogin = await this.prismaChatService.getIdOfLogin(login);
 			if (idOfLogin)
 				this.socketsLogin.push({login : login , sock: client, idOfLogin: idOfLogin})
@@ -179,7 +178,6 @@ export class MyGateway {
 		const targetSocket = this.socketsLogin.find((socket) => socket.sock === client);
 		if (targetSocket !== undefined)
 		{
-			console.log("trigger twice ??")
 			const RetrieveMessage = new RetrieveMessageService(this.prismaChatService);
 			RetrieveMessage.retrieveMessage(messageData.chatId, messageData.numberMsgToDisplay, targetSocket.sock);
 		}
@@ -197,7 +195,6 @@ export class MyGateway {
 	@SubscribeMessage('chatListOfUser')
 	async onChatListOfUser(@MessageBody() username: string, @ConnectedSocket() client:Socket) {
 		const targetSocket = this.socketsLogin.find((socket) => socket.sock === client);
-		console.log("plop")
 		if (targetSocket !== undefined)
 		{
 			const chatLister = new ChatLister(this.prismaChatService);

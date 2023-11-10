@@ -104,7 +104,6 @@ model Friend {
   id                Int     @id @default(autoincrement())
   user_id           Int
   friend_id         Int
-  friendship_status String?
   user              User    @relation("UserToFriends", fields: [user_id], references: [id])
 }
 

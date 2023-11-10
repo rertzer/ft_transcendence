@@ -30,7 +30,6 @@ export class ChatLister{
 					lastMessageUsername =  await this.prismaService.getLastMessagesUsername(chatUser.channel_id);
 				}
 				const avatarOfOwner = await this.prismaService.getOwnerOfChatAvatar(chatUser.channel_id);
-				console.log("avatar the joined : ", avatarOfOwner);
 				const chatType = {
 					id: chatUser.channel.id,
 					channelName: chatUser.channel.name,
