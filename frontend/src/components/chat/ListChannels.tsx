@@ -7,6 +7,15 @@ import { useContext, useState, useEffect } from 'react';
 import { WebsocketContext } from '../../context/chatContext';
 import  ConnectionContext from "../../context/authContext";
 import ChatContext from '../../context/chatContext';
+import { ChatTwoTone } from '@mui/icons-material';
+
+type Channel = {
+	id : number; 
+	name: string;
+	owner: string;
+	type: string;
+	password: null | string;
+}
 
 export const ListChannels = (props: {chatsOfUser: allChatOfUser[], showSubMenu: string, setShowSubMenu: Function}) => {
 
@@ -15,6 +24,9 @@ export const ListChannels = (props: {chatsOfUser: allChatOfUser[], showSubMenu: 
 	const {username} = useContext(ConnectionContext);
 	const {setChatId} = useContext(ChatContext);
 	const [id, setId] = useState('');
+	const [password, setPassword] = useState('');
+	const [chanToJoin, setChanToJoin] = useState<Channel>({id: 0, name: "", owner: "", type: "", password: null});
+	const [availableChannels, setAvailableChannels] = useState<Channel[]>([{id: -1, name: "", owner: "", type: "", password: ""}]);
 
 	// useEffect(() => {
 	// 	socket.on('onJoinChatRoom', (idChatRoom: JoinChatRoomPayload) => {
@@ -87,6 +99,20 @@ export const ListChannels = (props: {chatsOfUser: allChatOfUser[], showSubMenu: 
 		}
 	  }
 
+	useEffect(() => {
+
+		if (props.showSubMenu !== "list")
+			return;
+		socket.emit('chatList');
+		socket.on("chatList", (available: Channel[]) => {
+			setAvailableChannels(available);
+		});
+
+		return () => {
+			socket.off("chatList");
+		}
+	}, [props.showSubMenu]);
+
     const toggleForm = () => {
         if (props.showSubMenu !== "list") {
             props.setShowSubMenu("list");
@@ -95,34 +121,41 @@ export const ListChannels = (props: {chatsOfUser: allChatOfUser[], showSubMenu: 
       }
     }
 
+	function isNotAlreadyIn(chan: Channel) {
+		if (props.chatsOfUser.find((element) => element.id === chan.id)) {
+			return (false);
+		}
+		return (true);
+	}
+
     return (
     <div className='listchannels'>
         <Tooltip title="List available channels" arrow>
             <MenuIcon onClick={toggleForm}/>
         </Tooltip>
-        <div className={props.showSubMenu === "list" ? 'submenu' : "submenu-hidden"}>
-            <p>Recuperer tableau de tous les channels publics ou proteges par password
-                pour pouvoir le mapper et tout afficher (avec un petit logo cadenas si
-                y a un password). Classer par ordre de creation (plus recent d'abord)
-                ou par ordre alphabetique ? Fonction de recherche a implementer ?
-                Chacun de ces elements pourra avoir un onClick qui permet de rejoindre
-                le channel et d'updater le allChatOfUser (avec un sous-sous menu pour input
-                le mot de passe quand y en a un...)
-                Le fichier se trouve dans frontend/src/components/chat/ListChannels.tsx
-                </p>
-                <hr/>
-                <p>
-                    En attendant, j'ai mis l'ancien systeme pour rejoindre un chat ici pour pouvoir faire un peu le menage:
-                </p>
-                <hr/>
-                <p>Enter the id chat room you want to join</p>
-				  <input
-					type="text"
-					value={id}
-					onChange={(e) => setId(e.target.value)}
-				  />
-				  <button onClick={DealWithIdChat}>Join</button>
-        </div>
+		{props.showSubMenu === "list" ? 
+        <div className="submenu">
+			<div className="top">
+				<div className="joinInfo">
+				{id === "" ? <span>Choose a channel to join</span> : <span>Do you want to join "{chanToJoin.name}" ?</span>}
+				{chanToJoin.type === "protected by password" && <input
+					type="password"
+					placeholder='Password'
+					value={password}
+					onChange={(e) => setPassword(e.target.value)}
+					/>}
+				</div>
+				{ id !== "" && <button onClick={DealWithIdChat}>Join</button>}
+			</div>
+			<hr/>
+            {availableChannels.filter(isNotAlreadyIn).map((chan) => {return (
+			<div className="channelItem" key={chan.id}>
+				<p onClick={() => {setId(chan.id.toString()); setChanToJoin(chan)}}>{chan.name}</p>
+				{chan.type === "protected by password" && <LockIcon />}
+			</div>
+			)
+			})}
+        </div> : <div></div>}
     </div>
     );
 }

@@ -22,6 +22,7 @@ const MessageInput = (props: {chatId: number}) => {
 			return;
 		const messageData = {
 			username: username,
+			serviceMessage: false,
 			content: value,
 			idOfChat: props.chatId,
 		}

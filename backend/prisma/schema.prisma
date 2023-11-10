@@ -76,6 +76,7 @@ model ChatMsgHistory {
   chat_channels_id      Int
   chat_channels_user_id Int
   message               String
+  serviceMessage        Boolean
   date_sent             DateTime
   channel               ChatChannels     @relation("ChatMessages", fields: [chat_channels_id], references: [id])
   sender                ChatChannelsUser @relation("ChatMessagesSender", fields: [chat_channels_user_id], references: [id])

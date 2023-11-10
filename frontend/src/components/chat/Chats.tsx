@@ -39,7 +39,7 @@ const Chats = (props: {activeChat: allChatOfUser, setActiveChat: Function, chats
 
     function trigger() {
        socket.emit('chatListOfUser', username);
-	   socket.emit('chatList'); // here is for the public chat.
+	//    socket.emit('chatList'); // here is for the public chat.
     }
 
     useEffect(() => {

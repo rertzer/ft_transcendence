@@ -4,7 +4,7 @@ import  ConnectionContext from "../../context/authContext"
 import { WebsocketContext } from "../../context/chatContext";
 import { Link } from "react-router-dom";
 
-const  Message = (props: {username: string, date: string, msg: string, isOwner: boolean, isAdmin: boolean, chatId: number}) => {
+const  Message = (props: {username: string, date: string, msg: string, isOwner: boolean, isAdmin: boolean, chatId: number, service: boolean}) => {
 
     const {username} = useContext(ConnectionContext);
     const [showUserActionsMenu, setShowUserActionsMenu] = useState(false);
@@ -66,7 +66,7 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
     if (username === props.username) {
         messageType = "owner";
     }
-	if (props.msg.search("this channel") !== -1) { //evidemment, a remplacer par le booleen "serviceMessage"
+	if (props.service) {
 		messageType = "service";
 	}
 
@@ -79,6 +79,8 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 		const messageData = {
 			username: username,
 			content: message,
+			serviceMessage: true,
+			
 			idOfChat: props.chatId,
 			//ajouter un boolean "serviceMessage" qui sera true ici, et false dans les messages normaux pour differencier l'affichage
 		}

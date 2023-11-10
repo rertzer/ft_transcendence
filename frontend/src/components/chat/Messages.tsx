@@ -14,6 +14,7 @@ type ChatHistory = {
 	date: string;
 	id: number;
 	chatId: number;
+	serviceMessage: boolean;
 }
 
 type ChatMessage = {
@@ -22,6 +23,7 @@ type ChatMessage = {
 	date: string;
 	id: number;
 	chatId: number;
+	serviceMessage: boolean;
 }
 
 type trigger = {
@@ -51,7 +53,7 @@ const Messages = (props: {chatId: number, isOwner: boolean, isAdmin: boolean, se
 			console.log(chatHistoryReceive);
 			let newDateString = chatHistoryReceive.date.toString();
 			newDateString = newDateString.slice(newDateString.indexOf("T") + 1, newDateString.indexOf("T") + 9);
-			const add : ChatMessage = {msg: chatHistoryReceive.msg, username: chatHistoryReceive.username, date: newDateString, id: chatHistoryReceive.id, chatId: chatHistoryReceive.idOfChat}
+			const add : ChatMessage = {msg: chatHistoryReceive.msg, username: chatHistoryReceive.username, date: newDateString, id: chatHistoryReceive.id, chatId: chatHistoryReceive.idOfChat, serviceMessage: chatHistoryReceive.serviceMessage}
 			setChatMessages((prevMessages) => [...prevMessages, add]);
 			socket.emit("chatListOfUser",username);
 			console.log("pkop");
@@ -72,7 +74,7 @@ const Messages = (props: {chatId: number, isOwner: boolean, isAdmin: boolean, se
 
 					let newDateString = element.date.toString();
 					newDateString = newDateString.slice(newDateString.indexOf("T") + 1, newDateString.indexOf("T") + 9);
-					const add : ChatMessage = {msg: element.msg, username: element.username, date: newDateString, id: element.id, chatId: element.chatId}
+					const add : ChatMessage = {msg: element.msg, username: element.username, date: newDateString, id: element.id, chatId: element.chatId, serviceMessage: element.serviceMessage}
 					setChatMessages((prevMessages) => [...prevMessages, add]);
 				}
 
@@ -106,14 +108,10 @@ const Messages = (props: {chatId: number, isOwner: boolean, isAdmin: boolean, se
 					<div>
 
 						{chatMessages.map((chat) => {
-							// if (chat.msg === username + " has been banned from this channel") // ajouter la verification du service message
-							// 	props.setActiveChat({id: -42, name: "You have been banned from this channel"})
-							// else if (chat.msg === username + " has been kicked from this channel")
-							// 	props.setActiveChat({id: -42, name: "You have been kicked from this channel"})
 							return (
 							<div key={chat.date + chat.id}>
 								{chat.chatId === props.chatId && (
-									 <Message date={chat.date} username={chat.username} msg={chat.msg} isOwner={props.isOwner} isAdmin={props.isAdmin} chatId={props.chatId}/>
+									 <Message date={chat.date} username={chat.username} msg={chat.msg} isOwner={props.isOwner} isAdmin={props.isAdmin} chatId={props.chatId} service={chat.serviceMessage}/>
 								)}
 							</div>)
 			  			})}

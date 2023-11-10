@@ -58,7 +58,7 @@ export class MyGateway {
 	}
 
 	@SubscribeMessage('newMessage')
-	async onNewMessage(@MessageBody() messageData: {username: string, content: string, idOfChat: number}, @ConnectedSocket() client:Socket) {
+	async onNewMessage(@MessageBody() messageData: {username: string, serviceMessage:boolean ,content: string, idOfChat: number}, @ConnectedSocket() client:Socket) {
 		if (!this.mutedUserService.IsMutedUser(messageData.username, messageData.idOfChat))
 		{
 			const targetSocket = this.socketsLogin.find((socket) => socket.sock === client);
@@ -70,9 +70,10 @@ export class MyGateway {
 					username: messageData.username,
 					date: getDate(),
 					id: lastMessageId,
-					idOfChat: messageData.idOfChat
+					idOfChat: messageData.idOfChat,
+					serviceMessage: messageData.serviceMessage
 				}
-				await this.prismaChatService.addChatMessage(messageData.idOfChat, messageData.username, messageData.content, getDate());
+				await this.prismaChatService.addChatMessage(messageData.idOfChat, messageData.username, messageData.content, getDate(), message.serviceMessage);
 				this.server.to(messageData.idOfChat.toString()).emit('newMessage', message);
 				this.server.to(messageData.idOfChat.toString()).emit('lastMessage', message);
 			}

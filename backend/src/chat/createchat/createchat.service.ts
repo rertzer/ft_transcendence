@@ -35,6 +35,7 @@ export class CreateChatService {
 			id: newChatId,
 			channelName: chatName,
 			chatPicture: 'avatarOfOwner',// need to be change
+			status: "owner",
 			username: null,
 			msg: null,
 			dateSend: null,

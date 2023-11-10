@@ -288,7 +288,7 @@ export class PrismaChatService {
 			}
 	}
 
-	async addChatMessage(chatChanelId: number, chat_channels_username :string, message:string, date:Date )
+	async addChatMessage(chatChanelId: number, chat_channels_username :string, message:string, date:Date, serviceMessage: boolean )
 	{
 		const chat_channels_user_id = await this.getIdOfChatChannelsUser(chat_channels_username, chatChanelId);
 		if (chat_channels_user_id !== undefined)
@@ -300,6 +300,7 @@ export class PrismaChatService {
 					message: message,
 					chat_channels_id: chatChanelId,
 					chat_channels_user_id: chat_channels_user_id,
+					serviceMessage: serviceMessage,
 				},
 			})
 		}
