@@ -9,14 +9,11 @@ import { act } from "react-dom/test-utils";
 export type allChatOfUser = {
     id: number;
     channelName: string;
-    chatPicture: string; //je pense que pour pas trop se faire chier et rendre le truc plus lisible on pourra mettre une image par defaut, genre une borne de pong, pour les channels pour bien les differencier des DM qui auront la profile pic du user
-
-    /*Nouvelles variables pour differencier l'interface en fonction de la situation */
-    isChannel: boolean; // true si le chat est un channel avec potentiellement du monde dessus, false si c'est des DM entre deux users
-    receiverUsername: string // si c'est une conversation DM, on veut afficher le nom du destinataire a la place du nom du channel
-    status : string;
+    chatPicture: string;
+    type : string;
+    status: string;
     /*---------LastMessageReceive-------*/
-    username: String | null; // bien differencier username et uid unique en cas de changement de username
+    username: string | null; // bien differencier username et uid unique en cas de changement de username
     msg: string| null;
     dateSend: Date | null;
 }
@@ -32,7 +29,7 @@ export type Message = {
 const ChatComponent = () => {
 
     const [chatsOfUser, setChatsOfUser] = useState<allChatOfUser[]>([])
-    const [activeChat, setActiveChat] = useState<allChatOfUser>({id: -1, channelName: "Pong Chat", chatPicture: "", isChannel: false, receiverUsername: "", status: "", username: null, dateSend: null, msg: null})
+    const [activeChat, setActiveChat] = useState<allChatOfUser>({id: -1, channelName: "Pong Chat", chatPicture: "", type: "", status: "", username: null, dateSend: null, msg: null})
     const socket = useContext(WebsocketContext);
     const [lastMessage, setLastMessage] = useState<Message>({msg: "", username: "", date: new Date, id: 0, idOfChat: 0})
 
@@ -51,11 +48,8 @@ const ChatComponent = () => {
         console.log("chat NUMBER: ", chatsOfUser.length)
         console.log("CHATS: ", chatsOfUser)
         const id = activeChat.id;
-        const excluded = false;
-        // if (chatsOfUser.length === 1 && activeChat.channelName !== "Pong Chat")
-        //     setActiveChat(chatsOfUser[0]);
         if (id !== -1 && chatsOfUser.find(element => element.id === id) === undefined) 
-            setActiveChat({id: -1, channelName: "Pong Chat", chatPicture: "", isChannel: false, receiverUsername: "", status: "", username: null, dateSend: null, msg: null})
+            setActiveChat({id: -1, channelName: "Pong Chat", chatPicture: "", type: "", status: "", username: null, dateSend: null, msg: null})
     }, [chatsOfUser.length])
 
     return (

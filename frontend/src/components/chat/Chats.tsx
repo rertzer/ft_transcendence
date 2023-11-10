@@ -23,15 +23,11 @@ const Chats = (props: {activeChat: allChatOfUser, setActiveChat: Function, chats
 		socket.on("newChat", (newChat: allChatOfUser) => {
 			props.setChatsOfUser([...props.chatsOfUser, newChat]);
 		});
-	// 	socket.on('chatList', (listOfChat: allChatOfUser[]) => {
-
-    // })
 
         return () => {
 
 			socket.off("ListOfChatOfUser");
 			socket.off("newChat")
-			// socket.off("chatList")
         }
     }, [])
 
@@ -39,7 +35,6 @@ const Chats = (props: {activeChat: allChatOfUser, setActiveChat: Function, chats
 
     function trigger() {
        socket.emit('chatListOfUser', username);
-	//    socket.emit('chatList'); // here is for the public chat.
     }
 
     useEffect(() => {
@@ -92,7 +87,7 @@ const Chats = (props: {activeChat: allChatOfUser, setActiveChat: Function, chats
                                 <div className={props.activeChat.id === channel.id ? "userChat active" : "userChat"}>
                                     <img src={channel.chatPicture === null ? "" : channel.chatPicture} />
                                     <div className='userChatInfo'>
-                                        <h1>{channel.isChannel ? channel.channelName : findReceiverName(channel.channelName)}</h1>
+                                        <h1>{channel.type !== "DM" ? channel.channelName : findReceiverName(channel.channelName)}</h1>
                                         <p>{channel.msg ? channel.msg : ""}</p>
                                     </div>
                                 </div>

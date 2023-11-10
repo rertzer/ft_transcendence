@@ -31,7 +31,7 @@ type trigger = {
 	numberMsgToDisplay: number;
 }
 
-const Messages = (props: {chatId: number, isOwner: boolean, isAdmin: boolean, setActiveChat: Function}) => {
+const Messages = (props: {chatId: number, isOwner: boolean, isAdmin: boolean, setActiveChat: Function, isDM: boolean}) => {
 
 	const {username} = useContext(ConnectionContext);
 	const [render, setRender] = useState(false);
@@ -111,7 +111,7 @@ const Messages = (props: {chatId: number, isOwner: boolean, isAdmin: boolean, se
 							return (
 							<div key={chat.date + chat.id}>
 								{chat.chatId === props.chatId && (
-									 <Message date={chat.date} username={chat.username} msg={chat.msg} isOwner={props.isOwner} isAdmin={props.isAdmin} chatId={props.chatId} service={chat.serviceMessage}/>
+									 <Message date={chat.date} username={chat.username} msg={chat.msg} isOwner={props.isOwner} isAdmin={props.isAdmin} chatId={props.chatId} service={chat.serviceMessage} isDM={props.isDM}/>
 								)}
 							</div>)
 			  			})}

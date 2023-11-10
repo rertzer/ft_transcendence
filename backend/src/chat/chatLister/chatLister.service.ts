@@ -38,6 +38,7 @@ export class ChatLister{
 					status: chatUser.user_role,
 					msg: message,
 					dateSend: date,
+					type: chatUser.channel.type,
 				}
 				chatList.push(chatType);
 			}

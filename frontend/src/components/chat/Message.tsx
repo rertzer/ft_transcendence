@@ -4,7 +4,7 @@ import  ConnectionContext from "../../context/authContext"
 import { WebsocketContext } from "../../context/chatContext";
 import { Link } from "react-router-dom";
 
-const  Message = (props: {username: string, date: string, msg: string, isOwner: boolean, isAdmin: boolean, chatId: number, service: boolean}) => {
+const  Message = (props: {username: string, date: string, msg: string, isOwner: boolean, isAdmin: boolean, chatId: number, service: boolean, isDM: boolean}) => {
 
     const {username} = useContext(ConnectionContext);
     const [showUserActionsMenu, setShowUserActionsMenu] = useState(false);
@@ -13,7 +13,6 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 	let menuRef = useRef<HTMLInputElement>(null);
 	let messageType = "normal";
 
-	//ce useEffect sert simplement a gerer la fermeture du sous-menu si on clique a l'exterieur
 	useEffect(() => {
 		const clickHandler = (e: any) => {
 			if (!menuRef.current?.contains(e.target)) {
@@ -173,7 +172,7 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 								<div className="menuItems">
 									<div>Invite to play</div>
 									<div onClick={addToFriends}>Add to friends</div>
-									<div onClick={startDM}>Send DM</div>
+									{props.isDM === false && <div onClick={startDM}>Send DM</div>}
 									<Link to="/profile/1" style={{textDecoration:"none", color: "#ddddf7"}}>
 										<div onClick={toggleUserActionsMenu}>Show profile</div>
 									</Link>

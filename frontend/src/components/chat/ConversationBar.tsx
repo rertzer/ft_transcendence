@@ -24,7 +24,7 @@ const ConversationBar = (props: {toDisplay: allChatOfUser , setActiveChat: Funct
 
         return (
             <div className='chatInfo'>
-            <span>{props.toDisplay.isChannel ? props.toDisplay.channelName : findReceiverName(props.toDisplay.channelName)}</span>
+            <span>{props.toDisplay.type !== "DM" ? props.toDisplay.channelName : findReceiverName(props.toDisplay.channelName)}</span>
             {props.isOwner ? <span>(owner)</span> : <span></span>}
             {props.isAdmin ? <span>(admin)</span> : <span></span>}
             <div className="chatIcons">
@@ -35,7 +35,7 @@ const ConversationBar = (props: {toDisplay: allChatOfUser , setActiveChat: Funct
                     </Tooltip>
                 </div> : <div></div>
                 }
-                {props.toDisplay.isChannel ?        
+                {props.toDisplay.type !== "DM" ?        
                 <div>
                     <Tooltip title="Leave channel" arrow>
                         <LogoutIcon />

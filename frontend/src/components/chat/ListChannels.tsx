@@ -77,12 +77,10 @@ export const ListChannels = (props: {chatsOfUser: allChatOfUser[], showSubMenu: 
 		  console.log('Success:', data);
 		  setPassword('');
 		  socket.emit('chatListOfUser', username);
-
-		  // Return the data or a specific value from the response
-		  return data; // You can return a specific field if needed
+		  return data; 
 		} catch (error) {
 		  console.error('Error:', error);
-		  return -3; // Return "-1" or another specific value to indicate an error
+		  return -3;
 		}
 	  }
 
@@ -103,6 +101,7 @@ export const ListChannels = (props: {chatsOfUser: allChatOfUser[], showSubMenu: 
 	}, [props.showSubMenu]);
 
     const toggleForm = () => {
+		console.log("AVAILABLE",availableChannels)
         if (props.showSubMenu !== "list") {
             props.setShowSubMenu("list");
       } else {
