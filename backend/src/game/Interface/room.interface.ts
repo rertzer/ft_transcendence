@@ -2,7 +2,7 @@ import { GameObstacles, GameParams } from "@prisma/client";
 import { Ball } from "./ball.interface";
 import { Player } from "./player.interface";
 
-export type GameStatus = 'WAITING_FOR_PLAYER' | 'WAITING_TO_START' | 'STARTING' | 'PLAYING' | 'FINISHED' | 'FINISH_BY_FORFAIT';
+export type GameStatus = 'IN_WAITING_ROOM' | 'WAITING_FOR_PLAYER' | 'WAITING_TO_START' | 'STARTING' | 'PLAYING' | 'FINISHED' | 'FINISH_BY_FORFAIT';
 
 export type TypeGame = 'BASIC' | 'ADVANCED';
 

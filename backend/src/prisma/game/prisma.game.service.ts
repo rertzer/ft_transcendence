@@ -34,7 +34,7 @@ export class PrismaGameService extends PrismaClient implements OnModuleInit {
 		});
 		await this.gameParams.create({
 			data:{
-				type:"advanced",
+				type:"ADVANCED",
 				goal:10
 			}
 		});

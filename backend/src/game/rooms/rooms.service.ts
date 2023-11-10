@@ -7,7 +7,7 @@ import { Socket } from 'socket.io';
 import { PrismaGameService } from 'src/prisma/game/prisma.game.service';
 import { GameService } from './game.service';
 import { OnModuleInit } from '@nestjs/common';
-import { GameParams } from '@prisma/client';
+import { GameMaps, GameParams } from '@prisma/client';
 
 @Injectable()
 export class RoomsService  implements OnModuleInit{
@@ -18,15 +18,56 @@ export class RoomsService  implements OnModuleInit{
 		.then((gameParams) => {
 			this.gameParams = gameParams;
 		})
+		.then(async () => {
+			await this.prismaService.gameMaps.findMany({
+				include : {
+					obstacles:true
+				}
+			}).then((maps) => {this.gameMaps = maps});
+		})
 	}
+
+	/** 
+	 * I faut que je recupere les maps etc de la base de donne au lancement du module et je ne refais plus 
+	 * d'acces a la BDD par la suite. 
+	 * Pour eviter d'avoir des trucs async sur les fonctions de room. 
+	 * 
+	 * 
+	 * La fonction addplayertoroom ne marche pas. A revoir car il trouve pas la room. 
+	 * 
+	*/
 
 	private rooms: Room[] = [];
 	private roomMaxId:number = 1;
 	private gameParams: GameParams[];
 	private waitingRoomBasic: Player | null = null;
 	private waitingRoomAdvanced: Player | null = null;
+	private gameMaps:({
+		obstacles: {
+			id: number;
+			posx: number;
+			posy: number;
+			width: number;
+			height: number;
+			img: string | null;
+			lives: number;
+			gameMapsId: number | null;
+		}[];
+	} & {
+		id: number;
+		nbBalls: number;
+	})[];
 
-	async createEmptyRoom(typeGame:TypeGame) :Promise<Room | null> {
+	createRoom(playerLeft:Player, playerRight:Player, typeGame:TypeGame) {
+		const room = this.createEmptyRoom(typeGame);
+		if (!room) return null; 
+		room.gameStatus = 'WAITING_TO_START';
+		room.playerLeft = playerLeft;
+		room.playerRight = playerRight;
+		return (room);
+	};
+
+	createEmptyRoom(typeGame:TypeGame) : Room | null {
 		const gameParam = this.gameParams.find((gp) => {return (gp.type === typeGame)});
 		if (typeof(gameParam) === 'undefined') return null;
 		const newRoom: Room = {
@@ -47,40 +88,18 @@ export class RoomsService  implements OnModuleInit{
 			typeGame:typeGame,
 			gameParam: gameParam
 		}
-		this.rooms.push(newRoom);
 		this.roomMaxId++;
-		return (await this.updateRoomForAdvancedGame(newRoom));
+		if (newRoom.typeGame === 'ADVANCED') {
+			const map = this.gameMaps[Math.floor(Math.random() * this.gameMaps.length)];
+			newRoom.obstacles = map.obstacles;
+			newRoom.balls = this.gameService.newBalls(map.nbBalls, newRoom);
+		}
+		else {
+			newRoom.balls = this.gameService.newBalls(1, newRoom);
+		}
+		this.rooms.push(newRoom);
+		return (newRoom);
 	};
-
-	async createRoom(playerLeft:Player, playerRight:Player, typeGame:TypeGame) {
-		return(await this.createEmptyRoom(typeGame).then(
-			(room) => {
-				if (!room) return ; 
-				room.gameStatus = 'WAITING_TO_START';
-				room.playerLeft = playerLeft;
-				room.playerRight = playerRight;
-				return (room);
-			})
-		)
-	};
-
-	async updateRoomForAdvancedGame(room:Room) : Promise<Room> {
-		return (
-			await this.prismaService.gameMaps.findMany({
-				include : {
-					obstacles:true
-				}
-			}).then((maps) =>{ 
-				const map = maps[Math.floor(Math.random() * maps.length)];
-				room.obstacles = map.obstacles;
-				for (let i = 0; i < map.nbBalls; i++) {
-					room = this.gameService.addNewBall(room);
-				}
-				console.log('Room :', room.id, ' has been updated with maps');
-				return (room);
-			})
-		);
-	}
 
 	joinWaitingRoom(player:Player, typeGame:TypeGame) {
 		const waitingPlayer = (typeGame === 'ADVANCED' ? this.waitingRoomAdvanced : this.waitingRoomBasic);
@@ -124,11 +143,13 @@ export class RoomsService  implements OnModuleInit{
 	};
 
 	findRoomById(idToFind:number) : Room | null {
-		const room = this.rooms.find((element) => (element.id === idToFind));
-		if (typeof(room) === 'undefined') {
+		const room = this.rooms.filter((element) => {return(element.id === idToFind)});
+		console.log(room);
+		if (typeof(room) === 'undefined' || room.length === 0) {
 			return null;
 		}
-		return room;
+		console.log('I fond the room ', room[0]);
+		return room[0];
 	};
 
 	sendRoomStatus(room: Room) {
@@ -159,14 +180,18 @@ export class RoomsService  implements OnModuleInit{
 	}
 
 	async addPlayerToRoom(player:Player, roomId:number) {
+		
 		let room = this.findRoomById(roomId);
 		if (room === null) return;  
+		console.log('toto');
 		if (room.playerLeft === player || room.playerRight === player) {
-			player.socket.emit('Error_player_already_in_room');
+			player.socket.emit('error_join', {roomId: room.id, errorMsg: 'Player already in room'});
+			console.log('tata');
 			return;
 		}
 		if (room.playerLeft != null  && room.playerRight != null) {
-			player.socket.emit('Error_room_full');
+			player.socket.emit('error_join', {roomId: room.id, errorMsg: 'The Room is full'});
+			console.log('tutu');
 			return;
 		}
 		if (room.playerLeft === null) {
@@ -179,6 +204,7 @@ export class RoomsService  implements OnModuleInit{
 		room.gameStatus = 'WAITING_TO_START';
 		console.log('Creating a new reccord on the BDD');
 		const roomToUpdate = room;
+		console.log('titi');
 		const bddGame = await this.prismaService.addNewGame(room).then(
 			(bddGame) => {
 				if (bddGame) {
@@ -187,8 +213,8 @@ export class RoomsService  implements OnModuleInit{
 			}
 		);
 		console.log('Player ', player.socket.id, ' added to Room ', room.id);
-	
-		this.sendRoomStatus(room);
+		
+		player.socket.emit('room_joined', {roomId: room.id});
 	};
 
 	getNumberOfPlayersInRoom(room:Room):number {

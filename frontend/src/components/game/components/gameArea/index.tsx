@@ -4,11 +4,12 @@ import gameContext from '../../../../context/gameContext';
 import printMenu from "./printMenu";
 import printGame from "./printGame";
 import { gameSocket } from "../../services/gameSocketService";
-import { GameStatus, IPlayer } from "./interfacesGame";
+import { IPlayer } from "./interfacesGame";
 import { IBall } from "./interfacesGame";
+import { GameStatus } from "../../../../context/gameContext";
 
 function GameArea(props:any) {
-	const {roomName, gameWidth, gameHeight, playerName, nbBalls, setNbBalls } = useContext(gameContext);
+	const {roomId, gameWidth, gameHeight, playerName, gameStatus} = useContext(gameContext);
 	const [timeLastFrame, setTimeLastFrame] = useState(new Date());
 	const [idPlayerMove, setIdPlayerMove] = useState(0);
 	const [myPlayerMoves, setMyPlayerMoves] = useState<{idPlayerMove: number, dy:number}[]>([]);
@@ -163,7 +164,7 @@ function GameArea(props:any) {
 
 		gameSocket.on('connect', onConnect);
 		gameSocket.on('disconnect', onDisconnect);
-		gameSocket.emit("join_game", {roomName, playerName, nbBalls});
+		gameSocket.emit("join_game", {roomId, playerName});
 		gameSocket.on('game_state', onGameState);
 		gameSocket.on('room_status', onRoomStatus);
 
@@ -174,7 +175,7 @@ function GameArea(props:any) {
 			gameSocket.off('room_status', onRoomStatus);
 		}			
 			
-	}, [playerName, roomName ]);
+	}, [playerName, roomId ]);
 
 	useEffect(() => {
 		const handleKey = (event: KeyboardEvent) => {
@@ -254,6 +255,8 @@ function GameArea(props:any) {
 		<>
 			<Canvas draw = {render} style={styleCanvas} />
 			<div><strong>You play on the {frontEndPlayerLeft.socketId === gameSocket.id ? 'left' : 'right'} !</strong></div>
+			<div>{gameStatus.toString()}</div>
+			<div>{pong.toString()}</div>
 		</>
 	);
 };

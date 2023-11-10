@@ -1,3 +1,5 @@
+import { GameStatus } from "../../../../context/gameContext";
+
 export interface IPoint {
 	x:number;
     y:number;
@@ -9,7 +11,6 @@ export interface IBall {
 	speed: number;
 	dir: IPoint;
 };
-export type GameStatus = 'WAITING_FOR_PLAYER' | 'WAITING_TO_START' | 'STARTING' | 'PLAYING' | 'FINISHED';
 
 export interface IGameParam {
 	idRoom: string;

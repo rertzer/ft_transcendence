@@ -7,6 +7,10 @@ import { Socket } from "socket.io";
 import { Player } from "../Interface/player.interface";
 import { GameParams } from "@prisma/client";
 
+/**
+ * Besoin d'implementer les collisions avec les obstacles. 
+ */
+
 @Injectable()
 export class GameService {
 
@@ -97,18 +101,21 @@ export class GameService {
 		return (room);
 	}
 
-	addNewBall(room: Room) : Room {
-		const newId:number = room.balls.length;
-		room.balls.push({
-			id: newId, 
-			pos: {x:room.gameParam.ballInitPosx,  y:room.gameParam.ballInitPosy},
-			dir: {
-				x: Math.random() > 0.5 ? (Math.random() * 0.8) + 0.2 : -((Math.random() * 0.8) + 0.2 ), 
-				y: (Math.random() * 2) - 1
-			},
-			speed: room.gameParam.BallInitSpeed
-		});
-		return (room);
+	newBalls(nbBalls: number, room: Room) : Ball[] {
+		const newId:number = nbBalls;
+		const balls: Ball[] = [];
+		for (let i = 0; i< nbBalls; i++) {
+			balls.push({
+				id: newId, 
+				pos: {x:room.gameParam.ballInitPosx,  y:room.gameParam.ballInitPosy},
+				dir: {
+					x: Math.random() > 0.5 ? (Math.random() * 0.8) + 0.2 : -((Math.random() * 0.8) + 0.2 ), 
+					y: (Math.random() * 2) - 1
+				},
+				speed: room.gameParam.BallInitSpeed
+			});
+		}
+		return (balls);
 	}
 
 	checkballsPositions(room: Room) : Room {
@@ -123,8 +130,9 @@ export class GameService {
 			room.gameStatus = 'FINISHED';
 			this.prismaService.finishGame(room, null);
 		}
-		for (let i = 0; i < ballsOut.length; i++) {
-			room = this.addNewBall(room);
+		const newballs = this.newBalls(ballsOut.length, room);
+		for (let i = 0; i < newballs.length; i++) {
+			room.balls.push(newballs[i]);
 		}
 		return (room);
 	}

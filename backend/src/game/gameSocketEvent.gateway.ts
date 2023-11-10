@@ -54,12 +54,14 @@ export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, On
 
     //Recevoir un event 
 	@SubscribeMessage('give_me_a_room')
-	handleGiveMeARoom(@MessageBody() data:{typeGame:TypeGame}, @ConnectedSocket() client:Socket){
-		const newRoomId = this.roomsService.createEmptyRoom(data.typeGame);
+	async handleGiveMeARoom(@MessageBody() data:{typeGame:TypeGame}, @ConnectedSocket() client:Socket){
+		const newRoomId = await this.roomsService.createEmptyRoom(data.typeGame);
 		const responseData = {
-			roomId:newRoomId
+			roomId:newRoomId?.id
 		}
+		console.log('the new room id is ',newRoomId)
 		client.emit('new_empty_room', responseData);
+
 	}
 
 	@SubscribeMessage('match_me')
@@ -71,14 +73,23 @@ export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, On
 		} 
 	}
 
-	@SubscribeMessage('join_game')
+	@SubscribeMessage('join_room')
 	handleJoinGame(@MessageBody() data:{roomId:number, playerName:string}, @ConnectedSocket() client:Socket){
+		console.log("I got a join room request for ", data);
 		const player = this.playersService.findOne(client);
 		if (player) {
 			this.playersService.changePlayerName(player, data.playerName);
 			this.roomsService.addPlayerToRoom(player, data.roomId);
-		} 
+		}
 	}
+
+	@SubscribeMessage('give_me_room_status')
+	handleGiveMeRoomStatus(@MessageBody() data:{roomId:number}, @ConnectedSocket() client:Socket){
+		console.log("I got a give_me_room_status request for ", data.roomId);
+		const room = this.roomsService.findRoomById(data.roomId);
+		if (room) this.roomsService.sendRoomStatus(room);
+	}
+
 	@SubscribeMessage('keyevent')
 	handlePlayerKeyEvent(@MessageBody() data:{key:string, idPlayerMove:number}, @ConnectedSocket() client:Socket){
 		this.roomsService.handlePlayerKeyEvent({key:data.key, idPlayerMove:data.idPlayerMove, client});

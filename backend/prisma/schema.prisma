@@ -119,7 +119,7 @@ model Game {
 
 model GameParams {
   id                Int    @id @default(autoincrement())
-  type              String @default("basic")
+  type              String @default("BASIC")
   ballRadius        Float  @default(0.01)
   paddleWidth       Float  @default(0.02)
   paddleHeight      Float  @default(0.25)
