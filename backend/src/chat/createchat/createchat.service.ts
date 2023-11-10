@@ -12,20 +12,15 @@ export class CreateChatService {
 	constructor(private prismaService: PrismaChatService){
 	}
 
-	async createChat(login:string, chatPassword: string, chatName: string, chatType: string, targetSocket: Socket)
+	async createChat(login: string, idLogin:number, chatPassword: string, chatName: string, chatType: string, targetSocket: Socket)
 	{
-		const idOfUser = await this.prismaService.getIdOfLogin(login);
-
 			let encodedPassword : string | null = null;
 			if (chatPassword)
 				encodedPassword = await encodePassword(chatPassword);
-			if (idOfUser !== undefined)
-			{
-				const chatId = (await this.emitAndCreateRoom(login, encodedPassword, chatName, chatType, targetSocket, idOfUser)).toString();
-				targetSocket.join(chatId.toString());
-				const chatlister = new ChatLister(this.prismaService);
-				chatlister.listChatOfUser(login, targetSocket);
-			}
+			const chatId = (await this.emitAndCreateRoom(login, encodedPassword, chatName, chatType, targetSocket, idLogin)).toString();
+			targetSocket.join(chatId.toString());
+			const chatlister = new ChatLister(this.prismaService);
+			chatlister.listChatOfUser(idLogin, targetSocket);
 	}
 
 	async emitAndCreateRoom(username:string, encodedPassword: string  | null, chatName: string, typeOfChat: string, targetSocket: Socket, idOfUser: number)

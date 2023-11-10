@@ -9,17 +9,14 @@ export class PrivateConvService {
 	constructor(private prismaService:PrismaChatService){
 	}
 
-	async setDirectConv(creator:string, receiver: string, sockSender:Socket, sockReceiver: Socket)
+	async setDirectConv(creator:string, creatorId:number, receiver: string, sockSender:Socket, sockReceiver: Socket)
 	{
-		const idCreator = await this.prismaService.getIdOfLogin(creator);
-		if (idCreator)
-		{
-			const ChatCreated = await this.createDirectConv(creator, idCreator, receiver);
+			const ChatCreated = await this.createDirectConv(creator, creatorId, receiver);
 			console.log("c")
 
 			if (ChatCreated)
 			{
-				const added = await this.prismaService.addChanelUser(ChatCreated, idCreator, "user", getDate(), null)
+				const added = await this.prismaService.addChanelUser(ChatCreated, creatorId, "user", getDate(), null)
 				console.log("c")
 
 				if (added)
@@ -41,7 +38,6 @@ export class PrivateConvService {
 					}
 				}
 			}
-		}
 		return false;
 	}
 

@@ -17,7 +17,8 @@ export class PrismaChatService {
 	private prismaService: PrismaClient;
 
 	constructor() {
-		this.prismaService = new PrismaClient();
+		this.prismaService = new PrismaClient(); // verifier si on a vraiment besoin de faire ca
+												// ou si recuperes tous le me prisma client
 	  }
 
 	async getIdOfLogin(login: string){
@@ -31,14 +32,11 @@ export class PrismaChatService {
 			return user.id;
 	}
 
-	async BanUserFromChannel(login: string, chatId: number)
+	async BanUserFromChannel(idLogin: number, chatId: number)
 	{
-		const getId = await this.getIdOfLogin(login);
-		if (getId) {
-			// Fetch the ID of the record to delete based on user_id and channel_id
 			const recordToDelete = await this.prismaService.chatChannelsUser.findFirst({
 			  where: {
-				user_id: getId,
+				user_id: idLogin,
 				channel_id: chatId,
 			  },
 			});
@@ -55,7 +53,6 @@ export class PrismaChatService {
 				  } // Use the ID to uniquely identify the record
 			  });
 			}
-		}
 	}
 
 	async userHasbeenKickedInChat(user_id:number, chat_id:number) {
@@ -81,14 +78,12 @@ export class PrismaChatService {
 		return false;
 	}
 
-	async kickUserFromChat(login:string, chatId: number)
+	async kickUserFromChat(idLogin:number, chatId: number)
 	{
-		const getId = await this.getIdOfLogin(login);
-		if (getId) {
 			// Fetch the ID of the record to delete based on user_id and channel_id
 			const recordToDelete = await this.prismaService.chatChannelsUser.findFirst({
 			  where: {
-				user_id: getId,
+				user_id: idLogin,
 				channel_id: chatId,
 			  },
 			});
@@ -108,24 +103,22 @@ export class PrismaChatService {
 			  	return true;
 			}
 			return false;
-		}
 		return false;
 	}
 
-	async banUserPrism(login: string, chatId : number)
+	async banUserPrism(idLogin:number, chatId : number)
 	{
-		const getId = await this.getIdOfLogin(login);
-		if (getId && ! await this.checkIfUserIsBanned(chatId, login))
+		if (await this.checkIfUserIsBanned(chatId, idLogin))
 		{
 			const banned = await this.prismaService.usersBannedToChats.create({
 				data: {
-					userId :getId,
+					userId :idLogin,
 					chatId : chatId,
 				}
 			})
 			if (banned)
 			{
-				await this.BanUserFromChannel(login, chatId);
+				await this.BanUserFromChannel(idLogin, chatId);
 				return true;
 			}
 		}
@@ -142,15 +135,12 @@ export class PrismaChatService {
 			return chat.password;
 	}
 
-	async checkIfUserIsBanned(chat_channels_id: number, username: string)
+	async checkIfUserIsBanned(chat_channels_id: number, idLogin: number)
 	{
-		console.log("hey what did i recerive : ", chat_channels_id, username);
-		const user_id = await this.getIdOfLogin(username);
-		if (user_id)
-		{
+
 			const isBanned = await this.prismaService.usersBannedToChats.findFirst({
 				where: {
-					userId: user_id,
+					userId: idLogin,
 					chatId: chat_channels_id,
 				}
 			})
@@ -159,16 +149,13 @@ export class PrismaChatService {
 				return true;
 			else
 				return false;
-		}
 		return false;
 	}
 
-	async getIdOfChatChannelsUser(login: string, chat_channels_id: number){
-		const idOfUser = await this.getIdOfLogin(login);
-
+	async getIdOfChatChannelsUser(idLogin:number , chat_channels_id: number){
 		const user = await this.prismaService.chatChannelsUser.findFirst({
 			where: {
-				user_id: idOfUser,
+				user_id: idLogin,
 				channel_id: chat_channels_id,
 			}
 		})
@@ -182,30 +169,25 @@ export class PrismaChatService {
 		}
 	}
 
-	async changeChatUserRole(chat_channels_id: number, username : string, user_role: string)
+	async changeChatUserRole(chat_channels_id: number, loginId: number, user_role: string)
 	{
-		const id = await this.getIdOfLogin(username);
-		if (id)
+		const user = await this.prismaService.chatChannelsUser.findFirst({
+			where: {
+				user_id: loginId,
+				channel_id: chat_channels_id,
+			}
+		})
+		if (user)
 		{
 
-			const user = await this.prismaService.chatChannelsUser.findFirst({
+			await this.prismaService.chatChannelsUser.update({
 				where: {
-					user_id: id,
-					channel_id: chat_channels_id,
+					id: user.id,
+				},
+				data: {
+					user_role: user_role,
 				}
 			})
-			if (user)
-			{
-
-				await this.prismaService.chatChannelsUser.update({
-					where: {
-						id: user.id,
-					},
-					data: {
-						user_role: user_role,
-					}
-				})
-			}
 		}
 	}
 
@@ -229,15 +211,12 @@ export class PrismaChatService {
 		return heIsOwner.channelOwner.username === usermame
 	}
 
-	async isAdmin(login:string, chatId:number)
+	async isAdmin(idLogin: number, chatId:number)
 	{
-		const idToLogin = await this.getIdOfLogin(login);
-		if (idToLogin)
-		{
 			const heIsAdmin = await this.prismaService.chatChannelsUser.findFirst({
 				where: {
 					channel_id: chatId,
-					user_id: idToLogin,
+					user_id: idLogin,
 				  },
 				});
 			console.log("heisAdmin = ", heIsAdmin);
@@ -245,7 +224,6 @@ export class PrismaChatService {
 				return false;
 			if (heIsAdmin.user_role == "admin")
 				return true;
-		}
 		return false;
 	}
 
@@ -288,9 +266,9 @@ export class PrismaChatService {
 			}
 	}
 
-	async addChatMessage(chatChanelId: number, chat_channels_username :string, message:string, date:Date )
+	async addChatMessage(chatChanelId: number, loginId: number, message:string, date:Date )
 	{
-		const chat_channels_user_id = await this.getIdOfChatChannelsUser(chat_channels_username, chatChanelId);
+		const chat_channels_user_id = await this.getIdOfChatChannelsUser(loginId, chatChanelId);
 		if (chat_channels_user_id !== undefined)
 		{
 
@@ -330,12 +308,11 @@ export class PrismaChatService {
 		}
 	}
 
-	async getListOfChatByUsername(username: string)
+	async getListOfChatByUsername(loginId: number)
 	{
-		const id = await this.getIdOfLogin(username);
 		const userChatChannels = await this.prismaService.chatChannelsUser.findMany({
 			where: {
-				user_id: id,
+				user_id: loginId,
 				banned: false,
 				kicked:false,
 			},

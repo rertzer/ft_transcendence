@@ -7,10 +7,10 @@ export class ChatLister{
 	constructor(private prismaService:PrismaChatService){
 	}
 
-	async listChatOfUser(username: string, sock: Socket)
+	async listChatOfUser(idLogin: number, sock: Socket)
 	{
 		const chatList = [];
-		const retrieveChat = await this.prismaService.getListOfChatByUsername(username);
+		const retrieveChat = await this.prismaService.getListOfChatByUsername(idLogin);
 		if (retrieveChat !== undefined)
 		{
 			for (const chatUser of retrieveChat)

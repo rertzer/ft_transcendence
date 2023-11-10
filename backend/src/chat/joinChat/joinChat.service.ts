@@ -11,7 +11,7 @@ export class JoinChatService{
 	constructor(private prismaService:PrismaChatService ){
 	}
 
-	async joinChat(username: string, chat_id:string, user_role:string, passeword:string, sock : Socket)
+	async joinChat(loginId:number, chat_id:string, user_role:string, passeword:string, sock : Socket)
 	{
 
 		if (this.checkNumber(chat_id) === -1)
@@ -23,8 +23,8 @@ export class JoinChatService{
 			return (value);
 
 		}
-		if (!await this.prismaService.checkIfUserIsBanned(parseInt(chat_id), username))
-			await this.addUserToChat(username, chat_id, user_role, passeword)
+		if (!await this.prismaService.checkIfUserIsBanned(parseInt(chat_id), loginId))
+			await this.addUserToChat(loginId, chat_id, user_role, passeword)
 		sock.join(chat_id)
 		return value;
 	}
@@ -59,20 +59,14 @@ export class JoinChatService{
 
 
 
-	async addUserToChat(login: string, chat_id:string, user_role:string, passeword:string)
+	async addUserToChat(loginId: number, chat_id:string, user_role:string, passeword:string)
 	{
-		const userId = await this.prismaService.getIdOfLogin(login);
-		//need to check if the user is already in the chat
-		//if not then :
-		if (userId !== undefined)
-		{
-			if (await this.prismaService.userHasbeenKickedInChat(userId, parseInt(chat_id)) == true) //user updated to removed kicked value
+			if (await this.prismaService.userHasbeenKickedInChat(loginId, parseInt(chat_id)) == true) //user updated to removed kicked value
 				return (0)
 
-			const chatId = await this.prismaService.addChanelUser(parseInt(chat_id),userId, user_role, getDate(), null);
+			const chatId = await this.prismaService.addChanelUser(parseInt(chat_id),loginId, user_role, getDate(), null);
 			if (chatId !== undefined)
 				return (chatId.toString());
-		}
 		return ("-1")
 	}
 }
