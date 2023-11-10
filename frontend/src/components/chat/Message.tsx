@@ -80,9 +80,7 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 			username: username,
 			content: message,
 			serviceMessage: true,
-			
 			idOfChat: props.chatId,
-			//ajouter un boolean "serviceMessage" qui sera true ici, et false dans les messages normaux pour differencier l'affichage
 		}
 		socket.emit('newMessage', messageData);
 	}
@@ -103,7 +101,7 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 
 	}
 
-	function muteUser() { // il faudra que client remplisse le time
+	function muteUser() {
 		console.log("plop try to muted")
 		socket.emit("mutedUser", {username: props.username, chatId: props.chatId, time: 60 })
 		toggleUserActionsMenu();
@@ -133,7 +131,6 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 			body: JSON.stringify({ login: props.username, chatId: props.chatId})
 		};
 		toggleUserActionsMenu();
-
 		await fetch('http://localhost:4000/chatOption/kickUser/', requestOptions)
 		sendServiceMessage(props.username + " has been kicked from this channel");
 	}
@@ -144,6 +141,8 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 			receiver: props.username,
 		}
 		socket.emit('newPrivateConv', messageData);
+		toggleUserActionsMenu();
+		
 	}
 
 	async function addToFriends()
@@ -155,7 +154,6 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 		};
 		toggleUserActionsMenu();
 		await fetch('http://localhost:4000/friend/addFriend/', requestOptions)
-		sendServiceMessage(props.username + " has been kicked from this channel");
 
 	}
 

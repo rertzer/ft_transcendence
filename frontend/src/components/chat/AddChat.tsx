@@ -32,7 +32,7 @@ export const AddChat = (props: {chatsOfUser: allChatOfUser[], showSubMenu: strin
 	const onSubmit = () => {
 
 		let createChatData: CreateChatPayload;
-		if (chatName === "")
+		if (chatName === "" || (chatType === "protected by password" && password === ""))
 			return ;
 		if (password === "")
 		{
