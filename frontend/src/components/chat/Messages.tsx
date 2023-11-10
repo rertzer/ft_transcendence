@@ -50,13 +50,11 @@ const Messages = (props: {chatId: number, isOwner: boolean, isAdmin: boolean, se
 		});
 		socket.on('newMessage', (chatHistoryReceive :{msg: string, username: string, date: Date, id: number, idOfChat:number, serviceMessage: boolean}) => {
 
-			console.log(chatHistoryReceive);
 			let newDateString = chatHistoryReceive.date.toString();
 			newDateString = newDateString.slice(newDateString.indexOf("T") + 1, newDateString.indexOf("T") + 9);
 			const add : ChatMessage = {msg: chatHistoryReceive.msg, username: chatHistoryReceive.username, date: newDateString, id: chatHistoryReceive.id, chatId: chatHistoryReceive.idOfChat, serviceMessage: chatHistoryReceive.serviceMessage}
 			setChatMessages((prevMessages) => [...prevMessages, add]);
 			socket.emit("chatListOfUser",username);
-			console.log("pkop");
 			// Debugging: Check the updated chatHistory
 		});
 		return () => {

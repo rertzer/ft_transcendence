@@ -35,7 +35,6 @@ const ChatComponent = () => {
 
     useEffect(() => {
         socket.on('lastMessage', (lastMessage :{msg: string, username: string, date: Date, id: number, idOfChat:number}) => {
-            console.log("lasts mesage receive : ", lastMessage);
             setLastMessage(lastMessage);
         });
         return () => {
@@ -44,9 +43,6 @@ const ChatComponent = () => {
     },[])
     
     useEffect(() => {
-
-        console.log("chat NUMBER: ", chatsOfUser.length)
-        console.log("CHATS: ", chatsOfUser)
         const id = activeChat.id;
         if (id !== -1 && chatsOfUser.find(element => element.id === id) === undefined) 
             setActiveChat({id: -1, channelName: "Pong Chat", chatPicture: "", type: "", status: "", username: null, dateSend: null, msg: null})

@@ -158,7 +158,6 @@ export class MyGateway {
 				console.log("hey all good or nah :", allGood);
 			}
 		}
-
 	}
 
 	@SubscribeMessage('createChat')

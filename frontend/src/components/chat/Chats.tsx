@@ -16,8 +16,6 @@ const Chats = (props: {activeChat: allChatOfUser, setActiveChat: Function, chats
 
         socket.on("ListOfChatOfUser", (channelsListReceive : allChatOfUser[]) => {
             props.setChatsOfUser(channelsListReceive);
-            console.log("Console.logggegege");
-            console.log(channelsListReceive);
         });
 
 		socket.on("newChat", (newChat: allChatOfUser) => {
@@ -44,8 +42,6 @@ const Chats = (props: {activeChat: allChatOfUser, setActiveChat: Function, chats
                 block: "end",
             });
         }
-        console.log("chats receive :", props.chatsOfUser)
-
     }, []);
 
     function moveMostRecentUp(chatsOfUser: allChatOfUser[]) {

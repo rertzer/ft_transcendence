@@ -30,7 +30,6 @@ export const ListChannels = (props: {chatsOfUser: allChatOfUser[], showSubMenu: 
 
 	const DealWithIdChat = async () => {
 		const returnValue = await SendIdChat();
-		console.log("RETVAL : ", returnValue);
 		if (returnValue === -3) {
 			setErrorMessage("Oops, something wrong happened")
 			setChanToJoin({id: -1, name: "", owner: "", type: "", password: null})
@@ -74,7 +73,6 @@ export const ListChannels = (props: {chatsOfUser: allChatOfUser[], showSubMenu: 
 		  }
 
 		  const data = await response.json();
-		  console.log('Success:', data);
 		  setPassword('');
 		  socket.emit('chatListOfUser', username);
 		  return data; 
@@ -101,7 +99,6 @@ export const ListChannels = (props: {chatsOfUser: allChatOfUser[], showSubMenu: 
 	}, [props.showSubMenu]);
 
     const toggleForm = () => {
-		console.log("AVAILABLE",availableChannels)
         if (props.showSubMenu !== "list") {
             props.setShowSubMenu("list");
       } else {

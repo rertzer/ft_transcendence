@@ -50,7 +50,6 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 				throw new Error("Request failed");
 			}
 			const data = await response.json();
-			console.log("is user banned = ", data.isBanned)
 			if (data.isBanned) {
 				return true;
 			} else {
@@ -101,9 +100,9 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 	}
 
 	function muteUser() {
-		console.log("plop try to muted")
 		socket.emit("mutedUser", {username: props.username, chatId: props.chatId, time: 60 })
 		toggleUserActionsMenu();
+		sendServiceMessage(props.username + " has been muted for 1 min");
 	}
 
 	async function banUser() {
@@ -141,7 +140,6 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 		}
 		socket.emit('newPrivateConv', messageData);
 		toggleUserActionsMenu();
-		
 	}
 
 	async function addToFriends()
@@ -195,9 +193,11 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 			</div>
 		)
 	} else {
-		return (<div className="service-message" >
-					<p>{props.msg}</p>
-				</div>);
+		return (
+			<div className="service-message" >
+				<p>{props.msg}</p>
+			</div>
+			);
 	}
 }
 

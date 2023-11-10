@@ -22,7 +22,6 @@ function Login() {
 
 	useEffect(() => {
 		socket.connect();
-		console.log("fuck");
 	  }, []);
 
 	const sendUserConnection = () => {
