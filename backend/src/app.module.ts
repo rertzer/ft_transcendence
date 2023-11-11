@@ -6,6 +6,7 @@ import { UserModule } from './user/user.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { AppService } from './app.service';
 import { AppController } from './app.controller';
+import { FtAuthModule } from './ft_auth/ft_auth.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { AppController } from './app.controller';
       isGlobal: true,
     }),
     AuthModule,
+    FtAuthModule,
     UserModule,
     PrismaModule,
     ChatModule,
