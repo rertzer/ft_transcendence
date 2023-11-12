@@ -13,7 +13,6 @@ function Login() {
     try {
       const data = await fetch("/auth/login", {
         method: "POST",
-        mode: "cors",
         headers: { "Content-Type": "application/json; charset=utf-8" },
         body: JSON.stringify({ login, password }),
       });

@@ -4,16 +4,12 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { PrismaService } from '../prisma/prisma.service';
-import { AuthDto, LoginDto, EditDto } from './dto';
+import { LoginDto, EditDto } from './dto';
 import * as argon from 'argon2';
-import * as fs from 'fs';
-
 import { User } from '@prisma/client';
-import { Express } from 'express';
-import { ConfigService } from '@nestjs/config';
-import { promises } from 'dns';
 
 @Injectable()
 export class AuthService {
@@ -33,29 +29,10 @@ export class AuthService {
     });
     if (user) console.log('user found');
     if (!user) {
-      console.log('Creating User');
-      const password = await argon.hash(dto.password);
-      try {
-        user = await this.prisma.user.create({
-          data: {
-            login: dto.login,
-            email: dto.login + '@student.42.fr', //dto.email,
-            password,
-            role: 'player',
-          },
-        });
-      } catch (error) {
-        if (error instanceof PrismaClientKnownRequestError) {
-          if (error.code === 'P2002') {
-            throw new ForbiddenException('user already exist');
-          }
-          throw error;
-        }
-      }
+      user = await this.createUser(dto);
     } // end of !user
-    // password comparison
 
-    if (user) {
+    if (user && user.password) {
       const pwMatches = await argon.verify(
         user.password,
         dto.password,
@@ -70,6 +47,31 @@ export class AuthService {
     return this.signToken(user.login);
   } // end of login()
 
+  async createUser(dto: LoginDto): Promise<User| null>{
+    console.log('Creating User');
+    
+      const password = await argon.hash(dto.password);
+      try {
+        const user = await this.prisma.user.create({
+          data: {
+            login: dto.login,
+            email: dto.login + '@student.42.fr', //dto.email,
+            password,
+            role: 'player',
+          },
+        });
+        return user;
+      } catch (error) {
+        if (error instanceof PrismaClientKnownRequestError) {
+          if (error.code === 'P2002') {
+            throw new ForbiddenException('user already exist');
+          }
+          throw error;
+        }
+      }
+      return null;
+  }
+
   async signToken(
     login: string,
   ): Promise<{ login: string; access_token: string }> {
@@ -83,60 +85,7 @@ export class AuthService {
     return { login, access_token };
   } // end of signToken()
 
-  async edit(dto: EditDto) {
-    console.log('edit received dto: ', dto.login);
+ 
 
-    if (dto.password) {
-      dto.password = await argon.hash(dto.password);
-    }
 
-    const user = await this.prisma.user.update({
-      where: {
-        login: dto.login,
-      },
-      data: dto,
-    });
-    if (!user) throw new ForbiddenException('Bad login');
-    return user;
-  } // end of edit
-
-  async editAvatar(
-    file: Express.Multer.File,
-    user_login: string,
-  ) {
-    console.log('Editing avatar login is', user_login);
-    const find_data: { avatar: string | null; } | null = await this.prisma.user.findUnique({
-      select: {
-        avatar: true,
-      },
-      where: {
-        login: user_login,
-      },
-    });
-    if (find_data)
-    {
-      if (find_data.avatar != null)
-      { console.log ('deleting old file', find_data.avatar);
-      fs.unlink('/var/avatar/' + find_data.avatar, (err)=>{
-        if (err)
-        {
-          console.log (err);
-          throw err;
-        }
-      });}
-     
-      const user = await this.prisma.user.update({
-      where: {
-        login: user_login,
-      },
-      data: {avatar: file.filename},
-    });
-    if (!user) throw new ForbiddenException('Bad request');
-    }
-    
-    
-   
-    console.log(file);
-    return { file };
-  } // end of editAvatar
 }

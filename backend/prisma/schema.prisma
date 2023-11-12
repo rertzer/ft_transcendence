@@ -19,7 +19,7 @@ model User {
   email                  String
   avatar                 String?
   role                   String
-  password               String
+  password               String?
   game_won               Int              @default(0)
   game_lost              Int              @default(0)
   game_played            Int              @default(0)

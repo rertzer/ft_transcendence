@@ -55,7 +55,7 @@ function Register() {
       formData.append("file", newAvatar, newAvatar.name);
       console.log(formData);
 
-      const fileData = await fetch("/auth/editAvatar", {
+      const fileData = await fetch("/user/editAvatar", {
         method: "POST",
         headers: { Authorization: bearer },
         body: formData,
@@ -71,7 +71,7 @@ function Register() {
     if (newEmail) tosend.email = newEmail;
 
     console.log("fetching", tosend);
-    const data = await fetch("/auth/edit", {
+    const data = await fetch("/user/edit", {
       method: "POST",
       headers: {
         Authorization: bearer,
