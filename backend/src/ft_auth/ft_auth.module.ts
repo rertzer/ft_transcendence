@@ -6,7 +6,6 @@ import { PrismaModule } from 'src/prisma/prisma.module';
 import { FortytwoStrategy } from './ft_auth.strategy';
 import { HttpModule } from '@nestjs/axios';
 
-
 @Module({
   imports: [JwtModule.register({}), PrismaModule, HttpModule],
   controllers: [FtAuthController],

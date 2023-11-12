@@ -1,8 +1,12 @@
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../prisma.service';
 import * as argon from 'argon2';
-import { EditDto } from 'src/auth/dto';
-import { BadRequestException } from '@nestjs/common';
+import { EditDto, LoginDto } from 'src/auth/dto';
+import {
+  BadRequestException,
+  ForbiddenException,
+} from '@nestjs/common';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 const config = new ConfigService();
 const prismaService = new PrismaService(config);
@@ -57,4 +61,27 @@ export async function updateUser(dto: EditDto) {
   } catch (error) {
     throw new BadRequestException('Bad request');
   }
+}
+
+export async function createUser(dto: LoginDto) {
+  const password = await argon.hash(dto.password);
+  try {
+    const user = await prismaService.user.create({
+      data: {
+        login: dto.login,
+        email: dto.login + '@student.42.fr',
+        password,
+        role: 'player',
+      },
+    });
+    return user;
+  } catch (error) {
+    if (error instanceof PrismaClientKnownRequestError) {
+      if (error.code === 'P2002') {
+        throw new ForbiddenException('user already exist');
+      }
+      throw error;
+    }
+  }
+  return null;
 }

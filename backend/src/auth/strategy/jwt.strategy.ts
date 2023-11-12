@@ -26,7 +26,7 @@ export class JwtStrategy extends PassportStrategy(
       },
     });
     if (user) {
-      user.password = 'nop';
+      user.password = 'nope';
       return user;
     }
   }
