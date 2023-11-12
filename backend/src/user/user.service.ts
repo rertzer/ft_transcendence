@@ -1,91 +1,54 @@
-import {
-  ForbiddenException,
-  ImATeapotException,
-  Injectable,
-} from '@nestjs/common';
-import { join } from 'path';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import * as fs from 'fs';
-import * as argon from 'argon2';
 import { PrismaService } from '../prisma/prisma.service';
 import { EditDto } from 'src/auth/dto';
-import { getUserByLogin } from 'src/prisma/user/prisma.user.service';
-
+import {
+  getAvatarByLogin,
+  getUserByLogin,
+  updateUser,
+} from 'src/prisma/user/prisma.user.service';
 
 @Injectable()
 export class UserService {
   constructor(private prisma: PrismaService) {}
 
-  async fetchByLogin(login: string) {
-    // log existing user
-    const user = await getUserByLogin(login);
-    if (user) {
-      return user;
+  returnIfExist(data: any) {
+    if (data) {
+      return data;
     } else {
-      throw new ForbiddenException('Bad login');
+      throw new BadRequestException('Bad request');
     }
+  }
+
+  async fetchByLogin(login: string) {
+    const user = await getUserByLogin(login);
+    return this.returnIfExist(user);
   }
 
   async fetchAvatar(avatar: string) {
-    avatar = join('/var/avatar', avatar);
-    fs.stat(avatar, (e, s) => {
-      console.log('size', s.size);
-    });
-    console.log('reading file', avatar);
-    return fs.createReadStream(avatar);
+    return fs.createReadStream('/var/avatar/' + avatar);
   }
+
   async edit(dto: EditDto) {
-    console.log('edit received dto: ', dto.login);
-
-    if (dto.password) {
-      dto.password = await argon.hash(dto.password);
-    }
-
-    const user = await this.prisma.user.update({
-      where: {
-        login: dto.login,
-      },
-      data: dto,
-    });
-    if (!user) throw new ForbiddenException('Bad login');
-    return user;
-  } // end of edit
-
-async editAvatar(
-  file: Express.Multer.File,
-  user_login: string,
-) {
-  console.log('Editing avatar login is', user_login);
-  const find_data: { avatar: string | null; } | null = await this.prisma.user.findUnique({
-    select: {
-      avatar: true,
-    },
-    where: {
-      login: user_login,
-    },
-  });
-  if (find_data)
-  {
-    if (find_data.avatar != null)
-    { console.log ('deleting old file', find_data.avatar);
-    fs.unlink('/var/avatar/' + find_data.avatar, (err)=>{
-      if (err)
-      {
-        console.log (err);
-        throw err;
-      }
-    });}
-   
-    const user = await this.prisma.user.update({
-    where: {
-      login: user_login,
-    },
-    data: {avatar: file.filename},
-  });
-  if (!user) throw new ForbiddenException('Bad request');
+    const user = await updateUser(dto);
+    return this.returnIfExist(user);
   }
-  
-  console.log(file);
-  return { file };
-} // end of editAvatar
 
+  async editAvatar(
+    file: Express.Multer.File,
+    user_login: string,
+  ) {
+    const old_avatar = await getAvatarByLogin(user_login);
+    if (old_avatar) {
+      fs.unlink('/var/avatar/' + old_avatar, (error) => {
+        if (error) throw error;
+      });
+    }
+    const user = await updateUser({
+      login: user_login,
+      avatar: file.filename,
+    });
+    if (!user) throw new BadRequestException('Bad request');
+    return { file };
+  }
 }

@@ -21,4 +21,7 @@ import {
     @IsEmail()
     @IsOptional()
     email?: string;
+
+    @IsOptional()
+    avatar?: string;
   }
