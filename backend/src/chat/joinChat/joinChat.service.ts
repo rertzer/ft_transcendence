@@ -42,13 +42,13 @@ export class JoinChatService{
 
 	async checkChatExist(chat_id: string) {
 		const chatExist = await this.prismaService.checkChatId(parseInt(chat_id));
-		if (chatExist == ChatType.NotExisting) {
+		if (chatExist === ChatType.NotExisting) {
 		  console.log("here 1");
 			return "-1";
-		} else if (chatExist == ChatType.Private) {
+		} else if (chatExist === ChatType.Private) {
 			console.log("here 2");
 		  return '-3';
-		} else if (chatExist == ChatType.Password) {
+		} else if (chatExist === ChatType.Password) {
 			console.log("here 3");
 			return '-2';
 		} else {

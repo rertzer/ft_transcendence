@@ -60,7 +60,7 @@ function RepeatingNumbers() {
   for (let index = 1; index * (20 + (zoom - 100)/8) < windowHeightRef.current; index++) {
     const i = index + sx;
     const dynamicTop = `${(index) * (20 + (zoom - 100)/8) - (20 + (zoom - 100)/8)}px`;
-    if (i == localCoordY + 1 || localCoordY == -1)
+    if (i === localCoordY + 1 || localCoordY === -1)
     {
       components.push(
       <div  key={`y:${i}`}

@@ -5,13 +5,9 @@ import Login from './routes/Login';
 import Register from './routes/Register';
 import Home from './routes/Home';
 import Profile from './routes/Profile';
-import Navbar from './components/menus/Navbar';
-import Leftbar from './components/menus/Leftbar';
-import FriendsComponent from './components/friendlist/FriendsComponent';
 import {  IConnected } from './context/authContext';
 import ChatComponent from './components/chat/ChatComponent';
-import Leaderboards from './components/leaderboards/Leaderboards';
-import {IChatContext, WebsocketProvider, socket } from './context/chatContext';
+import { IChatContext } from './context/chatContext';
 import ChatContext from './context/chatContext';
 import ConnectionContext from './context/authContext'
 import Game from './components/game/Game';
@@ -29,37 +25,6 @@ function App() {
 	  setUsername,
   }
 
-  const rightBarSwitch = (state: string) => {
-    switch(state) {
-      case "friends" :
-        return (<FriendsComponent />);
-      case "chat" :
-        return (<ChatComponent />);
-      case "leaderboards" :
-        return (<Leaderboards />);
-      default :
-        return;
-    }
-  }
-
-  const Layout = ()=> {
-    return (<Desktop1 />);
-    const [RightBar, setRightBar] = useState("none");
-
-    return (
-    <div>
-         <Navbar RightBar={RightBar} setRightBar={setRightBar}/>
-         <div style={{display: "flex"}}>
-           <Leftbar />
-           <div style={{flex: 8}}>
-             <Outlet />
-           </div>
-           {rightBarSwitch(RightBar)}
-         </div>
-    </div>
-    );
-  }
-
   const ProtectedRoute = ({children}: any) => {
 
     if (!username) {
@@ -71,7 +36,7 @@ function App() {
   const router = createBrowserRouter([
     {
       path:"/",
-      element: <ProtectedRoute><Layout /></ProtectedRoute>,
+      element: <ProtectedRoute><Desktop1 /></ProtectedRoute>,
       children:[
         {
           path:"/",

@@ -68,7 +68,7 @@ export class RoomsService {
 	};
 
 	removeRoom(room: Room) {
-		this.rooms = this.rooms.filter((r) => {return r != room;});
+		this.rooms = this.rooms.filter((r) => {return r !== room;});
 		console.log('Remove room');
 		console.log('Rooms :', this.rooms);
 	};
@@ -152,7 +152,7 @@ export class RoomsService {
 		else if (room.playerLeft === player || room.playerRight === player) {
 			player.socket.emit('Error_player_already_in_room');
 		}
-		else if (room.playerLeft != null  && room.playerRight != null) {
+		else if (room.playerLeft !== null  && room.playerRight !== null) {
 			player.socket.emit('Error_room_full');
 		}
 		else {
@@ -186,7 +186,7 @@ export class RoomsService {
 	removePlayerFromRoom(player:Player) {
 		let room = this.findRoomOfPlayer(player);
 		if (room === null) return ;
-		if (this.getNumberOfPlayersInRoom(room) != 2){
+		if (this.getNumberOfPlayersInRoom(room) !== 2){
 			this.removeRoom(room);
 		}
 		else if (room.playerLeft === player) {

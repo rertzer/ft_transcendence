@@ -52,7 +52,7 @@ function  File() {
         <ListItem button onClick={() => handlePage("Data")}><ListItemText>Data </ListItemText></ListItem>
         <ListItem button onClick={() => handlePage("Contacts")}><ListItemText>Contacts </ListItemText></ListItem>
         <Divider/>
-        <ListItem button onClick={() => handleChat("Chat")}>{chat == "Chat" ? <CheckBoxOutlinedIcon fontSize="small"/>: <CheckBoxOutlineBlankIcon fontSize="small"/>} <ListItemText style={{position:'relative', left:'10px'}}>Chat </ListItemText></ListItem>
+        <ListItem button onClick={() => handleChat("Chat")}>{chat === "Chat" ? <CheckBoxOutlinedIcon fontSize="small"/>: <CheckBoxOutlineBlankIcon fontSize="small"/>} <ListItemText style={{position:'relative', left:'10px'}}>Chat </ListItemText></ListItem>
         <Divider/>
         <ListItem button onClick={print}><ListItemText>Print </ListItemText></ListItem>
         <ListItem button><ListItemText>Logout </ListItemText></ListItem>
@@ -194,7 +194,7 @@ function  File() {
     updatePageMenuChat(str, "none", chat);
   }
   function handleChat(str : string) {
-    if (str == chat)
+    if (str === chat)
       updatePageMenuChat(page, "none", "none");
     else
       updatePageMenuChat(page, "none", str);

@@ -35,7 +35,7 @@ export class MyGateway {
 		console.log("client connected : ", client.id)
 		client.on('disconnect', () => {
 			console.log("client disconect : ", client.id)
-			this.socketsLogin = this.socketsLogin.filter((s) => {return s.sock != client;});
+			this.socketsLogin = this.socketsLogin.filter((s) => {return s.sock !== client;});
 		})
 	}
 
@@ -124,7 +124,7 @@ export class MyGateway {
 	@SubscribeMessage('onUserConnection')
 	async onUserConnection(@MessageBody() TokenConnection: string, @ConnectedSocket() client:Socket) {
 			const userExist:boolean = await this.prismaChatService.checkLogin(TokenConnection);
-			if (userExist == false) {
+			if (userExist === false) {
 
 				client.emit('onUserConnection', {
 					id : '-1'

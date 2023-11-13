@@ -64,7 +64,7 @@ const Messages = (props: {chatId: number, isOwner: boolean, isAdmin: boolean}) =
 	}, [])
 
 	useEffect(() => {
-		if (render == true)
+		if (render === true)
 		{
 			for (const element of chatHistory)
 				{

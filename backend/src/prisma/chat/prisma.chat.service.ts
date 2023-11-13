@@ -161,7 +161,7 @@ export class PrismaChatService {
 			console.log("heisAdmin = ", heIsAdmin);
 			if (!heIsAdmin)
 				return false;
-			if (heIsAdmin.user_role == "admin")
+			if (heIsAdmin.user_role === "admin")
 				return true;
 		}
 		return false;

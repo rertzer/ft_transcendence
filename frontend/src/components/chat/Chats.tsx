@@ -61,7 +61,7 @@ const Chats = (props: {activeChat: Active, setActiveChat: Function, chatsOfUser:
                         <div ref={startRef} />
 						{props.chatsOfUser.map((channel) => (
                             <div key={channel.id} onClick={() => {
-                                    if (channel.id != props.activeChat.id) {
+                                    if (channel.id !== props.activeChat.id) {
                                     props.setActiveChat({id: channel.id, name: channel.channelName});
                                     socket.emit('retrieveMessage', {chatId: channel.id, messageToDisplay: 15 })
                                     }}}>

@@ -12,7 +12,7 @@ const Search = () => {
     // }
 
     // const handleKey= (e: KeyboardEvent<HTMLImageElement>) => {
-    //     e.code == "Enter" && handleSearch();
+    //     e.code === "Enter" && handleSearch();
     // }
 
     return (

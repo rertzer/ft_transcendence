@@ -13,7 +13,7 @@ import LastPageIcon from '@mui/icons-material/LastPage';
 
 import { createTheme } from '@mui/material/styles';
 import { ThemeProvider } from '@emotion/react';
-import { MyContext } from '../context/PageContext';
+import { MyContext } from '../../context/PageContext';
 import { useContext } from 'react';
 
 const theme = createTheme({
@@ -158,16 +158,16 @@ function Footer() {
     <SkipPreviousIcon className={styles.arrow} onClick={() =>selectPrev()}/>
     <SkipNextIcon className={styles.arrow} onClick={() =>selectNext()}/>
     <LastPageIcon className={styles.arrow} onClick={() =>updatePage("Contacts")}/>
-    <div className={page == "Project" ? styles.sheetPageSelected : styles.sheetPage} style={{left:'100px', width:'50px'}} onClick={() =>updatePage("Project")}>
+    <div className={page === "Project" ? styles.sheetPageSelected : styles.sheetPage} style={{left:'100px', width:'50px'}} onClick={() =>updatePage("Project")}>
       <div className={styles.text}>Game</div>
     </div>
-    <div className={page == "Profile" ? styles.sheetPageSelected : styles.sheetPage} style={{left:'150px', width:'50px'}} onClick={() =>updatePage("Profile")}>
+    <div className={page === "Profile" ? styles.sheetPageSelected : styles.sheetPage} style={{left:'150px', width:'50px'}} onClick={() =>updatePage("Profile")}>
      <div className={styles.text}>Profile</div>
     </div>
-    <div className={page == "Data" ? styles.sheetPageSelected : styles.sheetPage} style={{left:'200px', width:'50px'}} onClick={() =>updatePage("Data")}>
+    <div className={page === "Data" ? styles.sheetPageSelected : styles.sheetPage} style={{left:'200px', width:'50px'}} onClick={() =>updatePage("Data")}>
      <div className={styles.text}>Data</div>
     </div>
-    <div className={page == "Contacts" ? styles.sheetPageSelected : styles.sheetPage} style={{left:'250px', width:'70px'}} onClick={() =>updatePage("Contacts")}>
+    <div className={page === "Contacts" ? styles.sheetPageSelected : styles.sheetPage} style={{left:'250px', width:'70px'}} onClick={() =>updatePage("Contacts")}>
       <div className={styles.text}>Contacts</div>
     </div>
 	  <div className={styles.sep} />

@@ -60,7 +60,7 @@ function RepeatingLetters() {
     const n = i + sy;
     const dynamicLeft = `${(i) * (80 + (zoom - 100)/2)}px`;
     let string = "";
-    if (n == 0 || n == 26)
+    if (n === 0 || n === 26)
       string = "A";
     let j = n;
     if (j >= 26)
@@ -70,7 +70,7 @@ function RepeatingLetters() {
     }
     if (n >= 26 && n < 52)
       string = "A" + string;
-    if (n  == localCoordX || localCoordX == -1)
+    if (n  === localCoordX || localCoordX === -1)
     {
       components.push(
       <div  key={`x:${i}+${string}`}

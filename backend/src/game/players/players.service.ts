@@ -16,7 +16,7 @@ export class PlayersService {
 	};
 
 	remove(clientSocket: Socket) {
-		this.players = this.players.filter((p) => {return p.socket != clientSocket;});
+		this.players = this.players.filter((p) => {return p.socket !== clientSocket;});
 		console.log('Remove Player');
 		console.log('Players:',this.players);
 	};
@@ -35,7 +35,7 @@ export class PlayersService {
 
 	changePlayerName(player:Player, newName:string) {
 		const index = this.players.indexOf(player);
-		if (index != -1) {
+		if (index !== -1) {
 			player.name = newName;
 			this.players[index] = player;
 		}

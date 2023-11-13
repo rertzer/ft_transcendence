@@ -30,7 +30,6 @@ export function Canvas(props:any) {
 		const handleResize = () => {
 			const width = canvasRef.current?.parentElement?.clientWidth;
 			const height = canvasRef.current?.parentElement?.clientHeight;
-			console.log("my parent is", canvasRef.current?.parentElement);
 			if (typeof(width) !== 'undefined' && typeof(height) !== 'undefined') {
 				context.canvas.width = width;
 				context.canvas.height = height;
