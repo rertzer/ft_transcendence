@@ -23,7 +23,7 @@ const Chatbar = (props: {chatsOfUser: allChatOfUser[]}) => {
 
     return (
         <div className='chatbar'>
-            <span className='chatlogo'>Pong Chat</span>
+            <span className='chatlogo'>PongOffice Chat</span>
             <div className='icons' ref={menuRef}>
                 <ListChannels chatsOfUser={props.chatsOfUser} showSubMenu={showSubMenu} setShowSubMenu={setShowSubMenu}/>
                 <AddChat chatsOfUser={props.chatsOfUser} showSubMenu={showSubMenu} setShowSubMenu={setShowSubMenu}/>

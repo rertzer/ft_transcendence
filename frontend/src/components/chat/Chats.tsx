@@ -49,7 +49,11 @@ const Chats = (props: {activeChat: allChatOfUser, setActiveChat: Function, chats
         chatsOfUser.sort((a: allChatOfUser, b: allChatOfUser) => {
             const aDate = a.dateSend;
             const bDate = b.dateSend;
-            if (aDate === null || bDate === null)
+            if (aDate === null && bDate !== null)
+                return 1;
+            else if (aDate !== null && bDate === null)
+                return -1;
+            else if (aDate === null || bDate === null)
                 return 0;
             else if (aDate < bDate)
                 return 1;

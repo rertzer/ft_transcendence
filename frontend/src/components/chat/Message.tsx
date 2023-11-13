@@ -90,11 +90,12 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ username: props.username, chatId: props.chatId})
 		};
-		toggleUserActionsMenu();
-		await fetch('http://localhost:4000/chatOption/setAdmin/', requestOptions)
+		const response = await fetch('http://localhost:4000/chatOption/setAdmin/', requestOptions)
 		.catch((error) => {
 			console.error('Error checking user status:', error);
 		  });
+		console.log("RESPONSE: ", response)
+		toggleUserActionsMenu();
 		sendServiceMessage(props.username + " is now an administrator of this channel");
 
 	}
@@ -156,7 +157,7 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 
 	if (messageType !== "service") {
 		return (
-			<div className={messageType === "owner" ? "message owner" : "message"}>
+			<div className={messageType === "owner" ? "messageItem owner" : "messageItem"}>
 				<div className='messageInfo'>
 					{messageType === "owner" ?
 						<div>

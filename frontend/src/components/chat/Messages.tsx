@@ -103,11 +103,11 @@ const Messages = (props: {chatId: number, isOwner: boolean, isAdmin: boolean, se
 			{chatMessages.length === 0 ? (
 				<div></div>
 				) : (
-					<div>
+					<div className='messageArray'>
 
 						{chatMessages.map((chat) => {
 							return (
-							<div key={chat.date + chat.id}>
+							<div key={chat.date + chat.id} className="messageUnit">
 								{chat.chatId === props.chatId && (
 									 <Message date={chat.date} username={chat.username} msg={chat.msg} isOwner={props.isOwner} isAdmin={props.isAdmin} chatId={props.chatId} service={chat.serviceMessage} isDM={props.isDM}/>
 								)}

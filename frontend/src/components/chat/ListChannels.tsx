@@ -41,12 +41,15 @@ export const ListChannels = (props: {chatsOfUser: allChatOfUser[], showSubMenu: 
 			setChanToJoin({id: -1, name: "", owner: "", type: "", password: null})
 		} else {
 			setErrorMessage("");
+			toggleForm();
 		}
 	  }
 
 	  const SendIdChat = async () => {
 		let messageData;
-		if (chanToJoin.type = "protected by password") {
+		if (chanToJoin.type === "protected by password") {
+			if (password === "")
+				return (-1);
 			messageData = {
 				username: username,
 				chat_id: chanToJoin.id,

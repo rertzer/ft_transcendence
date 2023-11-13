@@ -38,10 +38,6 @@ function App() {
       element: <ProtectedRoute><Desktop1 /></ProtectedRoute>,
       children:[
         {
-          path:"/",
-          element: <Home />
-        },
-        {
           path:"/profile/:id",
           element: <Profile />
         },
