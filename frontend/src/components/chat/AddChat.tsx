@@ -69,6 +69,7 @@ export const AddChat = (props: {chatsOfUser: allChatOfUser[], showSubMenu: strin
 						<input
 							type="text"
 							placeholder="Channel Name"
+							maxLength={42}
 							value={chatName}
 							onChange={(e) => setChatName(e.target.value)}
 						/>
