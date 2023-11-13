@@ -48,9 +48,9 @@ function Desktop1() {
       <MyProvider>
         <Body />
         <Header />
-        <Footer/>
+        <Footer />
         <DisplayChat />
-      </MyProvider>
+      </MyProvider >
     </div>
   );
 }

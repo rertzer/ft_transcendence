@@ -65,7 +65,6 @@ function MyProvider({ children }: MyProviderProps) {
     setSharedData({ ...sharedData, scroll: { ...newScroll } });
   };
   
-
   return (
     <MyContext.Provider value={{ ...sharedData, updatePage, updateMenu, updateChat, updateZoom, updateToolbar, updatePageMenuChat, updateCoords, updateCoordsMenu, updateScroll}}>
       {children}

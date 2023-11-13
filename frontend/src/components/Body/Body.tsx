@@ -74,10 +74,10 @@ export function Body({}) {
         <div className={styles.letters} style={{top: toolbar ? '65px' : '142px' }}>
           <Letters />
         </div>
-        <div className={styles.racketPlayer2}>
+        <div className={styles.racketPlayer2} style={{top: toolbar ? '0px' : '140px' }}>
           <div className={styles.rightScrollZone} />
         </div>
-        <div className={styles.racketPlayer1}>
+        <div className={styles.racketPlayer1} style={{top: toolbar ? '0px' : '140px' }}>
           <div className={styles.rightScrollZone1} />
         </div>
 		    { context?.page === "Project" && <Game/>}

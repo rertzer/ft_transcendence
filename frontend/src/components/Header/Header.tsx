@@ -1,7 +1,7 @@
 import { SelectBar } from './SelectBar';
 import { Tooltip } from "@mui/material";
 import styles from "./Header.module.css";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import  ConnectionContext from "../../context/authContext";
 import { MyContext } from '../../context/PageContext';
 
@@ -10,13 +10,12 @@ function Header({}) {
   if (!context) {
     throw new Error('useContext must be used within a MyProvider');
   }
-  const { menu, updateMenu } = context;
-  const { toolbar } = context;
+  const { menu, toolbar, updateMenu } = context;
+
   function handleClick(str : string) {
     updateMenu(str);
   }
   const {username} = useContext(ConnectionContext);
-
   return <header className={styles.headerFrame} style={{ height: toolbar ? '65px' : '142px' }}>
         <div className={styles.headerBackground} style={{ height: toolbar ? '65px' : '142px' }}/>
         <div className={styles.line3}>

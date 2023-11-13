@@ -1,6 +1,7 @@
-import {useEffect, useState, useContext} from "react";
+import {useEffect, useState, useContext, useRef} from "react";
 import { Canvas } from "../canvas";
 import gameContext from '../../../../context/gameContext';
+import { MyContext } from "../../../../context/PageContext";
 import printMenu from "./printMenu";
 import printGame from "./printGame";
 import { gameSocket } from "../../services/gameSocketService";
@@ -90,7 +91,7 @@ function GameArea(props:any) {
 		speed: pong.ballInitSpeed,
 		dir: pong.ballInitDir
 	}]);
-	
+
 	useEffect(() => {
 		function onConnect() {
 			console.log("Connected with socket: ", gameSocket.id);
@@ -111,6 +112,8 @@ function GameArea(props:any) {
 			setBalls(balls);
 		}
 
+		
+		
 		function onGameState(data:any) {
 			updateBalls(data.balls);
 			
@@ -128,7 +131,7 @@ function GameArea(props:any) {
 				setFrontEndPlayerRight((prev) => ({ ...prev, posY: myPosY, score: data.scoreRight, readyToPlay:data.playerRight.readyToPlay}));
 				setFrontEndPlayerLeft((prev) => ({ ...prev, posY: otherPlayerPosY, score: data.scoreLeft, readyToPlay:data.playerLeft.readyToPlay}));
 			}
-			setPong((prev) => ({ ...prev, gameStatus:data.gameStatus, startingCount: data.startingCount}))
+			setPong((prev) => ({ ...prev, gameStatus:data.gameStatus, startingCount: data.startingCount}))	
 		}
 		
 		function onRoomStatus(data:any) {
@@ -249,7 +252,6 @@ function GameArea(props:any) {
 			setIdPlayerMove(idPlayerMove + 1);
 		}
 	};
-
 	function render(context:CanvasRenderingContext2D):void {
 		moveMyPlayerImediately();
 		context.clearRect(0, 0, context.canvas.width, context.canvas.height)
@@ -260,6 +262,7 @@ function GameArea(props:any) {
 	return (
 		<>
 			<Canvas draw = {render} style={styleCanvas} />
+			<div style={{position:'fixed', top:'0px', right:'0px'}}>hello</div>
 			<div><strong>You play on the {frontEndPlayerLeft.socketId === gameSocket.id ? 'left' : 'right'} !</strong></div>
 		</>
 	);
