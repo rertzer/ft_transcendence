@@ -15,6 +15,7 @@ import { GameService } from "./rooms/game.service";
     },
 	
 })
+
 export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect{
 	
 	private readonly logger = new Logger(GameSocketEvents.name);
@@ -27,7 +28,6 @@ export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, On
 
 	@Inject(RoomsService)
 	private readonly gameService: GameService;
-
 
 	@WebSocketServer()
 	server: Namespace;

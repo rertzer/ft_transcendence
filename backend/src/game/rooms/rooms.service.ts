@@ -64,6 +64,8 @@ export class RoomsService  implements OnModuleInit{
 		room.gameStatus = 'WAITING_TO_START';
 		room.playerLeft = playerLeft;
 		room.playerRight = playerRight;
+		console.log('JE VIENS DE FAIRE UNE ROOM', room);
+		this.sendRoomStatus(room);
 		return (room);
 	};
 
@@ -104,14 +106,24 @@ export class RoomsService  implements OnModuleInit{
 	joinWaitingRoom(player:Player, typeGame:TypeGame) {
 		const waitingPlayer = (typeGame === 'ADVANCED' ? this.waitingRoomAdvanced : this.waitingRoomBasic);
 		if (waitingPlayer === null) {
-			if (typeGame === 'ADVANCED') this.waitingRoomAdvanced = player;
-			else this.waitingRoomBasic = player;
+			console.log('I am adding', player.name , 'to the waiting list for', typeGame)
+			if (typeGame === 'ADVANCED') {
+				this.waitingRoomAdvanced = player;
+			} 
+			else {
+				this.waitingRoomBasic = player;
+			}
 			player.socket.emit('waiting_room_joined');
 		}
 		else {
+			console.log('The waiting room is not vide')
 			this.createRoom(player, waitingPlayer, typeGame);
-			if (typeGame === 'ADVANCED') this.waitingRoomAdvanced = null;
-			else this.waitingRoomBasic = null;
+			if (typeGame === 'ADVANCED') {
+				this.waitingRoomAdvanced = null;
+			}
+			else {
+				this.waitingRoomBasic = null;
+			}
 		}
 	}
 

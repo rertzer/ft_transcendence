@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import gameContext from '../../../../context/gameContext';
 import { gameSocket } from '../../services/gameSocketService';
+import { ConstructionOutlined } from '@mui/icons-material';
 
 interface IJoinRoomProps {
 };
@@ -30,6 +31,7 @@ export function JoinRoom(props:IJoinRoomProps) {
 	const joinWaitingRoom = (e: React.FormEvent) => {
 		e.preventDefault();
 		if (!TmpModeGameWaiting || TmpModeGameWaiting.trim() === "" ) return;
+		setModeGame(TmpModeGameWaiting);
 		gameSocket.emit('match_me', {playerName:playerName, typeGame:TmpModeGameWaiting})
 	};
 
@@ -52,6 +54,7 @@ export function JoinRoom(props:IJoinRoomProps) {
 			console.log(data.roomId)
 		}
 		function processWaitingRoomJoined() {
+			console.log('coucou la waiting room')
 			setGameStatus('IN_WAITING_ROOM');
 		}
 

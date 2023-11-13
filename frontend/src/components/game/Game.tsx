@@ -4,6 +4,7 @@ import GameContext, { IGameContextProps } from '../../context/gameContext';
 import GameArea from './components/gameArea';
 import ConnectionContext from '../../context/authContext'
 import { GameStatus } from '../../context/gameContext';
+import { WaitingRoom } from './components/waitingRoom';
 
 function Game() {
 	const [roomId, setRoomId] = useState(0);
@@ -37,7 +38,9 @@ function Game() {
 	return (
 		<GameContext.Provider value={gameContextValue}>
 			{ gameStatus === 'NOT_IN_GAME' && <JoinRoom />}
-			{ gameStatus !== 'NOT_IN_GAME' && <GameArea />}
+			{ gameStatus === 'IN_WAITING_ROOM'&& <WaitingRoom /> }
+			{ gameStatus !== 'IN_WAITING_ROOM' && gameStatus !== 'NOT_IN_GAME' && <GameArea />}
+			
 		</GameContext.Provider>
 	)
 }
