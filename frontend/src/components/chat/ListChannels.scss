@@ -13,8 +13,47 @@
         &::-webkit-scrollbar {
             display: none;
         }
-    }
-    .submenu-hidden {
-        display: none;
+        .top {
+            display: flex;
+            justify-content: space-between;
+            .joinInfo {
+                display: flex;
+                flex-direction: column;;
+                span {
+                    font-size: 18px;
+                    padding: 12px;
+                }
+                input {
+                    height: 25px;
+                    width: 100px;
+                    padding: 10px;
+                    margin-left: 50px;
+                }
+            }
+            button {
+                padding: 10px;
+                width: 70px;
+                margin: 20px;
+                background-color: #5d5b8d;
+                color: #ddddf7;
+                border-radius: 10px;
+                height: 50px;
+                cursor: pointer;
+                position: sticky;
+            }
+        }
+        .channelItem {
+            display: flex;
+            margin-top: 10px;
+            p {
+                cursor: pointer;
+                background-color: #5d5b8d;
+                margin-bottom: 10px;
+                padding: 2px;
+                border-radius: 10px;
+                margin-left: 50px;
+                margin-right: 20px;
+            }
+        }
     }
 }

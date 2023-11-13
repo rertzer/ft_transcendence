@@ -7,39 +7,26 @@ import CloseIcon from '@mui/icons-material/Close';
 import { Tooltip } from "@mui/material";
 import { allChatOfUser } from "./ChatComponent";
 import {Link} from "react-router-dom";
+import ConnectionContext from '../../context/authContext'
+import { useContext } from "react";
 
 
-const ConversationBar = (props: {toDisplay: allChatOfUser , setActiveChat: Function, isOwner: boolean}) => {
+const ConversationBar = (props: {toDisplay: allChatOfUser , setActiveChat: Function, isOwner: boolean, isAdmin: boolean}) => {
 
-    // if (props.toDisplay.isChannel === false) {  //interface d'une fenetre de DM
-    //     return (
-    //     <div className='chatInfo'>
-    //         <span>{/* nom du destinataire */}</span>
-    //         <div className="chatIcons">
-    //             <div>
-    //                 <Tooltip title="View profile" arrow>
-    //                     <Link to={"/profile/" + "1" /* remplacer par l'uid du destinataire*/} style={{textDecoration:"none"}}>
-    //                         <ProfileIcon />
-    //                     </Link>
-    //                 </Tooltip>
-    //             </div>
-    //             <div>
-    //                 <Tooltip title="Block user" arrow>
-    //                     <BlockIcon />
-    //                 </Tooltip>
-    //             </div>
-    //             <div>
-    //                 <Tooltip title="Close conversation" arrow>
-    //                     <CloseIcon onClick={() => {props.setActiveChat({id: -1, name: "none"})}} />
-    //                 </Tooltip>
-    //             </div>
-    //         </div>
-    //     </div>
-    // );
-    // } else 
+    const {username} = useContext(ConnectionContext);
+
+    function findReceiverName(names: string) {
+
+        let name = names.replace(username, "");
+        name.trim()
+        return (name)
+    }
+
         return (
             <div className='chatInfo'>
-            <span>{props.toDisplay.channelName}</span>
+            <span>{props.toDisplay.type !== "DM" ? props.toDisplay.channelName : findReceiverName(props.toDisplay.channelName)}</span>
+            {props.isOwner ? <span>(owner)</span> : <span></span>}
+            {props.isAdmin ? <span>(admin)</span> : <span></span>}
             <div className="chatIcons">
                 {props.isOwner === true ? 
                 <div>
@@ -47,15 +34,17 @@ const ConversationBar = (props: {toDisplay: allChatOfUser , setActiveChat: Funct
                         <LockIcon />
                     </Tooltip>
                 </div> : <div></div>
-                }             
+                }
+                {props.toDisplay.type !== "DM" ?        
                 <div>
                     <Tooltip title="Leave channel" arrow>
                         <LogoutIcon />
                     </Tooltip>
-                 </div>
+                 </div> : <div></div>
+                }               
                 <div>
                     <Tooltip title="Close conversation" arrow>
-                        <CloseIcon onClick={() => {props.setActiveChat({id: -1, name: "none"})}} />
+                        <CloseIcon onClick={() => {props.setActiveChat({id: -1, channelName: "Pong Chat", chatPicture: "", isChannel: false, receiverUsername: "", status: "", username: null, dateSend: null, msg: null})}} />
                     </Tooltip>
                  </div>
             </div>

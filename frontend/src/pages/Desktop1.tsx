@@ -6,11 +6,16 @@ import styles from "./Desktop1.module.css";
 import { useContext, useState } from 'react';
 import { MyContext, MyProvider } from '../context/PageContext';
 import ChatComponent from '../components/chat/ChatComponent';
+import ConnectionContext from '../context/authContext';
+import { WebsocketContext } from "../context/chatContext";
 
 function Desktop1() {
 
   //GET HEIGHT
+  const socket = useContext(WebsocketContext);
+  const {username} = useContext(ConnectionContext);
   const windowHeighthRef = useRef(window.innerHeight);
+  socket.emit("newChatConnection", username); // need to be somewhere that is going to be trigger only once
   useEffect(() => {
   const handleResize = () => {
       windowHeighthRef.current = window.innerHeight;

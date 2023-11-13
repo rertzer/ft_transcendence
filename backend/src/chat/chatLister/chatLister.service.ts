@@ -7,42 +7,41 @@ export class ChatLister{
 	constructor(private prismaService:PrismaChatService){
 	}
 
-	async listChatOfUser(username: string, sock: Socket)
+	async listChatOfUser(idLogin: number, sock: Socket)
 	{
 		const chatList = [];
-		const retrieveChat = await this.prismaService.getListOfChatByUsername(username);
-		sock.emit('ListerUsername', username);
+		const retrieveChat = await this.prismaService.getListOfChatByUsername(idLogin);
 		if (retrieveChat !== undefined)
 		{
-			for (const chat of retrieveChat)
+			for (const chatUser of retrieveChat)
 			{
-
-				const lastMessagesOfChat = await this.prismaService.getLastMessages(chat.id);
+				const lastMessagesOfChat = await this.prismaService.getLastMessages(chatUser.channel_id);
 				let lastMessageUsername = null;
 				let date = null;
 				let lastMessage = null;
 				let message = null;
+
 				if (lastMessagesOfChat !== undefined && lastMessagesOfChat && lastMessagesOfChat.length > 0)
 				{
 					lastMessage = lastMessagesOfChat[0];
 
 					date = lastMessage.date_sent;
 					message = lastMessage.message;
-					lastMessageUsername =  await this.prismaService.getLastMessagesUsername(chat.id);
+					lastMessageUsername =  await this.prismaService.getLastMessagesUsername(chatUser.channel_id);
 				}
-
-				const avatarOfOwner = await this.prismaService.getOwnerOfChatAvatar(chat.id);
+				const avatarOfOwner = await this.prismaService.getOwnerOfChatAvatar(chatUser.channel_id);
 				const chatType = {
-					id: chat.channel.id,
-					channelName: chat.channel.name,
+					id: chatUser.channel.id,
+					channelName: chatUser.channel.name,
 					chatPicture: avatarOfOwner,// need to be change
 					username: lastMessageUsername,
+					status: chatUser.user_role,
 					msg: message,
 					dateSend: date,
+					type: chatUser.channel.type,
 				}
 				chatList.push(chatType);
 			}
-
 			sock.emit('ListOfChatOfUser', chatList);
 		}
 	}

@@ -12,30 +12,37 @@ export class ChatOptController {
 
 	@Post('setAdmin')
 	async setUserAsAdmin(@Body() user:{username:string, chatId: number}){
-		await this.prismaChatService.changeChatUserRole(user.chatId, user.username, "admin");
+		//check if owner here
+		const SockArray = this.gateway.getSocketsArray()
+		const targetSocket = SockArray.find((socket) => socket.login === user.username);
+		if (targetSocket)
+		{
+			await this.prismaChatService.changeChatUserRole(user.chatId, targetSocket.idOfLogin, "admin");
+		}
 	}
 
 	@Post('banUser')
 	async banUser(@Body() user:{username:string, chatId: number}){
 		console.log("in ban user");
-		if (! await this.prismaChatService.isAdmin(user.username, user.chatId) && ! await this.prismaChatService.isOwner(user.username, user.chatId))
+		const SockArray = this.gateway.getSocketsArray()
+		const targetSocket = SockArray.find((socket) => socket.login === user.username);
+		if (targetSocket)
 		{
-			console.log("passed this step");
-			const banWorks = await this.prismaChatService.banUser(user.username, user.chatId);
-			if (banWorks)
+			if (! await this.prismaChatService.isAdmin(targetSocket.idOfLogin, user.chatId) && ! await this.prismaChatService.isOwner(user.username, user.chatId))
 			{
-				const SockArray = this.gateway.getSocketsArray()
-				const targetSocket = SockArray.find((socket) => socket.login === user.username);
-				if (targetSocket)
+				console.log("passed this step");
+				const banWorks = await this.prismaChatService.banUserPrism(targetSocket.idOfLogin, user.chatId);
+				if (banWorks)
 				{
-					console.log("removed the socket of :",user.username, "from the sock room number:", user.chatId)
-					targetSocket.sock.leave(user.chatId.toString())
-					return true
+						console.log("removed the socket of :",user.username, "from the sock room number:", user.chatId)
+						this.gateway.onChatListOfUser(user.username, targetSocket.sock);
+						targetSocket.sock.leave(user.chatId.toString())
+						return true
+					}
+					return false;
 				}
-				return false;
-			}
-			else
-				return false
+				else
+					return false
 		}
 		else
 			return false;
@@ -46,24 +53,51 @@ export class ChatOptController {
 		@Param('username') username: string,
 		@Param('chatId') chatId: string,
 	) {
-		const isBanned = await this .prismaChatService.checkIfUserIsBanned(parseInt(chatId),username);
-	return { isBanned };
+		console.log("username receive : ", username, "chat id :", chatId);
+		const SockArray = this.gateway.getSocketsArray()
+		const targetSocket = SockArray.find((socket) => socket.login === username);
+		if (targetSocket)
+		{
+			const isBanned = await this.prismaChatService.checkIfUserIsBanned(parseInt(chatId), targetSocket.idOfLogin);
+			console.log("is banned or not ?", isBanned);
+			return { isBanned };
+		}
 	}
 
 	@Post('kickUser')
-	async kickUser(@Body() user:{username:string, chatId: number}){
-
+	async kickUser(@Body() user:{login:string, chatId: number}) {
+		console.log("in kick user ", user.login);
+		const SockArray = this.gateway.getSocketsArray()
+		const targetSocket = SockArray.find((socket) => socket.login === user.login);
+		if (targetSocket)
+		{
+			if (! await this.prismaChatService.isAdmin(targetSocket.idOfLogin, user.chatId) && ! await this.prismaChatService.isOwner(user.login, user.chatId))
+			{
+				console.log("passed this step");
+					const kicked = await this.prismaChatService.kickUserFromChat(targetSocket.idOfLogin, user.chatId);
+					if (kicked)
+					{
+						console.log("removed the socket of :",user.login, "from the sock room number:", user.chatId)
+						await this.gateway.onChatListOfUser(user.login, targetSocket.sock);
+						targetSocket.sock.leave(user.chatId.toString())
+						return true
+					}
+					return false;
+			}
+			else
+				return false
+		}
 	}
 
 	@Post('joinChat')
-	async joinChat(@Body() user: {username:string, chat_id: string, user_role:string, passeword:string })
+	async joinChat(@Body() user: {username:string, chat_id: number, password:string})
 	{
 		console.log("join chat object receive ", user);
 		const SockArray = this.gateway.getSocketsArray()
 		const targetSocket = SockArray.find((socket) => socket.login === user.username);
 		if (targetSocket !== undefined)
 		{
-			const value = this.joinChatservice.joinChat(user.username, user.chat_id, user.user_role, user.passeword, targetSocket.sock);
+			const value = this.joinChatservice.joinChat(targetSocket.idOfLogin, user.chat_id, "user", user.password, targetSocket.sock);
 			return value;
 		}
 	}

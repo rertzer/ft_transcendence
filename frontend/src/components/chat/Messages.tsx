@@ -14,6 +14,7 @@ type ChatHistory = {
 	date: string;
 	id: number;
 	chatId: number;
+	serviceMessage: boolean;
 }
 
 type ChatMessage = {
@@ -22,6 +23,7 @@ type ChatMessage = {
 	date: string;
 	id: number;
 	chatId: number;
+	serviceMessage: boolean;
 }
 
 type trigger = {
@@ -29,7 +31,7 @@ type trigger = {
 	numberMsgToDisplay: number;
 }
 
-const Messages = (props: {chatId: number, isOwner: boolean, isAdmin: boolean}) => {
+const Messages = (props: {chatId: number, isOwner: boolean, isAdmin: boolean, setActiveChat: Function, isDM: boolean}) => {
 
 	const {username} = useContext(ConnectionContext);
 	const [render, setRender] = useState(false);
@@ -46,15 +48,14 @@ const Messages = (props: {chatId: number, isOwner: boolean, isAdmin: boolean}) =
 			setRender(true);
 
 		});
-		socket.on('newMessage', (chatHistoryReceive :{msg: string, username: string, date: Date, id: number, idOfChat:number}) => {
+		socket.on('newMessage', (chatHistoryReceive :{msg: string, username: string, date: Date, id: number, idOfChat:number, serviceMessage: boolean}) => {
 
 			let newDateString = chatHistoryReceive.date.toString();
 			newDateString = newDateString.slice(newDateString.indexOf("T") + 1, newDateString.indexOf("T") + 9);
-			const add : ChatMessage = {msg: chatHistoryReceive.msg, username: chatHistoryReceive.username, date: newDateString, id: chatHistoryReceive.id, chatId: chatHistoryReceive.idOfChat}
+			const add : ChatMessage = {msg: chatHistoryReceive.msg, username: chatHistoryReceive.username, date: newDateString, id: chatHistoryReceive.id, chatId: chatHistoryReceive.idOfChat, serviceMessage: chatHistoryReceive.serviceMessage}
 			setChatMessages((prevMessages) => [...prevMessages, add]);
-
+			socket.emit("chatListOfUser",username);
 			// Debugging: Check the updated chatHistory
-
 		});
 		return () => {
 
@@ -71,7 +72,7 @@ const Messages = (props: {chatId: number, isOwner: boolean, isAdmin: boolean}) =
 
 					let newDateString = element.date.toString();
 					newDateString = newDateString.slice(newDateString.indexOf("T") + 1, newDateString.indexOf("T") + 9);
-					const add : ChatMessage = {msg: element.msg, username: element.username, date: newDateString, id: element.id, chatId: element.chatId}
+					const add : ChatMessage = {msg: element.msg, username: element.username, date: newDateString, id: element.id, chatId: element.chatId, serviceMessage: element.serviceMessage}
 					setChatMessages((prevMessages) => [...prevMessages, add]);
 				}
 
@@ -104,13 +105,14 @@ const Messages = (props: {chatId: number, isOwner: boolean, isAdmin: boolean}) =
 				) : (
 					<div>
 
-						{chatMessages.map((chat) => (
-							<div key={chat.id}>
+						{chatMessages.map((chat) => {
+							return (
+							<div key={chat.date + chat.id}>
 								{chat.chatId === props.chatId && (
-									 <Message date={chat.date} username={chat.username} msg={chat.msg} isOwner={props.isOwner} isAdmin={props.isAdmin} chatId={props.chatId}/>
+									 <Message date={chat.date} username={chat.username} msg={chat.msg} isOwner={props.isOwner} isAdmin={props.isAdmin} chatId={props.chatId} service={chat.serviceMessage} isDM={props.isDM}/>
 								)}
-							</div>
-			  			))}
+							</div>)
+			  			})}
 			  		</div>
 				)}
 				<div ref={endRef} />

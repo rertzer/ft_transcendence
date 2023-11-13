@@ -1,16 +1,29 @@
 import "./Message.scss"
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useRef } from "react";
 import  ConnectionContext from "../../context/authContext"
-import CloseIcon from '@mui/icons-material/Close';
 import { WebsocketContext } from "../../context/chatContext";
 import { Link } from "react-router-dom";
 
-const  Message = (props: {username: string, date: string, msg: string, isOwner: boolean, isAdmin: boolean, chatId: number}) => {
+const  Message = (props: {username: string, date: string, msg: string, isOwner: boolean, isAdmin: boolean, chatId: number, service: boolean, isDM: boolean}) => {
 
     const {username} = useContext(ConnectionContext);
     const [showUserActionsMenu, setShowUserActionsMenu] = useState(false);
+	const [errorMessage, setErrorMessage] = useState("");
     const socket = useContext(WebsocketContext);
+	let menuRef = useRef<HTMLInputElement>(null);
 	let messageType = "normal";
+
+	useEffect(() => {
+		const clickHandler = (e: any) => {
+			if (!menuRef.current?.contains(e.target)) {
+				setShowUserActionsMenu(false);
+			}
+		};
+		document.addEventListener("mousedown", clickHandler);
+		return () => {
+			document.removeEventListener("mousedown", clickHandler);
+		}
+	});
 
 	useEffect(() => {
 		socket.on("userIsMute", (userIsMute:boolean) => {
@@ -29,46 +42,48 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 		}
     }, [])
 
-	function checkIfUserIsBanned() { //this is the function to check if the username Is banned
-		// implements it where u want
-		fetch(`http://localhost:4000/chatOption/${username}/banned/${props.chatId}`)
-		  .then((response) => response.json())
-		  .then((data) => {
-			if (data.isBanned) {
-			  // Handle the case where the user is banned
-			  console.log('You are banned.');
-			} else {
-			  // Handle the case where the user is not banned
-			  console.log('You are not banned.');
+	async function checkIfUserIsBanned(userName: string, chatID: number) {
+
+		try {
+			const response = await fetch(`http://localhost:4000/chatOption/${props.username}/banned/${chatID}`);
+			if (!response.ok) {
+				throw new Error("Request failed");
 			}
-		  })
-		  .catch((error) => {
-			console.error('Error checking user status:', error);
-		  });
+			const data = await response.json();
+			if (data.isBanned) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+		catch(error) {
+			console.error("Error while checking if user is banned", error);
+		}
 	  }
 
     if (username === props.username) {
         messageType = "owner";
     }
-	if (props.msg.search("this channel") !== -1) { //evidemment, a remplacer par le booleen "serviceMessage"
+	if (props.service) {
 		messageType = "service";
 	}
 
     function toggleUserActionsMenu() {
         setShowUserActionsMenu(!showUserActionsMenu);
+		setErrorMessage("");
     }
 
 	function sendServiceMessage(message: string) {
 		const messageData = {
 			username: username,
 			content: message,
+			serviceMessage: true,
 			idOfChat: props.chatId,
-			//ajouter un boolean "serviceMessage" qui sera true ici, et false dans les messages normaux pour differencier l'affichage
 		}
 		socket.emit('newMessage', messageData);
 	}
 
-	function sendNewAdmin() {
+	async function sendNewAdmin() {
 
 		const requestOptions = {
 			method: 'post',
@@ -76,7 +91,7 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 			body: JSON.stringify({ username: props.username, chatId: props.chatId})
 		};
 		toggleUserActionsMenu();
-		fetch('http://localhost:4000/chatOption/setAdmin/', requestOptions)
+		await fetch('http://localhost:4000/chatOption/setAdmin/', requestOptions)
 		.catch((error) => {
 			console.error('Error checking user status:', error);
 		  });
@@ -84,32 +99,59 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 
 	}
 
-	function muteUser() { // il faudra que client remplisse le time
-		console.log("plop try to muted")
+	function muteUser() {
 		socket.emit("mutedUser", {username: props.username, chatId: props.chatId, time: 60 })
 		toggleUserActionsMenu();
+		sendServiceMessage(props.username + " has been muted for 1 min");
 	}
 
-	function banUser() {
+	async function banUser() {
 		const requestOptions = {
 			method: 'post',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ username: props.username, chatId: props.chatId})
 		};
-		toggleUserActionsMenu();
-		fetch('http://localhost:4000/chatOption/banUser/', requestOptions)
-		sendServiceMessage(props.username + " has been banned from this channel");
+		let banned = await checkIfUserIsBanned(username, props.chatId);
+		if (banned) {
+			setErrorMessage(props.username + " is already banned");
+		//bien sur faut aussi verifier si le user est owner auquel cas faut un autre error message
+		} else {
+			await fetch('http://localhost:4000/chatOption/banUser/', requestOptions);
+			toggleUserActionsMenu();
+			sendServiceMessage(props.username + " has been banned from this channel");
+		}
 	}
 
-	function kickUser() {
+	async function kickUser() {
 		const requestOptions = {
 			method: 'post',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ username: props.username, chatId: props.chatId})
+			body: JSON.stringify({ login: props.username, chatId: props.chatId})
 		};
 		toggleUserActionsMenu();
-		fetch('http://localhost:4000/chatOption/kickUser/', requestOptions)
+		await fetch('http://localhost:4000/chatOption/kickUser/', requestOptions)
 		sendServiceMessage(props.username + " has been kicked from this channel");
+	}
+
+	function startDM() {
+		const messageData = {
+			sender: username,
+			receiver: props.username,
+		}
+		socket.emit('newPrivateConv', messageData);
+		toggleUserActionsMenu();
+	}
+
+	async function addToFriends()
+	{
+		const requestOptions = {
+			method: 'post',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ login: username, friendToAdd: props.username})
+		};
+		toggleUserActionsMenu();
+		await fetch('http://localhost:4000/friend/addFriend/', requestOptions)
+
 	}
 
 	if (messageType !== "service") {
@@ -120,29 +162,26 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 						<div>
 							<img src="" />  {/*faudra mettre la photo de profil ici   */}
 						</div> :
-						<div>
+						<div className="userOptions" ref={menuRef}>
 							<img src="" style={{cursor:"pointer"}} onClick={toggleUserActionsMenu}/>
+							<div className={showUserActionsMenu ? "userActions" : "userActions-hidden"}>
+								<h4>{props.username}</h4>
+								<hr></hr>
+								<div className="menuItems">
+									<div>Invite to play</div>
+									<div onClick={addToFriends}>Add to friends</div>
+									{props.isDM === false && <div onClick={startDM}>Send DM</div>}
+									<Link to="/profile/1" style={{textDecoration:"none", color: "#ddddf7"}}>
+										<div onClick={toggleUserActionsMenu}>Show profile</div>
+									</Link>
+									{(props.isAdmin || props.isOwner) && <div onClick={kickUser}>Kick</div>}
+									{(props.isAdmin || props.isOwner) && <div onClick={banUser}>Ban</div>}
+									{(props.isAdmin || props.isOwner) && <div onClick={muteUser}>Mute 1 minute</div>}
+									{props.isOwner && <div onClick={sendNewAdmin}>Set as admin </div>}
+								</div>
+								{errorMessage !== "" && <div className="errorMessage">{errorMessage}</div>}
+							</div>
 						</div>}
-				</div>
-				<div className={showUserActionsMenu ? "userActions" : "userActions-hidden"}>
-					<div className="menuHeader">
-						<h4>{props.username}</h4>
-						<CloseIcon style={{cursor:"pointer"}} onClick={toggleUserActionsMenu}/>
-					</div>
-					<hr></hr>
-					<div className="menuItems">
-						<div>Invite to play</div>
-						<div>Add to friends</div>
-						<div>Send DM</div>
-						<Link to="/profile/1" style={{textDecoration:"none", color: "#ddddf7"}}>
-							<div onClick={toggleUserActionsMenu}>Show profile</div>
-						</Link>
-						{(props.isAdmin || props.isOwner) && <div onClick={kickUser}>Kick</div>}
-						{(props.isAdmin || props.isOwner) && <div onClick={banUser}>Ban</div>}
-						{(props.isAdmin || props.isOwner) && <div onClick={muteUser}>Mute 1 minute</div>}
-						{props.isOwner && <div onClick={sendNewAdmin}>
-							Set as admin </div>}
-					</div>
 				</div>
 				<div className='messageContent'>
 					<p>{props.msg}</p>
@@ -154,13 +193,11 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 			</div>
 		)
 	} else {
-		return (<div className="service-message">
-			<p>{props.msg}</p>
-			<div className="name-time">
-				<span>Channel Bot,</span>
-				<span>{props.date}</span>
+		return (
+			<div className="service-message" >
+				<p>{props.msg}</p>
 			</div>
-		</div>);
+			);
 	}
 }
 

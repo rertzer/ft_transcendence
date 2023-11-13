@@ -3,13 +3,13 @@ import { SubscribeMessage, WebSocketGateway, MessageBody, WebSocketServer,Connec
 import { Server } from 'socket.io'
 import { PrismaChatService } from "src/prisma/chat/prisma.chat.service";
 import { getDate } from "../utils/utils.service";
-import { encodePassword, checkPassword } from "../password/password.service";
 import { JoinChatService } from "../joinChat/joinChat.service";
 import { RetrieveMessageService } from "../retrieveMessage/retrieveMessage.service";
 import {ChatLister} from "../chatLister/chatLister.service";
 import { Socket } from "socket.io";
 import { CreateChatService } from "../createchat/createchat.service";
 import { MutedUserService } from "../mutedUser/mutedUser.service";
+import { PrivateConvService } from "../privateConv/privateConv.service";
 
 
 let lastMessageId = 0;
@@ -25,8 +25,10 @@ let lastMessageId = 0;
 @Injectable()
 export class MyGateway {
 
-	constructor (private readonly mutedUserService: MutedUserService, private prismaChatService: PrismaChatService){}
-	private socketsLogin: { login: string; sock: Socket }[] = [];
+	constructor (private readonly mutedUserService: MutedUserService,
+		 private prismaChatService: PrismaChatService,
+		 private privateConv : PrivateConvService ){}
+	private socketsLogin: { login: string; sock: Socket, idOfLogin: number }[] = [];
 
 	@WebSocketServer()
 	server: Server;
@@ -48,27 +50,31 @@ export class MyGateway {
 	{
 		if (!this.socketsLogin.find((item) => item.login === login && item.sock === client))
 		{
-			console.log("plop trigger0");
-			this.socketsLogin.push({login : login , sock: client})
+			const idOfLogin = await this.prismaChatService.getIdOfLogin(login);
+			if (idOfLogin)
+				this.socketsLogin.push({login : login , sock: client, idOfLogin: idOfLogin})
 		}
 	}
 
 	@SubscribeMessage('newMessage')
-	async onNewMessage(@MessageBody() messageData: {username: string, content: string, idOfChat: number}, @ConnectedSocket() client:Socket) {
+	async onNewMessage(@MessageBody() messageData: {username: string, serviceMessage:boolean ,content: string, idOfChat: number}, @ConnectedSocket() client:Socket) {
 		if (!this.mutedUserService.IsMutedUser(messageData.username, messageData.idOfChat))
 		{
 			const targetSocket = this.socketsLogin.find((socket) => socket.sock === client);
 			if (targetSocket !== undefined)
 			{
 				lastMessageId++; // probleme with that in multi client. need to have an increment front end
-				this.server.to(messageData.idOfChat.toString()).emit('newMessage', {
+				const message = {
 					msg: messageData.content,
 					username: messageData.username,
 					date: getDate(),
 					id: lastMessageId,
-					idOfChat: messageData.idOfChat
-				});
-				await this.prismaChatService.addChatMessage(messageData.idOfChat, messageData.username, messageData.content, getDate());
+					idOfChat: messageData.idOfChat,
+					serviceMessage: messageData.serviceMessage
+				}
+				await this.prismaChatService.addChatMessage(messageData.idOfChat, targetSocket.idOfLogin, messageData.content, getDate(), messageData.serviceMessage);
+				this.server.to(messageData.idOfChat.toString()).emit('newMessage', message);
+				this.server.to(messageData.idOfChat.toString()).emit('lastMessage', message);
 			}
 		}
 	}
@@ -85,19 +91,18 @@ export class MyGateway {
 	}
 
 
-	@SubscribeMessage('JoinChatRoom')
-	async onJoinChatRoom(@MessageBody() messageData:{username: string, chat_id:string, user_role:string, passeword:string}, @ConnectedSocket() client:Socket) {
-		const targetSocket = this.socketsLogin.find((socket) => socket.sock === client);
-		if (targetSocket !== undefined)
-		{
-			const joinClass = new JoinChatService(this.prismaChatService);
-			joinClass.joinChat(messageData.username, messageData.chat_id, messageData.user_role, messageData.passeword, targetSocket.sock);
-		}
-	}
+	// @SubscribeMessage('JoinChatRoom')
+	// async onJoinChatRoom(@MessageBody() messageData:{username: string, chat_id:string, user_role:string, passeword:string}, @ConnectedSocket() client:Socket) {
+	// 	const targetSocket = this.socketsLogin.find((socket) => socket.sock === client);
+	// 	if (targetSocket !== undefined)
+	// 	{
+	// 		const joinClass = new JoinChatService(this.prismaChatService);
+	// 		joinClass.joinChat(targetSocket.idOfLogin, messageData.chat_id, messageData.user_role, messageData.passeword, targetSocket.sock);
+	// 	}
+	// }
 
 	@SubscribeMessage('SendPrivateMessage')
 	async onSendMessage(@MessageBody() messageData: {msg: string, loginToSend: string, idOfUser: string}, @ConnectedSocket() client:Socket) {
-
 		const targetSocket = this.socketsLogin.find((socket) => socket.sock === client);
 		if (targetSocket !== undefined)
 		{
@@ -111,10 +116,8 @@ export class MyGateway {
 			}
 			else {
 				const idToSend = await this.prismaChatService.getIdOfLogin(messageData.loginToSend);
-				const idOfSender = await this.prismaChatService.getIdOfLogin(messageData.idOfUser);
-
-				if (idOfSender !== undefined && idToSend !== undefined)
-					this.prismaChatService.addPrivateMessage(idOfSender, idToSend, messageData.msg);
+				if (idToSend !== undefined)
+					this.prismaChatService.addPrivateMessage(targetSocket.idOfLogin, idToSend, messageData.msg);
 			}
 		}
 	}
@@ -141,13 +144,29 @@ export class MyGateway {
 			}
 	}
 
+	@SubscribeMessage('newPrivateConv')
+	async onNewPrivateConv(@MessageBody() messageData: {sender: string, receiver: string}, @ConnectedSocket() client:Socket)
+	{
+		console.log("on new dm");
+		const targetSocket = this.socketsLogin.find((socket) => socket.sock === client);
+		if (targetSocket !== undefined)
+		{
+			const receiverSocket = this.socketsLogin.find((socket) => socket.login === messageData.receiver)
+			if (receiverSocket)
+			{
+				const allGood = await this.privateConv.setDirectConv(messageData.sender, targetSocket.idOfLogin, messageData.receiver, targetSocket.sock, receiverSocket.sock);
+				console.log("hey all good or nah :", allGood);
+			}
+		}
+	}
+
 	@SubscribeMessage('createChat')
 	async onCreateChat(@MessageBody() messageData: {username: string, chatName: string, chatType: string, chatPassword: string}, @ConnectedSocket() client:Socket) {
 		const targetSocket = this.socketsLogin.find((socket) => socket.sock === client);
 		if (targetSocket !== undefined)
 		{
 			const CreateRoom = new CreateChatService(this.prismaChatService);
-			CreateRoom.createChat(messageData.username, messageData.chatPassword, messageData.chatName, messageData.chatType, targetSocket.sock);
+			CreateRoom.createChat(messageData.username, targetSocket.idOfLogin ,messageData.chatPassword, messageData.chatName, messageData.chatType, targetSocket.sock);
 		}
 	}
 
@@ -157,7 +176,6 @@ export class MyGateway {
 		const targetSocket = this.socketsLogin.find((socket) => socket.sock === client);
 		if (targetSocket !== undefined)
 		{
-			console.log("trigger twice ??")
 			const RetrieveMessage = new RetrieveMessageService(this.prismaChatService);
 			RetrieveMessage.retrieveMessage(messageData.chatId, messageData.numberMsgToDisplay, targetSocket.sock);
 		}
@@ -175,12 +193,10 @@ export class MyGateway {
 	@SubscribeMessage('chatListOfUser')
 	async onChatListOfUser(@MessageBody() username: string, @ConnectedSocket() client:Socket) {
 		const targetSocket = this.socketsLogin.find((socket) => socket.sock === client);
-		console.log("plop")
 		if (targetSocket !== undefined)
 		{
-			console.log("hey chat list");
 			const chatLister = new ChatLister(this.prismaChatService);
-			chatLister.listChatOfUser(username, targetSocket.sock);
+			await chatLister.listChatOfUser(targetSocket.idOfLogin, targetSocket.sock);
 		}
 	}
 

@@ -4,11 +4,6 @@ import { WebsocketContext } from '../../context/chatContext';
 import  ConnectionContext from "../../context/authContext"
 import { allChatOfUser } from './ChatComponent';
 
-type MessagePayload = {
-	msg: string;
-	username: string;
-	id: string;
-  };
 
 type ChatHistory = {
 	msg: string;
@@ -18,38 +13,20 @@ type ChatHistory = {
 }
 const MessageInput = (props: {chatId: number}) => {
 
-	const [messages, setMessages] = useState<MessagePayload[]>([]);
-
 	const [value, setValue] = useState('');
 	const socket = useContext(WebsocketContext);
 	const {username} = useContext(ConnectionContext);
-
-	useEffect(() => {
-
-		socket.on('onMessage', (newMessage: MessagePayload) => {
-
-
-			setMessages((prev) => [...prev, newMessage]);
-			});
-
-		return () => {
-
-			socket.off('onMessage');
-		};
-	}, []);
 
 	const onSubmit = () => {
 		if (value === "" || props.chatId < 0)
 			return;
 		const messageData = {
 			username: username,
+			serviceMessage: false,
 			content: value,
 			idOfChat: props.chatId,
 		}
-
-
 		socket.emit('newMessage', messageData);
-		socket.emit('chatListOfUser', username);
 		setValue('');
 	  };
 

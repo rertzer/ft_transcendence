@@ -7,9 +7,10 @@ import { MutedUserService } from "../mutedUser/mutedUser.service";
 import { MutedUserModule } from "../mutedUser/mutedUser.module";
 import { ChatOptModule } from "../chatOption/chatOption.module";
 import { ChatOptController } from "../chatOption/chatOption.controller";
+import { PrivateConvModule } from "../privateConv/privateConv.module"
 
 @Module({
-	imports : [],
+	imports : [PrivateConvModule],
 	providers: [MyGateway],
 	exports: [MyGateway],
 })

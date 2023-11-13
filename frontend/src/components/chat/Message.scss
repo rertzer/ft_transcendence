@@ -13,6 +13,9 @@
             border-radius: 50%;
             object-fit: cover;
         }
+        .userOptions {
+            display: flex;
+        }
     }
     .messageContent {
         max-width: 80%;
@@ -71,6 +74,14 @@
                 }
             }
         }
+        .errorMessage {
+            padding-top: 10px;
+            color: #ddddf7;
+            font-size: 12px;
+            background-color: #5d5b8d;
+            padding: 5px;
+            border-radius: 10px;
+        }
     }
     .userActions-hidden {
         display: none;
@@ -83,9 +94,9 @@
         color: white;
         font-size: 12px;
         padding: 10px 20px;
-        border-radius: 0px 10px 10px 10px;
+        border-radius: 10px;
     }
-    padding-bottom: 10px;
+    padding-bottom: 30px;
     .name-time {
         display: flex;
         flex-direction: row;
@@ -97,3 +108,18 @@
         }
     }
 }
+
+@keyframes shake {
+    25% {
+      transform: rotate(15deg);
+    }
+    50% {
+      transform: rotate(-30deg);
+    }
+    75% {
+      transform: rotate(5deg);
+    }
+    100% {
+      transform: rotate(0deg);
+    }
+  }

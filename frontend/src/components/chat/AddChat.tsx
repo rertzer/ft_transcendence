@@ -6,7 +6,7 @@ import { Tooltip } from  "@mui/material";
 import "./AddChat.scss";
 import { allChatOfUser } from './ChatComponent';
 
-type CreateaChatPayload = {
+type CreateChatPayload = {
 	username: string;
 	chatName: string;
 	chatPassword: string | null;
@@ -21,10 +21,6 @@ export const AddChat = (props: {chatsOfUser: allChatOfUser[], showSubMenu: strin
 	const [chatType, setChatType] = useState('public');
 	const [chatInfo, setChatInfo] = useState({}); // Define the state for chat information
 
-	function trigger() {
-		socket.emit('chatList', username);
-	}
-
 	const toggleForm = () => {
 		if (props.showSubMenu !== "add") {
 	  		props.setShowSubMenu("add");
@@ -35,8 +31,8 @@ export const AddChat = (props: {chatsOfUser: allChatOfUser[], showSubMenu: strin
 
 	const onSubmit = () => {
 
-		let createChatData: CreateaChatPayload;
-		if (chatName === "")
+		let createChatData: CreateChatPayload;
+		if (chatName === "" || (chatType === "protected by password" && password === ""))
 			return ;
 		if (password === "")
 		{
@@ -61,7 +57,6 @@ export const AddChat = (props: {chatsOfUser: allChatOfUser[], showSubMenu: strin
 		setChatName('');
 		setPassword('');
 		toggleForm();
-		trigger(); // tout s'update avec un temps de retard, quand je cree un nouveau channel, je vois le precedent apparaitre
 	}
 	return (
 		<div className='addchat'>

@@ -50,17 +50,20 @@ model ChatChannelsUser {
   user_role        String
   date_joined      DateTime
   date_left        DateTime?
+  kicked           Boolean
+  banned           Boolean
   chatChannelsUser User             @relation("chatChanelUser", fields: [user_id], references: [id], map: "chat_channels_user")
   channel          ChatChannels     @relation("ChatChannelsUser", fields: [channel_id], references: [id])
   messagesSent     ChatMsgHistory[] @relation("ChatMessagesSender")
 }
 
 model ChatChannels {
-  id                 Int                  @id @default(autoincrement())
-  owner              Int
-  type               String
-  name               String?
-  password           String?
+  id       Int     @id @default(autoincrement())
+  owner    Int
+  type     String
+  name     String?
+  password String?
+
   chatMessages       ChatMsgHistory[]     @relation("ChatMessages")
   channelOwner       User                 @relation("ChatChannelsOwner", fields: [owner], references: [id])
   channelsUsers      ChatChannelsUser[]   @relation("ChatChannelsUser")
@@ -73,6 +76,7 @@ model ChatMsgHistory {
   chat_channels_id      Int
   chat_channels_user_id Int
   message               String
+  serviceMessage        Boolean
   date_sent             DateTime
   channel               ChatChannels     @relation("ChatMessages", fields: [chat_channels_id], references: [id])
   sender                ChatChannelsUser @relation("ChatMessagesSender", fields: [chat_channels_user_id], references: [id])
@@ -101,7 +105,6 @@ model Friend {
   id                Int     @id @default(autoincrement())
   user_id           Int
   friend_id         Int
-  friendship_status String?
   user              User    @relation("UserToFriends", fields: [user_id], references: [id])
 }
 

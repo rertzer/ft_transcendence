@@ -12,7 +12,6 @@ export class RetrieveMessageService {
 	async retrieveMessage(chat_id: number, NumToDisplay: number, sock : Socket)
 	{
 		const messageHistory = [];
-		console.log("hey");
 		if (chat_id !== undefined)
 		{
 			const messageReceived = await this.prismaService.RetrieveChatMessage(chat_id);
@@ -28,10 +27,10 @@ export class RetrieveMessageService {
 						date: element.date_sent,
 						id: element.id,
 						chatId: element.chat_channels_id,
+						serviceMessage: element.serviceMessage
 					}
 					messageHistory.push(msg);
 				};
-				console.log('message history = ', messageHistory)
 				sock.emit('chatMsgHistory', messageHistory);
 			}
 		}

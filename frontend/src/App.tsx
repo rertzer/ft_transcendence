@@ -2,7 +2,6 @@ import { useState } from 'react';
 import './styles.scss';
 import { createBrowserRouter, RouterProvider, Route, Outlet, Navigate } from 'react-router-dom';
 import Login from './routes/Login';
-import Register from './routes/Register';
 import Home from './routes/Home';
 import Profile from './routes/Profile';
 import {  IConnected } from './context/authContext';
@@ -56,10 +55,10 @@ function App() {
       path: "/login",
       element: <Login />,
     },
-    {
-      path: "/register",
-      element: <Register />,
-    },
+    // {
+    //   path: "/register",
+    //   element: <Register />,
+    // },
   ]);
 
   return (

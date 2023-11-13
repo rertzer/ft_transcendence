@@ -10,9 +10,9 @@ import { RoomsModule } from './game/rooms/rooms.module';
 
 import { PlayersService } from './game/players/players.service';
 import { RoomsService } from './game/rooms/rooms.service';
-
+import { FriendModule } from './friend/friend.module';
 @Module({
-  imports: [/*AuthModule,*/ UserModule, PrismaModule, ChatModule, MutedUserModule, GameSocketModule, PlayersModule, RoomsModule],
+  imports: [/*AuthModule,*/ UserModule, PrismaModule, ChatModule, MutedUserModule, GameSocketModule, PlayersModule, RoomsModule,FriendModule],
   controllers: [],
   providers: [PlayersService, RoomsService],
 })

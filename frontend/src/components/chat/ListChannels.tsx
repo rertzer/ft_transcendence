@@ -7,6 +7,15 @@ import { useContext, useState, useEffect } from 'react';
 import { WebsocketContext } from '../../context/chatContext';
 import  ConnectionContext from "../../context/authContext";
 import ChatContext from '../../context/chatContext';
+import { ChatTwoTone } from '@mui/icons-material';
+
+type Channel = {
+	id : number; 
+	name: string;
+	owner: string;
+	type: string;
+	password: null | string;
+}
 
 export const ListChannels = (props: {chatsOfUser: allChatOfUser[], showSubMenu: string, setShowSubMenu: Function}) => {
 
@@ -14,60 +23,48 @@ export const ListChannels = (props: {chatsOfUser: allChatOfUser[], showSubMenu: 
 	// const [idChatRoom, setIdChatRoom] = useState<JoinChatRoomPayload[]>([]);
 	const {username} = useContext(ConnectionContext);
 	const {setChatId} = useContext(ChatContext);
-	const [id, setId] = useState('');
-
-	// useEffect(() => {
-	// 	socket.on('onJoinChatRoom', (idChatRoom: JoinChatRoomPayload) => {
-	// 		if (idChatRoom.id === '-1')
-	// 		{
-
-	// 			setId('Doesnt exist')
-	// 		}
-	// 		else{
-	// 			// ici c'est faux si je te renvoie -2 c'est protege par du password
-	// 			// -3 c'est prive
-	// 			//sinon c'est good
-
-
-
-	// 			setChatId(parseInt(idChatRoom.id));
-	// 			setIdChatRoom((prev) => [...prev, idChatRoom]);
-	// 		}
-	// 	  });
-	// 	  return () => {
-	// 		socket.off('onJoinChatRoom');
-	// 	};
-	// }, []);
+	const [password, setPassword] = useState('');
+	const [chanToJoin, setChanToJoin] = useState<Channel>({id: -1, name: "", owner: "", type: "", password: null});
+	const [availableChannels, setAvailableChannels] = useState<Channel[]>([{id: -1, name: "", owner: "", type: "", password: null}]);
+	const [errorMessage, setErrorMessage] = useState("");
 
 	const DealWithIdChat = async () => {
 		const returnValue = await SendIdChat();
-		if (returnValue === "-1") {
-		 		// ici c'est faux si je te renvoie -2 c'est protege par du password
-				// -3 c'est prive
-				//sinon c'est good
-				setId('Doesnt exist')
+		if (returnValue === -3) {
+			setErrorMessage("Oops, something wrong happened")
+			setChanToJoin({id: -1, name: "", owner: "", type: "", password: null})
+		} else if (returnValue === -2) {
+			setErrorMessage("You cannot join this chat because you were banned");
+			setChanToJoin({id: -1, name: "", owner: "", type: "", password: null})
+		} else if (returnValue === -1) {
+			setErrorMessage("Wrong password");
+			setChanToJoin({id: -1, name: "", owner: "", type: "", password: null})
 		} else {
-		  // Handle other cases
-			setChatId(parseInt(returnValue.id));
+			setErrorMessage("");
 		}
 	  }
 
 	  const SendIdChat = async () => {
-		if (id === "") {
-		  return ""; // Return an empty string or another default value
+		let messageData;
+		if (chanToJoin.type = "protected by password") {
+			messageData = {
+				username: username,
+				chat_id: chanToJoin.id,
+				password: password,
+		  };
 		}
-		const messageData = {
-		  username: username,
-		  chat_id: id,
-		  user_role: "user",
-		};
-
+		else {
+			messageData = {
+				username: username,
+				chat_id: chanToJoin.id,
+				password: null,
+			  };
+		}
 		const requestOptions = {
 		  method: 'post',
 		  headers: { 'Content-Type': 'application/json' },
 		  body: JSON.stringify(messageData),
 		};
-
 		try {
 		  const response = await fetch('http://localhost:4000/chatOption/joinChat/', requestOptions);
 
@@ -76,15 +73,30 @@ export const ListChannels = (props: {chatsOfUser: allChatOfUser[], showSubMenu: 
 		  }
 
 		  const data = await response.json();
-		  console.log('Success:', data);
-
-		  // Return the data or a specific value from the response
-		  return data; // You can return a specific field if needed
+		  setPassword('');
+		  socket.emit('chatListOfUser', username);
+		  return data; 
 		} catch (error) {
 		  console.error('Error:', error);
-		  return "-1"; // Return "-1" or another specific value to indicate an error
+		  return -3;
 		}
 	  }
+
+	useEffect(() => {
+
+		setErrorMessage("");
+		setChanToJoin({id: -1, name: "", owner: "", type: "", password: null});
+		if (props.showSubMenu !== "list")
+			return;
+		socket.emit('chatList');
+		socket.on("chatList", (available: Channel[]) => {
+			setAvailableChannels(available);
+		});
+
+		return () => {
+			socket.off("chatList");
+		}
+	}, [props.showSubMenu]);
 
     const toggleForm = () => {
         if (props.showSubMenu !== "list") {
@@ -94,34 +106,46 @@ export const ListChannels = (props: {chatsOfUser: allChatOfUser[], showSubMenu: 
       }
     }
 
+	function isNotAlreadyIn(chan: Channel) {
+		if (props.chatsOfUser.find((element) => element.id === chan.id)) {
+			return (false);
+		}
+		return (true);
+	}
+
     return (
     <div className='listchannels'>
         <Tooltip title="List available channels" arrow>
             <MenuIcon onClick={toggleForm}/>
         </Tooltip>
-        <div className={props.showSubMenu === "list" ? 'submenu' : "submenu-hidden"}>
-            <p>Recuperer tableau de tous les channels publics ou proteges par password
-                pour pouvoir le mapper et tout afficher (avec un petit logo cadenas si
-                y a un password). Classer par ordre de creation (plus recent d'abord)
-                ou par ordre alphabetique ? Fonction de recherche a implementer ?
-                Chacun de ces elements pourra avoir un onClick qui permet de rejoindre
-                le channel et d'updater le allChatOfUser (avec un sous-sous menu pour input
-                le mot de passe quand y en a un...)
-                Le fichier se trouve dans frontend/src/components/chat/ListChannels.tsx
-                </p>
-                <hr/>
-                <p>
-                    En attendant, j'ai mis l'ancien systeme pour rejoindre un chat ici pour pouvoir faire un peu le menage:
-                </p>
-                <hr/>
-                <p>Enter the id chat room you want to join</p>
-				  <input
-					type="text"
-					value={id}
-					onChange={(e) => setId(e.target.value)}
-				  />
-				  <button onClick={DealWithIdChat}>Join</button>
-        </div>
+		{props.showSubMenu === "list" ? 
+        <div className="submenu">
+			<div className="top">
+				<div className="joinInfo">
+				{chanToJoin.id === -1 ? <span>Choose a channel to join</span> : <span>Do you want to join "{chanToJoin.name}" ?</span>}
+				{chanToJoin.type === "protected by password" && <input
+					type="password"
+					placeholder='Password'
+					value={password}
+					onChange={(e) => setPassword(e.target.value)}
+					/>}
+				</div>
+				{ chanToJoin.id !== -1 && <button onClick={() => {DealWithIdChat(); setChanToJoin({id: -1, name: "", owner: "", type: "", password: null})}}>Join</button>}
+			</div>
+			<hr/>
+			{errorMessage !== "" ?
+			<div>
+				<p>{errorMessage}</p>
+				<hr/>
+			</div> : <div></div>}
+            {availableChannels.filter(isNotAlreadyIn).map((chan) => {return (
+			<div className="channelItem" key={chan.id}>
+				<p onClick={() => {setChanToJoin(chan)}}>{chan.name}</p>
+				{chan.type === "protected by password" && <LockIcon />}
+			</div>
+			)
+			})}
+        </div> : <div></div>}
     </div>
     );
 }
