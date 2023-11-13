@@ -16,7 +16,11 @@ import {
   
     @IsString()
     @IsOptional()
-    password?: string;
+    first_name?: string;
+    
+    @IsString()
+    @IsOptional()
+    last_name?: string;
 
     @IsEmail()
     @IsOptional()

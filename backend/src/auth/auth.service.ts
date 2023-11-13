@@ -21,18 +21,7 @@ export class AuthService {
     if (!user) {
       user = await createUser(dto);
     }
-    if (user) {
-      let pwMatches = false;
-      if (user.password) {
-        pwMatches = await argon.verify(
-          user.password,
-          dto.password,
-        );
-      }
-      if (!pwMatches) {
-        throw new ForbiddenException('Bad password');
-      }
-    } else {
+    if (!user) {
       throw new ImATeapotException("For real: I'm a Teapot");
     }
     return this.signToken(user.login);

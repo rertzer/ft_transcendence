@@ -18,7 +18,6 @@ export async function getUserByLogin(login: string) {
     },
   });
   if (user) {
-    user.password = 'nope';
     return user;
   } else {
     return null;
@@ -46,9 +45,6 @@ export async function getAvatarByLogin(login: string) {
 }
 
 export async function updateUser(dto: EditDto) {
-  if (dto.password) {
-    dto.password = await argon.hash(dto.password);
-  }
   try {
     const user = await prismaService.user.update({
       where: {
@@ -56,7 +52,6 @@ export async function updateUser(dto: EditDto) {
       },
       data: dto,
     });
-    user.password = 'nope';
     return user;
   } catch (error) {
     throw new BadRequestException('Bad request');
@@ -64,13 +59,11 @@ export async function updateUser(dto: EditDto) {
 }
 
 export async function createUser(dto: LoginDto) {
-  const password = await argon.hash(dto.password);
   try {
     const user = await prismaService.user.create({
       data: {
         login: dto.login,
         email: dto.login + '@student.42.fr',
-        password,
         role: 'player',
       },
     });

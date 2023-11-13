@@ -7,8 +7,4 @@ import {
     @IsString()
     @IsNotEmpty()
     login: string;
-  
-    @IsString()
-    @IsNotEmpty()
-    password: string;
   }

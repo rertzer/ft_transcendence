@@ -25,7 +25,6 @@ function Register() {
   const [login, setLogin] = useState("");
   const [userOk, setUserOk] = useState(false);
   const [newUsername, setNewUsername] = useState(tmp);
-  const [newPassword, setNewPassword] = useState("");
   const [newEmail, setNewEmail] = useState(user.email);
   const [newAvatar, setNewAvatar] = useState<File>();
   const [avatarName, setAvatarName] = useState("");
@@ -67,7 +66,6 @@ function Register() {
 
     let tosend: IToSend = { login: user.login };
     if (newUsername) tosend.username = newUsername;
-    if (newPassword) tosend.password = newPassword;
     if (newEmail) tosend.email = newEmail;
 
     console.log("fetching", tosend);
@@ -85,7 +83,6 @@ function Register() {
     if (newUser) {
       if (newUser.message) {
         console.log("Bad request");
-        setNewPassword("");
 
         setUserOk(false);
       } else {
@@ -117,7 +114,6 @@ function Register() {
               value={newUsername}
               onChange={setNewUsername}
             />
-            <PassField value={newPassword} handleValid={setNewPassword} />
             <EmailField value={newEmail} handleValid={setNewEmail} />
             <input
               type="file"
