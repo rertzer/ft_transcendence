@@ -61,7 +61,7 @@ export function JoinRoom(props:IJoinRoomProps) {
 		function processRoomJoined(data:{roomId:number}) {
 			setGameStatus('WAITING_FOR_PLAYER');
 			setRoomId(data.roomId);
-			window.alert('I joined ' + data.roomId.toString() + ' to play');
+			window.alert('I joined room number ' + data.roomId.toString() + ' to play');
 		}
 
 		function processErrorJoin(data:{roomId:number, errorMsg:string}) {
@@ -83,6 +83,11 @@ export function JoinRoom(props:IJoinRoomProps) {
 
 	}, [RecievedRoomID]);
 
+	const askToDisplayInfoBack = (e: React.FormEvent) => {
+		e.preventDefault();
+		gameSocket.emit('display_info');
+	};
+
 	return (
 		<>
 			<h4>Join a waiting Room : </h4>
@@ -103,6 +108,9 @@ export function JoinRoom(props:IJoinRoomProps) {
 				<label>Basic Game <input type="radio" name="typegame_new_room" value="BASIC" onClick={handleSelectTypeGameNewRoom}/></label><br/>
 				<label>Advanced <input type="radio" name="typegame_new_room" value="ADVANCED" onClick={handleSelectTypeGameNewRoom}/></label><br/>
 				<button type="submit"> Ask for a Room !</button><br/>
+			</form>
+			<form onSubmit={askToDisplayInfoBack}>
+				<button type="submit"> Display info back!</button><br/>
 			</form>
 			{RecievedRoomID > 0 &&  <strong><br/>You got the room number {RecievedRoomID}</strong>}
 		</>

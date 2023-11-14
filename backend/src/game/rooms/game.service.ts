@@ -5,18 +5,20 @@ import { IGameParamBackEnd } from "../Interface/gameparam.interface";
 import { Ball } from "../Interface/ball.interface";
 import { Socket } from "socket.io";
 import { Player } from "../Interface/player.interface";
-import { GameParams } from "@prisma/client";
+import { GameObstacles, GameParams } from "@prisma/client";
 
 /**
  * Besoin d'implementer les collisions avec les obstacles. 
  */
+
+export type colisionOb = 'NO' | 'HORIZONTALE' | 'VERTICALE' | 'BOTH';
 
 @Injectable()
 export class GameService {
 
 	constructor(private prismaService: PrismaGameService){}
 
-	colision(playerPosY: number, ball:Ball, pong:GameParams, sidePlayer:string):boolean {
+	colisionPaddle(playerPosY: number, ball:Ball, pong:GameParams, sidePlayer:string):boolean {
 		const ballTop:number = ball.pos.y - pong.ballRadius;
 		const ballBtm:number = ball.pos.y + pong.ballRadius;
 		const ballLeft:number = ball.pos.x - pong.ballRadius;
@@ -31,22 +33,79 @@ export class GameService {
 		return (ballRight > paddleLeft && ballTop < paddleBtm && ballLeft < paddleRight && ballBtm > paddleTop)
 	}
 
+	colisionObstacle(obstacle: GameObstacles, ball: Ball, pong:GameParams): boolean {
+		const ballTop:number = ball.pos.y - pong.ballRadius;
+		const ballBtm:number = ball.pos.y + pong.ballRadius;
+		const ballLeft:number = ball.pos.x - pong.ballRadius;
+		const ballRight:number = ball.pos.x + pong.ballRadius;
+	
+		const obstacleTop:number =  obstacle.posy;
+		const obstacleBtm:number = obstacle.posy + obstacle.height;
+		const obstacleLeft:number = obstacle.posx;
+		const obstacleRight:number = obstacle.posx + obstacle.width;
+	
+		return (ballRight > obstacleLeft && ballTop < obstacleBtm && ballLeft < obstacleRight && ballBtm > obstacleTop)
+	}
+
+	colisionObstacles(room: Room, ball:Ball, pong: GameParams): number {
+		const col = room.obstacles.map((ob) => {
+			return (this.colisionObstacle(ob, ball, pong));
+		})
+		return(col.indexOf(true));
+	}
+
+	sideColisionObstacle(ballOldPos:{x:number, y:number}, obstacle: GameObstacles) : colisionOb {
+		const obstacleTop:number =  obstacle.posy;
+		const obstacleBtm:number = obstacle.posy + obstacle.height;
+		const obstacleLeft:number = obstacle.posx;
+		const obstacleRight:number = obstacle.posx + obstacle.width;
+
+		if (ballOldPos.x < obstacleLeft || ballOldPos.x > obstacleRight){
+			if (ballOldPos.y >= obstacleTop && ballOldPos.y <= obstacleBtm) {
+				return 'VERTICALE';
+			} 
+			return 'BOTH';
+		}
+		return 'HORIZONTALE';
+	}
+
+	/**
+ 	* Besoin d'implementer la vie des obstacles. 
+ 	*/
+	
 	moveBalls(room:Room) : Room {
 		room.balls = room.balls.map((ball) => {
 			if(room.gameStatus !== 'PLAYING') return (ball);
+			const ballOldPos = ball.pos;
 			ball.pos.x += (ball.speed / Math.sqrt(ball.dir.x**2 + ball.dir.y**2)) * ball.dir.x;
 			ball.pos.y += (ball.speed / Math.sqrt(ball.dir.x**2 + ball.dir.y**2)) * ball.dir.y;
 	
 			/*Top or bottom collision*/
-			if (ball.pos.y > 1 - room.gameParam.ballRadius 
-				|| ball.pos.y < room.gameParam.ballRadius) {
-					ball.dir.y = - ball.dir.y;
+			if (ball.pos.y > 1 - room.gameParam.ballRadius) {
+				ball.pos.y = 1 - room.gameParam.ballRadius;
+				ball.dir.y = - ball.dir.y;
 			}
+			else if (ball.pos.y < room.gameParam.ballRadius) {
+				ball.pos.y = room.gameParam.ballRadius;
+				ball.dir.y = - ball.dir.y;
+			}
+
+			/* Collision avec les obstacles */
+			if (this.colisionObstacles(room, ball, room.gameParam) !== -1) {
+				const obstacle = room.obstacles[this.colisionObstacles(room, ball, room.gameParam)];
+				if (this.sideColisionObstacle(ballOldPos,obstacle) !== 'VERTICALE') {
+					ball.dir.y = - ball.dir.y;
+				}
+				if (this.sideColisionObstacle(ballOldPos,obstacle) !== 'HORIZONTALE') {
+					ball.dir.x = - ball.dir.x;
+				}
+			}
+
 			/* Paddle colision*/
 			let playerWithBallPosY = (ball.pos.x <= 1 / 2) ? room.playerLeft?.posY! : room.playerRight?.posY!;
 			let sidePlayer:string = (ball.pos.x <= 1 / 2) ? 'left' : 'right';
 			let direction = (ball.pos.x <= 1 / 2) ? 1 : -1;
-			if (this.colision(playerWithBallPosY, ball, room.gameParam, sidePlayer)) {
+			if (this.colisionPaddle(playerWithBallPosY, ball, room.gameParam, sidePlayer)) {
 				let colisionY = (ball.pos.y - (playerWithBallPosY)) / (room.gameParam.paddleHeight / 2);
 				let ang = colisionY * (Math.PI / 4);
 				ball.dir.x = direction * Math.cos(ang);
@@ -60,9 +119,9 @@ export class GameService {
 
 	movePlayerOnEvent(param :{room: Room, key:string, idPlayerMove:number, client:Socket}) {
 		let player:Player | null;
-		param.room.playerLeft?.socket === param.client ? player = param.room.playerLeft : player = param.room.playerRight;
+		if (param.client !== param.room.playerLeft?.socket && param.client !== param.room.playerRight?.socket) return ;
+		player = (param.client === param.room.playerLeft?.socket ? param.room.playerLeft : param.room.playerRight);
 		if (!player) return ;
-		player.idPlayerMove = param.idPlayerMove;
 		switch (param.key){
 			case 'KeyW':
 				player.posY = Math.max(param.room.gameParam.paddleHeight / 2, player.posY - param.room.gameParam.paddleSpeed);

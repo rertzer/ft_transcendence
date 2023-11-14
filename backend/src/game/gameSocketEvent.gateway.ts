@@ -48,7 +48,12 @@ export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, On
 	handleDisconnect(client: Socket) {
 		console.log(`Client disconnected ${client.id}`);
 		const player = this.playersService.findOne(client);
-		if (player) this.roomsService.removePlayerFromRoom(player);
+		if (player) {
+			const rooms_player = this.roomsService.findRoomsOfPlayer(player);
+			rooms_player?.forEach((room) => {
+				this.roomsService.removePlayerFromRoom(player,room.id);
+			});
+		};
 		this.playersService.remove(client);	
 	}
 
@@ -91,8 +96,20 @@ export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, On
 	}
 
 	@SubscribeMessage('keyevent')
-	handlePlayerKeyEvent(@MessageBody() data:{key:string, idPlayerMove:number}, @ConnectedSocket() client:Socket){
-		this.roomsService.handlePlayerKeyEvent({key:data.key, idPlayerMove:data.idPlayerMove, client});
+	handlePlayerKeyEvent(@MessageBody() data:{roomId:number, key:string, idPlayerMove:number}, @ConnectedSocket() client:Socket){
+		this.roomsService.handlePlayerKeyEvent({roomId: data.roomId, key:data.key, idPlayerMove:data.idPlayerMove, client});
+	}
+
+	@SubscribeMessage('i_am_leaving')
+	handleLeaving(@MessageBody() data:{roomId:number, key:string, idPlayerMove:number}, @ConnectedSocket() client:Socket){
+		console.log('I JUST GOT A LEAVING MESSAGE');
+		const player = this.playersService.findOne(client);
+		if (player) this.roomsService.removePlayerFromRoom(player, data.roomId);
+	}
+
+	@SubscribeMessage('display_info')
+	handleDisplayInfo(){
+		this.roomsService.displayInfo();
 	}
 
 	@Interval(1000/60)
@@ -100,7 +117,7 @@ export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, On
 		this.roomsService.playGameLoop();
 		this.roomsService.broadcastGameState();
 	};
-
+	
 	afterInit(): void {
 		this.logger.log('Game Socket Gateway initialised')
 	}

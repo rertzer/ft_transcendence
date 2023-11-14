@@ -2,18 +2,14 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 import { PrismaChatService } from './prisma/chat/prisma.chat.service';
-import { PrismaGameService } from './prisma/game/prisma.game.service';
 
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const prismaUser = new PrismaChatService;//toDelete
-  const prismaGame = new PrismaGameService;
   
   prismaUser.createUser();//toDelete
-
-  prismaGame.initDB();
  
 
   // Define your CORS options here

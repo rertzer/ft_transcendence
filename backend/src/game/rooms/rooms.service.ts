@@ -7,24 +7,38 @@ import { Socket } from 'socket.io';
 import { PrismaGameService } from 'src/prisma/game/prisma.game.service';
 import { GameService } from './game.service';
 import { OnModuleInit } from '@nestjs/common';
-import { GameMaps, GameParams } from '@prisma/client';
+import { GameMaps, GameObstacles, GameParams } from '@prisma/client';
 
 @Injectable()
 export class RoomsService  implements OnModuleInit{
 	constructor(private prismaService: PrismaGameService, private gameService: GameService){}
 
+	private rooms: Room[] = [];
+	private roomMaxId:number = 1;
+	private gameParams: GameParams[]= [];
+	private waitingRoomBasic: Player | null = null;
+	private waitingRoomAdvanced: Player | null = null;
+	private gameMaps:GameMaps[] = [];
+	private gameObstacles: GameObstacles[];
+
 	async onModuleInit() {
-		await this.prismaService.gameParams.findMany({})
-		.then((gameParams) => {
-			this.gameParams = gameParams;
-		})
-		.then(async () => {
-			await this.prismaService.gameMaps.findMany({
-				include : {
-					obstacles:true
-				}
-			}).then((maps) => {this.gameMaps = maps});
-		})
+		await this.prismaService.initDB().then(async () => await this.loadDBdata());	
+	}
+
+	async loadDBdata() {
+		this.gameParams = await this.prismaService.gameParams.findMany();
+		this.gameMaps = await this.prismaService.gameMaps.findMany();
+		this.gameObstacles = await this.prismaService.gameObstacles.findMany();
+	}
+
+	displayInfo() {
+		console.log("-------------------------------------------------");
+		console.log("-------------     DISPLAY INFO     --------------");
+		console.log("-------------------------------------------------");
+		console.log("this.gameParams : ", this.gameParams);
+		console.log("this.gameMaps : ", this.gameMaps);
+		console.log("this.gameObstacles : ", this.gameObstacles);
+		console.log("this.rooms : ", this.rooms);
 	}
 
 	/** 
@@ -37,41 +51,27 @@ export class RoomsService  implements OnModuleInit{
 	 * 
 	*/
 
-	private rooms: Room[] = [];
-	private roomMaxId:number = 1;
-	private gameParams: GameParams[];
-	private waitingRoomBasic: Player | null = null;
-	private waitingRoomAdvanced: Player | null = null;
-	private gameMaps:({
-		obstacles: {
-			id: number;
-			posx: number;
-			posy: number;
-			width: number;
-			height: number;
-			img: string | null;
-			lives: number;
-			gameMapsId: number | null;
-		}[];
-	} & {
-		id: number;
-		nbBalls: number;
-	})[];
-
 	createRoom(playerLeft:Player, playerRight:Player, typeGame:TypeGame) {
+		console.log("\x1b[33mJe rentre dans createRoom\x1b[0m")
 		const room = this.createEmptyRoom(typeGame);
 		if (!room) return null; 
 		room.gameStatus = 'WAITING_TO_START';
 		room.playerLeft = playerLeft;
 		room.playerRight = playerRight;
 		console.log('JE VIENS DE FAIRE UNE ROOM', room);
-		this.sendRoomStatus(room);
+		room.playerLeft.socket.emit('room_joined', {roomId: room.id});
+		room.playerRight.socket.emit('room_joined', {roomId: room.id});
 		return (room);
 	};
 
 	createEmptyRoom(typeGame:TypeGame) : Room | null {
-		const gameParam = this.gameParams.find((gp) => {return (gp.type === typeGame)});
-		if (typeof(gameParam) === 'undefined') return null;
+		console.log("\x1b[33mJe rentre dans createEmptyRoom\x1b[0m");
+		const gameParam = this.gameParams?.find((gp) => {return (gp.type === typeGame)});
+		console.log("this.gameParams", this.gameParams);
+		if (typeof(gameParam) === 'undefined')  {
+			console.log("\x1b[31m Attetion, j'ai pas ete capabe de trouver les game Params\x1b[0m");
+			return null
+		};
 		const newRoom: Room = {
 			id:this.roomMaxId,
 			balls: [],
@@ -91,9 +91,9 @@ export class RoomsService  implements OnModuleInit{
 			gameParam: gameParam
 		}
 		this.roomMaxId++;
-		if (newRoom.typeGame === 'ADVANCED') {
+		if (newRoom.typeGame === 'ADVANCED' && this.gameMaps.length) {
 			const map = this.gameMaps[Math.floor(Math.random() * this.gameMaps.length)];
-			newRoom.obstacles = map.obstacles;
+			newRoom.obstacles = this.gameObstacles.filter((ob) => {return (ob.gameMapsId === map.id)});
 			newRoom.balls = this.gameService.newBalls(map.nbBalls, newRoom);
 		}
 		else {
@@ -101,7 +101,7 @@ export class RoomsService  implements OnModuleInit{
 		}
 		this.rooms.push(newRoom);
 		return (newRoom);
-	};
+	}; 
 
 	joinWaitingRoom(player:Player, typeGame:TypeGame) {
 		const waitingPlayer = (typeGame === 'ADVANCED' ? this.waitingRoomAdvanced : this.waitingRoomBasic);
@@ -117,7 +117,7 @@ export class RoomsService  implements OnModuleInit{
 		}
 		else {
 			console.log('The waiting room is not vide')
-			this.createRoom(player, waitingPlayer, typeGame);
+			this.createRoom(waitingPlayer, player, typeGame);
 			if (typeGame === 'ADVANCED') {
 				this.waitingRoomAdvanced = null;
 			}
@@ -137,10 +137,10 @@ export class RoomsService  implements OnModuleInit{
 		return this.rooms;
 	};
 
-	findRoomOfPlayer(player: Player | null): Room | null {
+	findRoomsOfPlayer(player: Player | null): Room[] | null {
 		if (!player) return null;
-		const room = this.rooms.find((element) => (element.playerLeft === player || element.playerRight === player));
-		if (typeof(room) === 'undefined') {
+		const room = this.rooms.filter((element) => {return(element.playerLeft === player || element.playerRight === player)});
+		if (room.length === 0) {
 			return null;
 		}
 		return room;
@@ -155,41 +155,12 @@ export class RoomsService  implements OnModuleInit{
 	};
 
 	findRoomById(idToFind:number) : Room | null {
-		const room = this.rooms.filter((element) => {return(element.id === idToFind)});
-		console.log(room);
+		const room = this.rooms.filter((element) => {return (element.id === idToFind)});
 		if (typeof(room) === 'undefined' || room.length === 0) {
 			return null;
 		}
-		console.log('I fond the room ', room[0]);
 		return room[0];
 	};
-
-	sendRoomStatus(room: Room) {
-		const data_to_send = {
-			idRoom:room.id,
-			gameParam: {
-				ballRadius: room.gameParam.ballRadius,
-				paddleWidth: room.gameParam.paddleWidth,
-				paddleHeight: room.gameParam.paddleHeight,
-				paddleSpeed: room.gameParam.paddleSpeed,
-				goal: room.gameParam.goal,
-				ballInitSpeed: room.gameParam.BallInitSpeed,
-				ballInitDir: {x:room.gameParam.BallInitDirx, y: room.gameParam.BallInitDiry },
-				ballSpeedIncrease: room.gameParam.ballSpeedIncrease
-			},
-			playerLeft:{
-				name:room.playerLeft?.name,
-				socketId: room.playerLeft?.socket.id,
-			},
-			playerRight:{
-				name:room.playerRight?.name,
-				socketId: room.playerRight?.socket.id,
-			},
-			gameStatus:room.gameStatus
-		};
-		room.playerLeft?.socket.emit('room_status', data_to_send);
-		room.playerRight?.socket.emit('room_status', data_to_send);
-	}
 
 	async addPlayerToRoom(player:Player, roomId:number) {
 		
@@ -198,12 +169,10 @@ export class RoomsService  implements OnModuleInit{
 		console.log('toto');
 		if (room.playerLeft === player || room.playerRight === player) {
 			player.socket.emit('error_join', {roomId: room.id, errorMsg: 'Player already in room'});
-			console.log('tata');
 			return;
 		}
 		if (room.playerLeft != null  && room.playerRight != null) {
 			player.socket.emit('error_join', {roomId: room.id, errorMsg: 'The Room is full'});
-			console.log('tutu');
 			return;
 		}
 		if (room.playerLeft === null) {
@@ -216,7 +185,6 @@ export class RoomsService  implements OnModuleInit{
 		room.gameStatus = 'WAITING_TO_START';
 		console.log('Creating a new reccord on the BDD');
 		const roomToUpdate = room;
-		console.log('titi');
 		const bddGame = await this.prismaService.addNewGame(room).then(
 			(bddGame) => {
 				if (bddGame) {
@@ -241,9 +209,9 @@ export class RoomsService  implements OnModuleInit{
 		else return 'none';
 	};
 
-	async removePlayerFromRoom(player:Player) {
-		let room = this.findRoomOfPlayer(player);
-		if (room === null) return ;
+	async removePlayerFromRoom(player:Player, roomId:number) {
+		let room = this.findRoomById(roomId);
+		if (room === null || (room.playerLeft !== player && room.playerRight !== player)) return ;
 		if (this.getNumberOfPlayersInRoom(room) != 2){
 			this.removeRoom(room);
 		}
@@ -255,6 +223,33 @@ export class RoomsService  implements OnModuleInit{
 		}
 		this.sendRoomStatus(room);
 	};
+
+	sendRoomStatus(room: Room) {
+		const data_to_send = {
+			idRoom:room.id,
+			gameParam: {
+				ballRadius: room.gameParam.ballRadius,
+				paddleWidth: room.gameParam.paddleWidth,
+				paddleHeight: room.gameParam.paddleHeight,
+				paddleSpeed: room.gameParam.paddleSpeed,
+				goal: room.gameParam.goal,
+			},
+			playerLeft:{
+				name:room.playerLeft?.name,
+				socketId: room.playerLeft?.socket.id,
+			},
+			playerRight:{
+				name:room.playerRight?.name,
+				socketId: room.playerRight?.socket.id,
+			},
+			balls:room.balls,
+			obstacles:room.obstacles,
+			gameStatus:room.gameStatus
+		};
+		if (room.playerLeft) {console.log("\x1b[33mJ'envie les infos sur la room a ", room.playerLeft.name,"\x1b[0m")}
+		room.playerLeft?.socket.emit('room_status', data_to_send);
+		room.playerRight?.socket.emit('room_status', data_to_send);
+	}
 
 	broadcastGameState() {
 		this.rooms.forEach(room => {
@@ -295,8 +290,8 @@ export class RoomsService  implements OnModuleInit{
 		this.rooms = newRooms;
 	}
 
-	handlePlayerKeyEvent(data:{key:string, idPlayerMove:number, client:Socket}){
-		const room = this.findRoomOfPlayerBySocket(data.client)
+	handlePlayerKeyEvent(data:{roomId: number, key:string, idPlayerMove:number, client:Socket}){
+		const room = this.findRoomById(data.roomId)
 		if (room) {
 			this.gameService.movePlayerOnEvent({room, key:data.key, idPlayerMove:data.idPlayerMove, client:data.client});
 		}

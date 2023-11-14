@@ -12,6 +12,17 @@ export interface IBall {
 	dir: IPoint;
 };
 
+export interface IObstacles {
+	id: number;
+    posx: number;
+    posy: number;
+    width: number;
+    height: number;
+    img: string | null;
+    lives: number;
+    gameMapsId: number | null;
+}
+
 export interface IGameParam {
 	idRoom: string;
     ballRadius: number;
