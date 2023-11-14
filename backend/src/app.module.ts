@@ -1,8 +1,13 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { ChatModule } from './chat/chat.module';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { AppService } from './app.service';
+import { AppController } from './app.controller';
+import { FtAuthModule } from './ft_auth/ft_auth.module';
+import { TwoFAModule } from './twoFA/twoFA.module';
 import { MutedUserModule } from './chat/mutedUser/mutedUser.module';
 import { GameSocketModule } from './game/gameSocket.module';
 import { PlayersModule } from './game/players/players.module';
@@ -12,8 +17,23 @@ import { PlayersService } from './game/players/players.service';
 import { RoomsService } from './game/rooms/rooms.service';
 import { FriendModule } from './friend/friend.module';
 @Module({
-  imports: [/*AuthModule,*/ UserModule, PrismaModule, ChatModule, MutedUserModule, GameSocketModule, PlayersModule, RoomsModule,FriendModule],
-  controllers: [],
-  providers: [PlayersService, RoomsService],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    AuthModule,
+    FtAuthModule,
+    TwoFAModule,
+    UserModule,
+    PrismaModule,
+    ChatModule,
+    MutedUserModule,
+    GameSocketModule,
+    PlayersModule,
+    RoomsModule,
+    FriendModule,
+  ],
+  controllers: [AppController],
+  providers: [PlayersService, RoomsService, AppService],
 })
 export class AppModule {}

@@ -227,26 +227,6 @@ export class PrismaChatService {
 		return false;
 	}
 
-	// async RetrievePrivateMessage(login:string) {
-	// 	const id = await this.getIdOfLogin(login);
-	// 	if (id)
-	// 	{
-	// 		const userDirectMessages = await this.prismaService.directMsg.findUnique({
-	// 			where: {
-	// 			  OR: [
-	// 				{ sender_id: id},    // Messages where the user is the sender
-	// 				{ receiver_id: id},  // Messages where the user is the receiver
-	// 			  ],
-	// 			},
-	// 			include: {
-	// 			  sender: true,
-	// 			  receiver: true,
-	// 			},
-	// 		  });
-	// 		return userDirectMessages;
-	// 	}
-	// }
-
 	async RetrieveChatMessage(chat_channels_id: number) {
 			// Find the chat channel by its ID
 
@@ -472,7 +452,6 @@ export class PrismaChatService {
 					email: 'johndoe@example.com',
 					avatar: 'avatar_url',
 					role: 'user',
-					password: 'your_password',
 					game_won: 0,
 					game_lost: 0,
 					game_played: 0,
@@ -487,7 +466,6 @@ export class PrismaChatService {
 					email: 'johndoeff@example.com',
 					avatar: 'fffvvf',
 					role: 'user',
-					password: 'your_password',
 			  game_won: 0,
 			  game_lost: 0,
 			  game_played: 0,

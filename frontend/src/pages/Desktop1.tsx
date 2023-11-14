@@ -8,20 +8,29 @@ import { MyContext, MyProvider } from '../context/PageContext';
 import ChatComponent from '../components/chat/ChatComponent';
 import ConnectionContext from '../context/authContext';
 import { WebsocketContext } from "../context/chatContext";
+import userContext from '../context/userContext';
 
 function Desktop1() {
 
   //GET HEIGHT
   const socket = useContext(WebsocketContext);
-  const {username} = useContext(ConnectionContext);
+  const {user} = useContext(userContext);
   const windowHeighthRef = useRef(window.innerHeight);
-  socket.emit("newChatConnection", username); // need to be somewhere that is going to be trigger only once
+  socket.emit("newChatConnection", user.login); // need to be somewhere that is going to be trigger only once
   useEffect(() => {
   const handleResize = () => {
       windowHeighthRef.current = window.innerHeight;
       // Trigger a re-render of the component when window.innerWidth changes
       forceUpdate();
     };
+
+    useEffect(() => {
+      socket.connect();
+      }, []);
+  
+    const sendUserConnection = () => {
+      socket.emit('onUserConnection', );
+    }
     window.addEventListener('resize', handleResize);
     return () => {
       window.removeEventListener('resize', handleResize);

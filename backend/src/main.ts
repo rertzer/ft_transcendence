@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 import { PrismaChatService } from './prisma/chat/prisma.chat.service';
+import { ValidationPipe } from '@nestjs/common';
 
 
 async function bootstrap() {
@@ -17,6 +18,9 @@ async function bootstrap() {
   };
   // Enable CORS using the provided options
   app.enableCors(corsOptions);
+  app.useGlobalPipes(new ValidationPipe(
+    {whitelist: true,}
+  ));
 
   await app.listen(4000);
 }

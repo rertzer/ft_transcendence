@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import './styles.scss';
 import { createBrowserRouter, RouterProvider, Route, Outlet, Navigate } from 'react-router-dom';
 import Login from './routes/Login';
@@ -6,31 +6,84 @@ import Home from './routes/Home';
 import Profile from './routes/Profile';
 import {  IConnected } from './context/authContext';
 import ChatComponent from './components/chat/ChatComponent';
-import { IChatContext } from './context/chatContext';
+import {IChatContext, WebsocketProvider, socket } from './context/chatContext';
 import ChatContext from './context/chatContext';
-import ConnectionContext from './context/authContext'
-import Game from './components/game/Game';
+// import { AuthContextProvider } from './context/authContext';
+import UserContext from './context/userContext'
+import { IContextUser } from './context/userContext';
 import Desktop1 from './pages/Desktop1';
+import Game from './components/game/Game';
 
 function App() {
-	const [username, setUsername] = useState('')
-  const [chatId, setChatId] = useState(-1)
-  const ChatContextValue: IChatContext = {
-	  chatId,
-	  setChatId,
-  };
-  const ConnectionValue: IConnected = {
-	  username,
-	  setUsername,
-  }
+  const raw_token: string | null = sessionStorage.getItem("Token");
+  let token = { login: "", access_token: "" };
+  if (raw_token) token = JSON.parse(raw_token);
 
-  const ProtectedRoute = ({children}: any) => {
+  const [user, setUser] = useState({
+    id: 0,
+    username: "",
+    first_name: "",
+    last_name: "",
+    login: "",
+    email: "",
+    avatar: "",
+    role: "",
+    password: "",
+    game_won: 0,
+    game_lost: 0,
+    game_played: 0,
+  });
 
-    if (!username) {
-      return (<Navigate to="/login" />);
+  const [image, setImage] = useState(
+    "https://img.lamontagne.fr/c6BQg2OSHIeQEv4GJfr_br_8h5DGcOy84ruH2ZResWQ/fit/657/438/sm/0/bG9jYWw6Ly8vMDAvMDAvMDMvMTYvNDYvMjAwMDAwMzE2NDYxMQ.jpg"
+  );
+  const bearer = "Bearer " + token.access_token;
+
+  if (token.login && user.login == "") {
+
+    const getUser = async () => {
+      const data = await fetch("/user/" + token.login, {
+        method: "GET",
+        headers: { Authorization: bearer },
+      });
+      const user = await data.json();
+      if (user.message) {
+        console.log("Bad Bad");
+      } else {
+        setUser(user);
+      }
+    };
+    try {
+      getUser();
+    } catch (e) {
+      console.log(e);
     }
-    return (children);
   }
+
+  const fetchImage = async () => {
+    const res = await fetch("/user/avatar/" + user.avatar, {
+      method: "GET",
+      headers: { Authorization: bearer },
+    });
+    const imageBlob = await res.blob();
+    const imageObjectURL = URL.createObjectURL(imageBlob);
+    setImage(imageObjectURL);
+  };
+
+
+  const UserValue: IContextUser = {
+    user,
+    setUser,
+    image,
+    setImage,
+  };
+
+  const ProtectedRoute = ({ children }: any) => {
+    if (!token.login) {
+      return <Navigate to="/login" />;
+    }
+    return children;
+  };
 
   const router = createBrowserRouter([
     {
@@ -38,8 +91,8 @@ function App() {
       element: <ProtectedRoute><Desktop1 /></ProtectedRoute>,
       children:[
         {
-          path:"/",
-          element: <Home />
+          path: "/",
+          element: <Home />,
         },
         {
           path:"/profile/:id",
@@ -55,20 +108,27 @@ function App() {
       path: "/login",
       element: <Login />,
     },
-    // {
-    //   path: "/register",
-    //   element: <Register />,
-    // },
+
   ]);
+  useEffect(() => {
+    if (user.avatar !== null && user.avatar !== "") {
+      try {
+        fetchImage().catch((e) => console.log("Failed to fetch the avatar"));
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  }, [user]);
+
 
   return (
-    <div>
+    <div >
 		{/* <AuthContextProvider> */}
-			<ChatContext.Provider value={ChatContextValue}>
-				<ConnectionContext.Provider value={ConnectionValue}>
+			{/* <ChatContext.Provider value={ChatContextValue}> */}
+				<UserContext.Provider value={UserValue}>
 					<RouterProvider router={router} />
-				</ConnectionContext.Provider>
-			</ChatContext.Provider>
+				</UserContext.Provider>
+			{/* </ChatContext.Provider> */}
 		{/* </AuthContextProvider> */}
     </div>
   );

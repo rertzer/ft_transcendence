@@ -4,7 +4,6 @@ import { OnModuleInit } from "@nestjs/common";
 import { PrismaChatService } from "../chat/prisma.chat.service";
 @Injectable()
 export class PrismaFriendService extends PrismaClient{
-	prismaChatService: PrismaChatService
 
 	async getIdOfLogin(login: string){ // this need to be removed
 
@@ -51,7 +50,7 @@ export class PrismaFriendService extends PrismaClient{
 
 	async deleteFriend(idLogin:number, friend:string)
 	{
-		const idFriend = await this.prismaChatService.getIdOfLogin(friend);
+		const idFriend = await this.getIdOfLogin(friend);
 		if (idFriend)
 		{
 			const friendToDelete = await this.alreadyFriend(idLogin, idFriend);

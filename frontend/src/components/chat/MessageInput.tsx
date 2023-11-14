@@ -1,7 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import "./MessageInput.scss"
 import { WebsocketContext } from '../../context/chatContext';
-import  ConnectionContext from "../../context/authContext"
 import { allChatOfUser } from './ChatComponent';
 
 
@@ -26,6 +25,7 @@ const MessageInput = (props: {chatId: number}) => {
 			content: value,
 			idOfChat: props.chatId,
 		}
+		console.log(" username send ", username)
 		socket.emit('newMessage', messageData);
 		setValue('');
 	  };
