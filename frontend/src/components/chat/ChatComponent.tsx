@@ -5,6 +5,7 @@ import { WebsocketContext } from "../../context/chatContext";
 import { useState, useEffect, useContext } from 'react';
 import  ConnectionContext from "../../context/authContext"
 import { act } from "react-dom/test-utils";
+import userContext from "../../context/userContext";
 
 export type allChatOfUser = {
     id: number;
@@ -63,14 +64,14 @@ export default ChatComponent;
 
 const NoChat = (props: {message: string}) => {
 
-    const {username} = useContext(ConnectionContext);
+    const {user} = useContext(userContext);
     const socket = useContext(WebsocketContext);
 
     useEffect(() => {
 
     socket.on('newMessage', (chatHistoryReceive :{msg: string, username: string, date: Date, id: number, idOfChat:number, serviceMessage: boolean}) => {
 
-        socket.emit("chatListOfUser",username);
+        socket.emit("chatListOfUser",user.login);
     });
     return () => {
         socket.off('newMessage');

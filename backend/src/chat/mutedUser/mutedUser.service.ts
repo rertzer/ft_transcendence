@@ -11,8 +11,8 @@ export class MutedUserService {
   }
 
   async addMutedUser(user: MutedUser) {
-	const isMutted = this.IsMutedUser(user.username, user.chatId)
-	const isOwner = await this.prismaService.isOwner(user.username, user.chatId)
+	const isMutted = this.IsMutedUser(user.login, user.chatId)
+	const isOwner = await this.prismaService.isOwner(user.login, user.chatId)
 	if (isMutted || isOwner)
 	{
 		return (false);
@@ -24,13 +24,13 @@ export class MutedUserService {
 	}
   }
 
-  removeMutedUser(username: string, chatId: number) {
-    this.mutedUsers = this.mutedUsers.filter((user) => !(user.username === username && user.chatId === chatId));
+  removeMutedUser(login: string, chatId: number) {
+    this.mutedUsers = this.mutedUsers.filter((user) => !(user.login === login && user.chatId === chatId));
 
 }
 
-  IsMutedUser(username: string, chatId: number): boolean {
-	const isMutted =  this.mutedUsers.find((user) => user.username === username && user.chatId === chatId);
+  IsMutedUser(login: string, chatId: number): boolean {
+	const isMutted =  this.mutedUsers.find((user) => user.login === login && user.chatId === chatId);
 
 		if (isMutted !== undefined)
 		{
@@ -40,7 +40,7 @@ export class MutedUserService {
 			const timeDiff = Math.abs(time.getTime() - timeStart.getTime());
 			if (timeDiff >= (isMutted.duration * 1000))
 			{
-				this.removeMutedUser(username, chatId);
+				this.removeMutedUser(login, chatId);
 				return false;
 			}
 			return true;

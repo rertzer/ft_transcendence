@@ -191,7 +191,7 @@ export class PrismaChatService {
 		}
 	}
 
-	async isOwner(usermame : string, chatId: number)
+	async isOwner(login : string, chatId: number)
 	{
 		const heIsOwner = await this.prismaService.chatChannels.findUnique({
 			where: {
@@ -208,7 +208,7 @@ export class PrismaChatService {
 		console.log("heisowner = ", heIsOwner);
 		if (!heIsOwner)
 			return false;
-		return heIsOwner.channelOwner.username === usermame
+		return heIsOwner.channelOwner.username === login
 	}
 
 	async isAdmin(idLogin: number, chatId:number)
@@ -445,12 +445,11 @@ export class PrismaChatService {
 			// User doesn't exist, create a new user
 			const newUser = await this.prismaService.user.create({
 				data: {
-					username: 'your_username',
+					username: 'toto',
 					first_name: 'John',
-					login: 'your_username',
+					login: 'toto',
 					last_name: 'Doe',
 					email: 'johndoe@example.com',
-					avatar: 'avatar_url',
 					role: 'user',
 					game_won: 0,
 					game_lost: 0,
@@ -459,12 +458,11 @@ export class PrismaChatService {
 			});
 			const newUser2 = await this.prismaService.user.create({
 				data: {
-					username: 'Pierrick',
+					username: 'coco',
 					first_name: 'jay',
 					last_name: ';avf',
-					login: 'Pierrick',
+					login: 'coco',
 					email: 'johndoeff@example.com',
-					avatar: 'fffvvf',
 					role: 'user',
 			  game_won: 0,
 			  game_lost: 0,

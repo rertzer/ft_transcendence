@@ -4,11 +4,12 @@ import React, { useContext, useState, useEffect, useRef, Component } from 'react
 import ConnectionContext from '../../context/authContext'
 import { allChatOfUser } from './ChatComponent';
 import { Message } from "./ChatComponent"
+import userContext from "../../context/userContext";
 
 const Chats = (props: {activeChat: allChatOfUser, setActiveChat: Function, chatsOfUser: allChatOfUser[], setChatsOfUser: Function, lastMessage: Message}) => {
 
     const socket = useContext(WebsocketContext);
-    const {username} = useContext(ConnectionContext);
+    const {user} = useContext(userContext);
 
     useEffect(() => {
 
@@ -32,7 +33,7 @@ const Chats = (props: {activeChat: allChatOfUser, setActiveChat: Function, chats
     const startRef = useRef<HTMLDivElement>(null); //ref to empty div to autoscroll to bottom
 
     function trigger() {
-       socket.emit('chatListOfUser', username);
+       socket.emit('chatListOfUser', user.login);
     }
 
     useEffect(() => {
@@ -62,7 +63,7 @@ const Chats = (props: {activeChat: allChatOfUser, setActiveChat: Function, chats
 
     function findReceiverName(names: string) {
 
-        let name = names.replace(username, "");
+        let name = names.replace(user.login, "");
         name.trim()
         return (name)
     }

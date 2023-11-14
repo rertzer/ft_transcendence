@@ -57,8 +57,8 @@ export class MyGateway {
 	}
 
 	@SubscribeMessage('newMessage')
-	async onNewMessage(@MessageBody() messageData: {username: string, serviceMessage:boolean ,content: string, idOfChat: number}, @ConnectedSocket() client:Socket) {
-		if (!this.mutedUserService.IsMutedUser(messageData.username, messageData.idOfChat))
+	async onNewMessage(@MessageBody() messageData: {username:string, login: string, serviceMessage:boolean ,content: string, idOfChat: number}, @ConnectedSocket() client:Socket) {
+		if (!this.mutedUserService.IsMutedUser(messageData.login, messageData.idOfChat))
 		{
 			const targetSocket = this.socketsLogin.find((socket) => socket.sock === client);
 			if (targetSocket !== undefined)
@@ -78,28 +78,6 @@ export class MyGateway {
 			}
 		}
 	}
-
-	@SubscribeMessage('retrievePrivateMessage')
-	async onRetrieveMp(@MessageBody() username:string, client: Socket)
-	{
-		const targetSocket = this.socketsLogin.find((socket) => socket.sock === client);
-		if (targetSocket !== undefined)
-		{
-			//const ReceiveAndSendMp = await this.prismaChatService.RetrievePrivateMessage(username);
-			client.emit("retrievePrivateMessage", targetSocket);
-		}
-	}
-
-
-	// @SubscribeMessage('JoinChatRoom')
-	// async onJoinChatRoom(@MessageBody() messageData:{username: string, chat_id:string, user_role:string, passeword:string}, @ConnectedSocket() client:Socket) {
-	// 	const targetSocket = this.socketsLogin.find((socket) => socket.sock === client);
-	// 	if (targetSocket !== undefined)
-	// 	{
-	// 		const joinClass = new JoinChatService(this.prismaChatService);
-	// 		joinClass.joinChat(targetSocket.idOfLogin, messageData.chat_id, messageData.user_role, messageData.passeword, targetSocket.sock);
-	// 	}
-	// }
 
 	@SubscribeMessage('SendPrivateMessage')
 	async onSendMessage(@MessageBody() messageData: {msg: string, loginToSend: string, idOfUser: string}, @ConnectedSocket() client:Socket) {
@@ -122,28 +100,6 @@ export class MyGateway {
 		}
 	}
 
-
-	// this need to go when login works
-	@SubscribeMessage('onUserConnection')
-	async onUserConnection(@MessageBody() TokenConnection: string, @ConnectedSocket() client:Socket) {
-			const userExist:boolean = await this.prismaChatService.checkLogin(TokenConnection);
-			if (userExist === false) {
-
-				client.emit('onUserConnection', {
-					id : '-1'
-				});
-				return;
-			}
-			else {
-
-				client.emit('onUserConnection', {
-					id : 'good',
-					username: TokenConnection
-				});
-				return;
-			}
-	}
-
 	@SubscribeMessage('newPrivateConv')
 	async onNewPrivateConv(@MessageBody() messageData: {sender: string, receiver: string}, @ConnectedSocket() client:Socket)
 	{
@@ -161,12 +117,14 @@ export class MyGateway {
 	}
 
 	@SubscribeMessage('createChat')
-	async onCreateChat(@MessageBody() messageData: {username: string, chatName: string, chatType: string, chatPassword: string}, @ConnectedSocket() client:Socket) {
+	async onCreateChat(@MessageBody() messageData: {login: string, chatName: string, chatType: string, chatPassword: string}, @ConnectedSocket() client:Socket){  //le passer en api
+		console.log("plop");
 		const targetSocket = this.socketsLogin.find((socket) => socket.sock === client);
 		if (targetSocket !== undefined)
 		{
+			console.log("plop");
 			const CreateRoom = new CreateChatService(this.prismaChatService);
-			CreateRoom.createChat(messageData.username, targetSocket.idOfLogin ,messageData.chatPassword, messageData.chatName, messageData.chatType, targetSocket.sock);
+			CreateRoom.createChat(messageData.login, targetSocket.idOfLogin ,messageData.chatPassword, messageData.chatName, messageData.chatType, targetSocket.sock);
 		}
 	}
 
@@ -182,8 +140,8 @@ export class MyGateway {
 	}
 
 	@SubscribeMessage('mutedUser')
-	mutedUser(@MessageBody() user:{username:string, chatId: number, time: number}, @ConnectedSocket() client:Socket) {
-		const userIsMute = this.mutedUserService.addMutedUser({username: user.username, chatId: user.chatId, timeStart: getDate(), duration: user.time});
+	mutedUser(@MessageBody() user:{login:string, chatId: number, time: number}, @ConnectedSocket() client:Socket) {
+		const userIsMute = this.mutedUserService.addMutedUser({login: user.login, chatId: user.chatId, timeStart: getDate(), duration: user.time});
 		if (userIsMute)
 		{
 			client.emit("userIsMute",userIsMute );
@@ -191,10 +149,11 @@ export class MyGateway {
 	}
 
 	@SubscribeMessage('chatListOfUser')
-	async onChatListOfUser(@MessageBody() username: string, @ConnectedSocket() client:Socket) {
+	async onChatListOfUser(@MessageBody() login: string, @ConnectedSocket() client:Socket) {
 		const targetSocket = this.socketsLogin.find((socket) => socket.sock === client);
 		if (targetSocket !== undefined)
 		{
+			console.log("work pls");
 			const chatLister = new ChatLister(this.prismaChatService);
 			await chatLister.listChatOfUser(targetSocket.idOfLogin, targetSocket.sock);
 		}
@@ -205,7 +164,6 @@ export class MyGateway {
 		const targetSocket = this.socketsLogin.find((socket) => socket.sock === client);
 		if (targetSocket !== undefined)
 		{
-
 			const chatLister = new ChatLister(this.prismaChatService);
 			chatLister.listAllPublicChat(client);
 		}

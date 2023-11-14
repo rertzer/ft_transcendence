@@ -9,15 +9,16 @@ import { allChatOfUser } from "./ChatComponent";
 import {Link} from "react-router-dom";
 import ConnectionContext from '../../context/authContext'
 import { useContext } from "react";
+import userContext from "../../context/userContext";
 
 
 const ConversationBar = (props: {toDisplay: allChatOfUser , setActiveChat: Function, isOwner: boolean, isAdmin: boolean}) => {
 
-    const {username} = useContext(ConnectionContext);
+    const {user} = useContext(userContext)
 
     function findReceiverName(names: string) {
 
-        let name = names.replace(username, "");
+        let name = names.replace(user.login, "");
         name.trim()
         return (name)
     }

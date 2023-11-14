@@ -7,6 +7,7 @@ import userEvent from '@testing-library/user-event';
 import  ConnectionContext from "../../context/authContext"
 import { Console } from 'console';
 import { render } from '@testing-library/react';
+import userContext from '../../context/userContext';
 
 type ChatHistory = {
 	msg: string;
@@ -33,7 +34,7 @@ type trigger = {
 
 const Messages = (props: {chatId: number, isOwner: boolean, isAdmin: boolean, setActiveChat: Function, isDM: boolean}) => {
 
-	const {username} = useContext(ConnectionContext);
+	const {user} = useContext(userContext);
 	const [render, setRender] = useState(false);
 	const socket = useContext(WebsocketContext);
 	const [chatHistory, setChatHistory] = useState<ChatHistory[]>([]);
@@ -54,7 +55,7 @@ const Messages = (props: {chatId: number, isOwner: boolean, isAdmin: boolean, se
 			newDateString = newDateString.slice(newDateString.indexOf("T") + 1, newDateString.indexOf("T") + 9);
 			const add : ChatMessage = {msg: chatHistoryReceive.msg, username: chatHistoryReceive.username, date: newDateString, id: chatHistoryReceive.id, chatId: chatHistoryReceive.idOfChat, serviceMessage: chatHistoryReceive.serviceMessage}
 			setChatMessages((prevMessages) => [...prevMessages, add]);
-			socket.emit("chatListOfUser",username);
+			socket.emit("chatListOfUser",user.login);
 			// Debugging: Check the updated chatHistory
 		});
 		return () => {

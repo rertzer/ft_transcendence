@@ -24,10 +24,7 @@ function Desktop1() {
       forceUpdate();
     };
 
-    useEffect(() => {
-      socket.connect();
-      }, []);
-  
+    
     const sendUserConnection = () => {
       socket.emit('onUserConnection', );
     }
@@ -36,6 +33,9 @@ function Desktop1() {
       window.removeEventListener('resize', handleResize);
     };
   }, []);
+  useEffect(() => {
+    socket.connect();
+    }, []);
   const forceUpdate = useForceUpdate();
 
   function DisplayChat() {

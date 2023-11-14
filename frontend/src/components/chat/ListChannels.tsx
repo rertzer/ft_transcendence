@@ -8,6 +8,7 @@ import { WebsocketContext } from '../../context/chatContext';
 import  ConnectionContext from "../../context/authContext";
 import ChatContext from '../../context/chatContext';
 import { ChatTwoTone } from '@mui/icons-material';
+import userContext from '../../context/userContext';
 
 type Channel = {
 	id : number; 
@@ -21,7 +22,7 @@ export const ListChannels = (props: {chatsOfUser: allChatOfUser[], showSubMenu: 
 
     const socket = useContext(WebsocketContext);
 	// const [idChatRoom, setIdChatRoom] = useState<JoinChatRoomPayload[]>([]);
-	const {username} = useContext(ConnectionContext);
+	const {user} = useContext(userContext);
 	const {setChatId} = useContext(ChatContext);
 	const [password, setPassword] = useState('');
 	const [chanToJoin, setChanToJoin] = useState<Channel>({id: -1, name: "", owner: "", type: "", password: null});
@@ -48,14 +49,14 @@ export const ListChannels = (props: {chatsOfUser: allChatOfUser[], showSubMenu: 
 		let messageData;
 		if (chanToJoin.type = "protected by password") {
 			messageData = {
-				username: username,
+				username: user.login,
 				chat_id: chanToJoin.id,
 				password: password,
 		  };
 		}
 		else {
 			messageData = {
-				username: username,
+				username: user.login,
 				chat_id: chanToJoin.id,
 				password: null,
 			  };
@@ -74,7 +75,7 @@ export const ListChannels = (props: {chatsOfUser: allChatOfUser[], showSubMenu: 
 
 		  const data = await response.json();
 		  setPassword('');
-		  socket.emit('chatListOfUser', username);
+		  socket.emit('chatListOfUser', user.login);
 		  return data; 
 		} catch (error) {
 		  console.error('Error:', error);

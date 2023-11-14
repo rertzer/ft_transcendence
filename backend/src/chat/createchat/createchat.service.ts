@@ -24,7 +24,7 @@ export class CreateChatService {
 			}
 	}
 
-	async emitAndCreateRoom(username:string, encodedPassword: string  | null, chatName: string, typeOfChat: string, targetSocket: Socket, idOfUser: number)
+	async emitAndCreateRoom(login:string, encodedPassword: string  | null, chatName: string, typeOfChat: string, targetSocket: Socket, idOfUser: number)
 	{
 		const newChatId = await this.prismaService.addChat(chatName, typeOfChat, idOfUser, encodedPassword );
 		const chatType = {
@@ -37,7 +37,7 @@ export class CreateChatService {
 			dateSend: null,
 		}
 		targetSocket.emit('newChat', chatType)
-		await this.prismaService.addChanelUser(newChatId, idOfUser, 'owner', getDate(), null).then(()=> targetSocket.emit('chatList', username));
+		await this.prismaService.addChanelUser(newChatId, idOfUser, 'owner', getDate(), null).then(()=> targetSocket.emit('chatList', login));
 		return (newChatId);
 	}
 }

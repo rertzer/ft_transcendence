@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import "./MessageInput.scss"
 import { WebsocketContext } from '../../context/chatContext';
 import { allChatOfUser } from './ChatComponent';
+import userContext from '../../context/userContext';
 
 
 type ChatHistory = {
@@ -14,18 +15,18 @@ const MessageInput = (props: {chatId: number}) => {
 
 	const [value, setValue] = useState('');
 	const socket = useContext(WebsocketContext);
-	const {username} = useContext(ConnectionContext);
-
+	const {user} = useContext(userContext);
 	const onSubmit = () => {
 		if (value === "" || props.chatId < 0)
 			return;
 		const messageData = {
-			username: username,
+			username: user.username,
+			login: user.login,
 			serviceMessage: false,
 			content: value,
 			idOfChat: props.chatId,
 		}
-		console.log(" username send ", username)
+		console.log(" username send ", user.login)
 		socket.emit('newMessage', messageData);
 		setValue('');
 	  };

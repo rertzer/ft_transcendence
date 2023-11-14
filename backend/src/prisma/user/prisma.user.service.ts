@@ -71,6 +71,7 @@ export class PrismaUserService extends PrismaClient
       const user = await this.user.create({
         data: {
           login: dto.login,
+          username: dto.login,
           email: dto.login + '@student.42.fr',
           role: 'player',
         },

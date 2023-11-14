@@ -3,10 +3,11 @@ import { useContext, useEffect, useState, useRef } from "react";
 import  ConnectionContext from "../../context/authContext"
 import { WebsocketContext } from "../../context/chatContext";
 import { Link } from "react-router-dom";
+import userContext from "../../context/userContext";
 
 const  Message = (props: {username: string, date: string, msg: string, isOwner: boolean, isAdmin: boolean, chatId: number, service: boolean, isDM: boolean}) => {
 
-    const {username} = useContext(ConnectionContext);
+    const {user} = useContext(userContext);
     const [showUserActionsMenu, setShowUserActionsMenu] = useState(false);
 	const [errorMessage, setErrorMessage] = useState("");
     const socket = useContext(WebsocketContext);
@@ -61,7 +62,7 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 		}
 	  }
 
-    if (username === props.username) {
+    if (user.login === props.username) {
         messageType = "owner";
     }
 	if (props.service) {
@@ -75,7 +76,8 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 
 	function sendServiceMessage(message: string) {
 		const messageData = {
-			username: username,
+			username: user.username,
+			login:user.login,
 			content: message,
 			serviceMessage: true,
 			idOfChat: props.chatId,
@@ -111,7 +113,7 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ username: props.username, chatId: props.chatId})
 		};
-		let banned = await checkIfUserIsBanned(username, props.chatId);
+		let banned = await checkIfUserIsBanned(user.login, props.chatId);
 		if (banned) {
 			setErrorMessage(props.username + " is already banned");
 		//bien sur faut aussi verifier si le user est owner auquel cas faut un autre error message
@@ -135,7 +137,7 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 
 	function startDM() {
 		const messageData = {
-			sender: username,
+			sender: user.login,
 			receiver: props.username,
 		}
 		socket.emit('newPrivateConv', messageData);
@@ -147,7 +149,7 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 		const requestOptions = {
 			method: 'post',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ login: username, friendToAdd: props.username})
+			body: JSON.stringify({ login: user.login, friendToAdd: props.username})
 		};
 		toggleUserActionsMenu();
 		await fetch('http://localhost:4000/friend/addFriend/', requestOptions)
@@ -186,7 +188,7 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 				<div className='messageContent'>
 					<p>{props.msg}</p>
 					<div className="name-time">
-						{username === props.username ? <span></span> : <span>{props.username},</span>}
+						{user.login === props.username ? <span></span> : <span>{props.username},</span>}
 						<span>{props.date}</span>
 					</div>
 				</div>

@@ -1,5 +1,5 @@
 interface MutedUser {
-	username: string;
+	login: string;
 	chatId: number;
 	timeStart: Date;
 	duration: number;
