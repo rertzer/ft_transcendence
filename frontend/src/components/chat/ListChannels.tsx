@@ -1,15 +1,13 @@
 import MenuIcon from '@mui/icons-material/Menu';
 import LockIcon from '@mui/icons-material/Lock';  // lock icon for channels protected by password
 import { Tooltip } from '@mui/material';
-import { allChatOfUser } from './ChatComponent';
 import "./ListChannels.scss"
 import { useContext, useState, useEffect } from 'react';
 import { WebsocketContext } from '../../context/chatContext';
 import  ConnectionContext from "../../context/authContext";
-import ChatContext from '../../context/chatContext';
-import { ChatTwoTone } from '@mui/icons-material';
+import chatContext from '../../context/chatContext';
 
-type Channel = {
+type ChannelToJoin = {
 	id : number; 
 	name: string;
 	owner: string;
@@ -17,15 +15,14 @@ type Channel = {
 	password: null | string;
 }
 
-export const ListChannels = (props: {chatsOfUser: allChatOfUser[], showSubMenu: string, setShowSubMenu: Function}) => {
+export const ListChannels = (props: {showSubMenu: string, setShowSubMenu: Function}) => {
 
     const socket = useContext(WebsocketContext);
-	// const [idChatRoom, setIdChatRoom] = useState<JoinChatRoomPayload[]>([]);
+	const {allChannels, setActiveChannel} = useContext(chatContext);
 	const {username} = useContext(ConnectionContext);
-	const {setChatId} = useContext(ChatContext);
 	const [password, setPassword] = useState('');
-	const [chanToJoin, setChanToJoin] = useState<Channel>({id: -1, name: "", owner: "", type: "", password: null});
-	const [availableChannels, setAvailableChannels] = useState<Channel[]>([{id: -1, name: "", owner: "", type: "", password: null}]);
+	const [chanToJoin, setChanToJoin] = useState<ChannelToJoin>({id: -1, name: "", owner: "", type: "", password: null});
+	const [availableChannels, setAvailableChannels] = useState<ChannelToJoin[]>([{id: -1, name: "", owner: "", type: "", password: null}]);
 	const [errorMessage, setErrorMessage] = useState("");
 
 	const DealWithIdChat = async () => {
@@ -92,7 +89,7 @@ export const ListChannels = (props: {chatsOfUser: allChatOfUser[], showSubMenu: 
 		if (props.showSubMenu !== "list")
 			return;
 		socket.emit('chatList');
-		socket.on("chatList", (available: Channel[]) => {
+		socket.on("chatList", (available: ChannelToJoin[]) => {
 			setAvailableChannels(available);
 		});
 
@@ -109,8 +106,8 @@ export const ListChannels = (props: {chatsOfUser: allChatOfUser[], showSubMenu: 
       }
     }
 
-	function isNotAlreadyIn(chan: Channel) {
-		if (props.chatsOfUser.find((element) => element.id === chan.id)) {
+	function isNotAlreadyIn(chan: ChannelToJoin) {
+		if (allChannels.find((element) => element.id === chan.id)) {
 			return (false);
 		}
 		return (true);
@@ -121,7 +118,7 @@ export const ListChannels = (props: {chatsOfUser: allChatOfUser[], showSubMenu: 
         <Tooltip title="List available channels" arrow>
             <MenuIcon onClick={toggleForm}/>
         </Tooltip>
-		{props.showSubMenu === "list" ? 
+		{props.showSubMenu === "list" && 
         <div className="submenu">
 			<div className="top">
 				<div className="joinInfo">
@@ -136,11 +133,11 @@ export const ListChannels = (props: {chatsOfUser: allChatOfUser[], showSubMenu: 
 				{ chanToJoin.id !== -1 && <button onClick={() => {DealWithIdChat(); setChanToJoin({id: -1, name: "", owner: "", type: "", password: null})}}>Join</button>}
 			</div>
 			<hr/>
-			{errorMessage !== "" ?
+			{errorMessage !== "" &&
 			<div>
 				<p>{errorMessage}</p>
 				<hr/>
-			</div> : <div></div>}
+			</div>}
             {availableChannels.filter(isNotAlreadyIn).map((chan) => {return (
 			<div className="channelItem" key={chan.id}>
 				<p onClick={() => {setChanToJoin(chan)}}>{chan.name}</p>
@@ -148,7 +145,7 @@ export const ListChannels = (props: {chatsOfUser: allChatOfUser[], showSubMenu: 
 			</div>
 			)
 			})}
-        </div> : <div></div>}
+        </div>}
     </div>
     );
 }

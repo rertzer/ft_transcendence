@@ -15,6 +15,7 @@ function Desktop1() {
   const socket = useContext(WebsocketContext);
   const {username} = useContext(ConnectionContext);
   const windowHeighthRef = useRef(window.innerHeight);
+  console.log("socket id = ", socket.id);
   socket.emit("newChatConnection", username); // need to be somewhere that is going to be trigger only once
   useEffect(() => {
   const handleResize = () => {

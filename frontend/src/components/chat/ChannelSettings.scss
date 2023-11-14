@@ -1,0 +1,24 @@
+.channelManagement {
+    .channelSettingsMenu {
+        width: 360px;
+        background-color: #4d4d4d;
+        top: 249px;
+        right: 20px;
+        position: fixed;
+        border-radius: 10px 00px 10px 10px;
+        color: #ddddf7;
+        padding: 20px;
+        cursor: auto;
+        max-height: 600px;
+        overflow: scroll;
+        &::-webkit-scrollbar {
+            display: none;
+        }
+        .passwordManagement {
+            padding: 20px;
+        }
+        .inviteUsers {
+            padding: 20px;
+        }
+    }
+}

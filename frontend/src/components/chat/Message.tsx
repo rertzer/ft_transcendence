@@ -1,12 +1,14 @@
 import "./Message.scss"
 import { useContext, useEffect, useState, useRef } from "react";
 import  ConnectionContext from "../../context/authContext"
-import { WebsocketContext } from "../../context/chatContext";
+import ChatContext, { WebsocketContext } from "../../context/chatContext";
 import { Link } from "react-router-dom";
+import { Channel } from "./ChatComponent";
 
 const  Message = (props: {username: string, date: string, msg: string, isOwner: boolean, isAdmin: boolean, chatId: number, service: boolean, isDM: boolean}) => {
 
     const {username} = useContext(ConnectionContext);
+	const {allChannels, setActiveChannel} = useContext(ChatContext)
     const [showUserActionsMenu, setShowUserActionsMenu] = useState(false);
 	const [errorMessage, setErrorMessage] = useState("");
     const socket = useContext(WebsocketContext);
@@ -134,13 +136,34 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 		sendServiceMessage(props.username + " has been kicked from this channel");
 	}
 
+	function checkIfDmExists() {
+
+		const index = allChannels.findIndex((element: Channel) => element.type === "DM" && element.channelName.search(props.username) !== -1);
+		return (index);
+	}
+
 	function startDM() {
-		const messageData = {
-			sender: username,
-			receiver: props.username,
+
+		const existingConversation = checkIfDmExists();
+		if (existingConversation !== -1) {
+			setActiveChannel(allChannels[existingConversation]);
+			socket.emit('retrieveMessage', {chatId: allChannels[existingConversation].id, messageToDisplay: 15 })
+		} else {
+			const messageData = {
+				sender: username,
+				receiver: props.username,
+			}
+			socket.emit('newPrivateConv', messageData);
+			toggleUserActionsMenu();
+			socket.emit("chatListOfUser",username);
+			// const serviceMessageData = {
+			// 	username: username,
+			// 	serviceMessage: true,
+			// 	content: "New private conversation between " + username + " and " + props.username,
+			// 	idOfChat: bah chai pas encore du coup
+			// }
+			// socket.emit('newMessage', serviceMessageData);
 		}
-		socket.emit('newPrivateConv', messageData);
-		toggleUserActionsMenu();
 	}
 
 	async function addToFriends()

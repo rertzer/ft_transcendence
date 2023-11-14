@@ -1,29 +1,29 @@
 import "./Chat.scss";
 import Messages from "./Messages";
 import MessageInput from "./MessageInput";
-import { allChatOfUser } from "./ChatComponent";
-import  ConnectionContext from "../../context/authContext"
+import ChatContext from "../../context/chatContext";
 import ConversationBar from "./ConversationBar";
 import { useContext } from "react";
 
 
-const Chat = (props: { toDisplay: allChatOfUser, setActiveChat: Function}) => {
+const Chat = () => {
 
+    const {activeChannel} = useContext(ChatContext);
     let isOwner = false;
     let isAdmin = false;
     let isDM = false;
-    if (props.toDisplay.status === "owner") {
+    if (activeChannel.status === "owner") {
         isOwner = true; }
-    if (props.toDisplay.status === "admin") {
+    if (activeChannel.status === "admin") {
         isAdmin = true; }
-    if (props.toDisplay.type === "DM") {
+    if (activeChannel.type === "DM") {
         isDM = true; }
 
     return (
         <div className='chat'>
-            <ConversationBar toDisplay={props.toDisplay} setActiveChat={props.setActiveChat} isOwner={isOwner} isAdmin={isAdmin}/>
-            <Messages chatId={props.toDisplay.id} isOwner={isOwner} isAdmin={isAdmin} setActiveChat={props.setActiveChat} isDM={isDM}/>
-            <MessageInput chatId={props.toDisplay.id}/>
+            <ConversationBar isOwner={isOwner} isAdmin={isAdmin}/>
+            <Messages chatId={activeChannel.id} isOwner={isOwner} isAdmin={isAdmin} isDM={isDM}/>
+            <MessageInput chatId={activeChannel.id}/>
         </div>
     )
 }

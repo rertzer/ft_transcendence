@@ -4,7 +4,6 @@ import  ConnectionContext from "../../context/authContext"
 import AddIcon from '@mui/icons-material/Add';
 import { Tooltip } from  "@mui/material";
 import "./AddChat.scss";
-import { allChatOfUser } from './ChatComponent';
 
 type CreateChatPayload = {
 	username: string;
@@ -13,13 +12,13 @@ type CreateChatPayload = {
 	chatType: string;
 }
 
-export const AddChat = (props: {chatsOfUser: allChatOfUser[], showSubMenu: string, setShowSubMenu: Function}) => {
+export const AddChat = (props: {showSubMenu: string, setShowSubMenu: Function}) => {
+	
 	const {username} = useContext(ConnectionContext);
 	const [chatName, setChatName] = useState('');
 	const [password, setPassword] = useState('');
 	const socket = useContext(WebsocketContext);
 	const [chatType, setChatType] = useState('public');
-	const [chatInfo, setChatInfo] = useState({}); // Define the state for chat information
 
 	const toggleForm = () => {
 		if (props.showSubMenu !== "add") {

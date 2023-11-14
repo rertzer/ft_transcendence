@@ -31,7 +31,7 @@ type trigger = {
 	numberMsgToDisplay: number;
 }
 
-const Messages = (props: {chatId: number, isOwner: boolean, isAdmin: boolean, setActiveChat: Function, isDM: boolean}) => {
+const Messages = (props: {chatId: number, isOwner: boolean, isAdmin: boolean, isDM: boolean}) => {
 
 	const {username} = useContext(ConnectionContext);
 	const [render, setRender] = useState(false);
@@ -55,7 +55,6 @@ const Messages = (props: {chatId: number, isOwner: boolean, isAdmin: boolean, se
 			const add : ChatMessage = {msg: chatHistoryReceive.msg, username: chatHistoryReceive.username, date: newDateString, id: chatHistoryReceive.id, chatId: chatHistoryReceive.idOfChat, serviceMessage: chatHistoryReceive.serviceMessage}
 			setChatMessages((prevMessages) => [...prevMessages, add]);
 			socket.emit("chatListOfUser",username);
-			// Debugging: Check the updated chatHistory
 		});
 		return () => {
 

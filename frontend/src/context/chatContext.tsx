@@ -1,5 +1,6 @@
-import React, { createContext } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
+import { Channel } from '../components/chat/ChatComponent';
 
 
 export const socket = io('http://localhost:4000', {
@@ -10,14 +11,28 @@ export const WebsocketContext = createContext<Socket>(socket);
 
 export const WebsocketProvider = WebsocketContext.Provider;
 
+
 export interface IChatContext {
-	chatId: number,
-	setChatId: (chatId: number) => void;
+	allChannels: Channel[],
+	setAllChannels: (allChannels: Channel[]) => void;
+	activeChannel: Channel,
+	setActiveChannel: (activeChannel: Channel) => void;
 };
 
 const defaultState:IChatContext = {
-	chatId: 0,
-	setChatId: () => {},
+	allChannels: [],
+	setAllChannels: () => {},
+	activeChannel: {
+		id: -1,
+		channelName: "Pong Chat",
+		chatPicture: "",
+		type: "",
+		status: "",
+		username: null,
+		dateSend: null,
+		msg: null
+	},
+	setActiveChannel: () => {}
 };
 
 export default React.createContext(defaultState);

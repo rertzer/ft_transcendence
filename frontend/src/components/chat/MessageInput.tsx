@@ -2,7 +2,6 @@ import React, { useState, useContext, useEffect } from 'react';
 import "./MessageInput.scss"
 import { WebsocketContext } from '../../context/chatContext';
 import  ConnectionContext from "../../context/authContext"
-import { allChatOfUser } from './ChatComponent';
 
 
 type ChatHistory = {
