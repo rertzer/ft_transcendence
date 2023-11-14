@@ -1,9 +1,11 @@
 import "./Login.scss";
 import { Navigate } from "react-router-dom";
-import { MouseEvent, useEffect, useState } from "react";
+import { MouseEvent, useContext, useEffect, useState } from "react";
+import { WebsocketContext } from "../context/chatContext";
 
 function Login() {
   const [login, setLogin] = useState("");
+
   const [tokenOk, setTokenOk] = useState(false);
   // const {username, setUsername} = useContext(ConnectionContext)
 

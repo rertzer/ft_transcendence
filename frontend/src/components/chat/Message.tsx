@@ -128,7 +128,7 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 		const requestOptions = {
 			method: 'post',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ login: props.username, chatId: props.chatId})
+			body: JSON.stringify({ username: props.username, chatId: props.chatId})
 		};
 		toggleUserActionsMenu();
 		await fetch('http://localhost:4000/chatOption/kickUser/', requestOptions)
@@ -149,7 +149,7 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 		const requestOptions = {
 			method: 'post',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ login: user.login, friendToAdd: props.username})
+			body: JSON.stringify({ username: props.username, friendToAdd: props.username})
 		};
 		toggleUserActionsMenu();
 		await fetch('http://localhost:4000/friend/addFriend/', requestOptions)

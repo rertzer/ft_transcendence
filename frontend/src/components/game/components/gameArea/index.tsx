@@ -45,7 +45,7 @@ function GameArea(props:any) {
 		menuFontPx: 0.08,
 		goal: 0,
 		endgame: false,
-		gameStatus:'WAITING_FOR_PLAYER' as GameStatus, 
+		gameStatus:'WAITING_FOR_PLAYER' as GameStatus,
 		startingCount:0
 	});
 
@@ -59,38 +59,38 @@ function GameArea(props:any) {
 		downArrowDown:false,
 		name:"",
 		namePos:{x: 1 / 4, y: 0.9},
-		color:'#aaaaaa', 
+		color:'#aaaaaa',
 		socketId: '',
 		readyToPlay:false
 	});
 
 	const [frontEndPlayerRight, setFrontEndPlayerRight] = useState({
-		posY: 0.5, 
+		posY: 0.5,
 		score: 0,
-		scorePos: {x: 3 / 4, y: 1 / 5}, 
+		scorePos: {x: 3 / 4, y: 1 / 5},
 		upArrowDown:false,
     	downArrowDown:false,
 		name: "",
 		namePos: {x: 3 / 4, y: 0.9},
-		color: '#aaaaaa', 
-		socketId: '', 
+		color: '#aaaaaa',
+		socketId: '',
 		readyToPlay:false
 	});
-	
+
 	const [ball, setBall] = useState({
 		id:0,
-		pos: {x: 1 / 2, y: 1 / 2}, 
-    	speed: pong.ballInitSpeed, 
+		pos: {x: 1 / 2, y: 1 / 2},
+    	speed: pong.ballInitSpeed,
     	dir: pong.ballInitDir
 	});
 
 	const [balls, setBalls] = useState<IBall[]>([{
 		id:0,
-		pos: {x: 1 / 2, y: 1 / 2}, 
+		pos: {x: 1 / 2, y: 1 / 2},
 		speed: pong.ballInitSpeed,
 		dir: pong.ballInitDir
 	}]);
-	
+
 	useEffect(() => {
 		function onConnect() {
 			console.log("Connected with socket: ", gameSocket.id);
@@ -113,7 +113,7 @@ function GameArea(props:any) {
 
 		function onGameState(data:any) {
 			updateBalls(data.balls);
-			
+
 			updatePendingMoves(data);
 			let myPosY:number = (mySide === 'left' ? data.playerLeft.posY : data.playerRight.posY);
 			let otherPlayerPosY:number = (mySide === 'left' ? data.playerRight.posY : data.playerLeft.posY );
@@ -130,9 +130,9 @@ function GameArea(props:any) {
 			}
 			setPong((prev) => ({ ...prev, gameStatus:data.gameStatus, startingCount: data.startingCount}))
 		}
-		
+
 		function onRoomStatus(data:any) {
-			setPong((prev) => ({...prev, 
+			setPong((prev) => ({...prev,
 				idRoom: data.idRoom,
 				ballRadius: data.gameParam.ballRadius,
 				paddleWidth: data.gameParam.paddleWidth,
@@ -145,25 +145,25 @@ function GameArea(props:any) {
 				gameStatus : data.gameStatus
 			}));
 			if (typeof(data.playerLeft.name) !== 'undefined' && typeof(data.playerLeft.socketId) !== 'undefined') {
-				setFrontEndPlayerLeft((prev) => ({...prev, 
-				name: data.playerLeft.name, 
+				setFrontEndPlayerLeft((prev) => ({...prev,
+				name: data.playerLeft.name,
 				socketId: data.playerLeft.socketId}));
 				if (data.playerLeft.socketId === gameSocket.id) setMySide('left');
 			}
 			else {
-				setFrontEndPlayerLeft((prev) => ({...prev, 
-					name: '', 
+				setFrontEndPlayerLeft((prev) => ({...prev,
+					name: '',
 					socketId: ''}))
 			}
 			if (typeof(data.playerRight.name) !== 'undefined' && typeof(data.playerRight.socketId) !== 'undefined') {
-				setFrontEndPlayerRight((prev) => ({...prev, 
-				name: data.playerRight.name, 
+				setFrontEndPlayerRight((prev) => ({...prev,
+				name: data.playerRight.name,
 				socketId: data.playerRight.socketId}));
 				if (data.playerRight.socketId === gameSocket.id) setMySide('right');
 			}
 			else {
-				setFrontEndPlayerRight((prev) => ({...prev, 
-					name: '', 
+				setFrontEndPlayerRight((prev) => ({...prev,
+					name: '',
 					socketId: ''}))
 			}
 		}
@@ -179,8 +179,8 @@ function GameArea(props:any) {
 			gameSocket.off('disconnect', onDisconnect);
 			gameSocket.off('game_state', onGameState);
 			gameSocket.off('room_status', onRoomStatus);
-		}			
-			
+		}
+
 	}, [playerName, roomName ]);
 
 	useEffect(() => {

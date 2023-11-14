@@ -8,7 +8,7 @@ import { allChatOfUser } from './ChatComponent';
 import userContext from '../../context/userContext';
 
 type CreateChatPayload = {
-	username: string;
+	login: string;
 	chatName: string;
 	chatPassword: string | null;
 	chatType: string;
@@ -38,7 +38,7 @@ export const AddChat = (props: {chatsOfUser: allChatOfUser[], showSubMenu: strin
 		if (password === "")
 		{
 			createChatData = {
-				username: user.login,
+				login: user.login,
 				chatName: chatName,
 				chatType: chatType,
 				chatPassword: null,
@@ -47,13 +47,12 @@ export const AddChat = (props: {chatsOfUser: allChatOfUser[], showSubMenu: strin
 		else
 		{
 			createChatData = {
-				username: user.login,
+				login: user.login,
 				chatName: chatName,
 				chatType: chatType,
 				chatPassword: password,
 			}
 		}
-
 		socket.emit('createChat', createChatData);
 		setChatName('');
 		setPassword('');

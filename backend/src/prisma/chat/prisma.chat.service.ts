@@ -21,15 +21,21 @@ export class PrismaChatService {
 												// ou si recuperes tous le me prisma client
 	  }
 
-	async getIdOfLogin(login: string){
+	async getIdOfUsername(username: string){
 
 		const user = await this.prismaService.user.findFirst({
 			where: {
-				username: login,
+				username: username,
 			}
 		})
 		if (user)
 			return user.id;
+		else
+		{
+			console.log("buggedd");
+			return 0;
+
+		}
 	}
 
 	async BanUserFromChannel(idLogin: number, chatId: number)
@@ -287,6 +293,11 @@ export class PrismaChatService {
 			})
 			return (newMessage.id)
 		}
+	}
+
+	async getIdWithUsername(username: String)
+	{
+
 	}
 
 	async getListOfChatByUsername(loginId: number)

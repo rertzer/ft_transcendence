@@ -9,6 +9,7 @@ import ChatComponent from './components/chat/ChatComponent';
 import {IChatContext, WebsocketProvider, socket } from './context/chatContext';
 import ChatContext from './context/chatContext';
 // import { AuthContextProvider } from './context/authContext';
+import { WebsocketContext } from './context/chatContext';
 import UserContext from './context/userContext'
 import { IContextUser } from './context/userContext';
 import Desktop1 from './pages/Desktop1';
@@ -18,6 +19,12 @@ function App() {
   const raw_token: string | null = sessionStorage.getItem("Token");
   let token = { login: "", access_token: "" };
   if (raw_token) token = JSON.parse(raw_token);
+  const socket = useContext(WebsocketContext);
+
+  useEffect(() => {
+	console.log("rkeklkrer");
+	socket.connect();
+    }, []);
 
   const [user, setUser] = useState({
     id: 0,
@@ -85,6 +92,7 @@ function App() {
     return children;
   };
 
+
   const router = createBrowserRouter([
     {
       path:"/",
@@ -110,6 +118,12 @@ function App() {
     },
 
   ]);
+  const [chatId, setChatId] = useState(-1)
+  const ChatContextValue: IChatContext = {
+	  chatId,
+	  setChatId,
+  };
+
   useEffect(() => {
     if (user.avatar !== null && user.avatar !== "") {
       try {
@@ -124,11 +138,11 @@ function App() {
   return (
     <div >
 		{/* <AuthContextProvider> */}
-			{/* <ChatContext.Provider value={ChatContextValue}> */}
+			<ChatContext.Provider value={ChatContextValue}>
 				<UserContext.Provider value={UserValue}>
 					<RouterProvider router={router} />
 				</UserContext.Provider>
-			{/* </ChatContext.Provider> */}
+			</ChatContext.Provider>
 		{/* </AuthContextProvider> */}
     </div>
   );

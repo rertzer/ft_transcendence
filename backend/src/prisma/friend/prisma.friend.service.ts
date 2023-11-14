@@ -5,7 +5,7 @@ import { PrismaChatService } from "../chat/prisma.chat.service";
 @Injectable()
 export class PrismaFriendService extends PrismaClient{
 
-	async getIdOfLogin(login: string){ // this need to be removed
+	async getIdOfUsername(login: string){ // this need to be removed
 
 		const user = await this.user.findFirst({
 			where: {
@@ -19,7 +19,7 @@ export class PrismaFriendService extends PrismaClient{
 	async addFriend(idLogin: number, newFriend: string)
 	{
 		console.log("idlogin -= ",idLogin, "new friend  =", newFriend);
-			const idFriend = await this.getIdOfLogin(newFriend);
+			const idFriend = await this.getIdOfUsername(newFriend);
 			console.log("id friend = ",idFriend)
 			if (idFriend && await this.alreadyFriend(idLogin, idFriend) == undefined)
 			{
@@ -50,7 +50,7 @@ export class PrismaFriendService extends PrismaClient{
 
 	async deleteFriend(idLogin:number, friend:string)
 	{
-		const idFriend = await this.getIdOfLogin(friend);
+		const idFriend = await this.getIdOfUsername(friend);
 		if (idFriend)
 		{
 			const friendToDelete = await this.alreadyFriend(idLogin, idFriend);
