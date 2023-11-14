@@ -11,12 +11,11 @@ import EmailField from "../components/user/EmailField";
 interface IToSend {
   login: string;
   username?: string;
-  password?: string;
   email?: string;
   avatar?: string;
 }
 
-function Register() {
+function EditProfile() {
   const { user, setUser } = useContext(UserContext);
 
   let tmp = user.username;
@@ -130,4 +129,4 @@ function Register() {
   );
 }
 
-export default Register;
+export default EditProfile;

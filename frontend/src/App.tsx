@@ -11,6 +11,7 @@ import Login from "./routes/Login";
 import EditProfile from "./routes/EditProfile";
 import Home from "./routes/Home";
 import Profile from "./routes/Profile";
+import Twofa from "./routes/TwoFA";
 import Navbar from "./components/menus/Navbar";
 import Leftbar from "./components/menus/Leftbar";
 import FriendsComponent from "./components/friendlist/FriendsComponent";
@@ -22,6 +23,7 @@ import { IChatContext, WebsocketProvider, socket } from "./context/chatContext";
 import ChatContext from "./context/chatContext";
 import UserContext from "./context/userContext";
 import Channels from "./components/channels/Channels";
+
 
 function App() {
   const raw_token: string | null = sessionStorage.getItem("Token");
@@ -150,6 +152,10 @@ function App() {
         {
           path: "/edit",
           element: <EditProfile />,
+        },
+        {
+          path: "/twofa",
+          element: <Twofa />,
         },
       ],
     },

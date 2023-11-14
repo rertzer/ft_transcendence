@@ -39,9 +39,11 @@
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.1",
     "passport-oauth2": "^1.7.0",
+    "qrcode": "^1.5.3",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1",
-    "socket.io": "^4.7.2"
+    "socket.io": "^4.7.2",
+    "speakeasy": "^2.0.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",
@@ -53,6 +55,8 @@
     "@types/node": "^20.3.1",
     "@types/passport-jwt": "^3.0.11",
     "@types/passport-oauth2": "^1.4.15",
+    "@types/qrcode": "^1.5.5",
+    "@types/speakeasy": "^2.0.10",
     "@types/supertest": "^2.0.12",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",

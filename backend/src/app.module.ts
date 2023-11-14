@@ -7,6 +7,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { AppService } from './app.service';
 import { AppController } from './app.controller';
 import { FtAuthModule } from './ft_auth/ft_auth.module';
+import { TwoFAModule } from './twoFA/twoFA.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { FtAuthModule } from './ft_auth/ft_auth.module';
     }),
     AuthModule,
     FtAuthModule,
+    TwoFAModule,
     UserModule,
     PrismaModule,
     ChatModule,

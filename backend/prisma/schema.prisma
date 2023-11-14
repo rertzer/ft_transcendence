@@ -19,9 +19,9 @@ model User {
   email                  String
   avatar                 String?
   role                   String
-  game_won               Int              @default(0)
-  game_lost              Int              @default(0)
-  game_played            Int              @default(0)
+  game_won               Int                @default(0)
+  game_lost              Int                @default(0)
+  game_played            Int                @default(0)
   friends                Friend[]           @relation("UserToFriends")
   sentDirectMessages     DirectMsg[]        @relation("SenderMessages")
   receivedDirectMessages DirectMsg[]        @relation("ReceiverMessages")
@@ -77,12 +77,12 @@ model DirectMsg {
 }
 
 model TwoFA {
-  id            Int    @id @default(autoincrement())
-  user_id       Int    @unique
-  qr_code       String
-  ascii_secret  String
+  id            Int     @id @default(autoincrement())
+  user_id       Int     @unique
+  hashed_secret String
+  temporary     Boolean @default(false)
   authenticator String
-  user          User   @relation("TwoFactorAuth", fields: [user_id], references: [id])
+  user          User    @relation("TwoFactorAuth", fields: [user_id], references: [id])
 }
 
 model Friend {
