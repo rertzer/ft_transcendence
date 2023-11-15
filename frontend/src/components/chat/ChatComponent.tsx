@@ -29,6 +29,7 @@ export type Message = {
 const ChatComponent = () => {
 
     const [allChannels, setAllChannels] = useState<Channel[]>([])
+    const [needToUpdate, setNeedToUpdate] = useState(false);
     const [activeChannel, setActiveChannel] = useState<Channel>({
         id: -1,
         channelName: "Pong Chat",
@@ -44,12 +45,18 @@ const ChatComponent = () => {
     allChannels,
     setAllChannels,
     activeChannel,
-    setActiveChannel
+    setActiveChannel,
+    needToUpdate,
+    setNeedToUpdate
   }
     useEffect(() => {
         const id = activeChannel.id;
         if (id !== -1 && allChannels.find(element => element.id === id) === undefined) 
-            setActiveChannel({id: -1, channelName: "Pong Chat", chatPicture: "", type: "", status: "", username: null, dateSend: null, msg: null})
+            setActiveChannel({id: -1, channelName: "Pong Chat", chatPicture: "", type: "", status: "", username: null, dateSend: null, msg: null});
+        else if (needToUpdate) {
+            setActiveChannel(allChannels[allChannels.length -1]);
+            setNeedToUpdate(false);
+        }
     }, [allChannels.length])
 
     return (

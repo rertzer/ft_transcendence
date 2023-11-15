@@ -1,6 +1,7 @@
 import { useState, useContext, useEffect } from 'react';
 import { WebsocketContext } from '../../context/chatContext';
 import  ConnectionContext from "../../context/authContext"
+import ChatContext from '../../context/chatContext';
 import AddIcon from '@mui/icons-material/Add';
 import { Tooltip } from  "@mui/material";
 import "./AddChat.scss";
@@ -15,6 +16,7 @@ type CreateChatPayload = {
 export const AddChat = (props: {showSubMenu: string, setShowSubMenu: Function}) => {
 	
 	const {username} = useContext(ConnectionContext);
+	const {setNeedToUpdate} = useContext(ChatContext);
 	const [chatName, setChatName] = useState('');
 	const [password, setPassword] = useState('');
 	const socket = useContext(WebsocketContext);
@@ -53,6 +55,7 @@ export const AddChat = (props: {showSubMenu: string, setShowSubMenu: Function}) 
 		}
 
 		socket.emit('createChat', createChatData);
+		setNeedToUpdate(true);
 		setChatName('');
 		setPassword('');
 		toggleForm();

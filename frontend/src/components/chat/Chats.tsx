@@ -14,7 +14,6 @@ const Chats = () => {
     useEffect(() => {
 
         trigger();
-
         socket.on("ListOfChatOfUser", (channelsListReceive : Channel[]) => {
             setAllChannels(channelsListReceive);
         });
@@ -30,12 +29,12 @@ const Chats = () => {
         }
     }, [])
 
-    const startRef = useRef<HTMLDivElement>(null); //ref to empty div to autoscroll to bottom
-
     function trigger() {
-       socket.emit('chatListOfUser', username);
+        socket.emit('chatListOfUser', username);
     }
 
+    const startRef = useRef<HTMLDivElement>(null); //ref to empty div to autoscroll to bottom
+    
     useEffect(() => {
         if (allChannels.length > 0) {
             startRef.current?.scrollIntoView({

@@ -17,6 +17,8 @@ export interface IChatContext {
 	setAllChannels: (allChannels: Channel[]) => void;
 	activeChannel: Channel,
 	setActiveChannel: (activeChannel: Channel) => void;
+	needToUpdate: boolean,
+	setNeedToUpdate: (bool: boolean) => void;
 };
 
 const defaultState:IChatContext = {
@@ -32,7 +34,9 @@ const defaultState:IChatContext = {
 		dateSend: null,
 		msg: null
 	},
-	setActiveChannel: () => {}
+	setActiveChannel: () => {},
+	needToUpdate: false,
+	setNeedToUpdate: () => {},
 };
 
 export default React.createContext(defaultState);

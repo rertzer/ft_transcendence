@@ -8,7 +8,7 @@ import { Channel } from "./ChatComponent";
 const  Message = (props: {username: string, date: string, msg: string, isOwner: boolean, isAdmin: boolean, chatId: number, service: boolean, isDM: boolean}) => {
 
     const {username} = useContext(ConnectionContext);
-	const {allChannels, setActiveChannel} = useContext(ChatContext)
+	const {allChannels, setActiveChannel, setNeedToUpdate} = useContext(ChatContext)
     const [showUserActionsMenu, setShowUserActionsMenu] = useState(false);
 	const [errorMessage, setErrorMessage] = useState("");
     const socket = useContext(WebsocketContext);
@@ -35,11 +35,7 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 			else
 				console.log(" i am mute");
 		})
-		// socket.on("BannedUser", (chat_id: Number)=> {
-		// 	console.log("yo i have been banned");
-		// })
         return () => {
-
 			socket.off("userIsMute");
 		}
     }, [])
@@ -137,14 +133,13 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 	}
 
 	function checkIfDmExists() {
-
 		const index = allChannels.findIndex((element: Channel) => element.type === "DM" && element.channelName.search(props.username) !== -1);
 		return (index);
 	}
 
-	function startDM() {
+	async function startDM() {
 
-		const existingConversation = checkIfDmExists();
+		let existingConversation = checkIfDmExists();
 		if (existingConversation !== -1) {
 			setActiveChannel(allChannels[existingConversation]);
 			socket.emit('retrieveMessage', {chatId: allChannels[existingConversation].id, messageToDisplay: 15 })
@@ -154,15 +149,8 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 				receiver: props.username,
 			}
 			socket.emit('newPrivateConv', messageData);
+			setNeedToUpdate(true);
 			toggleUserActionsMenu();
-			socket.emit("chatListOfUser",username);
-			// const serviceMessageData = {
-			// 	username: username,
-			// 	serviceMessage: true,
-			// 	content: "New private conversation between " + username + " and " + props.username,
-			// 	idOfChat: bah chai pas encore du coup
-			// }
-			// socket.emit('newMessage', serviceMessageData);
 		}
 	}
 

@@ -18,7 +18,7 @@ type ChannelToJoin = {
 export const ListChannels = (props: {showSubMenu: string, setShowSubMenu: Function}) => {
 
     const socket = useContext(WebsocketContext);
-	const {allChannels, setActiveChannel} = useContext(chatContext);
+	const {allChannels, setNeedToUpdate} = useContext(chatContext);
 	const {username} = useContext(ConnectionContext);
 	const [password, setPassword] = useState('');
 	const [chanToJoin, setChanToJoin] = useState<ChannelToJoin>({id: -1, name: "", owner: "", type: "", password: null});
@@ -38,7 +38,10 @@ export const ListChannels = (props: {showSubMenu: string, setShowSubMenu: Functi
 			setChanToJoin({id: -1, name: "", owner: "", type: "", password: null})
 		} else {
 			setErrorMessage("");
+			socket.emit('chatListOfUser', username);
+			setNeedToUpdate(true);
 			toggleForm();
+
 		}
 	  }
 
@@ -67,14 +70,11 @@ export const ListChannels = (props: {showSubMenu: string, setShowSubMenu: Functi
 		};
 		try {
 		  const response = await fetch('http://localhost:4000/chatOption/joinChat/', requestOptions);
-
 		  if (!response.ok) {
 			throw new Error('Request failed');
 		  }
-
 		  const data = await response.json();
 		  setPassword('');
-		  socket.emit('chatListOfUser', username);
 		  return data; 
 		} catch (error) {
 		  console.error('Error:', error);
