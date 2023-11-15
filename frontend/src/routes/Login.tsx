@@ -1,13 +1,12 @@
 import "./Login.scss";
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { MouseEvent, useEffect, useState } from "react";
 
 function Login() {
   const [login, setLogin] = useState("");
   const [tokenOk, setTokenOk] = useState(false);
-  // const {username, setUsername} = useContext(ConnectionContext)
 
-
+  const navigate = useNavigate();
   const handleSubmit = async (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
 
@@ -18,20 +17,26 @@ function Login() {
         body: JSON.stringify({ login }),
       });
       const token = await data.json();
+      let token_status = false;
       if (token.message) {
         console.log("Bad login");
-        setLogin("");
-        setTokenOk(false);
+        //setLogin("");
       } else {
-        setTokenOk(true);
+        token_status = true;
         sessionStorage.setItem("Token", JSON.stringify(token));
       }
+      setTokenOk(token_status);
     } catch (e) {
       console.log(e);
     }
   };
 
   console.log("Log user ok is", tokenOk);
+  useEffect(() => {
+    console.log("use effect token is", tokenOk);
+    if (tokenOk) navigate("/game");
+  }, [tokenOk]);
+
   return (
     <div className="login">
       <div className="card">
@@ -44,15 +49,14 @@ function Login() {
               value={login}
               onChange={(e) => setLogin(e.target.value)}
             />
+            <button
+              onClick={(e) => {
+                handleSubmit(e);
+              }}
+            >
+              Log in
+            </button>
           </form>
-          <button
-            onClick={(e) => {
-              handleSubmit(e);
-            }}
-          >
-            Log in
-          </button>
-          {tokenOk && <Navigate to="/"></Navigate>}
         </div>
       </div>
     </div>

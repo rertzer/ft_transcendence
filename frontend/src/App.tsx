@@ -4,11 +4,6 @@ import { createBrowserRouter, RouterProvider, Route, Outlet, Navigate } from 're
 import Login from './routes/Login';
 import Home from './routes/Home';
 import Profile from './routes/Profile';
-import {  IConnected } from './context/authContext';
-import ChatComponent from './components/chat/ChatComponent';
-import {IChatContext, WebsocketProvider, socket } from './context/chatContext';
-import ChatContext from './context/chatContext';
-// import { AuthContextProvider } from './context/authContext';
 import UserContext from './context/userContext'
 import { IContextUser } from './context/userContext';
 import Desktop1 from './pages/Desktop1';
@@ -80,6 +75,7 @@ function App() {
 
   const ProtectedRoute = ({ children }: any) => {
     if (!token.login) {
+      console.log("Protected route");
       return <Navigate to="/login" />;
     }
     return children;
@@ -123,13 +119,9 @@ function App() {
 
   return (
     <div >
-		{/* <AuthContextProvider> */}
-			{/* <ChatContext.Provider value={ChatContextValue}> */}
 				<UserContext.Provider value={UserValue}>
 					<RouterProvider router={router} />
 				</UserContext.Provider>
-			{/* </ChatContext.Provider> */}
-		{/* </AuthContextProvider> */}
     </div>
   );
 }
