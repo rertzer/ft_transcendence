@@ -53,7 +53,7 @@ const ChatComponent = () => {
         const id = activeChannel.id;
         if (id !== -1 && allChannels.find(element => element.id === id) === undefined) 
             setActiveChannel({id: -1, channelName: "Pong Chat", chatPicture: "", type: "", status: "", username: null, dateSend: null, msg: null});
-        else if (needToUpdate) {
+        else if (needToUpdate && allChannels.length > 0) {
             setActiveChannel(allChannels[allChannels.length -1]);
             setNeedToUpdate(false);
         }
