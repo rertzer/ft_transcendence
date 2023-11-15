@@ -11,7 +11,7 @@ import { ChatTwoTone } from '@mui/icons-material';
 import userContext from '../../context/userContext';
 
 type Channel = {
-	id : number; 
+	id : number;
 	name: string;
 	owner: string;
 	type: string;
@@ -49,14 +49,14 @@ export const ListChannels = (props: {chatsOfUser: allChatOfUser[], showSubMenu: 
 		let messageData;
 		if (chanToJoin.type = "protected by password") {
 			messageData = {
-				username: user.login,
+				login: user.login,
 				chat_id: chanToJoin.id,
 				password: password,
 		  };
 		}
 		else {
 			messageData = {
-				username: user.login,
+				login: user.login,
 				chat_id: chanToJoin.id,
 				password: null,
 			  };
@@ -76,7 +76,7 @@ export const ListChannels = (props: {chatsOfUser: allChatOfUser[], showSubMenu: 
 		  const data = await response.json();
 		  setPassword('');
 		  socket.emit('chatListOfUser', user.login);
-		  return data; 
+		  return data;
 		} catch (error) {
 		  console.error('Error:', error);
 		  return -3;
@@ -119,7 +119,7 @@ export const ListChannels = (props: {chatsOfUser: allChatOfUser[], showSubMenu: 
         <Tooltip title="List available channels" arrow>
             <MenuIcon onClick={toggleForm}/>
         </Tooltip>
-		{props.showSubMenu === "list" ? 
+		{props.showSubMenu === "list" ?
         <div className="submenu">
 			<div className="top">
 				<div className="joinInfo">

@@ -16,9 +16,12 @@ let lastMessageId = 0;
 
 
 @WebSocketGateway({
+	namespace: '/chat',
 	cors: {
-		origin: 'http://localhost:3000'
+		origin: 'http://' + process.env.REACT_APP_URL_MACHINE + ':4000/chat'
 	},
+	methods: ["GET", "POST"],
+    credentials: true,
 })
 
 
@@ -48,11 +51,16 @@ export class MyGateway {
 	@SubscribeMessage('newChatConnection')
 	async newChatConnection(@MessageBody() login:string, @ConnectedSocket() client:Socket)
 	{
+		console.log("new connection login = ", login);
 		if (!this.socketsLogin.find((item) => item.login === login && item.sock === client))
 		{
-			const idOfLogin = await this.prismaChatService.getIdOfLogin(login);
+
+			const idOfLogin = await this.prismaChatService.getIdOfUsername(login);
 			if (idOfLogin)
+			{
+				console.log("found an id");
 				this.socketsLogin.push({login : login , sock: client, idOfLogin: idOfLogin})
+			}
 		}
 	}
 
@@ -93,7 +101,7 @@ export class MyGateway {
 				return;
 			}
 			else {
-				const idToSend = await this.prismaChatService.getIdOfLogin(messageData.loginToSend);
+				const idToSend = await this.prismaChatService.getIdOfUsername(messageData.loginToSend);
 				if (idToSend !== undefined)
 					this.prismaChatService.addPrivateMessage(targetSocket.idOfLogin, idToSend, messageData.msg);
 			}
@@ -118,7 +126,7 @@ export class MyGateway {
 
 	@SubscribeMessage('createChat')
 	async onCreateChat(@MessageBody() messageData: {login: string, chatName: string, chatType: string, chatPassword: string}, @ConnectedSocket() client:Socket){  //le passer en api
-		console.log("plop");
+		console.log("login receive = ", messageData.login);
 		const targetSocket = this.socketsLogin.find((socket) => socket.sock === client);
 		if (targetSocket !== undefined)
 		{
@@ -154,6 +162,7 @@ export class MyGateway {
 		if (targetSocket !== undefined)
 		{
 			console.log("work pls");
+			console.log("login = ", login);
 			const chatLister = new ChatLister(this.prismaChatService);
 			await chatLister.listChatOfUser(targetSocket.idOfLogin, targetSocket.sock);
 		}
@@ -164,6 +173,7 @@ export class MyGateway {
 		const targetSocket = this.socketsLogin.find((socket) => socket.sock === client);
 		if (targetSocket !== undefined)
 		{
+			console.log("list public chat");
 			const chatLister = new ChatLister(this.prismaChatService);
 			chatLister.listAllPublicChat(client);
 		}

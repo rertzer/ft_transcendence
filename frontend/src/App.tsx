@@ -13,6 +13,12 @@ function App() {
   const raw_token: string | null = sessionStorage.getItem("Token");
   let token = { login: "", access_token: "" };
   if (raw_token) token = JSON.parse(raw_token);
+  const socket = useContext(WebsocketContext);
+
+  useEffect(() => {
+	console.log("rkeklkrer");
+	socket.connect();
+    }, []);
 
   const [user, setUser] = useState({
     id: 0,
@@ -81,6 +87,7 @@ function App() {
     return children;
   };
 
+
   const router = createBrowserRouter([
     {
       path:"/",
@@ -105,7 +112,8 @@ function App() {
       element: <Login />,
     },
 
-  ]);
+  ]);  
+
   useEffect(() => {
     if (user.avatar !== null && user.avatar !== "") {
       try {

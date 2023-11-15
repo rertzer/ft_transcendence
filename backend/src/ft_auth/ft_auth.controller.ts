@@ -11,7 +11,7 @@ import { FtAuthService } from './ft_auth.service';
 @Controller('ft_auth')
 export class FtAuthController {
   constructor(private ftAuthService: FtAuthService) {}
-
+  
   @Get('login')
   login(@Req() req: any) {}
 

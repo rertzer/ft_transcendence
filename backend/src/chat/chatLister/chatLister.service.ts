@@ -7,10 +7,19 @@ export class ChatLister{
 	constructor(private prismaService:PrismaChatService){
 	}
 
+	async isPartOfRoom(socket: Socket, chatId:number)
+	{
+		const isPartOfRoom = chatId.toString() in socket.rooms
+		if (!isPartOfRoom)
+		{
+			socket.join(chatId.toString());
+		}
+	}
+
 	async listChatOfUser(idLogin: number, sock: Socket)
 	{
 		const chatList = [];
-		
+		console.log("id login = ", idLogin);
 		const retrieveChat = await this.prismaService.getListOfChatByUsername(idLogin);
 		if (retrieveChat !== undefined)
 		{
@@ -21,7 +30,7 @@ export class ChatLister{
 				let date = null;
 				let lastMessage = null;
 				let message = null;
-
+				await this.isPartOfRoom(sock,chatUser.id);
 				if (lastMessagesOfChat !== undefined && lastMessagesOfChat && lastMessagesOfChat.length > 0)
 				{
 					lastMessage = lastMessagesOfChat[0];

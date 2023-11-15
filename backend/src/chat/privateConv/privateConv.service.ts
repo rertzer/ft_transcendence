@@ -22,7 +22,7 @@ export class PrivateConvService {
 				if (added)
 				{
 					console.log("c")
-					const IdReceiver = await this.prismaService.getIdOfLogin(receiver);
+					const IdReceiver = await this.prismaService.getIdOfUsername(receiver);
 					if (IdReceiver)
 					{
 					console.log("c")
