@@ -127,6 +127,7 @@ export const ListChannels = (props: {showSubMenu: string, setShowSubMenu: Functi
 					type="password"
 					placeholder='Password'
 					value={password}
+					maxLength={16}
 					onChange={(e) => setPassword(e.target.value)}
 					/>}
 				</div>

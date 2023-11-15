@@ -85,6 +85,7 @@ export const AddChat = (props: {showSubMenu: string, setShowSubMenu: Function}) 
 							<input
 							type="password"
 							placeholder="Password"
+							maxLength={16}
 							value={password}
 							onChange={(e) => setPassword(e.target.value)}
 							/>
