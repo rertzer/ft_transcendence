@@ -1,5 +1,5 @@
 import { Ball } from "./ball.interface";
-import { Player } from "./player.interface";
+import { IPlayer } from "./player.interface";
 import { IgameParams } from "./gameParam.interface";
 import { Iobstacles } from "./obstacle.interface";
 
@@ -12,8 +12,8 @@ export interface Room {
 	balls:Ball[];
 	obstacles:Iobstacles[];
 	ballHasLeft:boolean;
-	playerLeft:Player | null;
-	playerRight:Player | null;
+	playerLeft:IPlayer | null;
+	playerRight:IPlayer | null;
 	scoreLeft:number;
 	scoreRight:number;
 	gameStatus:GameStatus;

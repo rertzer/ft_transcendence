@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import gameContext from '../../../../context/gameContext';
 import { gameSocket } from '../../services/gameSocketService';
-import { ConstructionOutlined } from '@mui/icons-material';
+import { GameStatus } from '../../../../context/gameContext';
 
 interface IJoinRoomProps {
 };
@@ -38,7 +38,7 @@ export function JoinRoom(props:IJoinRoomProps) {
 	const joinSpecificRoom = (e: React.FormEvent) => {
 		e.preventDefault();
 		if (!TmpRoomName || TmpRoomName.trim() === "" ) return;
-		gameSocket.emit("join_room", {roomId:TmpRoomName, playerName});
+		gameSocket.emit("join_room", {roomId:parseInt(TmpRoomName), playerName});
 	};
 
 	const askNewRoomNumber = (e: React.FormEvent) => {
@@ -58,10 +58,10 @@ export function JoinRoom(props:IJoinRoomProps) {
 			setGameStatus('IN_WAITING_ROOM');
 		}
 
-		function processRoomJoined(data:{roomId:number}) {
-			setGameStatus('WAITING_FOR_PLAYER');
+		function processRoomJoined(data:{roomId:number, gameStatus: GameStatus}) {
+			setGameStatus(data.gameStatus);
 			setRoomId(data.roomId);
-			window.alert('I joined room number ' + data.roomId.toString() + ' to play');
+			console.log('I joined room number ' + data.roomId.toString() + ' to play');
 		}
 
 		function processErrorJoin(data:{roomId:number, errorMsg:string}) {
@@ -73,7 +73,6 @@ export function JoinRoom(props:IJoinRoomProps) {
 		gameSocket.on('room_joined', processRoomJoined);
 		gameSocket.on('error_join', processErrorJoin);
 	
-
 		return () => {
 			gameSocket.off('new_empty_room', processNewEmptyRoom);
 			gameSocket.off('waiting_room_joined', processWaitingRoomJoined);

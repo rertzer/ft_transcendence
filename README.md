@@ -1,38 +1,9 @@
 # ft_transcendence
 A website for the mighty Pong contest
 
-# Maxence
-
-To do, game avec waiting room. 
-
-## Dans la partie back : 
-
-il faudrait une fonction pour demander au backend un identifiant de room sur laquelle deux joueurs peuvent se connecter.
-==> Creer une nouvelle room de type basique ou advance. 
-==> envoie moi l'identifiant de cette room. 
-
-une fonction pour rejoindre une room dont on connait l'id. Cette fonction existe deja. Voir avec Thibaut et Pierrick pour le faire fonctionner. 
-
-une fonction pour dire je veux faire une partie advance ou basic mais j'ai pas de mates. Du coup on attend le temps que qqun se connecte. 
-
-## Cote Front : 
-### Quand on arrive sur la page. 
-- Si j'ai deja un id de room, et un type de jeu, je peux afficher le game, avec un message pour dire qu'on attends le mate. 
-On peut aussi indiquer si on est sur un jeu basic ou advance. 
-
-- Si j'ai pas de type de jeu, je demande de le choisir. 
-
-- Si j'ai un type de jeu, mais pas de numero de room, j'indique que je suis en attente de matching. 
-
-
-Event a reprendre cote front : 
-
-give_me_a_room -> new_empty_room
-
-match_me ->  waiting_room_joined | room_status
-
-join_game ->  Error_player_already_in_room  | Error_room_full
-
-game_state
-
-keyevent -> 
+# Maxence Reste a faire
+- Trouver des illustrations de graphique pour les obstacles. 
+- fix bug sur les colision des obstacles
+- implementer la vie des obstacles
+- faire en sorte que les balls ne partent pas toutes en meme temps, mais avec un system de timer random.
+- Mieux gerer la fin de la partie avec la destruction des room qui le doivent. 

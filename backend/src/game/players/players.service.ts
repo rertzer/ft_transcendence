@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { Player } from '../Interface/player.interface';
+import { IPlayer } from '../Interface/player.interface';
 import { Socket } from 'socket.io';
 
 @Injectable()
 export class PlayersService {
-	
-	private players: Player[] = [];
 
-	create(player: Player) {
+	private players: IPlayer[] = [];
+
+	create(player: IPlayer) {
 		this.players.push(player);
 		console.log('Create Player');
-		console.log('Players:',this.players);
+
 	};
 
 	remove(clientSocket: Socket) {
@@ -19,11 +19,11 @@ export class PlayersService {
 		console.log('Players:',this.players);
 	};
 
-	findAll(): Player[] {
+	findAll(): IPlayer[] {
 		return this.players;
 	};
 
-	findOne(socket: Socket): Player | null {
+	findOne(socket: Socket): IPlayer | null {
 		const player = this.players.find((element) => element.socket === socket);
 		if (typeof(player) === 'undefined') {
 			return null;
@@ -31,12 +31,18 @@ export class PlayersService {
 		return player
 	};
 
-	changePlayerName(player:Player, newName:string) {
+	/* changePlayerName(player:IPlayer, newName:string) {
 		const index = this.players.indexOf(player);
 		if (index != -1) {
 			player.name = newName;
+			
 			this.players[index] = player;
 		}
-		console.log('Players:',this.players);
-	};
+	}; */
+
+	consoleLogPlayers() {
+		console.log(this.players);
+	}
+
+	
 }

@@ -7,6 +7,7 @@ import { Interval } from "@nestjs/schedule";
 import { Logger } from "@nestjs/common";
 import { TypeGame } from "./Interface/room.interface";
 import { GameService } from "./rooms/game.service";
+import { PrismaGameService } from "src/prisma/game/prisma.game.service";
 
 @WebSocketGateway({
     namespace: '/game_socket',
@@ -23,6 +24,9 @@ export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, On
 	@Inject(PlayersService)
 	private readonly playersService: PlayersService;
 
+	@Inject(PrismaGameService)
+	private readonly prismaGameService: PrismaGameService;
+
 	@Inject(RoomsService)
 	private readonly roomsService: RoomsService;
 
@@ -37,14 +41,12 @@ export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, On
 		console.log(`GameSocket Client connected: ${client.id}`);
 		this.playersService.create({
 			name:'',
-			posY: 0.5,
-			readyToPlay:false,
-			socket: client, 
-			room:null,
-			idPlayerMove:-1
+			roomState:[],
+			socket: client,
+			idBdd:-1
 		});
     }
-	//Deconnexion 
+	//Deconnexion A REVOIR
 	handleDisconnect(client: Socket) {
 		console.log(`Client disconnected ${client.id}`);
 		const player = this.playersService.findOne(client);
@@ -70,20 +72,22 @@ export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, On
 	}
 
 	@SubscribeMessage('match_me')
-	handleJoinWaitingRoom(@MessageBody() data:{playerName:string, typeGame:TypeGame}, @ConnectedSocket() client:Socket){
+	async handleJoinWaitingRoom(@MessageBody() data:{playerName:string, typeGame:TypeGame}, @ConnectedSocket() client:Socket){
 		const player = this.playersService.findOne(client);
 		if (player) {
-			this.playersService.changePlayerName(player, data.playerName);
+			player.name = data.playerName;
+			player.idBdd = await this.prismaGameService.getIdOfLogin(data.playerName);
 			this.roomsService.joinWaitingRoom(player, data.typeGame);
 		} 
 	}
 
 	@SubscribeMessage('join_room')
-	handleJoinGame(@MessageBody() data:{roomId:number, playerName:string}, @ConnectedSocket() client:Socket){
+	async handleJoinGame(@MessageBody() data:{roomId:number, playerName:string}, @ConnectedSocket() client:Socket){
 		console.log("I got a join room request for ", data);
 		const player = this.playersService.findOne(client);
 		if (player) {
-			this.playersService.changePlayerName(player, data.playerName);
+			player.name = data.playerName;
+			player.idBdd = await this.prismaGameService.getIdOfLogin(data.playerName);
 			this.roomsService.addPlayerToRoom(player, data.roomId);
 		}
 	}
@@ -104,7 +108,11 @@ export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, On
 	handleLeaving(@MessageBody() data:{roomId:number, key:string, idPlayerMove:number}, @ConnectedSocket() client:Socket){
 		console.log('I JUST GOT A LEAVING MESSAGE');
 		const player = this.playersService.findOne(client);
-		if (player) this.roomsService.removePlayerFromRoom(player, data.roomId);
+		if (player){
+			const room = this.roomsService.findRoomById(data.roomId);
+			player.roomState = player.roomState.filter(rs => {return (rs.room !== room)});
+			this.roomsService.removePlayerFromRoom(player, data.roomId);
+		} 
 	}
 
 	@SubscribeMessage('display_info')

@@ -17,7 +17,6 @@ function GameArea(props:any) {
 	const [mySide, setMySide] = useState('');
 
 	const [pong, setPong] = useState({
-		idRoom: '',
 		ballRadius: 0,
 		paddleWidth: 0,
 		paddleHeight: 0,
@@ -47,7 +46,6 @@ function GameArea(props:any) {
 		menuFontPx: 0.07,
 		goal: 0,
 		endgame: false,
-		gameStatus:'WAITING_FOR_PLAYER' as GameStatus, 
 		startingCount:0
 	});
 
@@ -105,6 +103,7 @@ function GameArea(props:any) {
 		}
 
 		function onGameState(data:any) {
+			if(data.roomId !== roomId) return;
 			setBalls(data.balls);
 			setObstacles(data.obstacles);
 			updatePendingMoves(data);
@@ -121,20 +120,20 @@ function GameArea(props:any) {
 				setFrontEndPlayerRight((prev) => ({ ...prev, posY: myPosY, score: data.scoreRight, readyToPlay:data.playerRight.readyToPlay}));
 				setFrontEndPlayerLeft((prev) => ({ ...prev, posY: otherPlayerPosY, score: data.scoreLeft, readyToPlay:data.playerLeft.readyToPlay}));
 			}
-			setPong((prev) => ({ ...prev, gameStatus:data.gameStatus, startingCount: data.startingCount}))
+			setPong((prev) => ({ ...prev, startingCount: data.startingCount}));
+			setGameStatus(data.gameStatus)
 		}
 		
 		function onRoomStatus(data:any) {
-			console.log('I just got a room status');
+			if(data.idRoom !== roomId) return;
 			setPong((prev) => ({...prev, 
-				idRoom: data.idRoom,
 				ballRadius: data.gameParam.ballRadius,
 				paddleWidth: data.gameParam.paddleWidth,
 				paddleHeight: data.gameParam.paddleHeight,
 				paddleSpeed:data.gameParam.paddleSpeed,
-				goal:data.gameParam.goal,
-				gameStatus : data.gameStatus
+				goal:data.gameParam.goal
 			}));
+			setGameStatus(data.gameStatus);
 			setBalls(data.balls);
 			if (typeof(data.playerLeft.name) !== 'undefined' && typeof(data.playerLeft.socketId) !== 'undefined') {
 				setFrontEndPlayerLeft((prev) => ({...prev, 
@@ -162,7 +161,6 @@ function GameArea(props:any) {
 
 		gameSocket.on('connect', onConnect);
 		gameSocket.on('disconnect', onDisconnect);
-		console.log('give_me_room_status');
 		gameSocket.emit("give_me_room_status", {roomId});
 		gameSocket.on('game_state', onGameState);
 		gameSocket.on('room_status', onRoomStatus);
@@ -197,7 +195,6 @@ function GameArea(props:any) {
 					mySide === 'left' ? setFrontEndPlayerLeft((prev) => ({...prev, downArrowDown: move})) : setFrontEndPlayerRight((prev) => ({...prev, downArrowDown: move}))
 					break;
 				case 'Space':
-					console.log("I am sending Keyevent with roomId ", roomId , ", key: Space, idPlayerMove: ", idPlayerMove);
 					gameSocket.emit('keyevent', {roomId: roomId, key:'Space', idPlayerMove:idPlayerMove});
 					break;
 				default:
@@ -219,7 +216,7 @@ function GameArea(props:any) {
 		if (timePastSinceLastFrame < 15) return;
 		setTimeLastFrame(now);
 
-		if (pong.gameStatus !== 'PLAYING') return;
+		if (gameStatus !== 'PLAYING') return;
 
 		let MyPlayer:IPlayer;
 		MyPlayer = (frontEndPlayerLeft.socketId === gameSocket.id ? frontEndPlayerLeft : frontEndPlayerRight);
@@ -231,18 +228,15 @@ function GameArea(props:any) {
 			const previousPosY = MyPlayer.posY;
 			if (MyPlayer.upArrowDown) {
 				MyPlayer.posY = Math.max(pong.paddleHeight / 2, MyPlayer.posY - pong.paddleSpeed);
-				console.log("I am sending Keyevent with roomId ", roomId , ", key: KeyW, idPlayerMove: ", idPlayerMove);
 				gameSocket.emit('keyevent', {roomId: roomId, key:'KeyW', idPlayerMove:idPlayerMove});
 			}
 			if (MyPlayer.downArrowDown) {
 				MyPlayer.posY = Math.min(1 - pong.paddleHeight / 2,  MyPlayer.posY + pong.paddleSpeed);
-				console.log("I am sending Keyevent with roomId ", roomId , ", key: KeyS, idPlayerMove: ", idPlayerMove);
 				gameSocket.emit('keyevent', {roomId: roomId, key:'KeyS', idPlayerMove:idPlayerMove});
 			}
 			MyPlayerMove.dy = MyPlayer.posY - previousPosY;
 			myPlayerMoves.push(MyPlayerMove);
 			setMyPlayerMoves(myPlayerMoves);
-			//console.log(myPlayerMoves);
 			setIdPlayerMove(idPlayerMove + 1);
 		}
 	};
@@ -251,7 +245,7 @@ function GameArea(props:any) {
 		moveMyPlayerImediately();
 		context.clearRect(0, 0, context.canvas.width, context.canvas.height)
 		printGame({context:context, pong:pong, playerLeft:frontEndPlayerLeft, playerRight:frontEndPlayerRight, balls:balls, obstacles: obstacles, gameWidth:gameWidth, gameHeight:gameHeight});
-		printMenu({pong:pong, context:context, gameWidth:gameWidth, gameHeight:gameHeight, frontEndPlayerLeft:frontEndPlayerLeft, frontEndPlayerRight:frontEndPlayerRight,});
+		printMenu({pong:pong, gameStatus: gameStatus, context:context, gameWidth:gameWidth, gameHeight:gameHeight, frontEndPlayerLeft:frontEndPlayerLeft, frontEndPlayerRight:frontEndPlayerRight,});
 	}
 
 	const leaveGame = (e: React.FormEvent) => {
@@ -261,12 +255,11 @@ function GameArea(props:any) {
 		setModeGame('');
 	};
 
-
 	return (
 		<>
 			<Canvas draw = {render} style={styleCanvas} />
 			<div><strong>You play on the {frontEndPlayerLeft.socketId === gameSocket.id ? 'left' : 'right'} !</strong></div>
-			<div>{gameStatus.toString()}</div>
+			<div>Status {gameStatus.toString()} for Room {roomId.toString()}</div>
 			<form onSubmit={leaveGame}>
 				<button type="submit"> Leave the Game</button><br/>
 			</form>

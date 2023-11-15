@@ -1,14 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { Room, TypeGame} from '../Interface/room.interface';
-import { Player } from '../Interface/player.interface';
+import { IPlayer } from '../Interface/player.interface';
 import { Socket } from 'socket.io';
 import { PrismaGameService } from 'src/prisma/game/prisma.game.service';
 import { GameService } from './game.service';
 import { OnModuleInit } from '@nestjs/common';
 import { gameMaps } from '../DefaultData/gameMaps';
 import { gameParams } from '../DefaultData/gameParams';
-import { IgameMaps } from '../Interface/gameMaps.interface';
-import { IgameParams } from '../Interface/gameParam.interface';
 
 @Injectable()
 export class RoomsService  implements OnModuleInit{
@@ -16,21 +14,10 @@ export class RoomsService  implements OnModuleInit{
 
 	private rooms: Room[] = [];
 	private roomMaxId:number = 1;
-	private gameParams: GameParams[]= [];
-	private waitingRoomBasic: Player | null = null;
-	private waitingRoomAdvanced: Player | null = null;
-	private gameMaps:GameMaps[] = [];
-	private gameObstacles: GameObstacles[];
-
-	async onModuleInit() {
-		await this.prismaService.initDB().then(async () => await this.loadDBdata());	
-	} 
-
-	async loadDBdata() {
-		this.gameParams = await this.prismaService.gameParams.findMany();
-		this.gameMaps = await this.prismaService.gameMaps.findMany();
-		this.gameObstacles = await this.prismaService.gameObstacles.findMany();
-	}
+	private waitingRoomBasic: IPlayer[] = [];
+	private waitingRoomAdvanced: IPlayer[] = [];
+	
+	async onModuleInit() {} 
 
 	displayInfo() {
 		console.log("-------------------------------------------------");
@@ -41,26 +28,32 @@ export class RoomsService  implements OnModuleInit{
 		console.log("this.rooms : ", this.rooms);
 	}
 
-	/** 
-	 * I faut que je recupere les maps etc de la base de donne au lancement du module et je ne refais plus 
-	 * d'acces a la BDD par la suite. 
-	 * Pour eviter d'avoir des trucs async sur les fonctions de room. 
-	 * 
-	 * 
-	 * La fonction addplayertoroom ne marche pas. A revoir car il trouve pas la room. 
-	 * 
-	*/
-
-	createRoom(playerLeft:Player, playerRight:Player, typeGame:TypeGame) {
+	async createRoom(playerLeft:IPlayer, playerRight:IPlayer, typeGame:TypeGame) {
 		console.log("\x1b[33mJe rentre dans createRoom\x1b[0m")
 		const room = this.createEmptyRoom(typeGame);
 		if (!room) return null; 
 		room.gameStatus = 'WAITING_TO_START';
 		room.playerLeft = playerLeft;
 		room.playerRight = playerRight;
-		console.log('JE VIENS DE FAIRE UNE ROOM', room);
-		room.playerLeft.socket.emit('room_joined', {roomId: room.id});
-		room.playerRight.socket.emit('room_joined', {roomId: room.id});
+		playerLeft.roomState.push(
+			{
+				room:room,
+				posY:0.5,
+				readyToPlay:false,
+				idPlayerMove:-1,
+			}
+		)
+		playerRight.roomState.push(
+			{
+				room:room,
+				posY:0.5,
+				readyToPlay:false,
+				idPlayerMove:-1,
+			}
+		)
+		await this.addNewBddGame(room);
+		room.playerLeft.socket.emit('room_joined', {roomId: room.id, gameStatus:room.gameStatus });
+		room.playerRight.socket.emit('room_joined', {roomId: room.id, gameStatus:room.gameStatus});
 		return (room);
 	};
 
@@ -102,26 +95,27 @@ export class RoomsService  implements OnModuleInit{
 		return (newRoom);
 	}; 
 
-	joinWaitingRoom(player:Player, typeGame:TypeGame) {
-		const waitingPlayer = (typeGame === 'ADVANCED' ? this.waitingRoomAdvanced : this.waitingRoomBasic);
-		if (waitingPlayer === null) {
+	async joinWaitingRoom(player:IPlayer, typeGame:TypeGame) {
+		const waitingPlayers = (typeGame === 'ADVANCED' ? this.waitingRoomAdvanced.filter((p) => {return (p.idBdd !== player.idBdd)}) : this.waitingRoomBasic.filter((p) => {return (p.idBdd !== player.idBdd)}));
+		if (waitingPlayers.length === 0) {
 			console.log('I am adding', player.name , 'to the waiting list for', typeGame)
 			if (typeGame === 'ADVANCED') {
-				this.waitingRoomAdvanced = player;
+				this.waitingRoomAdvanced.push(player);
 			} 
 			else {
-				this.waitingRoomBasic = player;
+				this.waitingRoomBasic.push(player);
 			}
 			player.socket.emit('waiting_room_joined');
 		}
 		else {
-			console.log('The waiting room is not vide')
-			this.createRoom(waitingPlayer, player, typeGame);
+			console.log('The waiting room is not empty')
+			const playerToRemoveFromWaitingRoom = waitingPlayers[0];
+			await this.createRoom(playerToRemoveFromWaitingRoom, player, typeGame);
 			if (typeGame === 'ADVANCED') {
-				this.waitingRoomAdvanced = null;
+				this.waitingRoomAdvanced = this.waitingRoomAdvanced.filter(p => {return (p !== playerToRemoveFromWaitingRoom)});
 			}
 			else {
-				this.waitingRoomBasic = null;
+				this.waitingRoomBasic = this.waitingRoomBasic.filter(p => {return (p !== playerToRemoveFromWaitingRoom)});
 			}
 		}
 	}
@@ -136,7 +130,7 @@ export class RoomsService  implements OnModuleInit{
 		return this.rooms;
 	};
 
-	findRoomsOfPlayer(player: Player | null): Room[] | null {
+	findRoomsOfPlayer(player: IPlayer | null): Room[] | null {
 		if (!player) return null;
 		const room = this.rooms.filter((element) => {return(element.playerLeft === player || element.playerRight === player)});
 		if (room.length === 0) {
@@ -154,18 +148,19 @@ export class RoomsService  implements OnModuleInit{
 	};
 
 	findRoomById(idToFind:number) : Room | null {
-		const room = this.rooms.filter((element) => {return (element.id === idToFind)});
-		if (typeof(room) === 'undefined' || room.length === 0) {
+		const room = this.rooms.find(element => element.id === idToFind);
+		if (typeof(room) === 'undefined') {
 			return null;
 		}
-		return room[0];
+		return room;
 	};
 
-	async addPlayerToRoom(player:Player, roomId:number) {
-		
+	async addPlayerToRoom(player:IPlayer, roomId:number) {
 		let room = this.findRoomById(roomId);
-		if (room === null) return;  
-		console.log('toto');
+		if (room === null) {
+			player.socket.emit('error_join', {roomId: roomId, errorMsg: 'The room does not exist'});
+			return;  
+		}
 		if (room.playerLeft === player || room.playerRight === player) {
 			player.socket.emit('error_join', {roomId: room.id, errorMsg: 'Player already in room'});
 			return;
@@ -180,8 +175,21 @@ export class RoomsService  implements OnModuleInit{
 		else {
 			room.playerRight = player;
 		}
-		player.room = room;
+		player.roomState.push(
+			{
+				room:room,
+				posY:0.5,
+				readyToPlay:false,
+				idPlayerMove:-1,
+			}
+		)
 		room.gameStatus = 'WAITING_TO_START';
+		await this.addNewBddGame(room);
+		console.log('Player ', player.socket.id, ' added to Room ', room.id);
+		player.socket.emit('room_joined', {roomId: room.id});
+	};
+
+	async addNewBddGame(room:Room) {
 		console.log('Creating a new reccord on the BDD');
 		const roomToUpdate = room;
 		const bddGame = await this.prismaService.addNewGame(room).then(
@@ -191,10 +199,7 @@ export class RoomsService  implements OnModuleInit{
 				}
 			}
 		);
-		console.log('Player ', player.socket.id, ' added to Room ', room.id);
-		
-		player.socket.emit('room_joined', {roomId: room.id});
-	};
+	}
 
 	getNumberOfPlayersInRoom(room:Room):number {
 		if (room.playerLeft === null && room.playerRight === null) return 0;
@@ -202,13 +207,13 @@ export class RoomsService  implements OnModuleInit{
 		return 2;
 	};
 
-	getSideOfPlayer(room:Room, player:Player):string {
+	getSideOfPlayer(room:Room, player:IPlayer):string {
 		if (player === room.playerLeft) return 'left';
 		if (player === room.playerRight) return 'right';
 		else return 'none';
 	};
 
-	async removePlayerFromRoom(player:Player, roomId:number) {
+	async removePlayerFromRoom(player:IPlayer, roomId:number) {
 		let room = this.findRoomById(roomId);
 		if (room === null || (room.playerLeft !== player && room.playerRight !== player)) return ;
 		if (this.getNumberOfPlayersInRoom(room) != 2){
@@ -253,21 +258,22 @@ export class RoomsService  implements OnModuleInit{
 	broadcastGameState() {
 		this.rooms.forEach(room => {
 			const data = {
+				roomId:room.id,
 				balls:room.balls,
 				obstacles:room.obstacles,
 				playerLeft:{
 					name:room.playerLeft?.name,
-					posY:room.playerLeft?.posY,
+					posY:room.playerLeft?.roomState.find((r) => r.room === room)?.posY,
 					socket_id: room.playerLeft?.socket.id,
-					readyToPlay:room.playerLeft?.readyToPlay,
-					idPlayerMove:room.playerLeft?.idPlayerMove
+					readyToPlay:room.playerLeft?.roomState.find((r) => r.room === room)?.readyToPlay,
+					idPlayerMove:room.playerLeft?.roomState.find((r) => r.room === room)?.idPlayerMove
 				},
 				playerRight:{
 					name:room.playerRight?.name,
-					posY:room.playerRight?.posY,
+					posY:room.playerRight?.roomState.find((r) => r.room === room)?.posY,
 					socket_id: room.playerRight?.socket.id,
-					readyToPlay:room.playerRight?.readyToPlay,
-					idPlayerMove:room.playerRight?.idPlayerMove
+					readyToPlay:room.playerRight?.roomState.find((r) => r.room === room)?.readyToPlay,
+					idPlayerMove:room.playerRight?.roomState.find((r) => r.room === room)?.idPlayerMove
 				},
 				scoreLeft:room.scoreLeft, 
 				scoreRight:room.scoreRight,
@@ -295,5 +301,4 @@ export class RoomsService  implements OnModuleInit{
 			this.gameService.movePlayerOnEvent({room, key:data.key, idPlayerMove:data.idPlayerMove, client:data.client});
 		}
 	}
-
 }

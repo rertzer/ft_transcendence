@@ -4,8 +4,9 @@ import { Room } from "../Interface/room.interface";
 import { IGameParamBackEnd } from "../Interface/gameParamBackEnd.interface";
 import { Ball } from "../Interface/ball.interface";
 import { Socket } from "socket.io";
-import { Player } from "../Interface/player.interface";
-import { GameObstacles, GameParams } from "@prisma/client";
+import { IPlayer } from "../Interface/player.interface";
+import { IgameParams } from "../Interface/gameParam.interface";
+import { Iobstacles } from "../Interface/obstacle.interface";
 
 /**
  * Besoin d'implementer les collisions avec les obstacles. 
@@ -18,7 +19,7 @@ export class GameService {
 
 	constructor(private prismaService: PrismaGameService){}
 
-	colisionPaddle(playerPosY: number, ball:Ball, pong:GameParams, sidePlayer:string):boolean {
+	colisionPaddle(playerPosY: number, ball:Ball, pong:IgameParams, sidePlayer:string):boolean {
 		const ballTop:number = ball.pos.y - pong.ballRadius;
 		const ballBtm:number = ball.pos.y + pong.ballRadius;
 		const ballLeft:number = ball.pos.x - pong.ballRadius;
@@ -33,7 +34,7 @@ export class GameService {
 		return (ballRight > paddleLeft && ballTop < paddleBtm && ballLeft < paddleRight && ballBtm > paddleTop)
 	}
 
-	colisionObstacle(obstacle: GameObstacles, ball: Ball, pong:GameParams): boolean {
+	colisionObstacle(obstacle: Iobstacles, ball: Ball, pong:IgameParams): boolean {
 		const ballTop:number = ball.pos.y - pong.ballRadius;
 		const ballBtm:number = ball.pos.y + pong.ballRadius;
 		const ballLeft:number = ball.pos.x - pong.ballRadius;
@@ -47,14 +48,14 @@ export class GameService {
 		return (ballRight > obstacleLeft && ballTop < obstacleBtm && ballLeft < obstacleRight && ballBtm > obstacleTop)
 	}
 
-	colisionObstacles(room: Room, ball:Ball, pong: GameParams): number {
+	colisionObstacles(room: Room, ball:Ball, pong: IgameParams): number {
 		const col = room.obstacles.map((ob) => {
 			return (this.colisionObstacle(ob, ball, pong));
 		})
 		return(col.indexOf(true));
 	}
 
-	sideColisionObstacle(ballOldPos:{x:number, y:number}, obstacle: GameObstacles) : colisionOb {
+	sideColisionObstacle(ballOldPos:{x:number, y:number}, obstacle: Iobstacles) : colisionOb {
 		const obstacleTop:number =  obstacle.posy;
 		const obstacleBtm:number = obstacle.posy + obstacle.height;
 		const obstacleLeft:number = obstacle.posx;
@@ -102,7 +103,7 @@ export class GameService {
 			}
 
 			/* Paddle colision*/
-			let playerWithBallPosY = (ball.pos.x <= 1 / 2) ? room.playerLeft?.posY! : room.playerRight?.posY!;
+			let playerWithBallPosY = (ball.pos.x <= 1 / 2) ? room.playerLeft?.roomState.find((r) => r.room === room)?.posY! : room.playerRight?.roomState.find((r) => r.room === room)?.posY!;
 			let sidePlayer:string = (ball.pos.x <= 1 / 2) ? 'left' : 'right';
 			let direction = (ball.pos.x <= 1 / 2) ? 1 : -1;
 			if (this.colisionPaddle(playerWithBallPosY, ball, room.gameParam, sidePlayer)) {
@@ -118,19 +119,21 @@ export class GameService {
 	}
 
 	movePlayerOnEvent(param :{room: Room, key:string, idPlayerMove:number, client:Socket}) {
-		let player:Player | null;
+		let player:IPlayer | null;
 		if (param.client !== param.room.playerLeft?.socket && param.client !== param.room.playerRight?.socket) return ;
 		player = (param.client === param.room.playerLeft?.socket ? param.room.playerLeft : param.room.playerRight);
 		if (!player) return ;
+		let playerRoomParam = player.roomState.find((r) => r.room === param.room);
+		if (typeof(playerRoomParam) === 'undefined') return;
 		switch (param.key){
 			case 'KeyW':
-				player.posY = Math.max(param.room.gameParam.paddleHeight / 2, player.posY - param.room.gameParam.paddleSpeed);
+				playerRoomParam.posY = Math.max(param.room.gameParam.paddleHeight / 2, playerRoomParam.posY - param.room.gameParam.paddleSpeed);
 				break;
 			case 'KeyS':
-				player.posY = Math.min(1 - param.room.gameParam.paddleHeight / 2,  player.posY + param.room.gameParam.paddleSpeed);
+				playerRoomParam.posY = Math.min(1 - param.room.gameParam.paddleHeight / 2,  playerRoomParam.posY + param.room.gameParam.paddleSpeed);
 				break;
 			case 'Space':
-				player.readyToPlay = true;
+				playerRoomParam.readyToPlay = true;
 				break;
 			default:
 				return; 
@@ -139,10 +142,13 @@ export class GameService {
 
 	updateRoomGameStatus(room:Room) : Room {
 		if (room.gameStatus === 'FINISHED' || !room.playerLeft || !room.playerRight ) return (room);
+		const playerLeftRoomStatus = room.playerLeft.roomState.find(r => r.room === room);
+		const playerRightRoomStatus = room.playerRight.roomState.find(r => r.room === room);
+		if (typeof(playerLeftRoomStatus) === 'undefined' || typeof(playerRightRoomStatus) ===  'undefined') return (room);
 		if (room.gameStatus === 'WAITING_FOR_PLAYER' && room.playerLeft && room.playerRight ) {
 			room.gameStatus = 'WAITING_TO_START';
 		}
-		else if (room.gameStatus === 'WAITING_TO_START' && room.playerLeft.readyToPlay && room.playerRight.readyToPlay) {
+		else if (room.gameStatus === 'WAITING_TO_START' && playerLeftRoomStatus.readyToPlay && playerRightRoomStatus.readyToPlay) {
 			room.gameStatus = 'STARTING';
 		}
 		else if (room.gameStatus === 'STARTING' && room.startingCount >= 3) {

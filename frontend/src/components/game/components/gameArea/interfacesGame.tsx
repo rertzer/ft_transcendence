@@ -24,7 +24,6 @@ export interface IObstacles {
 }
 
 export interface IGameParam {
-	idRoom: string;
     ballRadius: number;
     paddleWidth: number;
     paddleHeight: number;
@@ -54,7 +53,6 @@ export interface IGameParam {
     play:boolean;
     goal:number;
     endgame:boolean;
-	gameStatus:GameStatus;
 	startingCount : number;
 };
 

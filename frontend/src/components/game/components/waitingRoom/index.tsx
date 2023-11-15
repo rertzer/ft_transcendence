@@ -1,15 +1,16 @@
 import React, { useContext, useEffect, useState } from 'react';
 import gameContext from '../../../../context/gameContext';
 import { gameSocket } from '../../services/gameSocketService';
+import { GameStatus } from '../../../../context/gameContext';
 
 export function WaitingRoom(props:any) {
 	const {modeGame, setGameStatus, setRoomId} = useContext(gameContext);
 
 	useEffect(()=> {
-		function processRoomJoined(data:{roomId:number}) {
-			setGameStatus('WAITING_FOR_PLAYER');
+		function processRoomJoined(data:{roomId:number, gameStatus: GameStatus}) {
+			setGameStatus(data.gameStatus);
 			setRoomId(data.roomId);
-			window.alert('I joined room number ' + data.roomId.toString() + ' to play');
+			console.log('I joined room number ' + data.roomId.toString() + ' to play');
 		}
 
 		function processErrorJoin(data:{roomId:number, errorMsg:string}) {
