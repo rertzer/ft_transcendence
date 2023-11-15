@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { Room, TypeGame} from '../Interface/room.interface';
 import { Player } from '../Interface/player.interface';
-import { Ball } from '../Interface/ball.interface';
-import { IGameParamBackEnd } from '../Interface/gameparam.interface';
 import { Socket } from 'socket.io';
 import { PrismaGameService } from 'src/prisma/game/prisma.game.service';
 import { GameService } from './game.service';
 import { OnModuleInit } from '@nestjs/common';
-import { GameMaps, GameObstacles, GameParams } from '@prisma/client';
+import { gameMaps } from '../DefaultData/gameMaps';
+import { gameParams } from '../DefaultData/gameParams';
+import { IgameMaps } from '../Interface/gameMaps.interface';
+import { IgameParams } from '../Interface/gameParam.interface';
 
 @Injectable()
 export class RoomsService  implements OnModuleInit{
@@ -23,7 +24,7 @@ export class RoomsService  implements OnModuleInit{
 
 	async onModuleInit() {
 		await this.prismaService.initDB().then(async () => await this.loadDBdata());	
-	}
+	} 
 
 	async loadDBdata() {
 		this.gameParams = await this.prismaService.gameParams.findMany();
@@ -35,9 +36,8 @@ export class RoomsService  implements OnModuleInit{
 		console.log("-------------------------------------------------");
 		console.log("-------------     DISPLAY INFO     --------------");
 		console.log("-------------------------------------------------");
-		console.log("this.gameParams : ", this.gameParams);
-		console.log("this.gameMaps : ", this.gameMaps);
-		console.log("this.gameObstacles : ", this.gameObstacles);
+		console.log("gameParams : ", gameParams);
+		console.log("gameMaps : ", gameMaps);
 		console.log("this.rooms : ", this.rooms);
 	}
 
@@ -66,8 +66,7 @@ export class RoomsService  implements OnModuleInit{
 
 	createEmptyRoom(typeGame:TypeGame) : Room | null {
 		console.log("\x1b[33mJe rentre dans createEmptyRoom\x1b[0m");
-		const gameParam = this.gameParams?.find((gp) => {return (gp.type === typeGame)});
-		console.log("this.gameParams", this.gameParams);
+		const gameParam = gameParams.find((gp) => {return (gp.type === typeGame)});
 		if (typeof(gameParam) === 'undefined')  {
 			console.log("\x1b[31m Attetion, j'ai pas ete capabe de trouver les game Params\x1b[0m");
 			return null
@@ -91,9 +90,9 @@ export class RoomsService  implements OnModuleInit{
 			gameParam: gameParam
 		}
 		this.roomMaxId++;
-		if (newRoom.typeGame === 'ADVANCED' && this.gameMaps.length) {
-			const map = this.gameMaps[Math.floor(Math.random() * this.gameMaps.length)];
-			newRoom.obstacles = this.gameObstacles.filter((ob) => {return (ob.gameMapsId === map.id)});
+		if (newRoom.typeGame === 'ADVANCED' && gameMaps.length) {
+			const map = gameMaps[Math.floor(Math.random() * gameMaps.length)];
+			newRoom.obstacles = map.obstacles;
 			newRoom.balls = this.gameService.newBalls(map.nbBalls, newRoom);
 		}
 		else {

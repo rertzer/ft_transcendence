@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaGameService } from "src/prisma/game/prisma.game.service";
 import { Room } from "../Interface/room.interface";
-import { IGameParamBackEnd } from "../Interface/gameparam.interface";
+import { IGameParamBackEnd } from "../Interface/gameParamBackEnd.interface";
 import { Ball } from "../Interface/ball.interface";
 import { Socket } from "socket.io";
 import { Player } from "../Interface/player.interface";

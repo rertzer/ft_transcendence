@@ -1,4 +1,3 @@
-
 export interface IGameParamBackEnd {
     ballRadius: number;
     paddleWidth: number;

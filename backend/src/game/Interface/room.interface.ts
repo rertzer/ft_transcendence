@@ -1,6 +1,7 @@
-import { GameObstacles, GameParams } from "@prisma/client";
 import { Ball } from "./ball.interface";
 import { Player } from "./player.interface";
+import { IgameParams } from "./gameParam.interface";
+import { Iobstacles } from "./obstacle.interface";
 
 export type GameStatus = 'IN_WAITING_ROOM' | 'WAITING_FOR_PLAYER' | 'WAITING_TO_START' | 'STARTING' | 'PLAYING' | 'FINISHED' | 'FINISH_BY_FORFAIT';
 
@@ -9,7 +10,7 @@ export type TypeGame = 'BASIC' | 'ADVANCED';
 export interface Room {
 	id:number;
 	balls:Ball[];
-	obstacles:GameObstacles[];
+	obstacles:Iobstacles[];
 	ballHasLeft:boolean;
 	playerLeft:Player | null;
 	playerRight:Player | null;
@@ -22,5 +23,5 @@ export interface Room {
 	startingCount: number;
 	bddGameId:number;
 	typeGame:TypeGame;
-	gameParam: GameParams;
+	gameParam: IgameParams;
   }

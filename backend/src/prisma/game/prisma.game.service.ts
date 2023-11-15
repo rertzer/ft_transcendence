@@ -16,14 +16,6 @@ export class PrismaGameService extends PrismaClient implements OnModuleInit {
 		this.initGameParams()
 		.then(()=> {this.initMaps().then((maps) => {this.initObstacles(maps)})})
 	}
-	
-	/*async clearDataBase() {
-		await this.gameParams.deleteMany().then(
-			() => this.gameObstacles.deleteMany()
-		).then(
-			() => this.gameMaps.deleteMany()
-		);
-	}*/
 
 	async initGameParams() { 
 		const gameParam = await this.gameParams.findMany();
