@@ -15,6 +15,7 @@ import { RoomsModule } from './game/rooms/rooms.module';
 
 import { PlayersService } from './game/players/players.service';
 import { RoomsService } from './game/rooms/rooms.service';
+import { GameLogicModule } from './game/gameLogic/gameLogic.module';
 import { FriendModule } from './friend/friend.module';
 @Module({
   imports: [
@@ -30,10 +31,10 @@ import { FriendModule } from './friend/friend.module';
     MutedUserModule,
     GameSocketModule,
     PlayersModule,
-    RoomsModule,
+    RoomsModule, GameLogicModule,
     FriendModule,
   ],
   controllers: [AppController],
-  providers: [PlayersService, RoomsService, AppService],
+  providers: [AppService],
 })
 export class AppModule {}

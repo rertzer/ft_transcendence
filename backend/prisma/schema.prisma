@@ -108,13 +108,16 @@ model Friend {
 }
 
 model Game {
-  id               Int     @id @default(autoincrement())
+  id               Int       @id @default(autoincrement())
   player_one_id    Int
   player_two_id    Int
+  type             String
   winner_id        Int?
   game_status      String?
   player_one_score Int?
   player_two_score Int?
+  date_begin       DateTime  @default(now())
+  date_end         DateTime?
 }
 
 model BlockedUser {

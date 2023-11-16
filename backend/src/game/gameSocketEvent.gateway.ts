@@ -5,6 +5,9 @@ import { Inject } from "@nestjs/common";
 import { RoomsService } from "./rooms/rooms.service";
 import { Interval } from "@nestjs/schedule";
 import { Logger } from "@nestjs/common";
+import { TypeGame } from "./Interface/room.interface";
+import { GameLogicService } from "./gameLogic/gameLogic.service";
+import { PrismaGameService } from "src/prisma/game/prisma.game.service";
 
 @WebSocketGateway({
     namespace: '/game_socket',
@@ -13,6 +16,7 @@ import { Logger } from "@nestjs/common";
     },
 	
 })
+
 export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect{
 	
 	private readonly logger = new Logger(GameSocketEvents.name);
@@ -20,8 +24,14 @@ export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, On
 	@Inject(PlayersService)
 	private readonly playersService: PlayersService;
 
+	@Inject(PrismaGameService)
+	private readonly prismaGameService: PrismaGameService;
+
 	@Inject(RoomsService)
 	private readonly roomsService: RoomsService;
+
+	@Inject(RoomsService)
+	private readonly gameService: GameLogicService;
 
 	@WebSocketServer()
 	server: Namespace;
@@ -31,36 +41,83 @@ export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, On
 		console.log(`GameSocket Client connected: ${client.id}`);
 		this.playersService.create({
 			name:'',
-			posY: 0.5,
-			readyToPlay:false,
-			socket: client, 
-			room:null,
-			idPlayerMove:-1
+			roomState:[],
+			socket: client,
+			idBdd:-1
 		});
     }
-	//Deconnexion 
+	//Deconnexion A REVOIR
 	handleDisconnect(client: Socket) {
 		console.log(`Client disconnected ${client.id}`);
 		const player = this.playersService.findOne(client);
-		if (player) this.roomsService.removePlayerFromRoom(player);
+		if (player) {
+			const rooms_player = this.roomsService.findRoomsOfPlayer(player);
+			rooms_player?.forEach((room) => {
+				this.roomsService.removePlayerFromRoom(player,room.id);
+			});
+		};
 		this.playersService.remove(client);	
 	}
 
     //Recevoir un event 
-	@SubscribeMessage('join_game')
-	handleJoinGame(@MessageBody() data:{roomName:string, playerName:string, nbBalls:number}, @ConnectedSocket() client:Socket){
+	@SubscribeMessage('give_me_a_room')
+	async handleGiveMeARoom(@MessageBody() data:{typeGame:TypeGame}, @ConnectedSocket() client:Socket){
+		const newRoomId = await this.roomsService.createEmptyRoom(data.typeGame);
+		const responseData = {
+			roomId:newRoomId?.id
+		}
+		console.log('the new room id is ',newRoomId)
+		client.emit('new_empty_room', responseData);
+
+	}
+
+	@SubscribeMessage('match_me')
+	async handleJoinWaitingRoom(@MessageBody() data:{playerName:string, typeGame:TypeGame}, @ConnectedSocket() client:Socket){
 		const player = this.playersService.findOne(client);
 		if (player) {
-			this.playersService.changePlayerName(player, data.playerName);
-			this.roomsService.addPlayerToRoom(player, data.roomName, data.nbBalls);
+			player.name = data.playerName;
+			player.idBdd = await this.prismaGameService.getIdOfLogin(data.playerName);
+			this.roomsService.joinWaitingRoom(player, data.typeGame);
 		} 
 	}
-	@SubscribeMessage('keyevent')
-	handlePlayerKeyEvent(@MessageBody() data:{key:string, idPlayerMove:number}, @ConnectedSocket() client:Socket){
-		const room = this.roomsService.findRoomOfPlayerBySocket(client)
-		if (room) {
-			this.roomsService.movePlayerOnEvent({room, key:data.key, idPlayerMove:data.idPlayerMove, client});
+
+	@SubscribeMessage('join_room')
+	async handleJoinGame(@MessageBody() data:{roomId:number, playerName:string}, @ConnectedSocket() client:Socket){
+		console.log("I got a join room request for ", data);
+		const player = this.playersService.findOne(client);
+		if (player) {
+			player.name = data.playerName;
+			player.idBdd = await this.prismaGameService.getIdOfLogin(data.playerName);
+			this.roomsService.addPlayerToRoom(player, data.roomId);
 		}
+	}
+
+	@SubscribeMessage('give_me_room_status')
+	handleGiveMeRoomStatus(@MessageBody() data:{roomId:number}, @ConnectedSocket() client:Socket){
+		console.log("I got a give_me_room_status request for ", data.roomId);
+		const room = this.roomsService.findRoomById(data.roomId);
+		if (room) this.roomsService.sendRoomStatus(room);
+	}
+
+	@SubscribeMessage('keyevent')
+	handlePlayerKeyEvent(@MessageBody() data:{roomId:number, key:string, idPlayerMove:number}, @ConnectedSocket() client:Socket){
+		this.roomsService.handlePlayerKeyEvent({roomId: data.roomId, key:data.key, idPlayerMove:data.idPlayerMove, client});
+	}
+
+	@SubscribeMessage('i_am_leaving')
+	handleLeaving(@MessageBody() data:{roomId:number, key:string, idPlayerMove:number}, @ConnectedSocket() client:Socket){
+		console.log('I JUST GOT A LEAVING MESSAGE');
+		const player = this.playersService.findOne(client);
+		if (player){
+			const room = this.roomsService.findRoomById(data.roomId);
+			player.roomState = player.roomState.filter(rs => {return (rs.room !== room)});
+			this.roomsService.removePlayerFromRoom(player, data.roomId);
+		} 
+	}
+
+	@SubscribeMessage('display_info')
+	handleDisplayInfo(){
+		this.roomsService.displayInfo();
 	}
 
 	@Interval(1000/60)
@@ -68,7 +125,7 @@ export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, On
 		this.roomsService.playGameLoop();
 		this.roomsService.broadcastGameState();
 	};
-
+	
 	afterInit(): void {
 		this.logger.log('Game Socket Gateway initialised')
 	}

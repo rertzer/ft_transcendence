@@ -4,18 +4,18 @@ import gameContext from '../../../../context/gameContext';
 import printMenu from "./printMenu";
 import printGame from "./printGame";
 import { gameSocket } from "../../services/gameSocketService";
-import { GameStatus, IPlayer } from "./interfacesGame";
+import { IPlayer } from "./interfacesGame";
 import { IBall } from "./interfacesGame";
+import { IObstacles } from "./interfacesGame";
 
 function GameArea(props:any) {
-	const {roomName, gameWidth, gameHeight, playerName, nbBalls, setNbBalls } = useContext(gameContext);
+	const {roomId, gameWidth, gameHeight, playerName, gameStatus, setGameStatus, setRoomId, setModeGame} = useContext(gameContext);
 	const [timeLastFrame, setTimeLastFrame] = useState(new Date());
 	const [idPlayerMove, setIdPlayerMove] = useState(0);
 	const [myPlayerMoves, setMyPlayerMoves] = useState<{idPlayerMove: number, dy:number}[]>([]);
 	const [mySide, setMySide] = useState('');
 
 	const [pong, setPong] = useState({
-		idRoom: '',
 		ballRadius: 0,
 		paddleWidth: 0,
 		paddleHeight: 0,
@@ -45,7 +45,6 @@ function GameArea(props:any) {
 		menuFontPx: 0.08,
 		goal: 0,
 		endgame: false,
-		gameStatus:'WAITING_FOR_PLAYER' as GameStatus,
 		startingCount:0
 	});
 
@@ -77,21 +76,23 @@ function GameArea(props:any) {
 		readyToPlay:false
 	});
 
-	const [ball, setBall] = useState({
-		id:0,
-		pos: {x: 1 / 2, y: 1 / 2},
-    	speed: pong.ballInitSpeed,
-    	dir: pong.ballInitDir
-	});
-
 	const [balls, setBalls] = useState<IBall[]>([{
 		id:0,
 		pos: {x: 1 / 2, y: 1 / 2},
 		speed: pong.ballInitSpeed,
-		dir: pong.ballInitDir
+		dir: pong.ballInitDir,
+		startingCountDownStart: null,
+		startingCountDown: 0,
+		active:false
 	}]);
 
+	const [obstacles, setObstacles] = useState<IObstacles[]>([]);
+	
 	useEffect(() => {
+		gameSocket.emit("give_me_room_status", {roomId});
+	},[]);
+
+	useEffect(()=> {
 		function onConnect() {
 			console.log("Connected with socket: ", gameSocket.id);
 			console.log(window.devicePixelRatio)
@@ -99,51 +100,26 @@ function GameArea(props:any) {
 		function onDisconnect() {
 			console.log("Disconnected");
 		}
+		gameSocket.on('connect', onConnect);
+		gameSocket.on('disconnect', onDisconnect);
+		return () => {
+			gameSocket.off('connect', onConnect);
+			gameSocket.off('disconnect', onDisconnect);
+		}	
+	}, []);
 
-		function updatePendingMoves(data:any){
-			let idLimit:number;
-			idLimit = (mySide === 'left' ?  data.playerLeft.idPlayerMove : data.playerRight.idPlayerMove);
-			const myNewPlayerMove = myPlayerMoves.filter((val) => {return (val.idPlayerMove > idLimit)});
-			setMyPlayerMoves(myNewPlayerMove);
-		}
-
-		function updateBalls(balls:IBall[]) {
-			setBalls(balls);
-		}
-
-		function onGameState(data:any) {
-			updateBalls(data.balls);
-
-			updatePendingMoves(data);
-			let myPosY:number = (mySide === 'left' ? data.playerLeft.posY : data.playerRight.posY);
-			let otherPlayerPosY:number = (mySide === 'left' ? data.playerRight.posY : data.playerLeft.posY );
-			myPlayerMoves.forEach((playerMove) => {
-				myPosY += playerMove.dy;
-			});
-			if (mySide === 'left') {
-				setFrontEndPlayerLeft((prev) => ({ ...prev, posY: myPosY, score: data.scoreLeft, readyToPlay:data.playerLeft.readyToPlay}));
-				setFrontEndPlayerRight((prev) => ({ ...prev, posY: otherPlayerPosY, score: data.scoreRight, readyToPlay:data.playerRight.readyToPlay}));
-			}
-			else {
-				setFrontEndPlayerRight((prev) => ({ ...prev, posY: myPosY, score: data.scoreRight, readyToPlay:data.playerRight.readyToPlay}));
-				setFrontEndPlayerLeft((prev) => ({ ...prev, posY: otherPlayerPosY, score: data.scoreLeft, readyToPlay:data.playerLeft.readyToPlay}));
-			}
-			setPong((prev) => ({ ...prev, gameStatus:data.gameStatus, startingCount: data.startingCount}))
-		}
-
+	useEffect(() => {
 		function onRoomStatus(data:any) {
-			setPong((prev) => ({...prev,
-				idRoom: data.idRoom,
+			if(data.idRoom !== roomId) return;
+			setPong((prev) => ({...prev, 
 				ballRadius: data.gameParam.ballRadius,
 				paddleWidth: data.gameParam.paddleWidth,
 				paddleHeight: data.gameParam.paddleHeight,
-				ballInitSpeed: data.gameParam.ballInitSpeed,
-				ballInitDir: {x:data.gameParam.ballInitDir.x, y:data.gameParam.ballInitDir.y},
-				ballSpeedIncrease: data.gameParam.ballSpeedIncrease,
 				paddleSpeed:data.gameParam.paddleSpeed,
-				goal:data.gameParam.goal,
-				gameStatus : data.gameStatus
+				goal:data.gameParam.goal
 			}));
+			setGameStatus(data.gameStatus);
+			setBalls(data.balls);
 			if (typeof(data.playerLeft.name) !== 'undefined' && typeof(data.playerLeft.socketId) !== 'undefined') {
 				setFrontEndPlayerLeft((prev) => ({...prev,
 				name: data.playerLeft.name,
@@ -167,21 +143,52 @@ function GameArea(props:any) {
 					socketId: ''}))
 			}
 		}
-
-		gameSocket.on('connect', onConnect);
-		gameSocket.on('disconnect', onDisconnect);
-		gameSocket.emit("join_game", {roomName, playerName, nbBalls});
-		gameSocket.on('game_state', onGameState);
 		gameSocket.on('room_status', onRoomStatus);
 
 		return () => {
-			gameSocket.off('connect', onConnect);
-			gameSocket.off('disconnect', onDisconnect);
-			gameSocket.off('game_state', onGameState);
 			gameSocket.off('room_status', onRoomStatus);
+		}			
+			
+	}, [playerName, roomId, mySide, setGameStatus]);
+
+
+
+	useEffect(()=>{
+		function updatePendingMoves(data:any){
+			let idLimit:number;
+			idLimit = (mySide === 'left' ?  data.playerLeft.idPlayerMove : data.playerRight.idPlayerMove);
+			const myNewPlayerMove = myPlayerMoves.filter((val) => {return (val.idPlayerMove > idLimit)});
+			setMyPlayerMoves(myNewPlayerMove);
 		}
 
-	}, [playerName, roomName ]);
+		function onGameState(data:any) {
+			if(data.roomId !== roomId) return;
+			setBalls(data.balls);
+			setObstacles(data.obstacles);
+			updatePendingMoves(data);
+			let myPosY:number = (mySide === 'left' ? data.playerLeft.posY : data.playerRight.posY);
+			let otherPlayerPosY:number = (mySide === 'left' ? data.playerRight.posY : data.playerLeft.posY );
+			myPlayerMoves.forEach((playerMove) => {
+				myPosY += playerMove.dy;
+			});
+			if (mySide === 'left') {
+				setFrontEndPlayerLeft((prev) => ({ ...prev, posY: myPosY, score: data.scoreLeft, readyToPlay:data.playerLeft.readyToPlay}));
+				setFrontEndPlayerRight((prev) => ({ ...prev, posY: otherPlayerPosY, score: data.scoreRight, readyToPlay:data.playerRight.readyToPlay}));
+			}
+			else {
+				setFrontEndPlayerRight((prev) => ({ ...prev, posY: myPosY, score: data.scoreRight, readyToPlay:data.playerRight.readyToPlay}));
+				setFrontEndPlayerLeft((prev) => ({ ...prev, posY: otherPlayerPosY, score: data.scoreLeft, readyToPlay:data.playerLeft.readyToPlay}));
+			}
+			setPong((prev) => ({ ...prev, startingCount: data.startingCount}));
+			setGameStatus(data.gameStatus)
+		}
+
+		gameSocket.on('game_state', onGameState);
+		return () => {
+			gameSocket.off('game_state', onGameState);
+		}	
+
+	}, [myPlayerMoves]);
 
 	useEffect(() => {
 		const handleKey = (event: KeyboardEvent) => {
@@ -203,7 +210,7 @@ function GameArea(props:any) {
 					mySide === 'left' ? setFrontEndPlayerLeft((prev) => ({...prev, downArrowDown: move})) : setFrontEndPlayerRight((prev) => ({...prev, downArrowDown: move}))
 					break;
 				case 'Space':
-					gameSocket.emit('keyevent', {key:'Space', idPlayerMove:idPlayerMove});
+					gameSocket.emit('keyevent', {roomId: roomId, key:'Space', idPlayerMove:idPlayerMove});
 					break;
 				default:
 					return;
@@ -216,7 +223,7 @@ function GameArea(props:any) {
 			window.removeEventListener('keydown', handleKey)
 			window.removeEventListener('keyup', handleKey)
 		});
-	}, [frontEndPlayerLeft.posY, frontEndPlayerRight.posY, pong.endgame, pong.ballInitSpeed, pong.ballInitDir]);
+	}, [frontEndPlayerLeft.posY, frontEndPlayerRight.posY, mySide, idPlayerMove, roomId]);
 
 	function moveMyPlayerImediately() {
 		const now = new Date();
@@ -224,10 +231,10 @@ function GameArea(props:any) {
 		if (timePastSinceLastFrame < 15) return;
 		setTimeLastFrame(now);
 
-		if (pong.gameStatus !== 'PLAYING') return;
+		if (gameStatus !== 'PLAYING') return;
 
 		let MyPlayer:IPlayer;
-		MyPlayer = (frontEndPlayerLeft.socketId === gameSocket.id ? frontEndPlayerLeft : frontEndPlayerRight);
+		MyPlayer = (mySide === 'left' ? frontEndPlayerLeft : frontEndPlayerRight);
 		let MyPlayerMove = {
 			idPlayerMove : idPlayerMove,
 			dy:0
@@ -236,16 +243,15 @@ function GameArea(props:any) {
 			const previousPosY = MyPlayer.posY;
 			if (MyPlayer.upArrowDown) {
 				MyPlayer.posY = Math.max(pong.paddleHeight / 2, MyPlayer.posY - pong.paddleSpeed);
-				gameSocket.emit('keyevent', {key:'KeyW', idPlayerMove:idPlayerMove});
+				gameSocket.emit('keyevent', {roomId: roomId, key:'KeyW', idPlayerMove:idPlayerMove});
 			}
 			if (MyPlayer.downArrowDown) {
 				MyPlayer.posY = Math.min(1 - pong.paddleHeight / 2,  MyPlayer.posY + pong.paddleSpeed);
-				gameSocket.emit('keyevent', {key:'KeyS', idPlayerMove:idPlayerMove});
+				gameSocket.emit('keyevent', {roomId: roomId, key:'KeyS', idPlayerMove:idPlayerMove});
 			}
 			MyPlayerMove.dy = MyPlayer.posY - previousPosY;
 			myPlayerMoves.push(MyPlayerMove);
 			setMyPlayerMoves(myPlayerMoves);
-			//console.log(myPlayerMoves);
 			setIdPlayerMove(idPlayerMove + 1);
 		}
 	};
@@ -253,14 +259,27 @@ function GameArea(props:any) {
 	function render(context:CanvasRenderingContext2D):void {
 		moveMyPlayerImediately();
 		context.clearRect(0, 0, context.canvas.width, context.canvas.height)
-		printGame({context:context, pong:pong, playerLeft:frontEndPlayerLeft, playerRight:frontEndPlayerRight, balls:balls, gameWidth:gameWidth, gameHeight:gameHeight});
-		printMenu({pong:pong, context:context, gameWidth:gameWidth, gameHeight:gameHeight, frontEndPlayerLeft:frontEndPlayerLeft, frontEndPlayerRight:frontEndPlayerRight,});
+		printGame({context:context, pong:pong, playerLeft:frontEndPlayerLeft, playerRight:frontEndPlayerRight, balls:balls, obstacles: obstacles, gameWidth:gameWidth, gameHeight:gameHeight});
+		printMenu({pong:pong, gameStatus: gameStatus, context:context, gameWidth:gameWidth, gameHeight:gameHeight, frontEndPlayerLeft:frontEndPlayerLeft, frontEndPlayerRight:frontEndPlayerRight,});
 	}
+
+	const leaveGame = (e: React.FormEvent) => {
+		e.preventDefault();
+		gameSocket.emit("i_am_leaving", {roomId});
+		setGameStatus('NOT_IN_GAME');
+		setRoomId(0);
+		setModeGame('');
+	};
 
 	return (
 		<>
 			<Canvas draw = {render} style={styleCanvas} />
-			<div><strong>You play on the {frontEndPlayerLeft.socketId === gameSocket.id ? 'left' : 'right'} !</strong></div>
+			<div><strong>You play on the {mySide} !</strong></div>
+			<div>Status {gameStatus?.toString()} for Room {roomId?.toString()}</div>
+			<div>PaddleSpeed {pong?.paddleSpeed}</div>
+			<form onSubmit={leaveGame}>
+				<button type="submit"> Leave the Game</button><br/>
+			</form>
 		</>
 	);
 };

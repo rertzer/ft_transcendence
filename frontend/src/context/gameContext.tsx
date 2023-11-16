@@ -1,29 +1,35 @@
 import React from 'react';
 
+export type GameStatus = 'NOT_IN_GAME' | 'IN_WAITING_ROOM' | 'WAITING_FOR_PLAYER' | 'WAITING_TO_START' | 'STARTING' | 'PLAYING' | 'FINISHED' | 'FINISH_BY_FORFAIT';
+
 export interface IGameContextProps {
-	roomName:string;
-	setRoomName: (roomName:string) => void;
+	roomId:number;
+	setRoomId: (roomId:number) => void;
 	gameWidth:number;
 	setGameWidth: (gameWidth:number) => void;
 	gameHeight:number;
 	setGameHeight: (gameHeight:number) => void;
 	playerName:string;
 	setPlayerName: (playerName:string) => void;
-	nbBalls: number;
-	setNbBalls: (nbBalls:number) => void;
+	modeGame: string;
+	setModeGame: (modeGame:string) => void;
+	gameStatus: GameStatus;
+	setGameStatus:  (gameStatus: GameStatus) => void;
 };
 
 const defaultState:IGameContextProps = {
-	roomName: '',
-	setRoomName: () => {},
+	roomId: 0,
+	setRoomId: () => {},
 	gameWidth:800,
 	setGameWidth:() => {},
 	gameHeight:400,
 	setGameHeight: () => {},
 	playerName:'',
 	setPlayerName: () => {},
-	nbBalls: 1,
-	setNbBalls: () => {}
+	modeGame: '',
+	setModeGame: () => {}, 
+	gameStatus: 'NOT_IN_GAME',
+	setGameStatus:  () => {}
 };
 
 export default React.createContext(defaultState);

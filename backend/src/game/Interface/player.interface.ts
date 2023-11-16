@@ -1,11 +1,16 @@
 import { Socket } from "socket.io";
 import { Room } from "./room.interface";
 
-export interface Player {
+export interface IRoomState {
+	room:Room;
 	posY:number;
+	readyToPlay:boolean;
+	idPlayerMove:number;
+}
+
+export interface IPlayer {
 	name:string;
 	socket: Socket;
-	readyToPlay:boolean;
-	room:Room | null;
-	idPlayerMove:number;
+	roomState: IRoomState[];
+	idBdd:number;
 }

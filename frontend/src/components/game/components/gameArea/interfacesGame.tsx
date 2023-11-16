@@ -1,3 +1,5 @@
+import { GameStatus } from "../../../../context/gameContext";
+
 export interface IPoint {
 	x:number;
     y:number;
@@ -8,11 +10,23 @@ export interface IBall {
 	pos: IPoint;
 	speed: number;
 	dir: IPoint;
+	startingCountDownStart: Date | null;
+	startingCountDown: number;
+	active:boolean;
 };
-export type GameStatus = 'WAITING_FOR_PLAYER' | 'WAITING_TO_START' | 'STARTING' | 'PLAYING' | 'FINISHED';
+
+export interface IObstacles {
+	id: number;
+    posx: number;
+    posy: number;
+    width: number;
+    height: number;
+    img: string | null;
+    lives: number;
+    gameMapsId: number | null;
+}
 
 export interface IGameParam {
-	idRoom: string;
     ballRadius: number;
     paddleWidth: number;
     paddleHeight: number;
@@ -42,7 +56,6 @@ export interface IGameParam {
     play:boolean;
     goal:number;
     endgame:boolean;
-	gameStatus:GameStatus;
 	startingCount : number;
 };
 

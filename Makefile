@@ -6,7 +6,11 @@
 #    By: mbocquel <mbocquel@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/08/01 17:12:15 by mbocquel          #+#    #+#              #
+<<<<<<< HEAD
 #    Updated: 2023/11/16 16:52:39 by mbocquel         ###   ########.fr        #
+=======
+#    Updated: 2023/11/10 12:19:45 by mbocquel         ###   ########.fr        #
+>>>>>>> origin/game_v3
 #                                                                              #
 # **************************************************************************** #
 
@@ -48,4 +52,8 @@ env_front:
 cache: 	fclean
 		rm -rf $(CACHE_FILE)
 
+<<<<<<< HEAD
 .PHONY: all re down clean
+=======
+.PHONY: all re down clean
+>>>>>>> origin/game_v3

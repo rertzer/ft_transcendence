@@ -1,27 +1,27 @@
 import { Injectable } from '@nestjs/common';
-import { Player } from '../Interface/player.interface';
+import { IPlayer } from '../Interface/player.interface';
 import { Socket } from 'socket.io';
-import { PrismaGameService } from 'src/prisma/game/prisma.game.service';
 
 @Injectable()
 export class PlayersService {
 
+	private players: IPlayer[] = [];
 
-	private players: Player[] = [];
-
-	create(player: Player) {
+	create(player: IPlayer) {
 		this.players.push(player);
+		console.log('Create Player');
+
 	};
 
 	remove(clientSocket: Socket) {
 		this.players = this.players.filter((p) => {return p.socket !== clientSocket;});
 	};
 
-	findAll(): Player[] {
+	findAll(): IPlayer[] {
 		return this.players;
 	};
 
-	findOne(socket: Socket): Player | null {
+	findOne(socket: Socket): IPlayer | null {
 		const player = this.players.find((element) => element.socket === socket);
 		if (typeof(player) === 'undefined') {
 			return null;
@@ -29,12 +29,7 @@ export class PlayersService {
 		return player
 	};
 
-	changePlayerName(player:Player, newName:string) {
-		const index = this.players.indexOf(player);
-		if (index !== -1) {
-			player.name = newName;
-			this.players[index] = player;
-		}
-		console.log('Players:',this.players);
-	};
+	consoleLogPlayers() {
+		console.log(this.players);
+	}	
 }
