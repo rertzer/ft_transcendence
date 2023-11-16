@@ -192,6 +192,7 @@ function  File() {
   }
   function handlePage(str : string) {
     updatePageMenuChat(str, "none", chat);
+	console.log(page);
   }
   function handleChat(str : string) {
     if (str === chat)

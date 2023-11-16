@@ -2,7 +2,7 @@ import React, {useEffect, useState, useContext} from 'react';
 import { JoinRoom } from './components/joinRoom';
 import GameContext, { IGameContextProps } from '../../context/gameContext';
 import GameArea from './components/gameArea';
-import ConnectionContext from '../../context/authContext'
+import { useLogin } from '../user/auth';
 
 function Game() {
 	const [roomName, setRoomName] = useState('');
@@ -11,10 +11,10 @@ function Game() {
 	const [gameHeight, setGameHeight] = useState(0);
 	const [nbBalls, setNbBalls] = useState(1);
 
-	const {username} = useContext(ConnectionContext);
+	const auth = useLogin();
 
 	useEffect(() => {
-		setPlayerName(username);
+		setPlayerName(auth.user.login);
 	}, []);
 
 	const gameContextValue :IGameContextProps = {
@@ -31,10 +31,13 @@ function Game() {
 	};
 
 	return (
-		<GameContext.Provider value={gameContextValue}>
-			{playerName!== '' && roomName === '' && <JoinRoom />}
-			{playerName!== '' && roomName !== '' && <GameArea />}
-		</GameContext.Provider>
+		<>
+			<div>toto</div>
+			<GameContext.Provider value={gameContextValue}>
+				{playerName!== '' && roomName === '' && <JoinRoom />}
+				{playerName!== '' && roomName !== '' && <GameArea />}
+			</GameContext.Provider>
+		</>
 	)
 }
 
