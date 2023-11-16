@@ -31,7 +31,6 @@ export class MutedUserService {
 
   IsMutedUser(login: string, chatId: number): boolean {
 	const isMutted =  this.mutedUsers.find((user) => user.login === login && user.chatId === chatId);
-
 		if (isMutted !== undefined)
 		{
 			const time = new Date();

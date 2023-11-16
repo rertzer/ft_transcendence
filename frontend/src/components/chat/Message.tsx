@@ -1,13 +1,15 @@
 import "./Message.scss"
 import { useContext, useEffect, useState, useRef } from "react";
 import  ConnectionContext from "../../context/authContext"
-import { WebsocketContext } from "../../context/chatContext";
+import ChatContext, { WebsocketContext } from "../../context/chatContext";
 import { Link } from "react-router-dom";
+import { Channel } from "./ChatComponent";
 import userContext from "../../context/userContext";
 
 const  Message = (props: {username: string, date: string, msg: string, isOwner: boolean, isAdmin: boolean, chatId: number, service: boolean, isDM: boolean}) => {
 
     const {user} = useContext(userContext);
+	const {allChannels, setActiveChannel, setNeedToUpdate} = useContext(ChatContext)
     const [showUserActionsMenu, setShowUserActionsMenu] = useState(false);
 	const [errorMessage, setErrorMessage] = useState("");
     const socket = useContext(WebsocketContext);
@@ -34,11 +36,7 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 			else
 				console.log(" i am mute");
 		})
-		// socket.on("BannedUser", (chat_id: Number)=> {
-		// 	console.log("yo i have been banned");
-		// })
         return () => {
-
 			socket.off("userIsMute");
 		}
     }, [])
@@ -92,11 +90,12 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ username: props.username, chatId: props.chatId})
 		};
-		toggleUserActionsMenu();
-		await fetch('http://localhost:4000/chatOption/setAdmin/', requestOptions)
+		const response = await fetch('http://localhost:4000/chatOption/setAdmin/', requestOptions)
 		.catch((error) => {
 			console.error('Error checking user status:', error);
 		  });
+		console.log("RESPONSE: ", response)
+		toggleUserActionsMenu();
 		sendServiceMessage(props.username + " is now an administrator of this channel");
 
 	}
@@ -135,13 +134,26 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 		sendServiceMessage(props.username + " has been kicked from this channel");
 	}
 
-	function startDM() {
-		const messageData = {
-			sender: user.login,
-			receiver: props.username,
+	function checkIfDmExists() {
+		const index = allChannels.findIndex((element: Channel) => element.type === "DM" && element.channelName.search(props.username) !== -1);
+		return (index);
+	}
+
+	async function startDM() {
+
+		let existingConversation = checkIfDmExists();
+		if (existingConversation !== -1) {
+			setActiveChannel(allChannels[existingConversation]);
+			socket.emit('retrieveMessage', {chatId: allChannels[existingConversation].id, messageToDisplay: 15 })
+		} else {
+			const messageData = {
+				sender: username,
+				receiver: props.username,
+			}
+			socket.emit('newPrivateConv', messageData);
+			setNeedToUpdate(true);
+			toggleUserActionsMenu();
 		}
-		socket.emit('newPrivateConv', messageData);
-		toggleUserActionsMenu();
 	}
 
 	async function addToFriends()
@@ -158,7 +170,7 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 
 	if (messageType !== "service") {
 		return (
-			<div className={messageType === "owner" ? "message owner" : "message"}>
+			<div className={messageType === "owner" ? "messageItem owner" : "messageItem"}>
 				<div className='messageInfo'>
 					{messageType === "owner" ?
 						<div>

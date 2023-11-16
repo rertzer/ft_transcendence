@@ -19,17 +19,20 @@ export class RetrieveMessageService {
 			if (messageReceived !== undefined)
 			{
 				for (const element of messageReceived) {
-					const username = await this.prismaService.findUser(element.chat_channels_user_id);
-
-					const msg = {
-						msg: element.message,
-						username: username,
-						date: element.date_sent,
-						id: element.id,
-						chatId: element.chat_channels_id,
-						serviceMessage: element.serviceMessage
+					const user = await this.prismaService.findUser(element.chat_channels_user_id);
+					if (user)
+					{
+						const msg = {
+							msg: element.message,
+							username: user?.username,
+							date: element.date_sent,
+							id: element.id,
+							login: user.login,
+							chatId: element.chat_channels_id,
+							serviceMessage: element.serviceMessage
+						}
+						messageHistory.push(msg);
 					}
-					messageHistory.push(msg);
 				};
 				sock.emit('chatMsgHistory', messageHistory);
 			}

@@ -1,10 +1,10 @@
 import { useState, useContext, useEffect } from 'react';
 import { WebsocketContext } from '../../context/chatContext';
 import  ConnectionContext from "../../context/authContext"
+import ChatContext from '../../context/chatContext';
 import AddIcon from '@mui/icons-material/Add';
 import { Tooltip } from  "@mui/material";
 import "./AddChat.scss";
-import { allChatOfUser } from './ChatComponent';
 import userContext from '../../context/userContext';
 
 type CreateChatPayload = {
@@ -15,12 +15,12 @@ type CreateChatPayload = {
 }
 
 export const AddChat = (props: {chatsOfUser: allChatOfUser[], showSubMenu: string, setShowSubMenu: Function}) => {
+	const {setNeedToUpdate} = useContext(ChatContext);
 	const {user} = useContext(userContext)
 	const [chatName, setChatName] = useState('');
 	const [password, setPassword] = useState('');
 	const socket = useContext(WebsocketContext);
 	const [chatType, setChatType] = useState('public');
-	const [chatInfo, setChatInfo] = useState({}); // Define the state for chat information
 
 	const toggleForm = () => {
 		if (props.showSubMenu !== "add") {
@@ -54,6 +54,7 @@ export const AddChat = (props: {chatsOfUser: allChatOfUser[], showSubMenu: strin
 			}
 		}
 		socket.emit('createChat', createChatData);
+		setNeedToUpdate(true);
 		setChatName('');
 		setPassword('');
 		toggleForm();
@@ -69,6 +70,7 @@ export const AddChat = (props: {chatsOfUser: allChatOfUser[], showSubMenu: strin
 						<input
 							type="text"
 							placeholder="Channel Name"
+							maxLength={42}
 							value={chatName}
 							onChange={(e) => setChatName(e.target.value)}
 						/>
@@ -85,6 +87,7 @@ export const AddChat = (props: {chatsOfUser: allChatOfUser[], showSubMenu: strin
 							<input
 							type="password"
 							placeholder="Password"
+							maxLength={16}
 							value={password}
 							onChange={(e) => setPassword(e.target.value)}
 							/>

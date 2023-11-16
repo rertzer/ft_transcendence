@@ -21,11 +21,11 @@ export class PrismaChatService {
 												// ou si recuperes tous le me prisma client
 	  }
 
-	async getIdOfUsername(username: string){
+	async getIdOfLogin(login: string){
 
 		const user = await this.prismaService.user.findFirst({
 			where: {
-				username: username,
+				login: login,
 			}
 		})
 		if (user)
@@ -206,7 +206,7 @@ export class PrismaChatService {
 			  select: {
 				channelOwner: {
 				  select: {
-					username: true,
+					login: true,
 				  },
 				},
 			  },
@@ -214,7 +214,7 @@ export class PrismaChatService {
 		console.log("heisowner = ", heIsOwner);
 		if (!heIsOwner)
 			return false;
-		return heIsOwner.channelOwner.username === login
+		return heIsOwner.channelOwner.login === login
 	}
 
 	async isAdmin(idLogin: number, chatId:number)
@@ -300,7 +300,7 @@ export class PrismaChatService {
 
 	}
 
-	async getListOfChatByUsername(loginId: number)
+	async getListOfChatById(loginId: number)
 	{
 		const userChatChannels = await this.prismaService.chatChannelsUser.findMany({
 			where: {
@@ -382,7 +382,7 @@ export class PrismaChatService {
 		})
 		if (user)
 		{
-			return user.chatChannelsUser.username;
+			return user.chatChannelsUser;
 		}
 	}
 

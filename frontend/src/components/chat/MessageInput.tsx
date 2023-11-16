@@ -1,8 +1,8 @@
 import React, { useState, useContext, useEffect } from 'react';
 import "./MessageInput.scss"
 import { WebsocketContext } from '../../context/chatContext';
-import { allChatOfUser } from './ChatComponent';
 import userContext from '../../context/userContext';
+import  ConnectionContext from "../../context/authContext"
 
 
 type ChatHistory = {
@@ -42,6 +42,7 @@ const MessageInput = (props: {chatId: number}) => {
             <input
 				type="text"
 				placeholder='Write...'
+				maxLength={1024}
 				value={value}
 				onChange={(e) => setValue(e.target.value)}
 				onKeyDown={handleKeyDown} // gestion du bouton Enter pour envoyer

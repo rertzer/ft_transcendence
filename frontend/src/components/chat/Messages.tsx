@@ -32,7 +32,7 @@ type trigger = {
 	numberMsgToDisplay: number;
 }
 
-const Messages = (props: {chatId: number, isOwner: boolean, isAdmin: boolean, setActiveChat: Function, isDM: boolean}) => {
+const Messages = (props: {chatId: number, isOwner: boolean, isAdmin: boolean, isDM: boolean}) => {
 
 	const {user} = useContext(userContext);
 	const [render, setRender] = useState(false);
@@ -56,7 +56,6 @@ const Messages = (props: {chatId: number, isOwner: boolean, isAdmin: boolean, se
 			const add : ChatMessage = {msg: chatHistoryReceive.msg, username: chatHistoryReceive.username, date: newDateString, id: chatHistoryReceive.id, chatId: chatHistoryReceive.idOfChat, serviceMessage: chatHistoryReceive.serviceMessage}
 			setChatMessages((prevMessages) => [...prevMessages, add]);
 			socket.emit("chatListOfUser",user.login);
-			// Debugging: Check the updated chatHistory
 		});
 		return () => {
 
@@ -104,11 +103,11 @@ const Messages = (props: {chatId: number, isOwner: boolean, isAdmin: boolean, se
 			{chatMessages.length === 0 ? (
 				<div></div>
 				) : (
-					<div>
+					<div className='messageArray'>
 
 						{chatMessages.map((chat) => {
 							return (
-							<div key={chat.date + chat.id}>
+							<div key={chat.date + chat.id} className="messageUnit">
 								{chat.chatId === props.chatId && (
 									 <Message date={chat.date} username={chat.username} msg={chat.msg} isOwner={props.isOwner} isAdmin={props.isAdmin} chatId={props.chatId} service={chat.serviceMessage} isDM={props.isDM}/>
 								)}

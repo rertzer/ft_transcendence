@@ -4,10 +4,10 @@ import Chat from './Chat'
 import { WebsocketContext } from "../../context/chatContext";
 import { useState, useEffect, useContext } from 'react';
 import  ConnectionContext from "../../context/authContext"
-import { act } from "react-dom/test-utils";
 import userContext from "../../context/userContext";
+import ChatContext, {IChatContext} from "../../context/chatContext";
 
-export type allChatOfUser = {
+export type Channel = {
     id: number;
     channelName: string;
     chatPicture: string;
@@ -29,31 +29,44 @@ export type Message = {
 
 const ChatComponent = () => {
 
-    const [chatsOfUser, setChatsOfUser] = useState<allChatOfUser[]>([])
-    const [activeChat, setActiveChat] = useState<allChatOfUser>({id: -1, channelName: "Pong Chat", chatPicture: "", type: "", status: "", username: null, dateSend: null, msg: null})
-    const socket = useContext(WebsocketContext);
-    const [lastMessage, setLastMessage] = useState<Message>({msg: "", username: "", date: new Date, id: 0, idOfChat: 0})
+    const [allChannels, setAllChannels] = useState<Channel[]>([])
+    const [needToUpdate, setNeedToUpdate] = useState(false);
+    const [activeChannel, setActiveChannel] = useState<Channel>({
+        id: -1,
+        channelName: "Pong Chat",
+        chatPicture: "",
+        type: "",
+        status: "",
+        username: null,
+        dateSend: null,
+        msg: null
+    })
 
+  const ChatValue: IChatContext = {
+    allChannels,
+    setAllChannels,
+    activeChannel,
+    setActiveChannel,
+    needToUpdate,
+    setNeedToUpdate
+  }
     useEffect(() => {
-        socket.on('lastMessage', (lastMessage :{msg: string, username: string, date: Date, id: number, idOfChat:number}) => {
-            setLastMessage(lastMessage);
-        });
-        return () => {
-            socket.off("lastMessage")
-        } 
-    },[])
-    
-    useEffect(() => {
-        const id = activeChat.id;
-        if (id !== -1 && chatsOfUser.find(element => element.id === id) === undefined) 
-            setActiveChat({id: -1, channelName: "Pong Chat", chatPicture: "", type: "", status: "", username: null, dateSend: null, msg: null})
-    }, [chatsOfUser.length])
+        const id = activeChannel.id;
+        if (id !== -1 && allChannels.find(element => element.id === id) === undefined)
+            setActiveChannel({id: -1, channelName: "You lost access to this channel", chatPicture: "", type: "", status: "", username: null, dateSend: null, msg: null});
+        else if (needToUpdate && allChannels.length > 0) {
+            setActiveChannel(allChannels[allChannels.length -1]);
+            setNeedToUpdate(false);
+        }
+    }, [allChannels.length])
 
     return (
         <div className="chatcomponent">
             <div className='container'>
-                <Sidebar activeChat={activeChat} setActiveChat={setActiveChat} chatsOfUser={chatsOfUser} setChatsOfUser={setChatsOfUser} lastMessage={lastMessage}/>
-                {activeChat.id > 0 ? <Chat toDisplay={activeChat} setActiveChat={setActiveChat}/> : <NoChat message={activeChat.channelName}/>}
+                <ChatContext.Provider value={ChatValue}>
+                    < Sidebar />
+                    {activeChannel.id > 0 ? <Chat/> : <NoChat message={activeChannel.channelName}/>}
+                </ChatContext.Provider>
             </div>
         </div>
     )

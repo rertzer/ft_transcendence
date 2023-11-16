@@ -17,8 +17,6 @@ function Desktop1() {
   const socket = useContext(WebsocketContext);
   const {user} = useContext(userContext);
   const windowHeighthRef = useRef(window.innerHeight);
-   // need to be somewhere that is going to be trigger only once
-
   useEffect(() => {
   const handleResize = () => {
       windowHeighthRef.current = window.innerHeight;

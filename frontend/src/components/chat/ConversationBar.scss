@@ -3,7 +3,8 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        max-width: 230px;
+        max-width: 140px;
+        font-size: 16px;
     }
     height: 50px;
     background-color: #949494;
@@ -11,12 +12,10 @@
     align-items: center;
     justify-content: space-between;
     padding: 10px;
-    color: lightgray;
+    color: white;
 }
 .chatIcons {
     display: flex;
-    gap: 20px;
-    div {
-        cursor: pointer;
-    }
+    gap: 10px;
+    cursor: pointer;
 }

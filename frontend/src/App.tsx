@@ -2,7 +2,6 @@ import React, { useContext, useState, useEffect } from 'react';
 import './styles.scss';
 import { createBrowserRouter, RouterProvider, Route, Outlet, Navigate } from 'react-router-dom';
 import Login from './routes/Login';
-import Home from './routes/Home';
 import Profile from './routes/Profile';
 import {  IConnected } from './context/authContext';
 import ChatComponent from './components/chat/ChatComponent';
@@ -99,10 +98,6 @@ function App() {
       element: <ProtectedRoute><Desktop1 /></ProtectedRoute>,
       children:[
         {
-          path: "/",
-          element: <Home />,
-        },
-        {
           path:"/profile/:id",
           element: <Profile />
         },
@@ -138,11 +133,9 @@ function App() {
   return (
     <div >
 		{/* <AuthContextProvider> */}
-			<ChatContext.Provider value={ChatContextValue}>
 				<UserContext.Provider value={UserValue}>
 					<RouterProvider router={router} />
 				</UserContext.Provider>
-			</ChatContext.Provider>
 		{/* </AuthContextProvider> */}
     </div>
   );

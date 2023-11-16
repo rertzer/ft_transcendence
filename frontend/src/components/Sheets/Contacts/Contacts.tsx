@@ -55,7 +55,6 @@ export function Contacts(sx: number, sy: number, zoom: number) {
       <CreateStyledCell
       coordX={3} coordY={5} width={1} height={1} scroll_x={sx} scroll_y={sy} zoom={zoom}
       text={'block'} fontSize={12} className={"block"} />
-
       <CreateStyledCell
         coordX={1} coordY={1} width={5} height={102} scroll_x={sx} scroll_y={sy} zoom={zoom}
         text={''} fontSize={0} className={"background"} />

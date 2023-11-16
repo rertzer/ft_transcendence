@@ -19,8 +19,7 @@ export class ChatLister{
 	async listChatOfUser(idLogin: number, sock: Socket)
 	{
 		const chatList = [];
-		console.log("id login = ", idLogin);
-		const retrieveChat = await this.prismaService.getListOfChatByUsername(idLogin);
+		const retrieveChat = await this.prismaService.getListOfChatById(idLogin);
 		if (retrieveChat !== undefined)
 		{
 			for (const chatUser of retrieveChat)
@@ -30,7 +29,7 @@ export class ChatLister{
 				let date = null;
 				let lastMessage = null;
 				let message = null;
-				await this.isPartOfRoom(sock,chatUser.id);
+				await this.isPartOfRoom(sock,chatUser.channel.id);
 				if (lastMessagesOfChat !== undefined && lastMessagesOfChat && lastMessagesOfChat.length > 0)
 				{
 					lastMessage = lastMessagesOfChat[0];
@@ -52,7 +51,6 @@ export class ChatLister{
 				}
 				chatList.push(chatType);
 			}
-			console.log("chat list = ", chatList);
 			sock.emit('ListOfChatOfUser', chatList);
 		}
 	}

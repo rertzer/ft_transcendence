@@ -2,11 +2,11 @@ import "./Chats.scss";
 import { WebsocketContext } from "../../context/chatContext";
 import React, { useContext, useState, useEffect, useRef, Component } from 'react';
 import ConnectionContext from '../../context/authContext'
-import { allChatOfUser } from './ChatComponent';
-import { Message } from "./ChatComponent"
+import ChatContext from "../../context/chatContext";
+import { Channel } from './ChatComponent';
 import userContext from "../../context/userContext";
 
-const Chats = (props: {activeChat: allChatOfUser, setActiveChat: Function, chatsOfUser: allChatOfUser[], setChatsOfUser: Function, lastMessage: Message}) => {
+const Chats = () => {
 
     const socket = useContext(WebsocketContext);
     const {user} = useContext(userContext);
@@ -14,13 +14,12 @@ const Chats = (props: {activeChat: allChatOfUser, setActiveChat: Function, chats
     useEffect(() => {
 
         trigger();
-
-        socket.on("ListOfChatOfUser", (channelsListReceive : allChatOfUser[]) => {
-            props.setChatsOfUser(channelsListReceive);
+        socket.on("ListOfChatOfUser", (channelsListReceive : Channel[]) => {
+            setAllChannels(channelsListReceive);
         });
 
-		socket.on("newChat", (newChat: allChatOfUser) => {
-			props.setChatsOfUser([...props.chatsOfUser, newChat]);
+		socket.on("newChat", (newChat: Channel) => {
+			setAllChannels([...allChannels, newChat]);
 		});
 
         return () => {
@@ -30,14 +29,14 @@ const Chats = (props: {activeChat: allChatOfUser, setActiveChat: Function, chats
         }
     }, [])
 
-    const startRef = useRef<HTMLDivElement>(null); //ref to empty div to autoscroll to bottom
-
     function trigger() {
        socket.emit('chatListOfUser', user.login);
     }
 
+    const startRef = useRef<HTMLDivElement>(null); //ref to empty div to autoscroll to bottom
+
     useEffect(() => {
-        if (props.chatsOfUser.length > 0) {
+        if (allChannels.length > 0) {
             startRef.current?.scrollIntoView({
                 behavior: "smooth",
                 block: "end",
@@ -45,12 +44,16 @@ const Chats = (props: {activeChat: allChatOfUser, setActiveChat: Function, chats
         }
     }, []);
 
-    function moveMostRecentUp(chatsOfUser: allChatOfUser[]) {
+    function moveMostRecentUp(chatsOfUser: Channel[]) {
 
-        chatsOfUser.sort((a: allChatOfUser, b: allChatOfUser) => {
+        chatsOfUser.sort((a: Channel, b: Channel) => {
             const aDate = a.dateSend;
             const bDate = b.dateSend;
-            if (aDate === null || bDate === null)
+            if (aDate === null && bDate !== null)
+                return 1;
+            else if (aDate !== null && bDate === null)
+                return -1;
+            else if (aDate === null || bDate === null)
                 return 0;
             else if (aDate < bDate)
                 return 1;
@@ -70,18 +73,18 @@ const Chats = (props: {activeChat: allChatOfUser, setActiveChat: Function, chats
 
     return (
         <div className='chats'>
-            {props.chatsOfUser.length === 0 ? (
+            {allChannels.length === 0 ? (
 				<div className='noConversations'>No conversations</div>
 				) : (
 					<div>
                         <div ref={startRef} />
-						{moveMostRecentUp(props.chatsOfUser).map((channel) => (
+						{moveMostRecentUp(allChannels).map((channel) => (
                             <div key={channel.id} onClick={() => {
-                                    if (channel.id != props.activeChat.id) {
-                                    props.setActiveChat(channel);
+                                    if (channel.id != activeChannel.id) {
+                                    setActiveChannel(channel);
                                     socket.emit('retrieveMessage', {chatId: channel.id, messageToDisplay: 15 })
                                     }}}>
-                                <div className={props.activeChat.id === channel.id ? "userChat active" : "userChat"}>
+                                <div className={activeChannel.id === channel.id ? "userChat active" : "userChat"}>
                                     <img src={channel.chatPicture === null ? "" : channel.chatPicture} />
                                     <div className='userChatInfo'>
                                         <h1>{channel.type !== "DM" ? channel.channelName : findReceiverName(channel.channelName)}</h1>

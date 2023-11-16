@@ -1,17 +1,26 @@
 import "./Sidebar.scss"
 import Chatbar from './Chatbar';
 import Chats from "./Chats";
-import { Message } from "./ChatComponent";
-import ChatComponent, { allChatOfUser } from './ChatComponent';
+import { useEffect, useContext } from "react";
+import ChatContext from "../../context/chatContext";
 
-const Sidebar = (props: {activeChat: allChatOfUser, setActiveChat: Function, chatsOfUser: allChatOfUser[], setChatsOfUser: Function, lastMessage: Message}) => {
+const Sidebar = () => {
 
+    const {activeChannel, allChannels, setActiveChannel} = useContext(ChatContext);
+
+    useEffect(() => {
+        const id = activeChannel.id;
+        console.log(activeChannel.id);
+        if (id !== -1 && allChannels.find(element => element.id === id) === undefined) 
+            setActiveChannel({id: -1, channelName: "Pong Chat", chatPicture: "", type: "", status: "", username: null, dateSend: null, msg: null});
+        else if (id > -1)
+            setActiveChannel(allChannels[allChannels.length - 1]);
+    }, [allChannels.length])
 
     return (
         <div className='sidebar'>
-            <Chatbar chatsOfUser={props.chatsOfUser}/>
-            <Chats activeChat={props.activeChat} setActiveChat={props.setActiveChat}
-                   chatsOfUser={props.chatsOfUser} setChatsOfUser={props.setChatsOfUser} lastMessage={props.lastMessage} />
+            <Chatbar/>
+            <Chats />
         </div>
     )
 }
