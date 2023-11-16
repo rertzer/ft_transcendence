@@ -1,4 +1,24 @@
+# credentials
 .env
+
+# vim
 .swp
-.vscode
-node_modules
+
+# compiled output
+dist/
+node_modules/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# IDE - VSCode
+.vscode/
+
+#prettier
+.prettierrc
