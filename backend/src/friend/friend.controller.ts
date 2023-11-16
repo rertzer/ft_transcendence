@@ -2,6 +2,11 @@ import { Body, Controller, Post, Get, Param } from "@nestjs/common";
 import { PrismaChatService } from "src/prisma/chat/prisma.chat.service";
 import { PrismaFriendService } from "src/prisma/friend/prisma.friend.service";
 import { MyGateway } from "src/chat/gateway/gateway.service";
+import { JwtGuard } from '../auth/guard';
+import { GetUser } from '../auth/decorator';
+import { UseGuards } from "@nestjs/common";
+
+@UseGuards(JwtGuard)
 @Controller('friend')
 export class addFriendController {
 	constructor(private prismaFriendService: PrismaFriendService, private gateway: MyGateway)

@@ -4,8 +4,10 @@ import { MutedUserService } from "../mutedUser/mutedUser.service";
 import { getDate } from "../utils/utils.service";
 import { MyGateway } from "../gateway/gateway.service";
 import { JoinChatService } from "../joinChat/joinChat.service";
+import { JwtGuard } from "src/auth/guard";
+import { UseGuards } from "@nestjs/common";
 
-
+// @UseGuards(JwtGuard)
 @Controller('chatOption')
 export class ChatOptController {
 	constructor(private prismaChatService:PrismaChatService, private gateway: MyGateway, private joinChatservice : JoinChatService) {}
