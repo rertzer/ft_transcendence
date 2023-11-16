@@ -26,6 +26,7 @@ function printGame(params:{
 
 	// Print Game elements
 	params.balls?.forEach((ball) => {
+		if (ball.active === false) return;
 		drawCircle({
 			center: {x:ball.pos.x * params.gameWidth, 
 					y:ball.pos.y * params.gameHeight}, 

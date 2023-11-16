@@ -13,12 +13,11 @@ function Game() {
 	const [gameHeight, setGameHeight] = useState(0);
 	const [modeGame, setModeGame] = useState('');
 	const [gameStatus, setGameStatus] = useState<GameStatus>('NOT_IN_GAME');
-
 	const {username} = useContext(ConnectionContext);
 
 	useEffect(() => {
 		setPlayerName(username);
-	}, []);
+	}, [username]);
 
 	const gameContextValue :IGameContextProps = {
 		roomId,

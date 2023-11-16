@@ -10,6 +10,9 @@ export interface IBall {
 	pos: IPoint;
 	speed: number;
 	dir: IPoint;
+	startingCountDownStart: Date | null;
+	startingCountDown: number;
+	active:boolean;
 };
 
 export interface IObstacles {

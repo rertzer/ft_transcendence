@@ -3,7 +3,7 @@ import { IgameMaps } from "../Interface/gameMaps.interface"
 export const gameMaps :IgameMaps[] = [
 	{
 		id:1, 
-		nbBalls: 3,
+		nbBalls: 4,
 		obstacles : [
 			{
 				posx: 0.15,
@@ -41,7 +41,7 @@ export const gameMaps :IgameMaps[] = [
 	}, 
 	{
 		id:2, 
-		nbBalls: 3,
+		nbBalls: 4,
 		obstacles : [
 			{
 				posx: 0.35,
@@ -63,7 +63,7 @@ export const gameMaps :IgameMaps[] = [
 	}, 
 	{
 		id:3, 
-		nbBalls: 3,
+		nbBalls: 4,
 		obstacles : [
 			{
 				posx: 0.20,
@@ -101,7 +101,7 @@ export const gameMaps :IgameMaps[] = [
 	}, 
 	{
 		id:4, 
-		nbBalls: 3,
+		nbBalls: 4,
 		obstacles : [
 			{
 				posx: 0.15, 

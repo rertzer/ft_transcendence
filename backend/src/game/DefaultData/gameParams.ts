@@ -22,11 +22,11 @@ export const gameParams : IgameParams[] = [
 		paddleHeight: 0.25,
 		ballSpeedIncrease: 0.0005,
 		paddleSpeed: 0.01,
-		goal: 10,
+		goal: 1000,
 		ballInitPosx: 0.5,
 		ballInitPosy: 0.5,
 		BallInitDirx: 0.5,
 		BallInitDiry: -1,
-		BallInitSpeed: 0.0003
+		BallInitSpeed: 0.002
 	}
 ]

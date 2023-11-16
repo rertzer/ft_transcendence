@@ -80,7 +80,7 @@ export function JoinRoom(props:IJoinRoomProps) {
 			gameSocket.off('error_join', processErrorJoin);
 		}
 
-	}, [RecievedRoomID]);
+	}, [RecievedRoomID, setGameStatus, setRoomId]);
 
 	const askToDisplayInfoBack = (e: React.FormEvent) => {
 		e.preventDefault();

@@ -60,26 +60,34 @@ export class GameLogicService {
 		if (ballOldPos.x >= obstacleRight && ballOldPos.y <= obstacleTop) return ['VERTICALE_RIGHT', 'HORIZONTALE_TOP'];
 		if (ballOldPos.x <= obstacleLeft && ballOldPos.y > obstacleTop && ballOldPos.y < obstacleBtm) return ['VERTICALE_LEFT', 'NO'];
 		if (ballOldPos.x >= obstacleRight && ballOldPos.y > obstacleTop && ballOldPos.y < obstacleBtm) return ['VERTICALE_RIGHT', 'NO'];
-		if (ballOldPos.x <= obstacleRight && ballOldPos.y >= obstacleBtm) return ['VERTICALE_LEFT', 'HORIZONTALE_BTM'];
+		if (ballOldPos.x <= obstacleLeft && ballOldPos.y >= obstacleBtm) return ['VERTICALE_LEFT', 'HORIZONTALE_BTM'];
 		if (ballOldPos.x > obstacleLeft && ballOldPos.x < obstacleRight && ballOldPos.y >= obstacleBtm) return ['NO', 'HORIZONTALE_BTM'];
 		if (ballOldPos.x >= obstacleRight && ballOldPos.y >= obstacleBtm) return ['VERTICALE_RIGHT', 'HORIZONTALE_BTM'];
 		return ['NO', 'NO'] 
 	}
 
-	/**
- 	* Besoin d'implementer la vie des obstacles. 
- 	*/
-	
 	moveBalls(room:Room) : Room {
 		room.balls = room.balls.map((ball) => {
+			if (!ball.active && room.gameStatus === 'PLAYING'){
+				if (ball.startingCountDown <= 0) {
+					ball.active = true;
+					return (ball);
+				}
+				if (ball.startingCountDownStart === null) {
+					ball.startingCountDownStart = new Date();
+				}
+				const newDate = new Date();
+				ball.startingCountDown -= (newDate.getTime() - ball.startingCountDownStart.getTime())/1000;
+				return (ball);
+			}
 			if(room.gameStatus !== 'PLAYING') return (ball);
-			const ballOldPos = ball.pos;
+			const ballOldPos = {
+				x: ball.pos.x,
+				y: ball.pos.y
+			};
 			ball.pos.x += (ball.speed / Math.sqrt(ball.dir.x**2 + ball.dir.y**2)) * ball.dir.x;
 			ball.pos.y += (ball.speed / Math.sqrt(ball.dir.x**2 + ball.dir.y**2)) * ball.dir.y;
 	
-			if (ballOldPos.x === ball.pos.x && ballOldPos.y === ball.pos.y) {
-				console.log('FUCK');
-			}
 			/*Top or bottom collision*/
 			if (ball.pos.y > 1 - room.gameParam.ballRadius) {
 				ball.pos.y = 1 - room.gameParam.ballRadius;
@@ -89,12 +97,10 @@ export class GameLogicService {
 				ball.pos.y = room.gameParam.ballRadius;
 				ball.dir.y = - ball.dir.y;
 			}
-
 			/* Collision avec les obstacles */
 			if (this.colisionObstacles(room, ball) !== -1) {
 				const obstacle = room.obstacles[this.colisionObstacles(room, ball)];
 				const sideCol = this.sideColisionObstacle(ballOldPos,obstacle);
-				console.log('Colision Ball :', ball.id, ' with obstacle ', obstacle.img);
 				if (sideCol[0] === 'VERTICALE_RIGHT') {
 					ball.dir.x = - ball.dir.x;
 					ball.pos.x = obstacle.posx + obstacle.width;
@@ -110,6 +116,10 @@ export class GameLogicService {
 				else if (sideCol[1] === 'HORIZONTALE_BTM') {
 					ball.dir.y = - ball.dir.y;
 					ball.pos.y = obstacle.posy + obstacle.height;
+				}
+				obstacle.lives -= 1;
+				if (obstacle.lives === 0) {
+					room.obstacles = room.obstacles.filter((ob) => {return ob != obstacle});
 				}
 			}
 
@@ -136,6 +146,7 @@ export class GameLogicService {
 		if (!player) return ;
 		let playerRoomParam = player.roomState.find((r) => r.room === param.room);
 		if (typeof(playerRoomParam) === 'undefined') return;
+		playerRoomParam.idPlayerMove = param.idPlayerMove;
 		switch (param.key){
 			case 'KeyW':
 				playerRoomParam.posY = Math.max(param.room.gameParam.paddleHeight / 2, playerRoomParam.posY - param.room.gameParam.paddleSpeed);
@@ -182,13 +193,16 @@ export class GameLogicService {
 		const balls: Ball[] = [];
 		for (let i = 0; i< nbBalls; i++) {
 			balls.push({
-				id: newId, 
+				id: i + 1, 
 				pos: {x:room.gameParam.ballInitPosx,  y:room.gameParam.ballInitPosy},
 				dir: {
 					x: Math.random() > 0.5 ? (Math.random() * 0.8) + 0.2 : -((Math.random() * 0.8) + 0.2 ), 
 					y: (Math.random() * 2) - 1
 				},
-				speed: room.gameParam.BallInitSpeed
+				speed: room.gameParam.BallInitSpeed, 
+				startingCountDownStart: null,
+				startingCountDown: (i === 0 ? 0 : Math.random() * 20),
+				active:false
 			});
 		}
 		return (balls);

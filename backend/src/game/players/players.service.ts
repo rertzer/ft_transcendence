@@ -31,18 +31,7 @@ export class PlayersService {
 		return player
 	};
 
-	/* changePlayerName(player:IPlayer, newName:string) {
-		const index = this.players.indexOf(player);
-		if (index != -1) {
-			player.name = newName;
-			
-			this.players[index] = player;
-		}
-	}; */
-
 	consoleLogPlayers() {
 		console.log(this.players);
-	}
-
-	
+	}	
 }

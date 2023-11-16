@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect } from 'react';
 import gameContext from '../../../../context/gameContext';
 import { gameSocket } from '../../services/gameSocketService';
 import { GameStatus } from '../../../../context/gameContext';
@@ -24,7 +24,7 @@ export function WaitingRoom(props:any) {
 			gameSocket.off('room_joined', processRoomJoined);
 			gameSocket.off('error_join', processErrorJoin);
 		}
-	}, []);
+	}, [setGameStatus, setRoomId]);
 
 	return (
 		<>
