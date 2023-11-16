@@ -8,12 +8,12 @@ import ConnectionContext from '../../context/authContext'
 import ChatContext from '../../context/chatContext'
 import { useContext, useState, useRef, useEffect } from "react";
 import { ChannelSettings } from "./ChannelSettings";
-import userContext from "../../context/userContext";
+import { useLogin } from "../../components/user/auth";
 
 
 const ConversationBar = (props: {isOwner: boolean, isAdmin: boolean}) => {
 
-    const {user} = useContext(userContext)
+	const auth = useLogin();
     const {activeChannel, setActiveChannel} = useContext(ChatContext);
     const [showSubMenu, setShowSubMenu] = useState("none");
     let menuRef = useRef<HTMLInputElement>(null);
@@ -32,7 +32,7 @@ const ConversationBar = (props: {isOwner: boolean, isAdmin: boolean}) => {
 
     function findReceiverName(names: string) {
 
-        let name = names.replace(user.login, "");
+        let name = names.replace(auth.user.login, "");
         name.trim()
         return (name)
     }

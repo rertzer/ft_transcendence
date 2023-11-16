@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import "./MessageInput.scss"
 import { WebsocketContext } from '../../context/chatContext';
-import userContext from '../../context/userContext';
+import { useLogin } from "../../components/user/auth";
 import  ConnectionContext from "../../context/authContext"
 
 
@@ -15,18 +15,18 @@ const MessageInput = (props: {chatId: number}) => {
 
 	const [value, setValue] = useState('');
 	const socket = useContext(WebsocketContext);
-	const {user} = useContext(userContext);
+	const auth = useLogin();
 	const onSubmit = () => {
 		if (value === "" || props.chatId < 0)
 			return;
 		const messageData = {
-			username: user.username,
-			login: user.login,
+			username: auth.user.username,
+			login: auth.user.login,
 			serviceMessage: false,
 			content: value,
 			idOfChat: props.chatId,
 		}
-		console.log(" login send ", user.login)
+		console.log(" login send ", auth.user.login)
 		socket.emit('newMessage', messageData);
 		setValue('');
 	  };

@@ -5,7 +5,7 @@ import ChatContext from '../../context/chatContext';
 import AddIcon from '@mui/icons-material/Add';
 import { Tooltip } from  "@mui/material";
 import "./AddChat.scss";
-import userContext from '../../context/userContext';
+import { useLogin } from "../../components/user/auth";
 
 type CreateChatPayload = {
 	login: string;
@@ -15,8 +15,8 @@ type CreateChatPayload = {
 }
 
 export const AddChat = (props: {showSubMenu: string, setShowSubMenu: Function}) => {
+	const auth = useLogin();
 	const {setNeedToUpdate} = useContext(ChatContext);
-	const {user} = useContext(userContext)
 	const [chatName, setChatName] = useState('');
 	const [password, setPassword] = useState('');
 	const socket = useContext(WebsocketContext);
@@ -38,7 +38,7 @@ export const AddChat = (props: {showSubMenu: string, setShowSubMenu: Function}) 
 		if (password === "")
 		{
 			createChatData = {
-				login: user.login,
+				login: auth.user.login,
 				chatName: chatName,
 				chatType: chatType,
 				chatPassword: null,
@@ -47,7 +47,7 @@ export const AddChat = (props: {showSubMenu: string, setShowSubMenu: Function}) 
 		else
 		{
 			createChatData = {
-				login: user.login,
+				login: auth.user.login,
 				chatName: chatName,
 				chatType: chatType,
 				chatPassword: password,

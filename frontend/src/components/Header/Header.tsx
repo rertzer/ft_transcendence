@@ -2,8 +2,8 @@ import { SelectBar } from './SelectBar';
 import { Tooltip } from "@mui/material";
 import styles from "./Header.module.css";
 import { useContext } from "react";
-import  ConnectionContext from "../../context/authContext";
 import { MyContext } from '../../context/PageContext';
+import { useLogin } from '../user/auth';
 
 function Header({}) {
   const context = useContext(MyContext);
@@ -15,7 +15,7 @@ function Header({}) {
   function handleClick(str : string) {
     updateMenu(str);
   }
-  const {username} = useContext(ConnectionContext);
+  const auth = useLogin();
 
   return <header className={styles.headerFrame} style={{ height: toolbar ? '65px' : '142px' }}>
         <div className={styles.headerBackground} style={{ height: toolbar ? '65px' : '142px' }}/>
@@ -51,7 +51,7 @@ function Header({}) {
           <div className={styles.untitled1}>Untitled 1 - PongOffice Calc</div>
           <div className={styles.user}>
             <img className={styles.userChild} alt="" src="/ellipse-1@2x.png" style={{cursor:"pointer"}}/>
-            <span className={styles.user1}>{username}</span>
+            <span className={styles.user1}>{auth.user.username}</span>
             <Tooltip className={styles.crossButton}title="Log out" arrow>
               <img className={styles.crossIcon} alt="" src="/cross.svg" style={{cursor:"pointer", right: "8px"}}/>
             </Tooltip>

@@ -16,7 +16,7 @@ function PageSwitch () {
   const { scrollX, scrollY } = scroll;
   const [sx, setNewScrollX] = useState(scrollX);
   const [sy, setNewScrollY] = useState(scrollY);
-    
+
   useEffect(() => {
     setNewScrollX(scrollX);
     setNewScrollY(scrollY);
@@ -47,7 +47,7 @@ function Grid() {
 
   const [sx, setNewScrollX] = useState(scrollX);
   const [sy, setNewScrollY] = useState(scrollY);
-    
+
   useEffect(() => {
     setNewScrollX(scrollX);
     setNewScrollY(scrollY);
@@ -84,13 +84,13 @@ function Grid() {
 
   const [x, setNewCoordX] = useState(coordX);
   const [y, setNewCoordY] = useState(coordY);
-  
+
   const handleUpdateCoords = (a: number, b: number) => {
     setNewCoordX(a);
     setNewCoordY(b);
     updateCoords({ coordX: a, coordY: b });
   };
-  
+
   useEffect(() => {
     setNewCoordX(coordX);
     setNewCoordY(coordY);
@@ -139,7 +139,7 @@ function Grid() {
     }} />);
   if (y_square !== -1 && x_square !== -1)
     components.push(<div key={"bluesquare"} style={{position: 'relative', top: `${(y_square * (20 + (zoom - 100)/8)) + (18 + (zoom - 100)/8)}px`, left: `${((x_square * (80 + (zoom - 100)/2)) + (77 + (zoom - 100)/2))}px`, width: '5px', height: '5px', backgroundColor:'#15539E',}}></div>);
-  
+
   components.push(PageSwitch());
 
   //HIGHLIGHT COLUMN, LINE OR EVERYTHING

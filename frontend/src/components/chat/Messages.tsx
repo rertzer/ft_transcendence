@@ -7,7 +7,7 @@ import userEvent from '@testing-library/user-event';
 import  ConnectionContext from "../../context/authContext"
 import { Console } from 'console';
 import { render } from '@testing-library/react';
-import userContext from '../../context/userContext';
+import { useLogin } from "../../components/user/auth";
 
 type ChatMessage = {
 	msg: string;
@@ -25,8 +25,7 @@ type trigger = {
 }
 
 const Messages = (props: {chatId: number, isOwner: boolean, isAdmin: boolean, isDM: boolean}) => {
-
-	const {user} = useContext(userContext);
+	const auth = useLogin();
 	const [render, setRender] = useState(false);
 	const socket = useContext(WebsocketContext);
 	const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
@@ -47,7 +46,7 @@ const Messages = (props: {chatId: number, isOwner: boolean, isAdmin: boolean, is
 			newDateString = newDateString.slice(newDateString.indexOf("T") + 1, newDateString.indexOf("T") + 9);
 			const add : ChatMessage = {msg: chatHistoryReceive.msg, username: chatHistoryReceive.username, login: chatHistoryReceive.login, date: newDateString, id: chatHistoryReceive.id, chatId: chatHistoryReceive.idOfChat, serviceMessage: chatHistoryReceive.serviceMessage}
 			setChatMessages((prevMessages) => [...prevMessages, add]);
-			socket.emit("chatListOfUser",user.login);
+			socket.emit("chatListOfUser",auth.user.login);
 		});
 		return () => {
 

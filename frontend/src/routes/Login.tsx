@@ -1,14 +1,17 @@
 import "./Login.scss";
-import { Navigate } from "react-router-dom";
-import { MouseEvent, useContext, useEffect, useState } from "react";
-import { WebsocketContext } from "../context/chatContext";
+import { useNavigate, useLocation } from "react-router-dom";
+import { MouseEvent, useEffect, useState } from "react";
+import { useLogin } from "../components/user/auth";
 
 function Login() {
   const [login, setLogin] = useState("");
+  const auth = useLogin();
 
   const [tokenOk, setTokenOk] = useState(false);
-  // const {username, setUsername} = useContext(ConnectionContext)
 
+  const navigate = useNavigate();
+  const location = useLocation();
+  const redirectPath = location.state?.path || "/";
 
   const handleSubmit = async (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -20,20 +23,24 @@ function Login() {
         body: JSON.stringify({ login }),
       });
       const token = await data.json();
+      let token_status = false;
       if (token.message) {
         console.log("Bad login");
-        setLogin("");
-        setTokenOk(false);
+        //setLogin("");
       } else {
-        setTokenOk(true);
-        sessionStorage.setItem("Token", JSON.stringify(token));
+        token_status = true;
+
+        auth.login(token);
+        navigate(redirectPath, { replace: true });
       }
+      setTokenOk(token_status);
     } catch (e) {
       console.log(e);
     }
   };
 
   console.log("Log user ok is", tokenOk);
+
   return (
     <div className="login">
       <div className="card">
@@ -46,15 +53,14 @@ function Login() {
               value={login}
               onChange={(e) => setLogin(e.target.value)}
             />
+            <button
+              onClick={(e) => {
+                handleSubmit(e);
+              }}
+            >
+              Log in
+            </button>
           </form>
-          <button
-            onClick={(e) => {
-              handleSubmit(e);
-            }}
-          >
-            Log in
-          </button>
-          {tokenOk && <Navigate to="/"></Navigate>}
         </div>
       </div>
     </div>

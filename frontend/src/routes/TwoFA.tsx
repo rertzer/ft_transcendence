@@ -1,17 +1,17 @@
 import "./EditProfile.scss";
 import { Link, Navigate } from "react-router-dom";
-import UserContext from "../context/userContext";
+// import UserContext from "../context/userContext";
 import { useContext, useEffect, useState, MouseEvent } from "react";
-
+import { useLogin } from "../components/user/auth";
 import StringField from "../components/user/StringField";
 
 
 
 
 function Twofa() {
-  const { user, setUser } = useContext(UserContext);
+	const auth = useLogin();
 
-  let tmp = user.username;
+  let tmp = auth.user.username;
   if (tmp == null) tmp = "";
 
   const [login, setLogin] = useState("");
@@ -28,7 +28,7 @@ function Twofa() {
     const bearer = "Bearer " + token.access_token;
 
 
-    let tosend: any= { login: user.login };
+    let tosend: any= { login: auth.user.login };
 
     const data = await fetch("/twofa/setup", {
       method: "GET",
@@ -56,7 +56,7 @@ function Twofa() {
       <div className="card">
         <div className="right">
           <h1>Two FA Setup</h1>
-          <h2>{user.login}</h2>
+          <h2>{auth.user.login}</h2>
           <form>
             <button onClick={handleTfa}>Edit</button>
           </form>

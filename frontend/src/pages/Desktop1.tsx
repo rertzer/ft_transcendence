@@ -6,39 +6,42 @@ import styles from "./Desktop1.module.css";
 import { useContext, useState } from 'react';
 import { MyContext, MyProvider } from '../context/PageContext';
 import ChatComponent from '../components/chat/ChatComponent';
-import ConnectionContext from '../context/authContext';
 import { WebsocketContext } from "../context/chatContext";
-
-import userContext from '../context/userContext';
+import { useLogin } from "../components/user/auth";
 
 function Desktop1() {
 
   //GET HEIGHT
   const socket = useContext(WebsocketContext);
-  const {user} = useContext(userContext);
+  const auth = useLogin();
   const windowHeighthRef = useRef(window.innerHeight);
+  console.log("A", auth.user);
   useEffect(() => {
   const handleResize = () => {
+	console.log("B", auth.user);
       windowHeighthRef.current = window.innerHeight;
       // Trigger a re-render of the component when window.innerWidth changes
       //forceUpdate();
     };
     window.addEventListener('resize', handleResize);
     return () => {
-      window.removeEventListener('resize', handleResize);
+		window.removeEventListener('resize', handleResize);
     };
-  }, []);
+}, []);
 
 //   useEffect(() => {
-// 	console.log("user send = ", user.login);
-// 	console.log("rkeklkrer");
-// 	socket.connect();
-//     }, []);
+	// 	console.log("user send = ", user.login);
+	// 	console.log("rkeklkrer");
+	// 	socket.connect();
+	//     }, []);
 
 	useEffect(() => {
+		console.log("C", auth.user);
+		if (auth.user.login)
+			socket.emit("newChatConnection", auth.user.login);
 		console.log("yo send something pls : " , socket.id);
-		socket.emit("newChatConnection", user.login);
-	},[socket]);
+	},[auth.user]);
+
   const forceUpdate = useForceUpdate();
 
   function DisplayChat() {

@@ -6,7 +6,7 @@ import { useContext, useState, useEffect } from 'react';
 import { WebsocketContext } from '../../context/chatContext';
 import  ConnectionContext from "../../context/authContext";
 import chatContext from '../../context/chatContext';
-import userContext from '../../context/userContext';
+import { useLogin } from "../../components/user/auth";
 
 type ChannelToJoin = {
 	id : number;
@@ -17,10 +17,9 @@ type ChannelToJoin = {
 }
 
 export const ListChannels = (props: {showSubMenu: string, setShowSubMenu: Function}) => {
-
+	const auth = useLogin();
     const socket = useContext(WebsocketContext);
 	const {allChannels, setNeedToUpdate} = useContext(chatContext);
-	const {user} = useContext(userContext);
 	const [password, setPassword] = useState('');
 	const [chanToJoin, setChanToJoin] = useState<ChannelToJoin>({id: -1, name: "", owner: "", type: "", password: null});
 	const [availableChannels, setAvailableChannels] = useState<ChannelToJoin[]>([{id: -1, name: "", owner: "", type: "", password: null}]);
@@ -39,7 +38,7 @@ export const ListChannels = (props: {showSubMenu: string, setShowSubMenu: Functi
 			setChanToJoin({id: -1, name: "", owner: "", type: "", password: null})
 		} else {
 			setErrorMessage("");
-			socket.emit('chatListOfUser', user.login);
+			socket.emit('chatListOfUser', auth.user.login);
 			setNeedToUpdate(true);
 			toggleForm();
 
@@ -52,14 +51,14 @@ export const ListChannels = (props: {showSubMenu: string, setShowSubMenu: Functi
 			if (password === "")
 				return (-1);
 			messageData = {
-				login: user.login,
+				login: auth.user.login,
 				chat_id: chanToJoin.id,
 				password: password,
 		  };
 		}
 		else {
 			messageData = {
-				login: user.login,
+				login: auth.user.login,
 				chat_id: chanToJoin.id,
 				password: null,
 			  };

@@ -1,6 +1,6 @@
 import "./EditProfile.scss";
 import { Link, Navigate } from "react-router-dom";
-import UserContext, { IUser } from "../context/userContext";
+import { useLogin } from "../components/user/auth";
 import { useContext, useEffect, useState, MouseEvent } from "react";
 
 import StringField from "../components/user/StringField";
@@ -16,15 +16,15 @@ interface IToSend {
 }
 
 function EditProfile() {
-  const { user, setUser } = useContext(UserContext);
+  const auth = useLogin();
 
-  let tmp = user.username;
+  let tmp = auth.user.username;
   if (tmp == null) tmp = "";
 
   const [login, setLogin] = useState("");
   const [userOk, setUserOk] = useState(false);
   const [newUsername, setNewUsername] = useState(tmp);
-  const [newEmail, setNewEmail] = useState(user.email);
+  const [newEmail, setNewEmail] = useState(auth.user.email);
   const [newAvatar, setNewAvatar] = useState<File>();
   const [avatarName, setAvatarName] = useState("");
 
@@ -42,11 +42,9 @@ function EditProfile() {
     event.preventDefault();
     console.log("Editing the user");
 
-    const raw_token: string | null = sessionStorage.getItem("Token");
-    let token = { login: "", access_token: "" };
-    if (raw_token) token = JSON.parse(raw_token);
-    console.log("Token in EditProfile is", token);
-    const bearer = "Bearer " + token.access_token;
+   
+    console.log("Token in EditProfile is", auth.getBearer());
+    
     if (newAvatar) {
       console.log("new Avatar");
       let formData = new FormData();
@@ -55,7 +53,7 @@ function EditProfile() {
 
       const fileData = await fetch("/user/editAvatar", {
         method: "POST",
-        headers: { Authorization: bearer },
+        headers: { Authorization: auth.getBearer() },
         body: formData,
       });
       const answer = await fileData.json();
@@ -63,7 +61,7 @@ function EditProfile() {
       setUserOk(true);
     }
 
-    let tosend: IToSend = { login: user.login };
+    let tosend: IToSend = { login: auth.user.login };
     if (newUsername) tosend.username = newUsername;
     if (newEmail) tosend.email = newEmail;
 
@@ -71,7 +69,7 @@ function EditProfile() {
     const data = await fetch("/user/edit", {
       method: "POST",
       headers: {
-        Authorization: bearer,
+        Authorization: auth.getBearer(),
         "Content-Type": "application/json; charset=utf-8",
       },
       body: JSON.stringify(tosend),
@@ -85,7 +83,7 @@ function EditProfile() {
 
         setUserOk(false);
       } else {
-        setUser(newUser);
+        auth.edit(newUser);
         setUserOk(true);
         console.log("Edited!!!", userOk);
       }
@@ -98,15 +96,15 @@ function EditProfile() {
   }, []);
 
   useEffect(() => {
-    if (!newUsername && user.username) setNewUsername(user.username);
-  }, [user.username]);
+    if (!newUsername && auth.user.username) setNewUsername(auth.user.username);
+  }, [auth.user.username]);
 
   return (
     <div className="register">
       <div className="card">
         <div className="right">
           <h1>Edit profile</h1>
-          <h2>{user.login}</h2>
+          <h2>{auth.user.login}</h2>
           <form>
             <StringField
               placeholder="username"
