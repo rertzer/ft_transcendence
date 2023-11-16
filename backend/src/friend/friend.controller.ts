@@ -37,4 +37,13 @@ export class addFriendController {
 			this.prismaFriendService.deleteFriend(targetSocket.idOfLogin, user.friendToDelete)
 		}
 	}
+
+	@Get('listFriends/:login')
+	async listFriend (
+		@Param('login') login:string
+	)
+	{
+		console.log("in list friends");
+		
+	}
 }

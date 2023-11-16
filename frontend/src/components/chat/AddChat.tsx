@@ -14,7 +14,7 @@ type CreateChatPayload = {
 	chatType: string;
 }
 
-export const AddChat = (props: {chatsOfUser: allChatOfUser[], showSubMenu: string, setShowSubMenu: Function}) => {
+export const AddChat = (props: {showSubMenu: string, setShowSubMenu: Function}) => {
 	const {setNeedToUpdate} = useContext(ChatContext);
 	const {user} = useContext(userContext)
 	const [chatName, setChatName] = useState('');

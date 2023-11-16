@@ -113,11 +113,6 @@ function App() {
     },
 
   ]);
-  const [chatId, setChatId] = useState(-1)
-  const ChatContextValue: IChatContext = {
-	  chatId,
-	  setChatId,
-  };
 
   useEffect(() => {
     if (user.avatar !== null && user.avatar !== "") {

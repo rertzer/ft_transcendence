@@ -8,7 +8,7 @@ import  ConnectionContext from "../../context/authContext";
 import chatContext from '../../context/chatContext';
 import userContext from '../../context/userContext';
 
-type Channel = {
+type ChannelToJoin = {
 	id : number;
 	name: string;
 	owner: string;
@@ -39,7 +39,7 @@ export const ListChannels = (props: {showSubMenu: string, setShowSubMenu: Functi
 			setChanToJoin({id: -1, name: "", owner: "", type: "", password: null})
 		} else {
 			setErrorMessage("");
-			socket.emit('chatListOfUser', username);
+			socket.emit('chatListOfUser', user.login);
 			setNeedToUpdate(true);
 			toggleForm();
 
@@ -119,7 +119,6 @@ export const ListChannels = (props: {showSubMenu: string, setShowSubMenu: Functi
         <Tooltip title="List available channels" arrow>
             <MenuIcon onClick={toggleForm}/>
         </Tooltip>
-		{props.showSubMenu === "list" ?
 		{props.showSubMenu === "list" &&
         <div className="submenu">
 			<div className="top">

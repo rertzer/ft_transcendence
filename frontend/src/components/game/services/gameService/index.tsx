@@ -19,7 +19,7 @@ class GameService {
 			socket.on('room_joined_error', (error) => {reject(error)});
 			socket.on('room_status_change', (data) => {
 				console.log("room_status_change");
-				console.log(data);				
+				console.log(data);
 				resolve(true);
 			})
 		});
@@ -33,6 +33,6 @@ class GameService {
 		return (this.playerSide);
 	};
 
-}; 
+};
 
 export default new GameService();

@@ -26,7 +26,7 @@ function Twofa() {
     if (raw_token) token = JSON.parse(raw_token);
     console.log("Token in EditProfile is", token);
     const bearer = "Bearer " + token.access_token;
- 
+
 
     let tosend: any= { login: user.login };
 
@@ -39,7 +39,7 @@ function Twofa() {
     const qr_url = await data.json();
     console.log ("qr_url is", qr_url);
     setQrcode(qr_url.qrcode_url);
-   
+
   };
 
   useEffect(() => {

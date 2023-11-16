@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { Channel } from "./ChatComponent";
 import userContext from "../../context/userContext";
 
-const  Message = (props: {username: string, date: string, msg: string, isOwner: boolean, isAdmin: boolean, chatId: number, service: boolean, isDM: boolean}) => {
+const  Message = (props: {username: string, login: string, date: string, msg: string, isOwner: boolean, isAdmin: boolean, chatId: number, service: boolean, isDM: boolean}) => {
 
     const {user} = useContext(userContext);
 	const {allChannels, setActiveChannel, setNeedToUpdate} = useContext(ChatContext)
@@ -44,7 +44,7 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 	async function checkIfUserIsBanned(userName: string, chatID: number) {
 
 		try {
-			const response = await fetch(`http://localhost:4000/chatOption/${props.username}/banned/${chatID}`);
+			const response = await fetch(`http://localhost:4000/chatOption/${props.login}/banned/${chatID}`);
 			if (!response.ok) {
 				throw new Error("Request failed");
 			}
@@ -60,7 +60,7 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 		}
 	  }
 
-    if (user.login === props.username) {
+    if (user.login === props.login) {
         messageType = "owner";
     }
 	if (props.service) {
@@ -88,7 +88,7 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 		const requestOptions = {
 			method: 'post',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ username: props.username, chatId: props.chatId})
+			body: JSON.stringify({ login: props.login, chatId: props.chatId})
 		};
 		const response = await fetch('http://localhost:4000/chatOption/setAdmin/', requestOptions)
 		.catch((error) => {
@@ -101,16 +101,16 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 	}
 
 	function muteUser() {
-		socket.emit("mutedUser", {username: props.username, chatId: props.chatId, time: 60 })
+		socket.emit("mutedUser", {login: props.login, chatId: props.chatId, time: 60 })
 		toggleUserActionsMenu();
-		sendServiceMessage(props.username + " has been muted for 1 min");
+		sendServiceMessage(props.login + " has been muted for 1 min");
 	}
 
 	async function banUser() {
 		const requestOptions = {
 			method: 'post',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ username: props.username, chatId: props.chatId})
+			body: JSON.stringify({ login: props.login, chatId: props.chatId})
 		};
 		let banned = await checkIfUserIsBanned(user.login, props.chatId);
 		if (banned) {
@@ -127,7 +127,7 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 		const requestOptions = {
 			method: 'post',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ username: props.username, chatId: props.chatId})
+			body: JSON.stringify({ login: props.login, chatId: props.chatId})
 		};
 		toggleUserActionsMenu();
 		await fetch('http://localhost:4000/chatOption/kickUser/', requestOptions)
@@ -147,8 +147,8 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 			socket.emit('retrieveMessage', {chatId: allChannels[existingConversation].id, messageToDisplay: 15 })
 		} else {
 			const messageData = {
-				sender: username,
-				receiver: props.username,
+				sender: user.login,
+				receiver: props.login,
 			}
 			socket.emit('newPrivateConv', messageData);
 			setNeedToUpdate(true);
@@ -161,7 +161,7 @@ const  Message = (props: {username: string, date: string, msg: string, isOwner: 
 		const requestOptions = {
 			method: 'post',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ username: props.username, friendToAdd: props.username})
+			body: JSON.stringify({ login: user.login, friendToAdd: props.login})
 		};
 		toggleUserActionsMenu();
 		await fetch('http://localhost:4000/friend/addFriend/', requestOptions)

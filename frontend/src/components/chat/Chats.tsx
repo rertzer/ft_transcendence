@@ -10,6 +10,7 @@ const Chats = () => {
 
     const socket = useContext(WebsocketContext);
     const {user} = useContext(userContext);
+	const {activeChannel, setActiveChannel, allChannels, setAllChannels} = useContext(ChatContext);
 
     useEffect(() => {
 

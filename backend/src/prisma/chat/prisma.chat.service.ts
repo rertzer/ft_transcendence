@@ -32,9 +32,7 @@ export class PrismaChatService {
 			return user.id;
 		else
 		{
-			console.log("buggedd");
 			return 0;
-
 		}
 	}
 
@@ -49,7 +47,6 @@ export class PrismaChatService {
 
 			if (recordToDelete) {
 			  // Use the ID to delete the record
-			  console.log("record to delete id = ", recordToDelete.id);
 			  const removedUser = await this.prismaService.chatChannelsUser.update({
 				where: {
 				  id: recordToDelete.id,
@@ -96,7 +93,6 @@ export class PrismaChatService {
 
 			if (recordToDelete) {
 			  // Use the ID to delete the record
-			  console.log("record to delete id = ", recordToDelete.id);
 			  const removedUser = await this.prismaService.chatChannelsUser.update({
 				where: {
 				  id: recordToDelete.id,
@@ -150,7 +146,6 @@ export class PrismaChatService {
 					chatId: chat_channels_id,
 				}
 			})
-			console.log("isBanned = ", isBanned);
 			if (isBanned)
 				return true;
 			else
@@ -211,7 +206,6 @@ export class PrismaChatService {
 				},
 			  },
 			});
-		console.log("heisowner = ", heIsOwner);
 		if (!heIsOwner)
 			return false;
 		return heIsOwner.channelOwner.login === login
@@ -225,7 +219,6 @@ export class PrismaChatService {
 					user_id: idLogin,
 				  },
 				});
-			console.log("heisAdmin = ", heIsAdmin);
 			if (!heIsAdmin)
 				return false;
 			if (heIsAdmin.user_role === "admin")

@@ -5,12 +5,12 @@ import userContext from '../../context/userContext';
 import  ConnectionContext from "../../context/authContext"
 
 
-type ChatHistory = {
-	msg: string;
-	username: string;
-	date: string;
-	id: number;
-}
+// type ChatHistory = {
+// 	msg: string;
+// 	username: string;
+// 	date: string;
+// 	id: number;
+// }
 const MessageInput = (props: {chatId: number}) => {
 
 	const [value, setValue] = useState('');
@@ -26,7 +26,7 @@ const MessageInput = (props: {chatId: number}) => {
 			content: value,
 			idOfChat: props.chatId,
 		}
-		console.log(" username send ", user.login)
+		console.log(" login send ", user.login)
 		socket.emit('newMessage', messageData);
 		setValue('');
 	  };
@@ -45,7 +45,7 @@ const MessageInput = (props: {chatId: number}) => {
 				maxLength={1024}
 				value={value}
 				onChange={(e) => setValue(e.target.value)}
-				onKeyDown={handleKeyDown} // gestion du bouton Enter pour envoyer
+				onKeyDown={handleKeyDown}
 			/>
 			<button onClick={onSubmit}>Send</button>
         </div>

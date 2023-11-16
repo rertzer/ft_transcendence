@@ -15,17 +15,19 @@ export type Channel = {
     status: string;
     /*---------LastMessageReceive-------*/
     username: string | null; // bien differencier username et uid unique en cas de changement de username
+	// login: string ;
     msg: string| null;
     dateSend: Date | null;
 }
 
-export type Message = {
-    msg: string;
-    username: string;
-    date: Date;
-    id: number;
-    idOfChat: number;
-}
+// export type Message = {
+//     msg: string;
+//     username: string;
+// 	login: string;
+//     date: Date;
+//     id: number;
+//     idOfChat: number;
+// }
 
 const ChatComponent = () => {
 
@@ -50,15 +52,6 @@ const ChatComponent = () => {
     needToUpdate,
     setNeedToUpdate
   }
-    useEffect(() => {
-        const id = activeChannel.id;
-        if (id !== -1 && allChannels.find(element => element.id === id) === undefined)
-            setActiveChannel({id: -1, channelName: "You lost access to this channel", chatPicture: "", type: "", status: "", username: null, dateSend: null, msg: null});
-        else if (needToUpdate && allChannels.length > 0) {
-            setActiveChannel(allChannels[allChannels.length -1]);
-            setNeedToUpdate(false);
-        }
-    }, [allChannels.length])
 
     return (
         <div className="chatcomponent">

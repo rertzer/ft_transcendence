@@ -9,18 +9,10 @@ import { Console } from 'console';
 import { render } from '@testing-library/react';
 import userContext from '../../context/userContext';
 
-type ChatHistory = {
-	msg: string;
-	username: string;
-	date: string;
-	id: number;
-	chatId: number;
-	serviceMessage: boolean;
-}
-
 type ChatMessage = {
 	msg: string;
 	username: string;
+	login: string;
 	date: string;
 	id: number;
 	chatId: number;
@@ -37,23 +29,23 @@ const Messages = (props: {chatId: number, isOwner: boolean, isAdmin: boolean, is
 	const {user} = useContext(userContext);
 	const [render, setRender] = useState(false);
 	const socket = useContext(WebsocketContext);
-	const [chatHistory, setChatHistory] = useState<ChatHistory[]>([]);
+	const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
 	const [chatMessages,setChatMessages] = useState<ChatMessage[]>([]);
 	const [toTrigger, setTrigger] = useState<trigger>({numberMsgToDisplay: 15, chatId: props.chatId});
 
 	useEffect(() => {
-			socket.on('chatMsgHistory', (chatHistoryReceive : ChatHistory[]) => {
+			socket.on('chatMsgHistory', (chatHistoryReceive : ChatMessage[]) => {
 
 			setChatHistory(chatHistoryReceive);
 
 			setRender(true);
 
 		});
-		socket.on('newMessage', (chatHistoryReceive :{msg: string, username: string, date: Date, id: number, idOfChat:number, serviceMessage: boolean}) => {
-
+		socket.on('newMessage', (chatHistoryReceive :{msg: string, username: string, login: string, date: Date, id: number, idOfChat:number, serviceMessage: boolean}) => {
+			console.log("receive a new message :", chatHistoryReceive);
 			let newDateString = chatHistoryReceive.date.toString();
 			newDateString = newDateString.slice(newDateString.indexOf("T") + 1, newDateString.indexOf("T") + 9);
-			const add : ChatMessage = {msg: chatHistoryReceive.msg, username: chatHistoryReceive.username, date: newDateString, id: chatHistoryReceive.id, chatId: chatHistoryReceive.idOfChat, serviceMessage: chatHistoryReceive.serviceMessage}
+			const add : ChatMessage = {msg: chatHistoryReceive.msg, username: chatHistoryReceive.username, login: chatHistoryReceive.login, date: newDateString, id: chatHistoryReceive.id, chatId: chatHistoryReceive.idOfChat, serviceMessage: chatHistoryReceive.serviceMessage}
 			setChatMessages((prevMessages) => [...prevMessages, add]);
 			socket.emit("chatListOfUser",user.login);
 		});
@@ -72,7 +64,7 @@ const Messages = (props: {chatId: number, isOwner: boolean, isAdmin: boolean, is
 
 					let newDateString = element.date.toString();
 					newDateString = newDateString.slice(newDateString.indexOf("T") + 1, newDateString.indexOf("T") + 9);
-					const add : ChatMessage = {msg: element.msg, username: element.username, date: newDateString, id: element.id, chatId: element.chatId, serviceMessage: element.serviceMessage}
+					const add : ChatMessage = {msg: element.msg, username: element.username, login: element.login, date: newDateString, id: element.id, chatId: element.chatId, serviceMessage: element.serviceMessage}
 					setChatMessages((prevMessages) => [...prevMessages, add]);
 				}
 
@@ -109,7 +101,7 @@ const Messages = (props: {chatId: number, isOwner: boolean, isAdmin: boolean, is
 							return (
 							<div key={chat.date + chat.id} className="messageUnit">
 								{chat.chatId === props.chatId && (
-									 <Message date={chat.date} username={chat.username} msg={chat.msg} isOwner={props.isOwner} isAdmin={props.isAdmin} chatId={props.chatId} service={chat.serviceMessage} isDM={props.isDM}/>
+									 <Message date={chat.date} username={chat.username} login={chat.login} msg={chat.msg} isOwner={props.isOwner} isAdmin={props.isAdmin} chatId={props.chatId} service={chat.serviceMessage} isDM={props.isDM}/>
 								)}
 							</div>)
 			  			})}
