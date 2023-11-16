@@ -5,6 +5,7 @@ import GameArea from './components/gameArea';
 import { useLogin } from '../user/auth';
 import { GameStatus } from '../../context/gameContext';
 import { WaitingRoom } from './components/waitingRoom';
+import { gameSocket } from './services/gameSocketService';
 
 function Game() {
 	const [roomId, setRoomId] = useState(0);
@@ -17,6 +18,7 @@ function Game() {
 
 	useEffect(() => {
 		setPlayerName(auth.user.login);
+		gameSocket.connect();
 	}, []);
 
 	const gameContextValue :IGameContextProps = {

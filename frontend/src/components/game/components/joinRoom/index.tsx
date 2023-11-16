@@ -32,6 +32,8 @@ export function JoinRoom(props:IJoinRoomProps) {
 		e.preventDefault();
 		if (!TmpModeGameWaiting || TmpModeGameWaiting.trim() === "" ) return;
 		setModeGame(TmpModeGameWaiting);
+		console.log("yop, ")
+		console.log("yop, ", gameSocket)
 		gameSocket.emit('match_me', {playerName:playerName, typeGame:TmpModeGameWaiting})
 	};
 
@@ -88,7 +90,7 @@ export function JoinRoom(props:IJoinRoomProps) {
 	};
 
 	return (
-		<>
+		<div style={{position: 'relative', color: '#000000', backgroundColor: '#FFFFFF', top: '140px', left: '134px', height:'315px', width: '368px'}}>
 			<h4>Join a waiting Room : </h4>
 			<form onSubmit={joinWaitingRoom}>
 	 			<label>Basic Game <input type="radio" name="typegame_waiting" value="BASIC" onClick={handleSelectTypeGameWaiting}/></label><br/>
@@ -112,6 +114,6 @@ export function JoinRoom(props:IJoinRoomProps) {
 				<button type="submit"> Display info back!</button><br/>
 			</form>
 			{RecievedRoomID > 0 &&  <strong><br/>You got the room number {RecievedRoomID}</strong>}
-		</>
+		</div>
 	)
 };

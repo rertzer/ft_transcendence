@@ -4,7 +4,7 @@ export const gameParams : IgameParams[] = [
 	{
 		type:'BASIC', 
 		ballRadius: 0.01,
-		paddleWidth: 0.02,
+		paddleWidth: 0.01,
 		paddleHeight: 0.25,
 		ballSpeedIncrease: 0.0005,
 		paddleSpeed: 0.01,
@@ -18,7 +18,7 @@ export const gameParams : IgameParams[] = [
 	{
 		type:'ADVANCED', 
 		ballRadius: 0.01,
-		paddleWidth: 0.02,
+		paddleWidth: 0.01,
 		paddleHeight: 0.25,
 		ballSpeedIncrease: 0.0005,
 		paddleSpeed: 0.01,

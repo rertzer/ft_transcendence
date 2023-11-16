@@ -71,7 +71,6 @@ export class GameLogicService {
 				}
 				const newDate = new Date();
 				const timePassed = (newDate.getTime() - ball.startingCountDownStart.getTime())/1000
-				console.log('Ball :', ball.id, 'Time to pass = ', timePassed);
 				if (timePassed >= ball.startingCountDown) {
 					ball.active = true;
 				}

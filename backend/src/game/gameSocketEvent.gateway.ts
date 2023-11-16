@@ -10,11 +10,12 @@ import { GameLogicService } from "./gameLogic/gameLogic.service";
 import { PrismaGameService } from "src/prisma/game/prisma.game.service";
 
 @WebSocketGateway({
-    namespace: '/game_socket',
+	namespace: '/game_socket',
 	cors: {
-        origin: '*',
-    },
-	
+		origin: 'http://' + process.env.REACT_APP_URL_MACHINE + ':4000/game_socket'
+	},
+	methods: ["GET", "POST"],
+    credentials: true,
 })
 
 export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect{
@@ -73,6 +74,7 @@ export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, On
 
 	@SubscribeMessage('match_me')
 	async handleJoinWaitingRoom(@MessageBody() data:{playerName:string, typeGame:TypeGame}, @ConnectedSocket() client:Socket){
+		console.log('COUCOU');
 		const player = this.playersService.findOne(client);
 		if (player) {
 			player.name = data.playerName;

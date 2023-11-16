@@ -37,7 +37,7 @@ export class MyGateway {
 	server: Server;
 
 	handleConnection(client:Socket){
-		console.log("client connected : ", client.id)
+		console.log("client toto connected : ", client.id)
 		client.on('disconnect', () => {
 			console.log("client disconect : ", client.id)
 			this.socketsLogin = this.socketsLogin.filter((s) => {return s.sock !== client;});
