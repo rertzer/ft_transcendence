@@ -6,7 +6,7 @@ import { RoomsService } from "./rooms/rooms.service";
 import { Interval } from "@nestjs/schedule";
 import { Logger } from "@nestjs/common";
 import { TypeGame } from "./Interface/room.interface";
-import { GameService } from "./gameLogic/game.service";
+import { GameLogicService } from "./gameLogic/gameLogic.service";
 import { PrismaGameService } from "src/prisma/game/prisma.game.service";
 
 @WebSocketGateway({
@@ -31,7 +31,7 @@ export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, On
 	private readonly roomsService: RoomsService;
 
 	@Inject(RoomsService)
-	private readonly gameService: GameService;
+	private readonly gameService: GameLogicService;
 
 	@WebSocketServer()
 	server: Namespace;

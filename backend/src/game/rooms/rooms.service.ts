@@ -3,14 +3,14 @@ import { Room, TypeGame} from '../Interface/room.interface';
 import { IPlayer } from '../Interface/player.interface';
 import { Socket } from 'socket.io';
 import { PrismaGameService } from 'src/prisma/game/prisma.game.service';
-import { GameService } from '../gameLogic/game.service';
+import { GameLogicService } from '../gameLogic/gameLogic.service';
 import { OnModuleInit } from '@nestjs/common';
 import { gameMaps } from '../DefaultData/gameMaps';
 import { gameParams } from '../DefaultData/gameParams';
 
 @Injectable()
 export class RoomsService  implements OnModuleInit{
-	constructor(private prismaService: PrismaGameService, private gameService: GameService){}
+	constructor(private prismaService: PrismaGameService, private gameLogicService: GameLogicService){}
 
 	private rooms: Room[] = [];
 	private roomMaxId:number = 1;
@@ -86,10 +86,10 @@ export class RoomsService  implements OnModuleInit{
 		if (newRoom.typeGame === 'ADVANCED' && gameMaps.length) {
 			const map = gameMaps[Math.floor(Math.random() * gameMaps.length)];
 			newRoom.obstacles = map.obstacles;
-			newRoom.balls = this.gameService.newBalls(map.nbBalls, newRoom);
+			newRoom.balls = this.gameLogicService.newBalls(map.nbBalls, newRoom);
 		}
 		else {
-			newRoom.balls = this.gameService.newBalls(1, newRoom);
+			newRoom.balls = this.gameLogicService.newBalls(1, newRoom);
 		}
 		this.rooms.push(newRoom);
 		return (newRoom);
@@ -287,9 +287,9 @@ export class RoomsService  implements OnModuleInit{
 
 	playGameLoop() {
 		const newRooms: Room[] = this.rooms.map((room) => {
-			room = this.gameService.updateRoomGameStatus(room);
-			room = this.gameService.moveBalls(room);
-			room = this.gameService.checkballsPositions(room);
+			room = this.gameLogicService.updateRoomGameStatus(room);
+			room = this.gameLogicService.moveBalls(room);
+			room = this.gameLogicService.checkballsPositions(room);
 			return (room);
 		});
 		this.rooms = newRooms;
@@ -298,7 +298,7 @@ export class RoomsService  implements OnModuleInit{
 	handlePlayerKeyEvent(data:{roomId: number, key:string, idPlayerMove:number, client:Socket}){
 		const room = this.findRoomById(data.roomId)
 		if (room) {
-			this.gameService.movePlayerOnEvent({room, key:data.key, idPlayerMove:data.idPlayerMove, client:data.client});
+			this.gameLogicService.movePlayerOnEvent({room, key:data.key, idPlayerMove:data.idPlayerMove, client:data.client});
 		}
 	}
 }

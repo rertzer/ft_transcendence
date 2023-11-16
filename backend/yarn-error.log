@@ -14,7 +14,7 @@ Platform:
   linux x64
 
 Trace: 
-  Error: ENOENT: no such file or directory, open '/mnt/nfs/homes/mbocquel/.cache/yarn/v6/npm-caniuse-lite-1.0.30001547-integrity/node_modules/caniuse-lite/.yarn-metadata.json'
+  Error: EBUSY: resource busy or locked, unlink '/mnt/nfs/homes/mbocquel/.cache/yarn/v6/npm-eslint-8.51.0-integrity/node_modules/eslint/.nfs00000000014f8d4100001c5d'
 
 npm manifest: 
   {

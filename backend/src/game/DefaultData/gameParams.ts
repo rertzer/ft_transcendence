@@ -27,6 +27,6 @@ export const gameParams : IgameParams[] = [
 		ballInitPosy: 0.5,
 		BallInitDirx: 0.5,
 		BallInitDiry: -1,
-		BallInitSpeed: 0.006
+		BallInitSpeed: 0.0003
 	}
 ]

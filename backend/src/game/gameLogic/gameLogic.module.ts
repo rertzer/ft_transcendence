@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { PrismaGameService } from 'src/prisma/game/prisma.game.service';
-import { GameService } from './game.service';
+import { GameLogicService } from './gameLogic.service';
 
 @Module({
-	providers: [PrismaGameService, GameService],
-	exports: [GameService]
+	providers: [PrismaGameService, GameLogicService],
+	exports: [GameLogicService]
 })
 export class GameLogicModule {
-	constructor(private roomsService:GameService) {}
+	constructor(private roomsService:GameLogicService) {}
 }

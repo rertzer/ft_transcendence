@@ -11,10 +11,10 @@ import { Iobstacles } from "../Interface/obstacle.interface";
  * Besoin d'implementer les collisions avec les obstacles. 
  */
 
-export type colisionOb = 'NO' | 'HORIZONTALE' | 'VERTICALE' | 'BOTH';
+export type colisionOb = 'NO' | 'HORIZONTALE_TOP' | 'HORIZONTALE_BTM' | 'VERTICALE_LEFT' | 'VERTICALE_RIGHT';
 
 @Injectable()
-export class GameService {
+export class GameLogicService {
 
 	constructor(private prismaService: PrismaGameService){}
 
@@ -33,40 +33,37 @@ export class GameService {
 		return (ballRight > paddleLeft && ballTop < paddleBtm && ballLeft < paddleRight && ballBtm > paddleTop)
 	}
 
-	colisionObstacle(obstacle: Iobstacles, ball: Ball, pong:IgameParams): boolean {
-		const ballTop:number = ball.pos.y - pong.ballRadius;
-		const ballBtm:number = ball.pos.y + pong.ballRadius;
-		const ballLeft:number = ball.pos.x - pong.ballRadius;
-		const ballRight:number = ball.pos.x + pong.ballRadius;
-	
+	colisionObstacle(obstacle: Iobstacles, ball: Ball): boolean {
 		const obstacleTop:number =  obstacle.posy;
 		const obstacleBtm:number = obstacle.posy + obstacle.height;
 		const obstacleLeft:number = obstacle.posx;
 		const obstacleRight:number = obstacle.posx + obstacle.width;
 	
-		return (ballRight > obstacleLeft && ballTop < obstacleBtm && ballLeft < obstacleRight && ballBtm > obstacleTop)
+		return (ball.pos.x > obstacleLeft && ball.pos.y < obstacleBtm && ball.pos.x < obstacleRight && ball.pos.y > obstacleTop)
 	}
 
-	colisionObstacles(room: Room, ball:Ball, pong: IgameParams): number {
+	colisionObstacles(room: Room, ball:Ball): number {
 		const col = room.obstacles.map((ob) => {
-			return (this.colisionObstacle(ob, ball, pong));
+			return (this.colisionObstacle(ob, ball));
 		})
 		return(col.indexOf(true));
 	}
 
-	sideColisionObstacle(ballOldPos:{x:number, y:number}, obstacle: Iobstacles) : colisionOb {
+	sideColisionObstacle(ballOldPos:{x:number, y:number}, obstacle: Iobstacles) : colisionOb[] {
 		const obstacleTop:number =  obstacle.posy;
 		const obstacleBtm:number = obstacle.posy + obstacle.height;
 		const obstacleLeft:number = obstacle.posx;
 		const obstacleRight:number = obstacle.posx + obstacle.width;
 
-		if (ballOldPos.x < obstacleLeft || ballOldPos.x > obstacleRight){
-			if (ballOldPos.y >= obstacleTop && ballOldPos.y <= obstacleBtm) {
-				return 'VERTICALE';
-			} 
-			return 'BOTH';
-		}
-		return 'HORIZONTALE';
+		if (ballOldPos.x <= obstacleLeft && ballOldPos.y <= obstacleTop) return ['VERTICALE_LEFT', 'HORIZONTALE_TOP'];
+		if (ballOldPos.x > obstacleLeft && ballOldPos.x < obstacleRight && ballOldPos.y <= obstacleTop) return ['NO', 'HORIZONTALE_TOP'];
+		if (ballOldPos.x >= obstacleRight && ballOldPos.y <= obstacleTop) return ['VERTICALE_RIGHT', 'HORIZONTALE_TOP'];
+		if (ballOldPos.x <= obstacleLeft && ballOldPos.y > obstacleTop && ballOldPos.y < obstacleBtm) return ['VERTICALE_LEFT', 'NO'];
+		if (ballOldPos.x >= obstacleRight && ballOldPos.y > obstacleTop && ballOldPos.y < obstacleBtm) return ['VERTICALE_RIGHT', 'NO'];
+		if (ballOldPos.x <= obstacleRight && ballOldPos.y >= obstacleBtm) return ['VERTICALE_LEFT', 'HORIZONTALE_BTM'];
+		if (ballOldPos.x > obstacleLeft && ballOldPos.x < obstacleRight && ballOldPos.y >= obstacleBtm) return ['NO', 'HORIZONTALE_BTM'];
+		if (ballOldPos.x >= obstacleRight && ballOldPos.y >= obstacleBtm) return ['VERTICALE_RIGHT', 'HORIZONTALE_BTM'];
+		return ['NO', 'NO'] 
 	}
 
 	/**
@@ -80,6 +77,9 @@ export class GameService {
 			ball.pos.x += (ball.speed / Math.sqrt(ball.dir.x**2 + ball.dir.y**2)) * ball.dir.x;
 			ball.pos.y += (ball.speed / Math.sqrt(ball.dir.x**2 + ball.dir.y**2)) * ball.dir.y;
 	
+			if (ballOldPos.x === ball.pos.x && ballOldPos.y === ball.pos.y) {
+				console.log('FUCK');
+			}
 			/*Top or bottom collision*/
 			if (ball.pos.y > 1 - room.gameParam.ballRadius) {
 				ball.pos.y = 1 - room.gameParam.ballRadius;
@@ -91,13 +91,25 @@ export class GameService {
 			}
 
 			/* Collision avec les obstacles */
-			if (this.colisionObstacles(room, ball, room.gameParam) !== -1) {
-				const obstacle = room.obstacles[this.colisionObstacles(room, ball, room.gameParam)];
-				if (this.sideColisionObstacle(ballOldPos,obstacle) !== 'VERTICALE') {
-					ball.dir.y = - ball.dir.y;
-				}
-				if (this.sideColisionObstacle(ballOldPos,obstacle) !== 'HORIZONTALE') {
+			if (this.colisionObstacles(room, ball) !== -1) {
+				const obstacle = room.obstacles[this.colisionObstacles(room, ball)];
+				const sideCol = this.sideColisionObstacle(ballOldPos,obstacle);
+				console.log('Colision Ball :', ball.id, ' with obstacle ', obstacle.img);
+				if (sideCol[0] === 'VERTICALE_RIGHT') {
 					ball.dir.x = - ball.dir.x;
+					ball.pos.x = obstacle.posx + obstacle.width;
+				}
+				else if (sideCol[0] === 'VERTICALE_LEFT') {
+					ball.dir.x = - ball.dir.x;
+					ball.pos.x = obstacle.posx;
+				}
+				if (sideCol[1] === 'HORIZONTALE_TOP') {
+					ball.dir.y = - ball.dir.y;
+					ball.pos.y = obstacle.posy;
+				}
+				else if (sideCol[1] === 'HORIZONTALE_BTM') {
+					ball.dir.y = - ball.dir.y;
+					ball.pos.y = obstacle.posy + obstacle.height;
 				}
 			}
 
