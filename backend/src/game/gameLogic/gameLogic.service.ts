@@ -7,10 +7,6 @@ import { IPlayer } from "../Interface/player.interface";
 import { IgameParams } from "../Interface/gameParam.interface";
 import { Iobstacles } from "../Interface/obstacle.interface";
 
-/**
- * Besoin d'implementer les collisions avec les obstacles. 
- */
-
 export type colisionOb = 'NO' | 'HORIZONTALE_TOP' | 'HORIZONTALE_BTM' | 'VERTICALE_LEFT' | 'VERTICALE_RIGHT';
 
 @Injectable()
@@ -68,19 +64,19 @@ export class GameLogicService {
 
 	moveBalls(room:Room) : Room {
 		room.balls = room.balls.map((ball) => {
-			if (!ball.active && room.gameStatus === 'PLAYING'){
-				if (ball.startingCountDown <= 0) {
-					ball.active = true;
-					return (ball);
-				}
+			if(room.gameStatus !== 'PLAYING') return (ball);
+			if (!ball.active){
 				if (ball.startingCountDownStart === null) {
 					ball.startingCountDownStart = new Date();
 				}
 				const newDate = new Date();
-				ball.startingCountDown -= (newDate.getTime() - ball.startingCountDownStart.getTime())/1000;
+				const timePassed = (newDate.getTime() - ball.startingCountDownStart.getTime())/1000
+				console.log('Ball :', ball.id, 'Time to pass = ', timePassed);
+				if (timePassed >= ball.startingCountDown) {
+					ball.active = true;
+				}
 				return (ball);
 			}
-			if(room.gameStatus !== 'PLAYING') return (ball);
 			const ballOldPos = {
 				x: ball.pos.x,
 				y: ball.pos.y
@@ -191,6 +187,7 @@ export class GameLogicService {
 	newBalls(nbBalls: number, room: Room) : Ball[] {
 		const newId:number = nbBalls;
 		const balls: Ball[] = [];
+		let startingCountDown:number = 0;
 		for (let i = 0; i< nbBalls; i++) {
 			balls.push({
 				id: i + 1, 
@@ -201,17 +198,18 @@ export class GameLogicService {
 				},
 				speed: room.gameParam.BallInitSpeed, 
 				startingCountDownStart: null,
-				startingCountDown: (i === 0 ? 0 : Math.random() * 20),
+				startingCountDown: startingCountDown,
 				active:false
 			});
+			startingCountDown += Math.random() * 5 + 1;
 		}
+		console.log(balls);
 		return (balls);
 	}
 
 	checkballsPositions(room: Room) : Room {
 		let ballsOut = room.balls.filter((ball) => {return ((ball.pos.x > 1 || ball.pos.x < 0))});
 		if (ballsOut.length === 0) return (room);
-		room.balls = room.balls.filter((ball) => {return (!(ball.pos.x > 1 || ball.pos.x < 0))});
 		ballsOut.forEach((ball) => {
 			let sidePlayer:string = (ball.pos.x <= 1 / 2) ? 'left' : 'right';
 			sidePlayer === 'left' ? room.scoreRight++ : room.scoreLeft++;
@@ -220,10 +218,18 @@ export class GameLogicService {
 			room.gameStatus = 'FINISHED';
 			this.prismaService.finishGame(room, null);
 		}
-		const newballs = this.newBalls(ballsOut.length, room);
-		for (let i = 0; i < newballs.length; i++) {
-			room.balls.push(newballs[i]);
-		}
+		room.balls = room.balls.map((ball)=> {
+			if (!(ball.pos.x > 1 || ball.pos.x < 0)) return (ball);
+			else {
+				ball.pos = {x:room.gameParam.ballInitPosx,  y:room.gameParam.ballInitPosy};
+				ball.dir = {
+					x: Math.random() > 0.5 ? (Math.random() * 0.8) + 0.2 : -((Math.random() * 0.8) + 0.2 ), 
+					y: (Math.random() * 2) - 1
+				};
+				ball.speed = room.gameParam.BallInitSpeed;
+				return ball;
+			}
+		})
 		return (room);
 	}
 
