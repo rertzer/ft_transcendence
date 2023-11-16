@@ -1,13 +1,18 @@
 import "./Login.scss";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { MouseEvent, useEffect, useState } from "react";
+import { useLogin } from "../components/user/auth";
 
 function Login() {
   const [login, setLogin] = useState("");
+  const auth = useLogin();
 
   const [tokenOk, setTokenOk] = useState(false);
 
   const navigate = useNavigate();
+  const location = useLocation();
+  const redirectPath = location.state?.path || "/";
+
   const handleSubmit = async (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
 
@@ -24,7 +29,9 @@ function Login() {
         //setLogin("");
       } else {
         token_status = true;
-        sessionStorage.setItem("Token", JSON.stringify(token));
+
+        auth.login(token);
+        navigate(redirectPath, { replace: true });
       }
       setTokenOk(token_status);
     } catch (e) {
@@ -33,10 +40,6 @@ function Login() {
   };
 
   console.log("Log user ok is", tokenOk);
-  useEffect(() => {
-    console.log("use effect token is", tokenOk);
-    if (tokenOk) navigate("/game");
-  }, [tokenOk]);
 
   return (
     <div className="login">

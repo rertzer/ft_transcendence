@@ -6,7 +6,6 @@ import styles from "./Desktop1.module.css";
 import { useContext, useState } from 'react';
 import { MyContext, MyProvider } from '../context/PageContext';
 import ChatComponent from '../components/chat/ChatComponent';
-import ConnectionContext from '../context/authContext';
 import { WebsocketContext } from "../context/chatContext";
 
 import userContext from '../context/userContext';

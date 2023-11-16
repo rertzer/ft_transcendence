@@ -2,7 +2,6 @@ import "./Home.scss";
 import { useContext } from "react";
 import GameWindow from "../components/GameWindow";
 import { WebsocketContext } from "../context/chatContext";
-import ConnectionContext from '../context/authContext'
 
 
 function Home() {
