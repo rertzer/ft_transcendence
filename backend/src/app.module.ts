@@ -10,10 +10,11 @@ import { RoomsModule } from './game/rooms/rooms.module';
 
 import { PlayersService } from './game/players/players.service';
 import { RoomsService } from './game/rooms/rooms.service';
+import { GameLogicModule } from './game/gameLogic/gameLogic.module';
 
 @Module({
-  imports: [/*AuthModule,*/ UserModule, PrismaModule, ChatModule, MutedUserModule, GameSocketModule, PlayersModule, RoomsModule],
+  imports: [/*AuthModule,*/ UserModule, PrismaModule, ChatModule, MutedUserModule, GameSocketModule, PlayersModule, RoomsModule, GameLogicModule],
   controllers: [],
-  providers: [PlayersService, RoomsService],
+  providers: [],
 })
 export class AppModule {}

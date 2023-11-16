@@ -4,7 +4,7 @@ import { PlayersService } from "./players/players.service";
 import { RoomsService } from "./rooms/rooms.service";
 import { ScheduleModule } from "@nestjs/schedule";
 import { PrismaGameService } from "src/prisma/game/prisma.game.service";
-import { GameService } from "./rooms/game.service";
+import { GameService } from "./gameLogic/game.service";
 
 @Module({
 	imports:[ ScheduleModule.forRoot()],

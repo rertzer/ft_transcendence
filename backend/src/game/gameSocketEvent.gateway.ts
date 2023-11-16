@@ -6,7 +6,7 @@ import { RoomsService } from "./rooms/rooms.service";
 import { Interval } from "@nestjs/schedule";
 import { Logger } from "@nestjs/common";
 import { TypeGame } from "./Interface/room.interface";
-import { GameService } from "./rooms/game.service";
+import { GameService } from "./gameLogic/game.service";
 import { PrismaGameService } from "src/prisma/game/prisma.game.service";
 
 @WebSocketGateway({

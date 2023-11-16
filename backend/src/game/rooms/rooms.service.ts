@@ -3,7 +3,7 @@ import { Room, TypeGame} from '../Interface/room.interface';
 import { IPlayer } from '../Interface/player.interface';
 import { Socket } from 'socket.io';
 import { PrismaGameService } from 'src/prisma/game/prisma.game.service';
-import { GameService } from './game.service';
+import { GameService } from '../gameLogic/game.service';
 import { OnModuleInit } from '@nestjs/common';
 import { gameMaps } from '../DefaultData/gameMaps';
 import { gameParams } from '../DefaultData/gameParams';
