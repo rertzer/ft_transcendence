@@ -8,6 +8,7 @@ type SharedData = {
   toolbar: boolean;
   coords: { coordX: number; coordY: number };
   scroll: { scrollX: number; scrollY: number };
+  game: { player1: string; player2: string; points1: number; points2: number };
   updatePage: (newData: string) => void;
   updateMenu: (updateMenu: string) => void;
   updateChat: (updateChat: string) => void;
@@ -17,6 +18,7 @@ type SharedData = {
   updateCoords: (newCoords: { coordX: number; coordY: number }) => void;
   updateCoordsMenu: (newCoords: { coordX: number; coordY: number }, newMenu: string) => void;
   updateScroll: (newScroll: { scrollX: number; scrollY: number }) => void;
+  updateGame: (newGame: { player1: string; player2: string; points1: number; points2: number }) => void;
 };
 
 const MyContext = createContext<SharedData | undefined>(undefined);
@@ -34,6 +36,7 @@ function MyProvider({ children }: MyProviderProps) {
     toolbar:false,
     coords: { coordX: 0, coordY: 0 },
     scroll: { scrollX: 0, scrollY: 0 },
+    game: {player1: "player1", player2: "player2", points1: 0, points2: 0},
   });
 
   const updatePage = (newData: string) => {
@@ -57,17 +60,19 @@ function MyProvider({ children }: MyProviderProps) {
   const updateCoords = (newCoords: { coordX: number; coordY: number }) => {
     setSharedData({ ...sharedData, coords: { ...newCoords } });
   };
-
   const updateCoordsMenu = (newCoords: { coordX: number; coordY: number }, newMenu: string) => {
     setSharedData({ ...sharedData, coords: { ...newCoords }, menu: newMenu});
   };
   const updateScroll = (newScroll: { scrollX: number; scrollY: number }) => {
     setSharedData({ ...sharedData, scroll: { ...newScroll } });
   };
+  const updateGame = (newGame: { player1: string; player2: string; points1: number; points2: number }) => {
+    setSharedData({ ...sharedData, game: { ...newGame } });
+  };
   
 
   return (
-    <MyContext.Provider value={{ ...sharedData, updatePage, updateMenu, updateChat, updateZoom, updateToolbar, updatePageMenuChat, updateCoords, updateCoordsMenu, updateScroll}}>
+    <MyContext.Provider value={{ ...sharedData, updatePage, updateMenu, updateChat, updateZoom, updateToolbar, updatePageMenuChat, updateCoords, updateCoordsMenu, updateScroll, updateGame}}>
       {children}
     </MyContext.Provider>
   );

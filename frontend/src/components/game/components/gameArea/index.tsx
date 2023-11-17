@@ -7,6 +7,7 @@ import { gameSocket } from "../../services/gameSocketService";
 import { IPlayer } from "./interfacesGame";
 import { IBall } from "./interfacesGame";
 import { IObstacles } from "./interfacesGame";
+import { MyContext } from "../../../../context/PageContext";
 
 function GameArea(props:any) {
 	const {roomId, gameWidth, gameHeight, playerName, gameStatus, setGameStatus, setRoomId, setModeGame} = useContext(gameContext);
@@ -25,14 +26,14 @@ function GameArea(props:any) {
 		backColor: '#000000',
 		ballColor: '#f2c546',
 		netColor: 'rgba(255,255,255,0)',
-		scoreColor: '#000000',
+		scoreColor: 'rgba(255,255,255,0)',
 		scoreFont: 'helvetica',
 		scoreFontDecoration: 'bold',
 		scoreFontPx: 0.07,
 		nameFont: 'helvetica',
 		nameFontDecoration: 'bold',
 		nameFontPx: 0.03,
-		nameColor: '#000000',
+		nameColor: 'rgba(255,255,255,0)',
 		ballInitSpeed: 0,
 		ballInitDir: {x: 0.5, y: -1},
 		ballSpeedIncrease: 0,
@@ -256,7 +257,26 @@ function GameArea(props:any) {
 		}
 	};
 
+	const resetGame = () => { //////////////////deplacer la fonction de reset au moment du form, pas au moment du render, ajoueter reset du player1, et du player2, conditionner leurs affichages si ils sont differents de player1 etc
+		gameSocket.emit("i_am_leaving", {roomId});
+		setGameStatus('NOT_IN_GAME');
+		setRoomId(0);
+		setModeGame('');
+	};
+
+	const context = useContext(MyContext);
+	if (!context) {
+	throw new Error('useContext must be used within a MyProvider');
+	}
+	const { game, page, updateGame, updatePage } = context;
 	function render(context:CanvasRenderingContext2D):void {
+		if (game.player1 != frontEndPlayerLeft.name || game.player2 != frontEndPlayerRight.name || game.points1 != frontEndPlayerLeft.score || game.points2 != frontEndPlayerRight.score)
+			updateGame({player1: frontEndPlayerLeft.name, player2: frontEndPlayerRight.name, points1: frontEndPlayerLeft.score, points2: frontEndPlayerRight.score});
+		if (page === "Project")
+		{
+			updatePage("Game");
+			resetGame();
+		}
 		moveMyPlayerImediately();
 		context.clearRect(0, 0, context.canvas.width, context.canvas.height)
 		printGame({context:context, pong:pong, playerLeft:frontEndPlayerLeft, playerRight:frontEndPlayerRight, balls:balls, obstacles: obstacles, gameWidth:gameWidth, gameHeight:gameHeight});

@@ -14,7 +14,7 @@ SOURCES = 	docker-compose.yml
 
 CACHE_FILE = "/mnt/nfs/homes/$(USER)/.cache/yarn"
 
-all: 	$(SOURCES) env_front env_back
+all: 	$(SOURCES) env_front 
 		docker-compose -f ./docker-compose.yml up
 
 down:	$(SOURCES) env_front env_back
