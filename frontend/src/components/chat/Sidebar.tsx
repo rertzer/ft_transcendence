@@ -12,14 +12,40 @@ const Sidebar = () => {
 
 	useEffect(() => {
         const id = activeChannel.id;
-        if (id !== -1 && allChannels.find(element => element.id === id) === undefined)
+        console.log(activeChannel.channelName)
+        console.log(allChannels)
+        if (needToUpdate === "" && id !== -1 && allChannels.find(element => element.id === id) === undefined)
             setActiveChannel({id: -1, channelName: "You lost access to this channel", chatPicture: "", type: "", status: "", username: null, dateSend: null, msg: null});
-        else if (needToUpdate && allChannels.length > 0) {
-            setActiveChannel(allChannels[allChannels.length -1]);
-			socket.emit('retrieveMessage', {chatId: allChannels[allChannels.length -1].id, messageToDisplay: 15 })
-            setNeedToUpdate(false);
+        else if (needToUpdate === "addChat" && allChannels.length === 1) {
+            setActiveChannel(allChannels[0]);
+			socket.emit('retrieveMessage', {chatId: allChannels[0].id, messageToDisplay: 15 })
+            setNeedToUpdate("");
         }
-    }, [allChannels.length])
+        else if (needToUpdate.indexOf("newDM ") === 0) {
+            const name = needToUpdate.substring(6);
+            const newDM = allChannels.find((element) => {
+                if (element.type !== "DM")
+				return false;
+			const name1 = element.channelName.substring(0, element.channelName.indexOf(" "));
+			const name2 = element.channelName.substring(element.channelName.indexOf(" ") + 1);
+			if (name === name1 || name === name2)
+				return true;
+			return false;
+            });
+            if (newDM) {
+                setActiveChannel(newDM);
+                setNeedToUpdate("");
+            }
+        }
+        else if (needToUpdate.indexOf("joinedChat ") === 0  && allChannels.length > 0) {
+            const channelJoined = allChannels.find(element => element.id === parseInt(needToUpdate))
+            if (channelJoined !== undefined) {
+                setActiveChannel(channelJoined);
+                socket.emit('retrieveMessage', {chatId: channelJoined.id, messageToDisplay: 15 })
+                setNeedToUpdate("");
+            }
+        }
+    }, [allChannels.length, needToUpdate])
 
     return (
         <div className='sidebar'>

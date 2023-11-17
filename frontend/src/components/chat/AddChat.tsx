@@ -54,7 +54,7 @@ export const AddChat = (props: {showSubMenu: string, setShowSubMenu: Function}) 
 			}
 		}
 		socket.emit('createChat', createChatData);
-		setNeedToUpdate(true);
+		setNeedToUpdate("addChat");
 		setChatName('');
 		setPassword('');
 		toggleForm();

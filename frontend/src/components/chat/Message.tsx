@@ -136,7 +136,15 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 	}
 
 	function checkIfDmExists() {
-		const index = allChannels.findIndex((element: Channel) => element.type === "DM" && element.channelName.search(props.username) !== -1);
+		const index = allChannels.findIndex((element: Channel) => {
+			if (element.type !== "DM")
+				return false;
+			const name1 = element.channelName.substring(0, element.channelName.indexOf(" "));
+			const name2 = element.channelName.substring(element.channelName.indexOf(" ") + 1);
+			if (props.username === name1 || props.username === name2)
+				return true;
+			return false;
+		});
 		return (index);
 	}
 
@@ -151,8 +159,9 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 				sender: auth.user.login,
 				receiver: props.login,
 			}
+			console.log(messageData)
 			socket.emit('newPrivateConv', messageData);
-			setNeedToUpdate(true);
+			setNeedToUpdate("newDM" + props.username);
 			toggleUserActionsMenu();
 		}
 	}

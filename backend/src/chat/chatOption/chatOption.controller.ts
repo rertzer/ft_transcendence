@@ -6,6 +6,7 @@ import { MyGateway } from "../gateway/gateway.service";
 import { JoinChatService } from "../joinChat/joinChat.service";
 import { JwtGuard } from "src/auth/guard";
 import { UseGuards } from "@nestjs/common";
+import { ChatLister } from "../chatLister/chatLister.service";
 
 // @UseGuards(JwtGuard)
 @Controller('chatOption')
@@ -128,7 +129,9 @@ export class ChatOptController {
 		const targetSocket = SockArray.find((socket) => socket.login === user.login);
 		if (targetSocket !== undefined)
 		{
-			const value = this.joinChatservice.joinChat(targetSocket.idOfLogin, user.chat_id, "user", user.password, targetSocket.sock);
+			const value =  await this.joinChatservice.joinChat(targetSocket.idOfLogin, user.chat_id, "user", user.password, targetSocket.sock);
+			const chatlister = new ChatLister(this.prismaChatService);
+			chatlister.listChatOfUser(targetSocket.idOfLogin, targetSocket.sock);
 			return value;
 		}
 		return false;

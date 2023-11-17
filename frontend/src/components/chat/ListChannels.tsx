@@ -38,8 +38,8 @@ export const ListChannels = (props: {showSubMenu: string, setShowSubMenu: Functi
 			setChanToJoin({id: -1, name: "", owner: "", type: "", password: null})
 		} else {
 			setErrorMessage("");
-			socket.emit('chatListOfUser', auth.user.login);
-			setNeedToUpdate(true);
+			// socket.emit('chatListOfUser', auth.user.login);
+			setNeedToUpdate("joinedChat " + chanToJoin.id.toString());
 			toggleForm();
 
 		}

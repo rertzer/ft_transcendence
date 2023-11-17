@@ -20,19 +20,10 @@ export type Channel = {
     dateSend: Date | null;
 }
 
-// export type Message = {
-//     msg: string;
-//     username: string;
-// 	login: string;
-//     date: Date;
-//     id: number;
-//     idOfChat: number;
-// }
-
 const ChatComponent = () => {
 
     const [allChannels, setAllChannels] = useState<Channel[]>([])
-    const [needToUpdate, setNeedToUpdate] = useState(false);
+    const [needToUpdate, setNeedToUpdate] = useState("");
     const [activeChannel, setActiveChannel] = useState<Channel>({
         id: -1,
         channelName: "Pong Chat",
@@ -43,6 +34,8 @@ const ChatComponent = () => {
         dateSend: null,
         msg: null
     })
+
+    // useEffect(() => {console.log("coucou", allChannels)}, [allChannels])
 
   const ChatValue: IChatContext = {
     allChannels,

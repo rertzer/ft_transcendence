@@ -18,8 +18,8 @@ export interface IChatContext {
 	setAllChannels: (allChannels: Channel[]) => void;
 	activeChannel: Channel,
 	setActiveChannel: (activeChannel: Channel) => void;
-	needToUpdate: boolean,
-	setNeedToUpdate: (bool: boolean) => void;
+	needToUpdate: string,
+	setNeedToUpdate: (bool: string) => void;
 };
 
 const defaultState:IChatContext = {
@@ -36,7 +36,7 @@ const defaultState:IChatContext = {
 		msg: null
 	},
 	setActiveChannel: () => {},
-	needToUpdate: false,
+	needToUpdate: "",
 	setNeedToUpdate: () => {},
 };
 
