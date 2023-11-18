@@ -11,6 +11,7 @@ import Welcome from "./routes/Welcome";
 import { LoginProvider } from "./components/user/auth";
 import { RequireAuth } from "./components/user/requireAuth";
 import EditProfile from "./routes/EditProfile";
+import Twofa from './routes/TwoFA';
 
 function App() {
   const socket = useContext(WebsocketContext);
@@ -31,6 +32,7 @@ function App() {
 	  <Route path="/login" element={<Login />} />
     <Route path="/profile" element={<RequireAuth> <Profile /></RequireAuth>} />
     <Route path="/edit" element={<RequireAuth> <EditProfile /></RequireAuth>} />
+    <Route path="/twofa" element={<RequireAuth> <Twofa /></RequireAuth>} />
 	  <Route path="*" element={<Welcome />} />
 	  </Route>
     )

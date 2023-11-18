@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { PrismaClient } from '@prisma/client';
+import { twoFASecretDto } from 'src/twoFA/dto/twoFASecret.dto';
 
 
 @Injectable()
@@ -66,6 +67,21 @@ export class PrismaUserService extends PrismaClient
     }
   }
   
+  async setTfaHashedSecret(dto: twoFASecretDto){
+    try {
+      const user = await this.user.update({
+        where: {
+          login: dto.login,
+        },
+        data: {tfa_hashed_secret: dto.hashedSecret},
+      });
+      return user;
+    } catch (error) {
+      throw new BadRequestException('Bad request');
+    }
+  }
+
+
   async createUser(dto: LoginDto) {
     try {
       const user = await this.user.create({
