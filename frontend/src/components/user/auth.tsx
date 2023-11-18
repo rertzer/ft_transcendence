@@ -43,6 +43,18 @@ export const LoginProvider = ({ children }: any) => {
     setUser(empty_user);
   };
 
+  const fetchImage = async () => {
+    const bearer = "Bearer " + token.access_token;
+    const res = await fetch("/user/avatar/" + user.avatar, {
+      method: "GET",
+      headers: { Authorization: bearer },
+    });
+    console.log("fetchImage on route /user/avatar/", user.avatar);
+    const imageBlob = await res.blob();
+    const imageObjectURL = URL.createObjectURL(imageBlob);
+    setImage(imageObjectURL);
+  };
+
   const reload = () => {
     console.log("reloading...", token.login);
     if (token.login) {
@@ -53,35 +65,17 @@ export const LoginProvider = ({ children }: any) => {
           method: "GET",
           headers: { Authorization: bearer },
         });
-        const user = await data.json();
-        if (user.message) {
+        const newUser = await data.json();
+        if (newUser.message) {
           console.log("Bad Bad");
         } else {
-          setUser(user);
+          setUser(newUser);
         }
       };
       try {
         fetchUser();
       } catch (e) {
         console.log(e);
-      }
-
-      const fetchImage = async () => {
-        const res = await fetch("/user/avatar/" + user.avatar, {
-          method: "GET",
-          headers: { Authorization: bearer },
-        });
-        const imageBlob = await res.blob();
-        const imageObjectURL = URL.createObjectURL(imageBlob);
-        setImage(imageObjectURL);
-      };
-
-      if (user.avatar !== null && user.avatar !== "") {
-        try {
-          fetchImage().catch((e) => console.log("Failed to fetch the avatar"));
-        } catch (e) {
-          console.log(e);
-        }
       }
     }
   };
@@ -90,7 +84,6 @@ export const LoginProvider = ({ children }: any) => {
     setUser(user);
   };
   const getLogin = () => {
-    
     return token.login;
   };
 
@@ -100,14 +93,24 @@ export const LoginProvider = ({ children }: any) => {
   };
 
   //////////////////////////////// refresh //////////////////////////////////////
-  // useEffect(() => {
-  //   if (!user.login) reload();
-  // }, []);
+  useEffect(() => {
+    console.log("should I fetch", user.avatar);
+    if (user.avatar !== null && user.avatar !== "") {
+      console.log("fetching image", user.avatar);
+      try {
+        fetchImage().catch((e) => console.log("Failed to fetch the avatar"));
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  }, [user]);
 
   if (!user.login) reload();
 
   return (
-    <LoginContext.Provider value={{ user, image, login, logout, getLogin, getBearer, edit }}>
+    <LoginContext.Provider
+      value={{ user, image, login, logout, getLogin, getBearer, edit }}
+    >
       {children}
     </LoginContext.Provider>
   );

@@ -29,6 +29,8 @@ function App() {
 		<Route path="/" element={<Game />} />
       </Route>
 	  <Route path="/login" element={<Login />} />
+    <Route path="/profile" element={<RequireAuth> <Profile /></RequireAuth>} />
+    <Route path="/edit" element={<RequireAuth> <EditProfile /></RequireAuth>} />
 	  <Route path="*" element={<Welcome />} />
 	  </Route>
     )
