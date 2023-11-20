@@ -6,12 +6,17 @@ import { Link } from "react-router-dom";
 import { Channel } from "./ChatComponent";
 import { useLogin } from "../../components/user/auth";
 
+type uInfo = {
+	userStatus: string, // "owner", "admin", "user", "banned", "out" (if kicked or left)
+	friend: boolean
+}
 
 const  Message = (props: {username: string, login: string, date: string, msg: string, isOwner: boolean, isAdmin: boolean, chatId: number, service: boolean, isDM: boolean}) => {
 
     const auth = useLogin();
 	const {allChannels, setActiveChannel, setNeedToUpdate} = useContext(ChatContext)
     const [showUserActionsMenu, setShowUserActionsMenu] = useState(false);
+	const [userInfo, setUserInfo] = useState<uInfo>({userStatus: "user", friend: false})
 	const [errorMessage, setErrorMessage] = useState("");
     const socket = useContext(WebsocketContext);
 	let menuRef = useRef<HTMLInputElement>(null);
@@ -42,10 +47,10 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 		}
     }, [])
 
-	async function checkIfUserIsBanned(userName: string, chatID: number) {
+	async function checkIfUserIsBanned() {
 
 		try {
-			const response = await fetch(`http://localhost:4000/chatOption/${props.login}/banned/${chatID}`);
+			const response = await fetch(`http://localhost:4000/chatOption/${props.login}/banned/${props.chatId}`);
 			if (!response.ok) {
 				throw new Error("Request failed");
 			}
@@ -59,7 +64,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 		catch(error) {
 			console.error("Error while checking if user is banned", error);
 		}
-	  }
+	}
 
     if (auth.user.login === props.login) {
         messageType = "owner";
@@ -68,7 +73,21 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 		messageType = "service";
 	}
 
-    function toggleUserActionsMenu() {
+	async function checkIfAlreadyFriend() {
+		return false; //nouveau fetch a implementer, 
+	}
+
+	async function getUserInfo() {
+		return (""); // nouveau fetch a implementer, "owner", "admin", "" (normal), "banned", "left" (if kicked or left)
+	}
+
+    async function toggleUserActionsMenu() {
+		const info: uInfo = {userStatus: "", friend: false};
+		if (showUserActionsMenu === false && props.isDM === false) {
+			info.userStatus =  await getUserInfo();
+			info.friend = await checkIfAlreadyFriend();
+			setUserInfo(info);
+		}
         setShowUserActionsMenu(!showUserActionsMenu);
 		setErrorMessage("");
     }
@@ -113,7 +132,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ login: props.login, chatId: props.chatId})
 		};
-		let banned = await checkIfUserIsBanned(auth.user.login, props.chatId);
+		let banned = await checkIfUserIsBanned();
 		if (banned) {
 			setErrorMessage(props.username + " is already banned");
 		} else {
@@ -198,19 +217,23 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 						<div className="userOptions" ref={menuRef}>
 							<img src="" style={{cursor:"pointer"}} onClick={toggleUserActionsMenu}/>
 							<div className={showUserActionsMenu ? "userActions" : "userActions-hidden"}>
-								<h4>{props.username}</h4>
+								{props.isDM || userInfo.userStatus === "" ? <h4>{props.username}</h4> : <h4>{props.username + " (" + userInfo.userStatus + ")"}</h4>}  
 								<hr></hr>
 								<div className="menuItems">
 									<div>Invite to play</div>
-									<div onClick={addToFriends}>Add to friends</div>
+									{userInfo.friend ? <div>Unfriend</div> : <div onClick={addToFriends}>Add to friends</div>}
 									{props.isDM === false && <div onClick={startDM}>Send DM</div>}
 									<Link to="/profile/1" style={{textDecoration:"none", color: "#ddddf7"}}>
-										<div onClick={toggleUserActionsMenu}>Show profile</div>
+										<div>Show profile</div>
 									</Link>
-									{(props.isAdmin || props.isOwner) && <div onClick={kickUser}>Kick</div>}
-									{(props.isAdmin || props.isOwner) && <div onClick={banUser}>Ban</div>}
-									{(props.isAdmin || props.isOwner) && <div onClick={muteUser}>Mute 1 minute</div>}
-									{props.isOwner && <div onClick={sendNewAdmin}>Set as admin </div>}
+									{((props.isAdmin || props.isOwner) && (userInfo.userStatus === "" || userInfo.userStatus === "admin")) &&
+										<div onClick={kickUser}>Kick</div>}
+									{((props.isAdmin || props.isOwner) && userInfo.userStatus !== "banned" && userInfo.userStatus !== "owner") &&
+										<div onClick={banUser}>Ban</div>}
+									{((props.isAdmin || props.isOwner) && (userInfo.userStatus === "" || userInfo.userStatus === "admin")) &&
+										<div onClick={muteUser}>Mute 1 minute</div>}
+									{(props.isOwner && userInfo.userStatus === "") &&
+										<div onClick={sendNewAdmin}>Set as admin </div>}
 								</div>
 								{errorMessage !== "" && <div className="errorMessage">{errorMessage}</div>}
 							</div>

@@ -37,8 +37,15 @@ export const ListChannels = (props: {showSubMenu: string, setShowSubMenu: Functi
 			setErrorMessage("Wrong password");
 			setChanToJoin({id: -1, name: "", owner: "", type: "", password: null})
 		} else {
+			const messageData = {
+				username: auth.user.username,
+				login:auth.user.login,
+				content: auth.user.username + " has just joined",
+				serviceMessage: true,
+				idOfChat: chanToJoin.id,
+			}
+			socket.emit('newMessage', messageData);
 			setErrorMessage("");
-			// socket.emit('chatListOfUser', auth.user.login);
 			setNeedToUpdate("joinedChat " + chanToJoin.id.toString());
 			toggleForm();
 

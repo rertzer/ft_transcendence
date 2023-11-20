@@ -1,14 +1,12 @@
 import "./ConversationBar.scss";
-import ProfileIcon from '@mui/icons-material/AccountBoxOutlined';
-import BlockIcon from '@mui/icons-material/BlockOutlined';
 import LogoutIcon from '@mui/icons-material/MeetingRoomOutlined';
 import CloseIcon from '@mui/icons-material/Close';
 import { Tooltip } from "@mui/material";
-import ConnectionContext from '../../context/authContext'
 import ChatContext from '../../context/chatContext'
 import { useContext, useState, useRef, useEffect } from "react";
 import { ChannelSettings } from "./ChannelSettings";
 import { useLogin } from "../../components/user/auth";
+import { WebsocketContext } from '../../context/chatContext';
 
 
 const ConversationBar = (props: {isOwner: boolean, isAdmin: boolean}) => {
@@ -17,6 +15,7 @@ const ConversationBar = (props: {isOwner: boolean, isAdmin: boolean}) => {
     const {activeChannel, setActiveChannel} = useContext(ChatContext);
     const [showSubMenu, setShowSubMenu] = useState("none");
     let menuRef = useRef<HTMLInputElement>(null);
+    const socket = useContext(WebsocketContext);
 
     useEffect(() => {
 		const clickHandler = (e: any) => {
@@ -31,6 +30,14 @@ const ConversationBar = (props: {isOwner: boolean, isAdmin: boolean}) => {
 	});
 
     async function leaveChannel() {
+        const messageData = {
+			username: auth.user.username,
+			login:auth.user.login,
+			content: auth.user.username + " has just left",
+			serviceMessage: true,
+			idOfChat: activeChannel.id,
+		}
+		socket.emit('newMessage', messageData);
         const requestOptions = {
 			method: 'post',
 			headers: { 'Content-Type': 'application/json' },
