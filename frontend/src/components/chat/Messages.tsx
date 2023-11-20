@@ -3,10 +3,6 @@ import Message from "./Message";
 import "./Messages.scss";
 import { useContext, useState } from 'react';
 import { WebsocketContext } from "../../context/chatContext";
-import userEvent from '@testing-library/user-event';
-import  ConnectionContext from "../../context/authContext"
-import { Console } from 'console';
-import { render } from '@testing-library/react';
 import { useLogin } from "../../components/user/auth";
 
 type ChatMessage = {

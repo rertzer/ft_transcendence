@@ -36,7 +36,8 @@ export class ChatOptController {
 		const idLogin = await this.prismaChatService.getIdOfLogin(user.login);
 		if (idLogin)
 		{
-			if (! await this.prismaChatService.isAdmin(idLogin, user.chatId) && ! await this.prismaChatService.isOwner(user.login, user.chatId))
+			const isOwner = await this.prismaChatService.isOwner(user.login, user.chatId);
+			if (!isOwner)
 			{
 				console.log("passed this step");
 				const banWorks = await this.prismaChatService.banUserPrism(idLogin, user.chatId);
@@ -55,7 +56,7 @@ export class ChatOptController {
 				return false;
 			}
 			else
-				return false
+				return {isOwner};
 		}
 		return (false);
 	}
