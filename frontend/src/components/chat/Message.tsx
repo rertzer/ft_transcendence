@@ -161,7 +161,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 			}
 			console.log(messageData)
 			socket.emit('newPrivateConv', messageData);
-			setNeedToUpdate("newDM" + props.username);
+			setNeedToUpdate("newDM " + props.username);
 			toggleUserActionsMenu();
 		}
 	}

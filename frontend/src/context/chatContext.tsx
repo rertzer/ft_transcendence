@@ -27,7 +27,7 @@ const defaultState:IChatContext = {
 	setAllChannels: () => {},
 	activeChannel: {
 		id: -1,
-		channelName: "Pong Chat",
+		channelName: "PongOffice Chat",
 		chatPicture: "",
 		type: "",
 		status: "",

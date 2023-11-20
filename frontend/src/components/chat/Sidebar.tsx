@@ -12,8 +12,6 @@ const Sidebar = () => {
 
 	useEffect(() => {
         const id = activeChannel.id;
-        console.log(activeChannel.channelName)
-        console.log(allChannels)
         if (needToUpdate === "" && id !== -1 && allChannels.find(element => element.id === id) === undefined)
             setActiveChannel({id: -1, channelName: "You lost access to this channel", chatPicture: "", type: "", status: "", username: null, dateSend: null, msg: null});
         else if (needToUpdate === "addChat" && allChannels.length === 1) {
@@ -38,8 +36,12 @@ const Sidebar = () => {
             }
         }
         else if (needToUpdate.indexOf("joinedChat ") === 0  && allChannels.length > 0) {
-            const channelJoined = allChannels.find(element => element.id === parseInt(needToUpdate))
+            console.log("IN JOINED CHAT")
+            console.log("joined: ", needToUpdate)
+            const joinedId = parseInt(needToUpdate.substring(11));
+            const channelJoined = allChannels.find(element => element.id === joinedId)
             if (channelJoined !== undefined) {
+                console.log("JOINED FOUND")
                 setActiveChannel(channelJoined);
                 socket.emit('retrieveMessage', {chatId: channelJoined.id, messageToDisplay: 15 })
                 setNeedToUpdate("");

@@ -26,7 +26,7 @@ const ChatComponent = () => {
     const [needToUpdate, setNeedToUpdate] = useState("");
     const [activeChannel, setActiveChannel] = useState<Channel>({
         id: -1,
-        channelName: "Pong Chat",
+        channelName: "PongOffice Chat",
         chatPicture: "",
         type: "",
         status: "",
