@@ -29,17 +29,13 @@ function printGame(params:{
 		if (ball.active === false) return;
 		const img = new Image();
 		img.src = "../../../../../mouse.png";
-		params.context.drawImage(img, ball.pos.x * params.gameWidth, ball.pos.y * params.gameHeight, params.pong.ballRadius * params.gameWidth * 2, params.pong.ballRadius * params.gameWidth * 2);
+		params.context.drawImage(img, ball.pos.x * params.gameWidth, ball.pos.y * params.gameHeight, params.pong.ballRadius * params.gameWidth * 2, params.pong.ballRadius * params.gameWidth * 2);	
 	});
 
 	params.obstacles?.forEach((obstacle) => {
-		drawRect({
-			start: {x:obstacle.posx * params.gameWidth, 
-					y:obstacle.posy * params.gameHeight}, 
-			width: obstacle.width * params.gameWidth,
-			height: obstacle.height * params.gameHeight, 
-			color: '#00BFFF'
-		}, params.context);
+		const img = new Image();
+		img.src = "../../../../../" + obstacle.img;
+		params.context.drawImage(img, obstacle.posx * params.gameWidth, obstacle.posy * params.gameHeight,obstacle.width * params.gameWidth,obstacle.height * params.gameHeight);	
 	});
 	
 	drawRect({
