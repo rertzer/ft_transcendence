@@ -19,32 +19,25 @@ type ChatMessage = {
 	serviceMessage: boolean;
 }
 
-type trigger = {
-	chatId : number;
-	numberMsgToDisplay: number;
-}
-
-const Messages = (props: {chatId: number, isOwner: boolean, isAdmin: boolean, isDM: boolean}) => {
+const Messages = (props: {chatId: number, isOwner: boolean, isAdmin: boolean, setIsAdmin: Function, isDM: boolean}) => {
 	const auth = useLogin();
 	const [render, setRender] = useState(false);
 	const socket = useContext(WebsocketContext);
 	const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
 	const [chatMessages,setChatMessages] = useState<ChatMessage[]>([]);
-	const [toTrigger, setTrigger] = useState<trigger>({numberMsgToDisplay: 15, chatId: props.chatId});
 
 	useEffect(() => {
 			socket.on('chatMsgHistory', (chatHistoryReceive : ChatMessage[]) => {
-
 			setChatHistory(chatHistoryReceive);
-
 			setRender(true);
-
 		});
 		socket.on('newMessage', (chatHistoryReceive :{msg: string, username: string, login: string, date: Date, id: number, idOfChat:number, serviceMessage: boolean}) => {
 			console.log("receive a new message :", chatHistoryReceive);
 			let newDateString = chatHistoryReceive.date.toString();
 			newDateString = newDateString.slice(newDateString.indexOf("T") + 1, newDateString.indexOf("T") + 9);
 			const add : ChatMessage = {msg: chatHistoryReceive.msg, username: chatHistoryReceive.username, login: chatHistoryReceive.login, date: newDateString, id: chatHistoryReceive.id, chatId: chatHistoryReceive.idOfChat, serviceMessage: chatHistoryReceive.serviceMessage}
+			if (add.serviceMessage === true && add.msg === auth.user.username + " is now an administrator of this channel")
+				props.setIsAdmin(true);
 			setChatMessages((prevMessages) => [...prevMessages, add]);
 			socket.emit("chatListOfUser",auth.user.login);
 		});
