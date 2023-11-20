@@ -11,12 +11,13 @@ const Sidebar = () => {
     const {activeChannel, allChannels, setActiveChannel, needToUpdate, setNeedToUpdate} = useContext(ChatContext);
 
 	useEffect(() => {
+        console.log(allChannels);
         const id = activeChannel.id;
         if (needToUpdate === "" && id !== -1 && allChannels.find(element => element.id === id) === undefined)
             setActiveChannel({id: -1, channelName: "You lost access to this channel", chatPicture: "", type: "", status: "", username: null, dateSend: null, msg: null});
-        else if (needToUpdate === "addChat" && allChannels.length === 1) {
-            setActiveChannel(allChannels[0]);
-			socket.emit('retrieveMessage', {chatId: allChannels[0].id, messageToDisplay: 15 })
+        else if (needToUpdate === "addChat") {
+            setActiveChannel(allChannels[allChannels.length - 1]);
+			socket.emit('retrieveMessage', {chatId: allChannels[allChannels.length - 1].id, messageToDisplay: 15 })
             setNeedToUpdate("");
         }
         else if (needToUpdate.indexOf("newDM ") === 0) {
@@ -47,7 +48,7 @@ const Sidebar = () => {
                 setNeedToUpdate("");
             }
         }
-    }, [allChannels.length, needToUpdate])
+    }, [allChannels.length])
 
     return (
         <div className='sidebar'>

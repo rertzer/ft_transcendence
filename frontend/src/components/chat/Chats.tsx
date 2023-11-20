@@ -19,14 +19,9 @@ const Chats = () => {
             setAllChannels(channelsListReceive);
         });
 
-		socket.on("newChat", (newChat: Channel) => {
-			setAllChannels([...allChannels, newChat]);
-		});
-
         return () => {
 
 			socket.off("ListOfChatOfUser");
-			socket.off("newChat")
         }
     }, [])
 
