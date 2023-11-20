@@ -30,6 +30,12 @@ const ConversationBar = (props: {isOwner: boolean, isAdmin: boolean}) => {
 	});
 
     async function leaveChannel() {
+        const requestOptions = {
+			method: 'post',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ login: auth.user.login, chatId: activeChannel.id})
+		};
+		const response = await fetch('http://localhost:4000/chatOption/kickUser/', requestOptions);
         const messageData = {
 			username: auth.user.username,
 			login:auth.user.login,
@@ -38,12 +44,6 @@ const ConversationBar = (props: {isOwner: boolean, isAdmin: boolean}) => {
 			idOfChat: activeChannel.id,
 		}
 		socket.emit('newMessage', messageData);
-        const requestOptions = {
-			method: 'post',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ login: auth.user.login, chatId: activeChannel.id})
-		};
-		const response = await fetch('http://localhost:4000/chatOption/kickUser/', requestOptions);
 		const data = await response.json();
 		if (data.isOwner)
 			console.log("PLOP") //faudra surement faire un autre call, pour l'instant l'owner peut pas quitter son channel
