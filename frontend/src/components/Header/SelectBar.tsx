@@ -186,19 +186,19 @@ function  File() {
   if (!context) {
     throw new Error('useContext must be used within a MyProvider');
   }
-  const { page, menu, chat, updatePageMenuChat, updatePage, updateMenu, updateChat } = context;
+  const { page, resetGame, chat, updatePageMenuChatReset, updateMenu, updateGame } = context;
   function handleClick(str : string) {
     updateMenu(str);
   }
   function handlePage(str : string) {
-    updatePageMenuChat(str, "none", chat);
-	console.log(page);
+    updatePageMenuChatReset(str, "none", chat, true);
+    console.log(page);
   }
   function handleChat(str : string) {
     if (str === chat)
-      updatePageMenuChat(page, "none", "none");
+      updatePageMenuChatReset(page, "none", "none", resetGame);
     else
-      updatePageMenuChat(page, "none", str);
+      updatePageMenuChatReset(page, "none", str, resetGame);
   }
   const darkTheme = createTheme({
     palette: {

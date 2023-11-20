@@ -1,6 +1,5 @@
 import {useEffect, useContext, useRef} from "react";
 import gameContext from '../../../../context/gameContext';
-import { gameSocket } from "../../services/gameSocketService";
 import { MyContext } from "../../../../context/PageContext";
 
 
@@ -12,7 +11,6 @@ export function Canvas(props:any) {
 	if (!context) {
 		throw new Error('useContext must be used within a MyProvider');
 	}
-	const {page, updatePage} = context;
 
 	useEffect(()=> {
 		const canvas = canvasRef.current;
@@ -58,24 +56,7 @@ export function Canvas(props:any) {
 		}
 	},[]);
 
-	const {roomId, setGameStatus, setRoomId, setModeGame} = useContext(gameContext);
-
-	const leaveGame = () => {
-		// if (page === "Project")
-		// {
-		// 	updatePage("Game");
-		// 	console.log(page);
-		// 	gameSocket.emit("i_am_leaving", {roomId});
-		// 	setGameStatus('NOT_IN_GAME');
-		// 	setRoomId(0);
-		// 	setModeGame('');
-
-		// 	console.log("reseted!");
-		// }
-		return (1);
-	};
 	return (
-		<>
-			{leaveGame() && <canvas ref={canvasRef} {...rest} style={{position: 'relative', width: '100%', heigth: '100%'}}  />}
-		</>);
+			<canvas ref={canvasRef} {...rest} style={{position: 'relative', width: '100%', heigth: '100%'}}  />
+		);
 };

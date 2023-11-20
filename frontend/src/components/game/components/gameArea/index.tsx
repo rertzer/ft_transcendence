@@ -257,26 +257,14 @@ function GameArea(props:any) {
 		}
 	};
 
-	const resetGame = () => { //////////////////deplacer la fonction de reset au moment du form, pas au moment du render, ajoueter reset du player1, et du player2, conditionner leurs affichages si ils sont differents de player1 etc
-		gameSocket.emit("i_am_leaving", {roomId});
-		setGameStatus('NOT_IN_GAME');
-		setRoomId(0);
-		setModeGame('');
-	};
-
 	const context = useContext(MyContext);
 	if (!context) {
 	throw new Error('useContext must be used within a MyProvider');
 	}
-	const { game, page, updateGame, updatePage } = context;
+	const { game, updateGame } = context;
 	function render(context:CanvasRenderingContext2D):void {
 		if (game.player1 != frontEndPlayerLeft.name || game.player2 != frontEndPlayerRight.name || game.points1 != frontEndPlayerLeft.score || game.points2 != frontEndPlayerRight.score)
 			updateGame({player1: frontEndPlayerLeft.name, player2: frontEndPlayerRight.name, points1: frontEndPlayerLeft.score, points2: frontEndPlayerRight.score});
-		if (page === "Project")
-		{
-			updatePage("Game");
-			resetGame();
-		}
 		moveMyPlayerImediately();
 		context.clearRect(0, 0, context.canvas.width, context.canvas.height)
 		printGame({context:context, pong:pong, playerLeft:frontEndPlayerLeft, playerRight:frontEndPlayerRight, balls:balls, obstacles: obstacles, gameWidth:gameWidth, gameHeight:gameHeight});

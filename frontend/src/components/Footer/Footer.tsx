@@ -158,7 +158,7 @@ function Footer() {
     <SkipPreviousIcon className={styles.arrow} onClick={() =>selectPrev()}/>
     <SkipNextIcon className={styles.arrow} onClick={() =>selectNext()}/>
     <LastPageIcon className={styles.arrow} onClick={() =>updatePage("Contacts")}/>
-    <div className={page === "Project" ? styles.sheetPageSelected : styles.sheetPage} style={{left:'100px', width:'50px'}} onClick={() =>updatePage("Project")}>
+    <div className={(page === "Project") ? styles.sheetPageSelected : styles.sheetPage} style={{left:'100px', width:'50px'}} onClick={() =>updatePage("Project")}>
       <div className={styles.text}>Game</div>
     </div>
     <div className={page === "Profile" ? styles.sheetPageSelected : styles.sheetPage} style={{left:'150px', width:'50px'}} onClick={() =>updatePage("Profile")}>

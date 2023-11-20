@@ -21,7 +21,7 @@ function Header({}) {
   return <header className={styles.headerFrame} style={{ height: toolbar ? '65px' : '142px' }}>
         <div className={styles.headerBackground} style={{ height: toolbar ? '65px' : '142px' }}/>
         <div className={styles.line3}>
-          {page === "Game" ? <GameBar /> : <input className={styles.bar} /> }
+          {page === "Project" ? <GameBar /> : <input className={styles.bar} /> }
           <img className={styles.buttonsIcon} alt="" src="/buttons.svg" />
           <div className={styles.menu}>
             <div className={styles.menuBackground} />

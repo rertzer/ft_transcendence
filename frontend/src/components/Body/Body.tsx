@@ -80,7 +80,7 @@ export function Body({}) {
         <div className={styles.racketPlayer1}>
           <div className={styles.rightScrollZone1} />
         </div>
-		    { (context?.page === "Project" || context?.page === "Game") && <Game/>}
+		    { context?.page === "Project" && <Game />}
       </div>
   )
 }
