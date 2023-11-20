@@ -134,9 +134,14 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ login: props.login, chatId: props.chatId})
 		};
-		toggleUserActionsMenu();
-		await fetch('http://localhost:4000/chatOption/kickUser/', requestOptions)
-		sendServiceMessage(props.username + " has been kicked from this channel");
+		const response = await fetch('http://localhost:4000/chatOption/kickUser/', requestOptions);
+		const data = await response.json();
+		if (data.isOwner)
+			setErrorMessage(props.username + " cannot be kicked since he or she owns this channel")
+		else {
+			toggleUserActionsMenu();
+			sendServiceMessage(props.username + " has been kicked from this channel");
+		}
 	}
 
 	function checkIfDmExists() {

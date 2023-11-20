@@ -84,7 +84,8 @@ export class ChatOptController {
 		const targetSocket = SockArray.find((socket) => socket.login === user.login);
 		if (targetSocket)
 		{
-			if (! await this.prismaChatService.isAdmin(targetSocket.idOfLogin, user.chatId) && ! await this.prismaChatService.isOwner(user.login, user.chatId))
+			const isOwner = await this.prismaChatService.isOwner(user.login, user.chatId);
+			if (!isOwner)
 			{
 				console.log("passed this step");
 				const kicked = await this.prismaChatService.kickUserFromChat(targetSocket.idOfLogin, user.chatId);
@@ -98,7 +99,7 @@ export class ChatOptController {
 				return false;
 			}
 			else
-				return false
+				return {isOwner}
 		}
 		else
 		{

@@ -3,21 +3,26 @@ import Messages from "./Messages";
 import MessageInput from "./MessageInput";
 import ChatContext from "../../context/chatContext";
 import ConversationBar from "./ConversationBar";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 
 const Chat = () => {
 
     const {activeChannel} = useContext(ChatContext);
     let isOwner = false;
-    const [isAdmin, setIsAdmin] = useState(false);
     let isDM = false;
+    const [isAdmin, setIsAdmin] = useState(false);
     if (activeChannel.status === "owner") {
-        isOwner = true; }
-    if (activeChannel.status === "admin") {
-        setIsAdmin(true); }
-    if (activeChannel.type === "DM") {
-        isDM = true; }
+        isOwner = true;   
+    } else if (activeChannel.type === "DM") {
+        isDM = true;
+    }
+    useEffect(() => {
+        if (activeChannel.status === "admin")
+            setIsAdmin(true);
+        else
+            setIsAdmin(false);
+    }, [activeChannel]);
 
     return (
         <div className='chat'>
