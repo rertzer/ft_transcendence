@@ -49,7 +49,7 @@ export const LoginProvider = ({ children }: any) => {
       const bearer = "Bearer " + token.access_token;
       const fetchUser = async () => {
         console.log("bearer is", bearer);
-        const data = await fetch("/user/" + token.login, {
+        const data = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/user/` + token.login, {
           method: "GET",
           headers: { Authorization: bearer },
         });
@@ -67,7 +67,7 @@ export const LoginProvider = ({ children }: any) => {
       }
 
       const fetchImage = async () => {
-        const res = await fetch("/user/avatar/" + user.avatar, {
+        const res = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/user/avatar/` + user.avatar, {
           method: "GET",
           headers: { Authorization: bearer },
         });

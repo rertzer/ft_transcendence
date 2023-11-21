@@ -17,7 +17,7 @@ function Login() {
     event.preventDefault();
 
     try {
-      const data = await fetch("/auth/login", {
+      const data = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json; charset=utf-8" },
         body: JSON.stringify({ login }),

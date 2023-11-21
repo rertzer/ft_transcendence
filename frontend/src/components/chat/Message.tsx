@@ -45,7 +45,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 	async function checkIfUserIsBanned(userName: string, chatID: number) {
 
 		try {
-			const response = await fetch(`http://localhost:4000/chatOption/${props.login}/banned/${chatID}`);
+			const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/${props.login}/banned/${chatID}`);
 			if (!response.ok) {
 				throw new Error("Request failed");
 			}
@@ -91,7 +91,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ login: props.login, chatId: props.chatId})
 		};
-		const response = await fetch('http://localhost:4000/chatOption/setAdmin/', requestOptions)
+		const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/setAdmin/`, requestOptions)
 		.catch((error) => {
 			console.error('Error checking user status:', error);
 		  });
@@ -118,7 +118,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 			setErrorMessage(props.username + " is already banned");
 		//bien sur faut aussi verifier si le user est owner auquel cas faut un autre error message
 		} else {
-			await fetch('http://localhost:4000/chatOption/banUser/', requestOptions);
+			await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/banUser/`, requestOptions);
 			toggleUserActionsMenu();
 			sendServiceMessage(props.username + " has been banned from this channel");
 		}
@@ -131,7 +131,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 			body: JSON.stringify({ login: props.login, chatId: props.chatId})
 		};
 		toggleUserActionsMenu();
-		await fetch('http://localhost:4000/chatOption/kickUser/', requestOptions)
+		await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/kickUser/`, requestOptions)
 		sendServiceMessage(props.username + " has been kicked from this channel");
 	}
 
@@ -165,7 +165,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 			body: JSON.stringify({ login: auth.user.login, friendToAdd: props.login})
 		};
 		toggleUserActionsMenu();
-		await fetch('http://localhost:4000/friend/addFriend/', requestOptions)
+		await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/friend/addFriend/`, requestOptions)
 
 	}
 

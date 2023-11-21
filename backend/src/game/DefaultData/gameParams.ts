@@ -3,7 +3,7 @@ import { IgameParams } from "../Interface/gameParam.interface"
 export const gameParams : IgameParams[] = [
 	{
 		type:'BASIC', 
-		ballRadius: 0.01,
+		ballRadius: 0.007,
 		paddleWidth: 0.01,
 		paddleHeight: 0.25,
 		ballSpeedIncrease: 0.0005,
@@ -17,7 +17,7 @@ export const gameParams : IgameParams[] = [
 	}, 
 	{
 		type:'ADVANCED', 
-		ballRadius: 0.01,
+		ballRadius: 0.007,
 		paddleWidth: 0.01,
 		paddleHeight: 0.25,
 		ballSpeedIncrease: 0.0005,

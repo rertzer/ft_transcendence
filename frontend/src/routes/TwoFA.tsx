@@ -30,7 +30,7 @@ function Twofa() {
 
     let tosend: any= { login: auth.user.login };
 
-    const data = await fetch("/twofa/setup", {
+    const data = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/twofa/setup`, {
       method: "GET",
       headers: {
         Authorization: bearer,

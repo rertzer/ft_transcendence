@@ -51,7 +51,7 @@ function EditProfile() {
       formData.append("file", newAvatar, newAvatar.name);
       console.log(formData);
 
-      const fileData = await fetch("/user/editAvatar", {
+      const fileData = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/user/editAvatar`, {
         method: "POST",
         headers: { Authorization: auth.getBearer() },
         body: formData,
@@ -66,7 +66,7 @@ function EditProfile() {
     if (newEmail) tosend.email = newEmail;
 
     console.log("fetching", tosend);
-    const data = await fetch("/user/edit", {
+    const data = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/user/edit`, {
       method: "POST",
       headers: {
         Authorization: auth.getBearer(),

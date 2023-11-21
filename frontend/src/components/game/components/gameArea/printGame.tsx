@@ -28,7 +28,7 @@ function printGame(params:{
 	params.balls?.forEach((ball) => {
 		if (ball.active === false) return;
 		const img = new Image();
-		img.src = "../../../../../mouse.png";
+		img.src = "../../../../../mouse3.png";
 		params.context.drawImage(img, ball.pos.x * params.gameWidth, ball.pos.y * params.gameHeight, params.pong.ballRadius * params.gameWidth * 2, params.pong.ballRadius * params.gameWidth * 2);	
 	});
 
