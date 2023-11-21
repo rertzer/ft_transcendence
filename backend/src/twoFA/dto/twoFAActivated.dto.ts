@@ -1,14 +1,15 @@
 import {
+    IsBoolean,
     IsNotEmpty,
     IsString,  
   } from 'class-validator';
   
-  export class twoFASecretDto {
+  export class twoFAActivatedDto {
     @IsString()
     @IsNotEmpty()
     login: string;
 
-    @IsString()
+    @IsBoolean()
     @IsNotEmpty()
-    secret: string;
+    verified: boolean;
   }

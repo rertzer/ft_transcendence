@@ -1,7 +1,8 @@
 import { useContext, useEffect } from 'react';
 import './styles.scss';
 import { createBrowserRouter, createRoutesFromElements,RouterProvider, Route } from 'react-router-dom';
-import Login from './routes/Login';
+//import Login from './routes/Login';
+import Login from './routes/FtLogin';
 import Home from './routes/Home';
 import Profile from './routes/Profile';
 import { WebsocketContext } from './context/chatContext';
@@ -12,6 +13,7 @@ import { LoginProvider } from "./components/user/auth";
 import { RequireAuth } from "./components/user/requireAuth";
 import EditProfile from "./routes/EditProfile";
 import Twofa from './routes/TwoFA';
+import Redirect from './routes/Redirect';
 
 function App() {
   const socket = useContext(WebsocketContext);
@@ -30,6 +32,7 @@ function App() {
 		<Route path="/" element={<Game />} />
       </Route>
 	  <Route path="/login" element={<Login />} />
+    <Route path="/redirect" element={<Redirect />} /> 
     <Route path="/profile" element={<RequireAuth> <Profile /></RequireAuth>} />
     <Route path="/edit" element={<RequireAuth> <EditProfile /></RequireAuth>} />
     <Route path="/twofa" element={<RequireAuth> <Twofa /></RequireAuth>} />

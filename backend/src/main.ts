@@ -20,7 +20,8 @@ async function bootstrap() {
     credentials: true, // If you need to handle cookies or authentication
   };
   // Enable CORS using the provided options
-  app.enableCors(corsOptions);
+  //app.enableCors(corsOptions);
+  app.enableCors();
   app.useGlobalPipes(new ValidationPipe(
     {whitelist: true,}
   ));

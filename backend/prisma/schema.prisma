@@ -22,7 +22,7 @@ model User {
   game_won               Int?
   game_lost              Int?
   game_played            Int?
-  tfa_hashed_secret      String?
+  tfa_secret             String?
   tfa_activated          Boolean              @default(false)
   banned_chats           UsersBannedToChats[]
   friends                Friend[]             @relation("UserToFriends")

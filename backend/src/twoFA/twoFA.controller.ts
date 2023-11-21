@@ -19,9 +19,9 @@ export class TwoFAController {
   @Post('validate')
   validate(@GetUser('login') login: string,
   @Body() dto: twoFADto) {
-    const answer = this.twofaService.validate(login, dto.token);
-    console.log('Controller received answer:', answer);
-    return answer;
+    const user = this.twofaService.validate(login, dto.token);
+    console.log('Controller received answer:', user);
+    return user;
   }
 
   @Get('authenticate')

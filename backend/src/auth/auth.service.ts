@@ -20,7 +20,7 @@ export class AuthService {
   async login(dto: LoginDto) {
     let user = await this.prismaUser.getUserByLogin(dto.login);
     if (!user) {
-      user = await this.prismaUser.createUser(dto);
+     // user = await this.prismaUser.createUser(dto);
     }
     if (!user) {
       throw new ImATeapotException("For real: I'm a Teapot");

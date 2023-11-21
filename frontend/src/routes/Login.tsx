@@ -26,7 +26,6 @@ function Login() {
       let token_status = false;
       if (token.message) {
         console.log("Bad login");
-        //setLogin("");
       } else {
         token_status = true;
 
