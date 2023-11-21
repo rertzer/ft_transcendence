@@ -1,11 +1,10 @@
 import { Body, Controller, Post, Get, Param } from "@nestjs/common";
 import { PrismaChatService } from "src/prisma/chat/prisma.chat.service";
-import { MutedUserService } from "../mutedUser/mutedUser.service";
-import { getDate } from "../utils/utils.service";
 import { MyGateway } from "../gateway/gateway.service";
 import { JoinChatService } from "../joinChat/joinChat.service";
 import { JwtGuard } from "src/auth/guard";
-import { UseGuards } from "@nestjs/common";
+import { getDate } from "../utils/utils.service";
+import { UseGuards, ParseIntPipe } from "@nestjs/common";
 import { ChatLister } from "../chatLister/chatLister.service";
 
 // @UseGuards(JwtGuard)
@@ -28,6 +27,24 @@ export class ChatOptController {
 			return false;
 		}
 
+	}
+
+	@Post('blockUser')
+	async blockUser(@Body() data: {blockedLogin:string, login:string})
+	{
+		return await this.prismaChatService.blockUser(data.login, data.blockedLogin, getDate());
+	}
+
+	@Post('unblockUser')
+	async unblockUser(@Body() data: {blockedLogin:string, login:string})
+	{
+		return await this.prismaChatService.unblockUser(data.login, data.blockedLogin);
+	}
+
+	@Post('isBlocked')
+	async isBlockUser(@Body() data: {blockedLogin:string, login:string})
+	{
+		return await this.prismaChatService.userIsblocked(data.login, data.blockedLogin);
 	}
 
 	@Post('banUser')
@@ -64,14 +81,14 @@ export class ChatOptController {
 	@Get(':login/banned/:chatId')
 	async isUserBanned(
 		@Param('login') login: string,
-		@Param('chatId') chatId: string,
+		@Param('chatId', ParseIntPipe) chatId: number,
 	) {
 		console.log("username receive : ", login, "chat id :", chatId);
 		const SockArray = this.gateway.getSocketsArray()
 		const targetSocket = SockArray.find((socket) => socket.login === login);
 		if (targetSocket)
 		{
-			const isBanned = await this.prismaChatService.checkIfUserIsBanned(parseInt(chatId), targetSocket.idOfLogin);
+			const isBanned = await this.prismaChatService.checkIfUserIsBanned(chatId, targetSocket.idOfLogin);
 			console.log("is banned or not ?", isBanned);
 			return { isBanned };
 		}
@@ -124,6 +141,48 @@ export class ChatOptController {
 			return false
 		}
 	}
+
+	@Post('changeType')
+	async changeChatType(@Body() chatType:{password:string, type: string, chatId: number, login: string})
+	{
+		let worked;
+		const isOwner = await this.prismaChatService.isOwner(chatType.login, chatType.chatId);
+		if (isOwner)
+		{
+			if (chatType.password.length > 0)
+			{
+				worked = await this.prismaChatService.updateChatWithPassword(chatType.password, chatType.type, chatType.chatId);
+			}
+			else 
+			{
+				worked = await this.prismaChatService.updateChatTypeNoPass(chatType.chatId, chatType.type);
+			}
+			return( worked);
+		}
+		else
+			return ("Not Owner")
+	}
+	
+	@Post("listOfBlockedUser")
+	async listOfBlockUser(@Body() user:{login:string})
+	{
+		const listBlocked = await this.prismaChatService.getListOfBlocked(user.login)
+		if (listBlocked)
+			return listBlocked;
+		else 
+			return false;
+	}
+
+	@Get(':login/info/:chatId')
+	async userInfo(
+		@Param('login') login: string,
+		@Param('chatId', ParseIntPipe) chatId: number,
+	) {
+		const userInfo = this.prismaChatService.getChatChannelsUser(login, chatId);
+		if (userInfo)
+			return userInfo;
+	}
+
 
 	@Post('joinChat')
 	async joinChat(@Body() user: {login:string, chat_id: number, password:string})

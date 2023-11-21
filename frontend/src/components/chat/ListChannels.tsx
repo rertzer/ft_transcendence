@@ -1,5 +1,4 @@
 import MenuIcon from '@mui/icons-material/Menu';
-import LockIcon from '@mui/icons-material/Lock';  // lock icon for channels protected by password
 import { Tooltip } from '@mui/material';
 import "./ListChannels.scss"
 import { useContext, useState, useEffect } from 'react';
@@ -148,8 +147,9 @@ export const ListChannels = (props: {showSubMenu: string, setShowSubMenu: Functi
 			</div>}
             {availableChannels.filter(isNotAlreadyIn).map((chan) => {return (
 			<div className="channelItem" key={chan.id}>
-				<p onClick={() => {setChanToJoin(chan)}}>{chan.name}</p>
-				{chan.type === "protected by password" && <LockIcon />}
+				{chan.type === "protected by password" ?
+				<p onClick={() => {setChanToJoin(chan)}}>{chan.name + " (password)"}</p> : 
+				<p onClick={() => {setChanToJoin(chan)}}>{chan.name}</p>}
 			</div>
 			)
 			})}

@@ -2,15 +2,19 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import { Tooltip } from '@mui/material';
 import "./ChannelSettings.scss"
 import { useContext, useState } from 'react';
-import ChatContext from '../../context/chatContext';
+import ChatContext, {WebsocketContext} from '../../context/chatContext';
+import { useLogin } from "../../components/user/auth";
 import { act } from 'react-dom/test-utils';
+
 
 export const ChannelSettings = (props: {showSubMenu: string, setShowSubMenu: Function}) => {
 
-    const {activeChannel} = useContext(ChatContext);
+    const socket = useContext(WebsocketContext);
+    const {activeChannel, setNeedToUpdate} = useContext(ChatContext);
     const [userToInvite, setUserToInvite] = useState('');
 	const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState("");
+    const auth = useLogin();
 
 
     const toggleForm = () => {
@@ -22,43 +26,61 @@ export const ChannelSettings = (props: {showSubMenu: string, setShowSubMenu: Fun
     }
 
     async function updatePassword() {
-
-        /* 
-            const data = {
-				login: login, (pour verifier si le user est bien owner du channel)
-				chat_id: activeChannel.id,
-				password: password,
-			};
-
-            const requestOptions = {
-            method: 'post',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data),
-            };
-
-            let returnValue = await fetch('http://localhost:4000/chatOption/urlPourModifierLePasswordEtChangerLeTypeSiNecessaire', requestOptions)
-            (verifier la valeur de retour pour set le message d'erreur si necessaire, et si tout va bien on ferme le menu et on re-render)
-        */
+        if (password === "") {
+            setErrorMessage("Password cannot be left empty");
+            return;
+        }
+        const requestOptions = {
+			method: 'post',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ password: password, type: "protected by password", chatId: activeChannel.id, login: auth.user.login})
+		};
+		const response = await fetch('http://localhost:4000/chatOption/changeType/', requestOptions);
+		const data = await response.json();
+        if (data) {
+            toggleForm();
+            setErrorMessage("");
+            setPassword("");
+            setUserToInvite("");
+            const messageData = {
+                username: auth.user.username,
+                login:auth.user.login,
+                content: "This channel is now protected by a new password",
+                serviceMessage: true,
+                idOfChat: activeChannel.id,
+            }
+            socket.emit('newMessage', messageData);
+            activeChannel.type = "protected by password";
+        }
+        else
+            setErrorMessage("Oops, an error occured while updating password")
     }
 
     async function changeChannelType(newType: string) {
-
-        /* 
-            const data = {
-				login: login, (pour verifier si le user est bien owner du channel)
-				chat_id: activeChannel.id,
-				type: newType,
-			};
-
-            const requestOptions = {
-            method: 'post',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data),
-            };
-
-            let returnValue = await fetch('http://localhost:4000/chatOption/urlPourModifierLeTypeDuChannel', requestOptions)
-            (verifier la valeur de retour pour set le message d'erreur si necessaire, et si tout va bien on ferme le menu et on re-render)
-        */
+        const requestOptions = {
+			method: 'post',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ password: "", type: newType, chatId: activeChannel.id, login: auth.user.login})
+		};
+		const response = await fetch('http://localhost:4000/chatOption/changeType/', requestOptions);
+		const data = await response.json();
+        if (data){
+            toggleForm();
+            setErrorMessage("");
+            setPassword("");
+            setUserToInvite("");
+            const messageData = {
+                username: auth.user.username,
+                login:auth.user.login,
+                content: "This channel is now " + newType,
+                serviceMessage: true,
+                idOfChat: activeChannel.id,
+            }
+            socket.emit('newMessage', messageData);
+            activeChannel.type = newType;
+        }
+        else
+            setErrorMessage("Oops, an error occured while changing channel type")
     }
 
     async function inviteUserToChannel() {

@@ -74,11 +74,41 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 	}
 
 	async function checkIfAlreadyFriend() {
-		return false; //nouveau fetch a implementer, 
+		try {
+			// :myLogin/:loginFriend/isMyFriend
+			const response = await fetch(`http://localhost:4000/friend/${auth.user.login}/${props.login}/isMyFriend`);
+			if (!response.ok) {
+				throw new Error("Request failed");
+			}
+			const data = await response.json();
+			if (data)
+				return data;
+		}
+		catch(error) {
+			console.error("Error while checking if user is friend", error);
+		}
 	}
 
 	async function getUserInfo() {
-		return (""); // nouveau fetch a implementer, "owner", "admin", "" (normal), "banned", "left" (if kicked or left)
+		try {
+			const response = await fetch(`http://localhost:4000/chatOption/${props.login}/info/${props.chatId}`);
+			if (!response.ok) {
+				throw new Error("Request failed");
+			}
+			const data = await response.json();
+			if (data) {
+				if (data.banned === true)
+					return ("banned");
+				if (data.kicked === true)
+					return ("left");
+				if (data.user_role === "user")
+					return ("");
+				return (data.user_role);
+			}
+		}
+		catch(error) {
+			console.error("Error while checking user info", error);
+		}
 	}
 
     async function toggleUserActionsMenu() {
@@ -206,6 +236,17 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 
 	}
 
+	async function blockUser() {
+		const requestOptions = {
+			method: 'post',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({blockedLogin: props.login, login: auth.user.login})
+		};
+		const response = await fetch('http://localhost:4000/chatOption/blockUser/', requestOptions);
+		const data = await response.json();
+		console.log(data);
+	}
+
 	if (messageType !== "service") {
 		return (
 			<div className={messageType === "owner" ? "messageItem owner" : "messageItem"}>
@@ -221,6 +262,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 								<hr></hr>
 								<div className="menuItems">
 									<div>Invite to play</div>
+									<div onClick={blockUser}>Block User</div>
 									{userInfo.friend ? <div>Unfriend</div> : <div onClick={addToFriends}>Add to friends</div>}
 									{props.isDM === false && <div onClick={startDM}>Send DM</div>}
 									<Link to="/profile/1" style={{textDecoration:"none", color: "#ddddf7"}}>

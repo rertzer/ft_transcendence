@@ -37,8 +37,6 @@ const Sidebar = () => {
             }
         }
         else if (needToUpdate.indexOf("joinedChat ") === 0  && allChannels.length > 0) {
-            console.log("IN JOINED CHAT")
-            console.log("joined: ", needToUpdate)
             const joinedId = parseInt(needToUpdate.substring(11));
             const channelJoined = allChannels.find(element => element.id === joinedId)
             if (channelJoined !== undefined) {
