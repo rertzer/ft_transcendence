@@ -44,10 +44,17 @@ export function JoinRoom(props:IJoinRoomProps) {
 		gameSocket.emit("join_room", {roomId:parseInt(TmpRoomName), playerName});
 	};
 
-	const askNewRoomNumber = (e: React.FormEvent) => {
+	async function askNewRoomNumber(e: React.FormEvent) {
 		e.preventDefault();
 		if (!TmpModeGameNewRoom || TmpModeGameNewRoom.trim() === "" ) return;
-		gameSocket.emit('give_me_a_room', {typeGame: TmpModeGameNewRoom});
+		const requestOptions = {
+			method: 'post',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({typeGame: TmpModeGameNewRoom})
+		};
+		const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/game/newRoom/`, requestOptions);
+		const data = await response.json();
+		setRoomId(data.roomId)
 	};
 
 	useEffect(()=>{

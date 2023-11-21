@@ -16,6 +16,7 @@ export class gameSocketControler {
 		const responseData = {
 			roomId:newRoomId?.id
 		}
+		console.log("giveMeARoom");
 		return (responseData);	
 	}	
 }
