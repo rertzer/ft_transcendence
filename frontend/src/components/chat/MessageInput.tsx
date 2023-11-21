@@ -26,7 +26,6 @@ const MessageInput = (props: {chatId: number}) => {
 			content: value,
 			idOfChat: props.chatId,
 		}
-		console.log(" login send ", auth.user.login)
 		socket.emit('newMessage', messageData);
 		setValue('');
 	  };

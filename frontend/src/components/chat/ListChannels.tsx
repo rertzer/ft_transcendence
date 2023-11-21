@@ -1,5 +1,4 @@
 import MenuIcon from '@mui/icons-material/Menu';
-import LockIcon from '@mui/icons-material/Lock';  // lock icon for channels protected by password
 import { Tooltip } from '@mui/material';
 import "./ListChannels.scss"
 import { useContext, useState, useEffect } from 'react';
@@ -37,9 +36,16 @@ export const ListChannels = (props: {showSubMenu: string, setShowSubMenu: Functi
 			setErrorMessage("Wrong password");
 			setChanToJoin({id: -1, name: "", owner: "", type: "", password: null})
 		} else {
+			const messageData = {
+				username: auth.user.username,
+				login:auth.user.login,
+				content: auth.user.username + " has just joined",
+				serviceMessage: true,
+				idOfChat: chanToJoin.id,
+			}
+			socket.emit('newMessage', messageData);
 			setErrorMessage("");
-			socket.emit('chatListOfUser', auth.user.login);
-			setNeedToUpdate(true);
+			setNeedToUpdate("joinedChat " + chanToJoin.id.toString());
 			toggleForm();
 
 		}
@@ -141,8 +147,9 @@ export const ListChannels = (props: {showSubMenu: string, setShowSubMenu: Functi
 			</div>}
             {availableChannels.filter(isNotAlreadyIn).map((chan) => {return (
 			<div className="channelItem" key={chan.id}>
-				<p onClick={() => {setChanToJoin(chan)}}>{chan.name}</p>
-				{chan.type === "protected by password" && <LockIcon />}
+				{chan.type === "protected by password" ?
+				<p onClick={() => {setChanToJoin(chan)}}>{chan.name + " (password)"}</p> : 
+				<p onClick={() => {setChanToJoin(chan)}}>{chan.name}</p>}
 			</div>
 			)
 			})}

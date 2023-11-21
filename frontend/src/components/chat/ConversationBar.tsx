@@ -1,14 +1,12 @@
 import "./ConversationBar.scss";
-import ProfileIcon from '@mui/icons-material/AccountBoxOutlined';
-import BlockIcon from '@mui/icons-material/BlockOutlined';
 import LogoutIcon from '@mui/icons-material/MeetingRoomOutlined';
 import CloseIcon from '@mui/icons-material/Close';
 import { Tooltip } from "@mui/material";
-import ConnectionContext from '../../context/authContext'
 import ChatContext from '../../context/chatContext'
 import { useContext, useState, useRef, useEffect } from "react";
 import { ChannelSettings } from "./ChannelSettings";
 import { useLogin } from "../../components/user/auth";
+import { WebsocketContext } from '../../context/chatContext';
 
 
 const ConversationBar = (props: {isOwner: boolean, isAdmin: boolean}) => {
@@ -17,6 +15,7 @@ const ConversationBar = (props: {isOwner: boolean, isAdmin: boolean}) => {
     const {activeChannel, setActiveChannel} = useContext(ChatContext);
     const [showSubMenu, setShowSubMenu] = useState("none");
     let menuRef = useRef<HTMLInputElement>(null);
+    const socket = useContext(WebsocketContext);
 
     useEffect(() => {
 		const clickHandler = (e: any) => {
@@ -29,6 +28,26 @@ const ConversationBar = (props: {isOwner: boolean, isAdmin: boolean}) => {
 			document.removeEventListener("mousedown", clickHandler);
 		}
 	});
+
+    async function leaveChannel() {
+        const requestOptions = {
+			method: 'post',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ login: auth.user.login, chatId: activeChannel.id})
+		};
+		const response = await fetch('http://localhost:4000/chatOption/kickUser/', requestOptions);
+        const messageData = {
+			username: auth.user.username,
+			login:auth.user.login,
+			content: auth.user.username + " has just left",
+			serviceMessage: true,
+			idOfChat: activeChannel.id,
+		}
+		socket.emit('newMessage', messageData);
+		const data = await response.json();
+		if (data.isOwner)
+			console.log("PLOP") //faudra surement faire un autre call, pour l'instant l'owner peut pas quitter son channel
+    }
 
     function findReceiverName(names: string) {
 
@@ -51,11 +70,11 @@ const ConversationBar = (props: {isOwner: boolean, isAdmin: boolean}) => {
                         }
                         {activeChannel.type !== "DM" &&
                              <Tooltip title="Leave channel" arrow>
-                                <LogoutIcon />
+                                <LogoutIcon onClick={leaveChannel}/>
                             </Tooltip>
                         }
                         <Tooltip title="Close conversation" arrow>
-                            <CloseIcon onClick={() => {setActiveChannel({id: -1, channelName: "Pong Chat", chatPicture: "", status: "", type: "", username: null, dateSend: null, msg: null})}} />
+                            <CloseIcon onClick={() => {setActiveChannel({id: -1, channelName: "PongOffice Chat", chatPicture: "", status: "", type: "", username: null, dateSend: null, msg: null})}} />
                         </Tooltip>
                     </div>
                 </div>

@@ -6,7 +6,7 @@ import { JwtGuard } from '../auth/guard';
 import { GetUser } from '../auth/decorator';
 import { UseGuards } from "@nestjs/common";
 
-@UseGuards(JwtGuard)
+// @UseGuards(JwtGuard)
 @Controller('friend')
 export class addFriendController {
 	constructor(private prismaFriendService: PrismaFriendService, private gateway: MyGateway)
@@ -43,7 +43,22 @@ export class addFriendController {
 		@Param('login') login:string
 	)
 	{
-		console.log("in list friends");
-		
+		console.log("in list friends");	
+	}
+
+	@Get(':myLogin/:loginFriend/isMyFriend')
+	async checkIfFriend (
+		@Param('myLogin') myLog:string,
+		@Param('loginFriend') friendLog: string,
+	)
+	{
+		const idLog = await this.prismaFriendService.getIdOfLogin(myLog);
+		const idFriend = await this.prismaFriendService.getIdOfLogin(friendLog);
+		if (idLog && idFriend)
+		{
+			const friend = await this.prismaFriendService.alreadyFriend(idLog, idFriend);
+			console.log("friend or nah = ", friend);
+			return friend; 
+		}
 	}
 }

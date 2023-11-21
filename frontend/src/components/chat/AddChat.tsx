@@ -19,10 +19,12 @@ export const AddChat = (props: {showSubMenu: string, setShowSubMenu: Function}) 
 	const {setNeedToUpdate} = useContext(ChatContext);
 	const [chatName, setChatName] = useState('');
 	const [password, setPassword] = useState('');
+	const [errorMessage, setErrorMessage] = useState('');
 	const socket = useContext(WebsocketContext);
 	const [chatType, setChatType] = useState('public');
 
 	const toggleForm = () => {
+		setErrorMessage('');
 		if (props.showSubMenu !== "add") {
 	  		props.setShowSubMenu("add");
 		} else {
@@ -33,8 +35,14 @@ export const AddChat = (props: {showSubMenu: string, setShowSubMenu: Function}) 
 	const onSubmit = () => {
 
 		let createChatData: CreateChatPayload;
-		if (chatName === "" || (chatType === "protected by password" && password === ""))
+		if (chatName === "") {
+			setErrorMessage("Channel Name cannot be left empty")
 			return ;
+		}
+		else if (chatType === "protected by password" && password === "") {
+			setErrorMessage("Password needs to be specified")
+			return;
+		}
 		if (password === "")
 		{
 			createChatData = {
@@ -54,7 +62,7 @@ export const AddChat = (props: {showSubMenu: string, setShowSubMenu: Function}) 
 			}
 		}
 		socket.emit('createChat', createChatData);
-		setNeedToUpdate(true);
+		setNeedToUpdate("addChat");
 		setChatName('');
 		setPassword('');
 		toggleForm();
@@ -93,6 +101,7 @@ export const AddChat = (props: {showSubMenu: string, setShowSubMenu: Function}) 
 							/>
 						)}
 					</div>
+					{errorMessage !== "" && <div className='error'>{errorMessage}</div>}
 					<button onClick={onSubmit}>Create</button>
 				</div>
 			</div>

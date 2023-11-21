@@ -26,7 +26,6 @@ export class MutedUserService {
 
   removeMutedUser(login: string, chatId: number) {
     this.mutedUsers = this.mutedUsers.filter((user) => !(user.login === login && user.chatId === chatId));
-
 }
 
   IsMutedUser(login: string, chatId: number): boolean {

@@ -35,7 +35,7 @@ export class CreateChatService {
 			msg: null,
 			dateSend: null,
 		}
-		targetSocket.emit('newChat', chatType)
+		// targetSocket.emit('newChat', chatType) //plus vraiment utile, vu que j'ai la chatlist just derriere
 		await this.prismaService.addChanelUser(newChatId, idOfUser, 'owner', getDate(), null).then(()=> targetSocket.emit('chatList', login));
 		return (newChatId);
 	}

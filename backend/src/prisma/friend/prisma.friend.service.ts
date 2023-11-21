@@ -5,11 +5,11 @@ import { PrismaChatService } from "../chat/prisma.chat.service";
 @Injectable()
 export class PrismaFriendService extends PrismaClient{
 
-	async getIdOfUsername(login: string){ // this need to be removed
+	async getIdOfLogin(login: string){ // this need to be removed
 
 		const user = await this.user.findFirst({
 			where: {
-				username: login,
+				login: login,
 			}
 		})
 		if (user)
@@ -19,9 +19,9 @@ export class PrismaFriendService extends PrismaClient{
 	async addFriend(idLogin: number, newFriend: string)
 	{
 		console.log("idlogin -= ",idLogin, "new friend  =", newFriend);
-			const idFriend = await this.getIdOfUsername(newFriend);
+			const idFriend = await this.getIdOfLogin(newFriend);
 			console.log("id friend = ",idFriend)
-			if (idFriend && await this.alreadyFriend(idLogin, idFriend) == undefined)
+			if (idFriend && await this.alreadyFriend(idLogin, idFriend) == false)
 			{
 				console.log("passsed this")
 				const created = await this.friend.create ({
@@ -44,16 +44,29 @@ export class PrismaFriendService extends PrismaClient{
 			}
 		})
 		if (friend)
+			return true
+		return false
+	}
+
+	async idFriendToDelete(idLogin: number, idFriend:number)
+	{
+		const friend = await this.friend.findFirst({
+			where :{
+				user_id: idLogin,
+				friend_id: idFriend,
+			}
+		})
+		if (friend)
 			return friend.id
-		return undefined
+		return false
 	}
 
 	async deleteFriend(idLogin:number, friend:string)
 	{
-		const idFriend = await this.getIdOfUsername(friend);
+		const idFriend = await this.getIdOfLogin(friend);
 		if (idFriend)
 		{
-			const friendToDelete = await this.alreadyFriend(idLogin, idFriend);
+			const friendToDelete = await this.idFriendToDelete(idLogin, idFriend);
 			if (friendToDelete)
 			{
 				const deleted = this.friend.delete({
@@ -64,9 +77,4 @@ export class PrismaFriendService extends PrismaClient{
 			}
 		}
 	}
-
-	// async removeFriend(login: string, friendToRemove: string)
-	// {
-	// 	const idLogin
-	// }
 }
