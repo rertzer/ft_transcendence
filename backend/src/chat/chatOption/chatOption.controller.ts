@@ -163,9 +163,10 @@ export class ChatOptController {
 			return ("Not Owner")
 	}
 	
-	@Post("listOfBlockedUser")
-	async listOfBlockUser(@Body() user:{login:string})
-	{
+	@Get("listOfBlockedUser/:login")
+	async listOfBlockUser(
+		@Param('login') login: string,
+	) {
 		const listBlocked = await this.prismaChatService.getListOfBlocked(user.login)
 		if (listBlocked)
 			return listBlocked;

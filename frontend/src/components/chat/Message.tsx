@@ -50,7 +50,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 	async function checkIfUserIsBanned() {
 
 		try {
-			const response = await fetch(`http://localhost:4000/chatOption/${props.login}/banned/${props.chatId}`);
+			const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/${props.login}/banned/${props.chatId}`);
 			if (!response.ok) {
 				throw new Error("Request failed");
 			}
@@ -75,7 +75,6 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 
 	async function checkIfAlreadyFriend() {
 		try {
-			// :myLogin/:loginFriend/isMyFriend
 			const response = await fetch(`http://localhost:4000/friend/${auth.user.login}/${props.login}/isMyFriend`);
 			if (!response.ok) {
 				throw new Error("Request failed");
@@ -262,7 +261,6 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 								<hr></hr>
 								<div className="menuItems">
 									<div>Invite to play</div>
-									<div onClick={blockUser}>Block User</div>
 									{userInfo.friend ? <div>Unfriend</div> : <div onClick={addToFriends}>Add to friends</div>}
 									{props.isDM === false && <div onClick={startDM}>Send DM</div>}
 									<Link to="/profile/1" style={{textDecoration:"none", color: "#ddddf7"}}>
@@ -276,6 +274,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 										<div onClick={muteUser}>Mute 1 minute</div>}
 									{(props.isOwner && userInfo.userStatus === "") &&
 										<div onClick={sendNewAdmin}>Set as admin </div>}
+									<div onClick={blockUser}>Block User</div>
 								</div>
 								{errorMessage !== "" && <div className="errorMessage">{errorMessage}</div>}
 							</div>

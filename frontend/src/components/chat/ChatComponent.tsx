@@ -22,7 +22,9 @@ export type Channel = {
 
 const ChatComponent = () => {
 
+    const auth = useLogin();
     const [allChannels, setAllChannels] = useState<Channel[]>([])
+    const [blockedUsers, setBlockedUsers] = useState<number[]>([]);
     const [needToUpdate, setNeedToUpdate] = useState("");
     const [activeChannel, setActiveChannel] = useState<Channel>({
         id: -1,
@@ -35,16 +37,43 @@ const ChatComponent = () => {
         msg: null
     })
 
-    // useEffect(() => {console.log("coucou", allChannels)}, [allChannels])
-
   const ChatValue: IChatContext = {
     allChannels,
     setAllChannels,
     activeChannel,
     setActiveChannel,
     needToUpdate,
-    setNeedToUpdate
+    setNeedToUpdate,
+    blockedUsers,
+    setBlockedUsers,
   }
+
+//   useEffect(() => {
+//     const fetchBlocked = async () => {
+//         const result = await getBlockedUsers();
+//         if (result)
+//             setBlockedUsers(result)
+//     }
+//     fetchBlocked();
+//     console.log(blockedUsers);
+//   }, []);
+
+// async function getBlockedUsers() {
+//     let blocked: number[] = [];
+//     try {
+//         const response = await fetch(`http://localhost:4000/chatOption/listOfBlockedUser/${auth.user.login}`);
+//         if (!response.ok) {
+//             throw new Error("Request failed");
+//         }
+//         const data = await response.json();
+//         if (data) {
+//             return (data);
+//         }
+//     }
+//     catch(error) {
+//         console.error("Error while getting blocked users", error);
+//     }
+// }
 
     return (
         <div className="chatcomponent">

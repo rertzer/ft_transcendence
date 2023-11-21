@@ -19,7 +19,9 @@ export interface IChatContext {
 	activeChannel: Channel,
 	setActiveChannel: (activeChannel: Channel) => void;
 	needToUpdate: string,
-	setNeedToUpdate: (bool: string) => void;
+	setNeedToUpdate: (str: string) => void;
+	blockedUsers: number[];
+	setBlockedUsers: (blocked: number[]) => void;
 };
 
 const defaultState:IChatContext = {
@@ -38,6 +40,8 @@ const defaultState:IChatContext = {
 	setActiveChannel: () => {},
 	needToUpdate: "",
 	setNeedToUpdate: () => {},
+	blockedUsers: [],
+	setBlockedUsers: () => {},
 };
 
 export default React.createContext(defaultState);

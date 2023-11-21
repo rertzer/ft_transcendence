@@ -11,7 +11,6 @@ const Sidebar = () => {
     const {activeChannel, allChannels, setActiveChannel, needToUpdate, setNeedToUpdate} = useContext(ChatContext);
 
 	useEffect(() => {
-        console.log(allChannels);
         const id = activeChannel.id;
         if (needToUpdate === "" && id !== -1 && allChannels.find(element => element.id === id) === undefined)
             setActiveChannel({id: -1, channelName: "PongOffice Chat", chatPicture: "", type: "", status: "", username: null, dateSend: null, msg: null});
