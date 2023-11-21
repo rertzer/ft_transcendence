@@ -27,7 +27,7 @@ export function WaitingRoom(props:any) {
 	}, [setGameStatus, setRoomId]);
 
 	return (
-		<div style={{position: 'relative', color: '#000000', backgroundColor: '#FFFFFF', top: '140px', left: '134px', height:'315px', width: '368px'}}>
+		<div onClick={() => console.log(modeGame)} style={{position: 'relative', color: '#000000', backgroundColor: '#FFFFFF', top: '140px', left: '134px', height:'315px', width: '368px'} }>
 			{ modeGame === 'BASIC' && <div>You are in the waiting room to join a basic game !  </div>}
 			{ modeGame === 'ADVANCED' && <div>You are in the waiting room to join an advanced game !  </div>}
 		</div>

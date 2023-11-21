@@ -21,7 +21,7 @@ function Header({}) {
   return <header className={styles.headerFrame} style={{ height: toolbar ? '65px' : '142px' }}>
         <div className={styles.headerBackground} style={{ height: toolbar ? '65px' : '142px' }}/>
         <div className={styles.line3}>
-          {page === "Project" ? <GameBar /> : <input className={styles.bar} /> }
+          {page === "Game" ? <GameBar /> : <input className={styles.bar} /> }
           <img className={styles.buttonsIcon} alt="" src="/buttons.svg" />
           <div className={styles.menu}>
             <div className={styles.menuBackground} />
@@ -53,7 +53,7 @@ function Header({}) {
           <div className={styles.user}>
             <img className={styles.userChild} alt="" src="/ellipse-1@2x.png" style={{cursor:"pointer"}}/>
             <span className={styles.user1}>{auth.user.username}</span>
-            <Tooltip className={styles.crossButton}title="Log out" arrow>
+            <Tooltip onClick={auth.logout} className={styles.crossButton}title="Log out" arrow>
               <img className={styles.crossIcon} alt="" src="/cross.svg" style={{cursor:"pointer", right: "8px"}}/>
             </Tooltip>
           </div>

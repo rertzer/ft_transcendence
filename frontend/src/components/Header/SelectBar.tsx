@@ -1,7 +1,8 @@
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import styles from "./Header.module.css";
 import style from "./SelectBar.module.css"
 import { MyContext } from '../../context/PageContext';
+import { GameStatus } from '../../context/gameContext';
 
 import Divider from '@mui/material/Divider';
 // import MenuItem from '@mui/material/MenuItem';
@@ -20,6 +21,10 @@ import InfoIcon from '@mui/icons-material/Info';
 import KeyboardIcon from '@mui/icons-material/Keyboard';
 import PsychologyAltIcon from '@mui/icons-material/PsychologyAlt';
 
+import { useLogin } from '../user/auth';
+import { gameSocket } from '../game/services/gameSocketService';
+import gameContext from '../../context/gameContext';
+
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 //import CssBaseline from '@mui/material/CssBaseline';
 
@@ -28,13 +33,14 @@ import ListItem from '@mui/material/ListItem';
 //import ListItemText from '@mui/material/ListItemText';
 
 function BasicMenu() {
+  const {setGameStatus, gameStatus, playerName} = useContext(gameContext);
 function  File() {
     const context = useContext(MyContext);
     if (!context) {
       throw new Error('useContext must be used within a MyProvider');
     }
     const { updateMenu } = context;
-
+    const auth = useLogin();
     function print() {
       updateMenu('none');
       window.print();
@@ -42,11 +48,67 @@ function  File() {
     function closeTab() {
       window.close();
     }
+    //DEBUT MAX
+
+    const {setRoomId, setModeGame, setGameStatus, playerName} = useContext(gameContext);
+    const [TmpModeGameWaiting, setTmpModeGameWaiting] = useState('');
+    const [TmpModeGameNewRoom, setTmpModeGameNewRoom] = useState('');
+    const [TmpRoomName, setTmpRoomName] = useState('');
+    const [RecievedRoomID, setRecievedRoomID] = useState(0);
+    useEffect(()=>{
+
+      function processNewEmptyRoom(data:{roomId:number}) {
+        setRecievedRoomID(data.roomId);
+        console.log(data.roomId)
+      }
+      function processWaitingRoomJoined() {
+        console.log('coucou la waiting room')
+        setGameStatus('IN_WAITING_ROOM');
+      }
+
+      function processRoomJoined(data:{roomId:number, gameStatus: GameStatus}) {
+        setGameStatus(data.gameStatus);
+        setRoomId(data.roomId);
+        console.log('I joined room number ' + data.roomId.toString() + ' to play');
+      }
+
+      function processErrorJoin(data:{roomId:number, errorMsg:string}) {
+        window.alert('Error for room ' + data.roomId.toString() + ': ' + data.errorMsg);
+      }
+      
+      gameSocket.on('new_empty_room', processNewEmptyRoom);
+      gameSocket.on('waiting_room_joined', processWaitingRoomJoined);
+      gameSocket.on('room_joined', processRoomJoined);
+      gameSocket.on('error_join', processErrorJoin);
+    
+      return () => {
+        gameSocket.off('new_empty_room', processNewEmptyRoom);
+        gameSocket.off('waiting_room_joined', processWaitingRoomJoined);
+        gameSocket.off('room_joined', processRoomJoined);
+        gameSocket.off('error_join', processErrorJoin);
+      }
+    }, [RecievedRoomID, setGameStatus, setRoomId]);
+  /////////////FIN MAXENCE/////////////
+    function newGame() {
+      handlePage("Game");
+      gameSocket.emit('match_me', {playerName:playerName, typeGame:"BASIC"});
+    }
+    function newGamePlus() {
+      handlePage("Game");
+      gameSocket.emit('match_me', {playerName:playerName, typeGame:"ADVANCED"});
+    }
 
     return (
       <List dense onMouseLeave={() => handleClick("none")} sx={{color: 'white',}} style={{position: 'fixed', top:'64px', width:200, paddingTop: "0px", paddingBottom: "0px", backgroundColor: '#2f2f2f', border:'1px solid black'}} >
         <ListItem button>
-          <ListItemText onClick={() => handlePage("Project")}>New Game</ListItemText>
+          <ListItemText onClick={() => newGame()}>New Game</ListItemText>
+        </ListItem>
+        <ListItem button>
+          <ListItemText onClick={() =>newGamePlus() }>New Game+</ListItemText>
+        </ListItem>
+
+        <ListItem button>
+          <ListItemText onClick={() =>handlePage("Game") }>Form</ListItemText>
         </ListItem>
         <ListItem button onClick={() => handlePage("Profile")}><ListItemText>Profile </ListItemText></ListItem>
         <ListItem button onClick={() => handlePage("Data")}><ListItemText>Data </ListItemText></ListItem>
@@ -55,7 +117,7 @@ function  File() {
         <ListItem button onClick={() => handleChat("Chat")}>{chat === "Chat" ? <CheckBoxOutlinedIcon fontSize="small"/>: <CheckBoxOutlineBlankIcon fontSize="small"/>} <ListItemText style={{position:'relative', left:'10px'}}>Chat </ListItemText></ListItem>
         <Divider/>
         <ListItem button onClick={print}><ListItemText>Print </ListItemText></ListItem>
-        <ListItem button><ListItemText>Logout </ListItemText></ListItem>
+        <ListItem button onClick={auth.logout}><ListItemText>Logout </ListItemText></ListItem>
         <ListItem button onClick={closeTab}><ListItemText>Exit PongOffice </ListItemText></ListItem>
       </List>
     );
@@ -138,7 +200,12 @@ function  File() {
   }
   function  Window() {
     function openNewTab() {
-      const url = 'http://localhost:3000/';
+      const isLocalhost = window.location.hostname === 'localhost';
+      let url;
+      if (isLocalhost)
+        url = 'http://localhost:3000/';
+      else 
+        url = 'http://' + process.env.REACT_APP_URL_MACHINE + ':3000/';
       window.open(url, '_blank');
     }
     function closeTab() {
@@ -186,19 +253,19 @@ function  File() {
   if (!context) {
     throw new Error('useContext must be used within a MyProvider');
   }
-  const { page, resetGame, chat, updatePageMenuChatReset, updateMenu, updateGame } = context;
+  const { page, chat, updatePageMenuChat, updateMenu, updateGame } = context;
   function handleClick(str : string) {
     updateMenu(str);
   }
   function handlePage(str : string) {
-    updatePageMenuChatReset(str, "none", chat, true);
+    updatePageMenuChat(str, "none", chat);
     console.log(page);
   }
   function handleChat(str : string) {
     if (str === chat)
-      updatePageMenuChatReset(page, "none", "none", resetGame);
+      updatePageMenuChat(page, "none", "none");
     else
-      updatePageMenuChatReset(page, "none", str, resetGame);
+      updatePageMenuChat(page, "none", str);
   }
   const darkTheme = createTheme({
     palette: {

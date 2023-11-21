@@ -36,34 +36,10 @@ function Game() {
 		gameStatus,
 		setGameStatus
 	};
-	const context = useContext(MyContext);
-	if (!context) {
-	  throw new Error('useContext must be used within a MyProvider');
-	}
-
-	const { resetGame, page, menu, chat, updatePageMenuChatReset, updateReset} = context;
-	const [ newResetGame, setNewReset ] = useState(resetGame);
-
-	// useEffect(() => {
-	// 	setNewGame(game);
-	//   }, [game]);
-
-	// const ft_resetGame = () => {
-	// 	if ( resetGame === true)
-	// 	{
-	// 		gameSocket.emit("i_am_leaving", {roomId});
-	// 		setGameStatus('NOT_IN_GAME');
-	// 		setRoomId(0);
-	// 		setModeGame('');
-	// 		updateReset(false);
-	// 		console.log("RESETED !!!!!!!!!!!!!!!!!");
-	// 	}
-	// 	return (1);
-	// };
 
 	return (
 		<GameContext.Provider value={gameContextValue}>
-			{ gameStatus === 'NOT_IN_GAME' /* && (ft_resetGame()) */ && <JoinRoom />}
+			{ gameStatus === 'NOT_IN_GAME' && <JoinRoom />}
 			{ gameStatus === 'IN_WAITING_ROOM'&& <WaitingRoom /> }
 			{ gameStatus !== 'IN_WAITING_ROOM' && gameStatus !== 'NOT_IN_GAME' && <GameArea />}
 		</GameContext.Provider>

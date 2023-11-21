@@ -6,7 +6,6 @@ type SharedData = {
   chat: string;
   zoom: number;
   toolbar: boolean;
-  resetGame: boolean;
   coords: { coordX: number; coordY: number };
   scroll: { scrollX: number; scrollY: number };
   game: { player1: string; player2: string; points1: number; points2: number};
@@ -14,9 +13,8 @@ type SharedData = {
   updateMenu: (menu: string) => void;
   updateChat: (chat: string) => void;
   updateZoom: (zoom: number) => void;
-  updateReset: (reset: boolean) => void;
   updateToolbar: (newTool: boolean) => void;
-  updatePageMenuChatReset: (page:string, menu: string, chat: string, reset: boolean) => void;
+  updatePageMenuChat: (page:string, menu: string, chat: string) => void;
   updateCoords: (newCoords: { coordX: number; coordY: number }) => void;
   updateCoordsMenu: (newCoords: { coordX: number; coordY: number }, newMenu: string) => void;
   updateScroll: (newScroll: { scrollX: number; scrollY: number }) => void;
@@ -36,7 +34,6 @@ function MyProvider({ children }: MyProviderProps) {
     chat:'none',
     zoom:125,
     toolbar:false,
-    resetGame: true,
     coords: { coordX: 0, coordY: 0 },
     scroll: { scrollX: 0, scrollY: 0 },
     game: {player1: "player1", player2: "player2", points1: 0, points2: 0},
@@ -57,11 +54,8 @@ function MyProvider({ children }: MyProviderProps) {
   const updateToolbar = (newData: boolean) => {
     setSharedData({ ...sharedData, toolbar: newData });
   };
-  const updateReset = (newReset: boolean) => {
-    setSharedData({ ...sharedData, resetGame: newReset });
-  };
-  const updatePageMenuChatReset = (newPage: string, newMenu: string, newChat: string, newReset: boolean ) => {
-    setSharedData({ ...sharedData, page: newPage, menu: newMenu, chat: newChat , resetGame: newReset});
+  const updatePageMenuChat = (newPage: string, newMenu: string, newChat: string) => {
+    setSharedData({ ...sharedData, page: newPage, menu: newMenu, chat: newChat});
   };
   const updateCoords = (newCoords: { coordX: number; coordY: number }) => {
     setSharedData({ ...sharedData, coords: { ...newCoords } });
@@ -78,7 +72,7 @@ function MyProvider({ children }: MyProviderProps) {
   
 
   return (
-    <MyContext.Provider value={{ ...sharedData, updatePage, updateMenu, updateChat, updateZoom, updateToolbar, updateReset, updatePageMenuChatReset, updateCoords, updateCoordsMenu, updateScroll, updateGame}}>
+    <MyContext.Provider value={{ ...sharedData, updatePage, updateMenu, updateChat, updateZoom, updateToolbar, updatePageMenuChat, updateCoords, updateCoordsMenu, updateScroll, updateGame}}>
       {children}
     </MyContext.Provider>
   );

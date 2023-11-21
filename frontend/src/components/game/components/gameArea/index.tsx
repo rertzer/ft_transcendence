@@ -285,7 +285,7 @@ function GameArea(props:any) {
 			<div><strong>You play on the {mySide} !</strong></div>
 			<div>Status {gameStatus?.toString()} for Room {roomId?.toString()}</div>
 			<div>PaddleSpeed {pong?.paddleSpeed}</div>
-			<form onSubmit={leaveGame}>
+			<form onSubmit={leaveGame} style={{position:"fixed", top:'500px', left:'500px'}}>
 				<button type="submit"> Leave the Game</button><br/>
 			</form>
 		</>
