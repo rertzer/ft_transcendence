@@ -105,6 +105,7 @@ export class RoomsService  implements OnModuleInit{
 			else {
 				this.waitingRoomBasic.push(player);
 			}
+			console.log(this.waitingRoomAdvanced, this.waitingRoomBasic);
 			player.socket.emit('waiting_room_joined');
 		}
 		else {
@@ -117,6 +118,7 @@ export class RoomsService  implements OnModuleInit{
 			else {
 				this.waitingRoomBasic = this.waitingRoomBasic.filter(p => {return (p !== playerToRemoveFromWaitingRoom)});
 			}
+			console.log(this.waitingRoomAdvanced, this.waitingRoomBasic);
 		}
 	}
 

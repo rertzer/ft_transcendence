@@ -34,6 +34,7 @@ export function JoinRoom(props:IJoinRoomProps) {
 		setModeGame(TmpModeGameWaiting);
 		console.log("yop, ")
 		console.log("yop, ", gameSocket)
+		console.log("playerName", playerName)
 		gameSocket.emit('match_me', {playerName:playerName, typeGame:TmpModeGameWaiting})
 	};
 

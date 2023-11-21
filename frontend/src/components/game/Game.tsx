@@ -8,7 +8,7 @@ import { WaitingRoom } from './components/waitingRoom';
 import { gameSocket } from './services/gameSocketService';
 
 function Game() {
-	const [roomId, setRoomId] = useState(0);
+	/* const [roomId, setRoomId] = useState(0);
 	const [playerName, setPlayerName] = useState('');
 	const [gameWidth, setGameWidth] = useState(0);
 	const [gameHeight, setGameHeight] = useState(0);
@@ -19,6 +19,9 @@ function Game() {
 	useEffect(() => {
 		setPlayerName(auth.user.login);
 		gameSocket.connect();
+		return (()=> {
+			gameSocket.disconnect();
+		})
 	}, []);
 
 	const gameContextValue :IGameContextProps = {
@@ -34,15 +37,20 @@ function Game() {
 		setModeGame, 
 		gameStatus,
 		setGameStatus
-	};
+	}; */
+	
+	const {gameStatus, playerName} = useContext(GameContext);
+	useEffect(() => {
+		console.log(playerName)
+	}, []);
 
 	return (
-		<GameContext.Provider value={gameContextValue}>
+		//<GameContext.Provider value={gameContextValue}>
+		<>
 			{ gameStatus === 'NOT_IN_GAME' && <JoinRoom />}
 			{ gameStatus === 'IN_WAITING_ROOM'&& <WaitingRoom /> }
 			{ gameStatus !== 'IN_WAITING_ROOM' && gameStatus !== 'NOT_IN_GAME' && <GameArea />}
-			
-		</GameContext.Provider>
+		</>
 	)
 }
 

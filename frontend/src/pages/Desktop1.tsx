@@ -8,12 +8,46 @@ import { MyContext, MyProvider } from '../context/PageContext';
 import ChatComponent from '../components/chat/ChatComponent';
 import { WebsocketContext } from "../context/chatContext";
 import { useLogin } from "../components/user/auth";
+import { gameSocket } from '../components/game/services/gameSocketService';
+import { GameStatus } from '../context/gameContext';
+import GameContext, { IGameContextProps } from '../context/gameContext';
 
 function Desktop1() {
 
+	const auth = useLogin();
+	const [roomId, setRoomId] = useState(0);
+	const [playerName, setPlayerName] = useState('');
+	const [gameWidth, setGameWidth] = useState(0);
+	const [gameHeight, setGameHeight] = useState(0);
+	const [modeGame, setModeGame] = useState('');
+	const [gameStatus, setGameStatus] = useState<GameStatus>('NOT_IN_GAME');
+
+	useEffect(() => {
+		gameSocket.connect();
+		console.log('artsghrdnhytenteynwtyegnt', auth)
+		return (()=> {
+			gameSocket.disconnect();
+		})
+	}, []);
+
+	const gameContextValue :IGameContextProps = {
+		roomId,
+		setRoomId,
+		gameWidth,
+		setGameWidth,
+		gameHeight,
+		setGameHeight,
+		playerName,
+		setPlayerName, 
+		modeGame,
+		setModeGame, 
+		gameStatus,
+		setGameStatus
+	};
+
   //GET HEIGHT
   const socket = useContext(WebsocketContext);
-  const auth = useLogin();
+ 
   const windowHeighthRef = useRef(window.innerHeight);
   console.log("A", auth.user);
   useEffect(() => {
@@ -37,8 +71,10 @@ function Desktop1() {
 
 	useEffect(() => {
 		console.log("C", auth.user);
-		if (auth.user.login)
+		if (auth.user.login) {
+			setPlayerName(auth.user.login);
 			socket.emit("newChatConnection", auth.user.login);
+		}
 		console.log("yo send something pls : " , socket.id);
 	},[auth.user]);
 
@@ -61,10 +97,12 @@ function Desktop1() {
   return (
     <div className={styles.desktop1} style={{height: windowHeighthRef.current}}>
       <MyProvider>
-        <Body />
-        <Header />
-        <Footer/>
-        <DisplayChat />
+	  	<GameContext.Provider value={gameContextValue}>
+        	<Body />
+        	<Header />
+        	<Footer/>
+        	<DisplayChat />
+		</GameContext.Provider>
       </MyProvider>
     </div>
   );

@@ -247,6 +247,22 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 		console.log(data);
 	}
 
+	async function startGame() {
+		const requestOptions = {
+			method: 'post',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({typeGame: "BASIC"})
+		};
+		const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/game/newRoom/`, requestOptions);
+		const data = await response.json();
+		console.log(data);
+		sendServiceMessage("You're invited to play a game on room " + data.roomId)
+		/**
+		 * Besoin de setRoomId avec data.roomId
+		 * Puis navigate vers Game
+		 */
+	}
+
 	if (messageType !== "service") {
 		return (
 			<div className={messageType === "owner" ? "messageItem owner" : "messageItem"}>
@@ -261,7 +277,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 								{props.isDM || userInfo.userStatus === "" ? <h4>{props.username}</h4> : <h4>{props.username + " (" + userInfo.userStatus + ")"}</h4>}  
 								<hr></hr>
 								<div className="menuItems">
-									<div>Invite to play</div>
+									<div onClick={startGame}>Invite to play</div>
 									{userInfo.friend ? <div>Unfriend</div> : <div onClick={addToFriends}>Add to friends</div>}
 									{props.isDM === false && <div onClick={startDM}>Send DM</div>}
 									<Link to="/profile/1" style={{textDecoration:"none", color: "#ddddf7"}}>

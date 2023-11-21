@@ -167,7 +167,7 @@ export class ChatOptController {
 	async listOfBlockUser(
 		@Param('login') login: string,
 	) {
-		const listBlocked = await this.prismaChatService.getListOfBlocked(user.login)
+		const listBlocked = await this.prismaChatService.getListOfBlocked(login)
 		if (listBlocked)
 			return listBlocked;
 		else 
