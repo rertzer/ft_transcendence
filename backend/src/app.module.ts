@@ -17,6 +17,9 @@ import { PlayersService } from './game/players/players.service';
 import { RoomsService } from './game/rooms/rooms.service';
 import { GameLogicModule } from './game/gameLogic/gameLogic.module';
 import { FriendModule } from './friend/friend.module';
+import { GameStatsModule } from './gameStats/gameStats.module';
+
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -31,8 +34,10 @@ import { FriendModule } from './friend/friend.module';
     MutedUserModule,
     GameSocketModule,
     PlayersModule,
-    RoomsModule, GameLogicModule,
+    RoomsModule,
+	GameLogicModule,
     FriendModule,
+	GameStatsModule, 
   ],
   controllers: [AppController],
   providers: [AppService],

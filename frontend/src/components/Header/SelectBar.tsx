@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import styles from "./Header.module.css";
 import style from "./SelectBar.module.css"
-import { MyContext } from '../../context/PageContext';
+import { PageContext } from '../../context/PageContext';
 import { GameStatus } from '../../context/gameContext';
 
 import Divider from '@mui/material/Divider';
@@ -33,146 +33,105 @@ import ListItem from '@mui/material/ListItem';
 //import ListItemText from '@mui/material/ListItemText';
 
 function BasicMenu() {
-  const {setGameStatus, gameStatus, playerName} = useContext(gameContext);
-function  File() {
-    const context = useContext(MyContext);
-    if (!context) {
-      throw new Error('useContext must be used within a MyProvider');
-    }
-    const { updateMenu } = context;
-    const auth = useLogin();
-    function print() {
-      updateMenu('none');
-      window.print();
-    }
-    function closeTab() {
-      window.close();
-    }
-    //DEBUT MAX
+	const {setModeGame, playerName} = useContext(gameContext);
+	function  File() {
+		const context = useContext(PageContext);
+		if (!context) {
+			throw new Error('useContext must be used within a MyProvider');
+		}
+		const { updateMenu } = context;
+		const auth = useLogin();
 
-    const {setRoomId, setModeGame, setGameStatus, playerName} = useContext(gameContext);
-    const [TmpModeGameWaiting, setTmpModeGameWaiting] = useState('');
-    const [TmpModeGameNewRoom, setTmpModeGameNewRoom] = useState('');
-    const [TmpRoomName, setTmpRoomName] = useState('');
-    const [RecievedRoomID, setRecievedRoomID] = useState(0);
-    useEffect(()=>{
+		function print() {
+			updateMenu('none');
+			window.print();
+		}
+		function closeTab() {
+			window.close();
+		}
+		function newBasicGame (){
+			handlePage("Game");
+			setModeGame('BASIC');
+			gameSocket.emit('match_me', {playerName:playerName, typeGame:'BASIC'});
+		}
 
-      function processNewEmptyRoom(data:{roomId:number}) {
-        setRecievedRoomID(data.roomId);
-        console.log(data.roomId)
-      }
-      function processWaitingRoomJoined() {
-        console.log('coucou la waiting room')
-        setGameStatus('IN_WAITING_ROOM');
-      }
+		function newAdvancedGame() {
+			handlePage("Game");
+			setModeGame('ADVANCED');
+			gameSocket.emit('match_me', {playerName:playerName, typeGame:'ADVANCED'});
+		}
 
-      function processRoomJoined(data:{roomId:number, gameStatus: GameStatus}) {
-        setGameStatus(data.gameStatus);
-        setRoomId(data.roomId);
-        console.log('I joined room number ' + data.roomId.toString() + ' to play');
-      }
+		return (
+		<List dense onMouseLeave={() => handleClick("none")} sx={{color: 'white',}} style={{position: 'fixed', top:'64px', width:200, paddingTop: "0px", paddingBottom: "0px", backgroundColor: '#2f2f2f', border:'1px solid black'}} >
+			<ListItem button>
+			<ListItemText onClick={() => newBasicGame ()}>New Basic Game</ListItemText>
+			</ListItem>
+			<ListItem button>
+			<ListItemText onClick={() => newAdvancedGame()}>New Advanced Game</ListItemText>
+			</ListItem>
+			<ListItem button onClick={() => handlePage("Profile")}><ListItemText>Profile </ListItemText></ListItem>
+			<ListItem button onClick={() => handlePage("Data")}><ListItemText>Data </ListItemText></ListItem>
+			<ListItem button onClick={() => handlePage("Contacts")}><ListItemText>Contacts </ListItemText></ListItem>
+			<Divider/>
+			<ListItem button onClick={() => handleChat("Chat")}>{chat === "Chat" ? <CheckBoxOutlinedIcon fontSize="small"/>: <CheckBoxOutlineBlankIcon fontSize="small"/>} <ListItemText style={{position:'relative', left:'10px'}}>Chat </ListItemText></ListItem>
+			<Divider/>
+			<ListItem button onClick={print}><ListItemText>Print </ListItemText></ListItem>
+			<ListItem button onClick={auth.logout}><ListItemText>Logout </ListItemText></ListItem>
+			<ListItem button onClick={closeTab}><ListItemText>Exit PongOffice </ListItemText></ListItem>
+		</List>
+		);
+	}
+	function  Edit() {
+		const context = useContext(PageContext);
+		if (!context) {
+		throw new Error('useContext must be used within a MyProvider');
+		}
 
-      function processErrorJoin(data:{roomId:number, errorMsg:string}) {
-        window.alert('Error for room ' + data.roomId.toString() + ': ' + data.errorMsg);
-      }
-      
-      gameSocket.on('new_empty_room', processNewEmptyRoom);
-      gameSocket.on('waiting_room_joined', processWaitingRoomJoined);
-      gameSocket.on('room_joined', processRoomJoined);
-      gameSocket.on('error_join', processErrorJoin);
-    
-      return () => {
-        gameSocket.off('new_empty_room', processNewEmptyRoom);
-        gameSocket.off('waiting_room_joined', processWaitingRoomJoined);
-        gameSocket.off('room_joined', processRoomJoined);
-        gameSocket.off('error_join', processErrorJoin);
-      }
-    }, [RecievedRoomID, setGameStatus, setRoomId]);
-  /////////////FIN MAXENCE/////////////
-    function newGame() {
-      handlePage("Game");
-      gameSocket.emit('match_me', {playerName:playerName, typeGame:"BASIC"});
-    }
-    function newGamePlus() {
-      handlePage("Game");
-      gameSocket.emit('match_me', {playerName:playerName, typeGame:"ADVANCED"});
-    }
+		const { coords, updateCoordsMenu } = context;
+		const { coordX, coordY } = coords;
 
-    return (
-      <List dense onMouseLeave={() => handleClick("none")} sx={{color: 'white',}} style={{position: 'fixed', top:'64px', width:200, paddingTop: "0px", paddingBottom: "0px", backgroundColor: '#2f2f2f', border:'1px solid black'}} >
-        <ListItem button>
-          <ListItemText onClick={() => newGame()}>New Game</ListItemText>
-        </ListItem>
-        <ListItem button>
-          <ListItemText onClick={() => newGamePlus() }>New Game+</ListItemText>
-        </ListItem>
+		return (
+		<List dense onMouseLeave={() => handleClick("none")} sx={{color: 'white',}} style={{position: 'fixed', top:'64px', left:'45px', width:200, paddingTop: "0px", paddingBottom: "0px", backgroundColor: '#2f2f2f', border:'1px solid black'}} >
+			<ListItem button >
+			<ContentCopy fontSize="small"/>
+			<ListItemText style={{position:'relative', left:'10px'}}>Copy</ListItemText>
+			<Typography fontSize="12px" color="text.disabled">Ctrl+C</Typography>
+			</ListItem>
+			<ListItem button>
+			<ContentCut fontSize="small"/>
+			<ListItemText style={{position:'relative', left:'10px'}}>Cut</ListItemText>
+			<Typography fontSize="12px" color="text.disabled">Ctrl+X</Typography>
+			</ListItem>
+			<ListItem button>
+			<ContentPaste fontSize="small"/>
+			<ListItemText style={{position:'relative', left:'10px'}}>Paste</ListItemText>
+			<Typography fontSize="12px" color="text.disabled">Ctrl+V</Typography>
+			</ListItem>
+			<Divider/>
+			<ListItem button onClick={() => updateCoordsMenu({coordX: -1,coordY: coordY}, 'none')}><ListItemText>Select Row </ListItemText></ListItem>
+			<ListItem button onClick={() => updateCoordsMenu({coordX: coordX,coordY: -1},'none')}><ListItemText>Select Column </ListItemText></ListItem>
+			<ListItem button onClick={() => updateCoordsMenu({coordX: -1,coordY: -1}, 'none')}><ListItemText>Select All </ListItemText></ListItem>
+		</List>
+		);
+	}
+	function  View() {
+		const context = useContext(PageContext);
+		if (!context) {
+		throw new Error('useContext must be used within a MyProvider');
+		}
+		const { zoom, updateZoom } = context;
+		const increment = 10;
+		function add_zoom() {
+		if (zoom + increment > 200)
+			updateZoom(200);
 
-        <ListItem button>
-          <ListItemText onClick={() => handlePage("Game") }>Form</ListItemText>
-        </ListItem>
-        <ListItem button onClick={() => handlePage("Profile")}><ListItemText>Profile </ListItemText></ListItem>
-        <ListItem button onClick={() => handlePage("Data")}><ListItemText>Data </ListItemText></ListItem>
-        <ListItem button onClick={() => handlePage("Contacts")}><ListItemText>Contacts </ListItemText></ListItem>
-        <Divider/>
-        <ListItem button onClick={() => handleChat("Chat")}>{chat === "Chat" ? <CheckBoxOutlinedIcon fontSize="small"/>: <CheckBoxOutlineBlankIcon fontSize="small"/>} <ListItemText style={{position:'relative', left:'10px'}}>Chat </ListItemText></ListItem>
-        <Divider/>
-        <ListItem button onClick={print}><ListItemText>Print </ListItemText></ListItem>
-        <ListItem button onClick={auth.logout}><ListItemText>Logout </ListItemText></ListItem>
-        <ListItem button onClick={closeTab}><ListItemText>Exit PongOffice </ListItemText></ListItem>
-      </List>
-    );
-  }
-  function  Edit() {
-    const context = useContext(MyContext);
-    if (!context) {
-      throw new Error('useContext must be used within a MyProvider');
-    }
-
-    const { coords, updateCoordsMenu } = context;
-    const { coordX, coordY } = coords;
-
-    return (
-      <List dense onMouseLeave={() => handleClick("none")} sx={{color: 'white',}} style={{position: 'fixed', top:'64px', left:'45px', width:200, paddingTop: "0px", paddingBottom: "0px", backgroundColor: '#2f2f2f', border:'1px solid black'}} >
-        <ListItem button >
-          <ContentCopy fontSize="small"/>
-          <ListItemText style={{position:'relative', left:'10px'}}>Copy</ListItemText>
-          <Typography fontSize="12px" color="text.disabled">Ctrl+C</Typography>
-        </ListItem>
-        <ListItem button>
-          <ContentCut fontSize="small"/>
-          <ListItemText style={{position:'relative', left:'10px'}}>Cut</ListItemText>
-          <Typography fontSize="12px" color="text.disabled">Ctrl+X</Typography>
-        </ListItem>
-        <ListItem button>
-          <ContentPaste fontSize="small"/>
-          <ListItemText style={{position:'relative', left:'10px'}}>Paste</ListItemText>
-          <Typography fontSize="12px" color="text.disabled">Ctrl+V</Typography>
-        </ListItem>
-        <Divider/>
-        <ListItem button onClick={() => updateCoordsMenu({coordX: -1,coordY: coordY}, 'none')}><ListItemText>Select Row </ListItemText></ListItem>
-        <ListItem button onClick={() => updateCoordsMenu({coordX: coordX,coordY: -1},'none')}><ListItemText>Select Column </ListItemText></ListItem>
-        <ListItem button onClick={() => updateCoordsMenu({coordX: -1,coordY: -1}, 'none')}><ListItemText>Select All </ListItemText></ListItem>
-      </List>
-    );
-  }
-  function  View() {
-    const context = useContext(MyContext);
-    if (!context) {
-      throw new Error('useContext must be used within a MyProvider');
-    }
-    const { zoom, updateZoom } = context;
-    const increment = 10;
-    function add_zoom() {
-      if (zoom + increment > 200)
-        updateZoom(200);
-
-      else
-        updateZoom(zoom + increment);
-      console.log(zoom);
-    }
-    function reduce_zoom() {
-      if (zoom - increment < 50)
-        updateZoom(50);
+		else
+			updateZoom(zoom + increment);
+		console.log(zoom);
+		}
+		function reduce_zoom() {
+		if (zoom - increment < 50)
+			updateZoom(50);
 
       else
         updateZoom(zoom - increment);
@@ -228,7 +187,7 @@ function  File() {
     );
   }
   function BarSwitch () {
-      const context = useContext(MyContext);
+      const context = useContext(PageContext);
       if (!context) {
         throw new Error('useContext must be used within a MyProvider');
       }
@@ -249,7 +208,7 @@ function  File() {
         return;
     }
   }
-  const context = useContext(MyContext);
+  const context = useContext(PageContext);
   if (!context) {
     throw new Error('useContext must be used within a MyProvider');
   }
@@ -317,41 +276,41 @@ function  File() {
   );
 }
 
-export function SelectBar({}) {
-  const context = useContext(MyContext);
-  if (!context) {
-    throw new Error('useContext must be used within a MyProvider');
-  }
-  const { menu, updateMenu } = context;
-  function handleClick(str : string) {
-    updateMenu(str);
-  }
+	export function SelectBar({}) {
+	const context = useContext(PageContext);
+	if (!context) {
+		throw new Error('useContext must be used within a MyProvider');
+	}
+	const { menu, updateMenu } = context;
+	function handleClick(str : string) {
+		updateMenu(str);
+	}
 
-  const darkTheme = createTheme({
-    palette: {
-      text: {
-        primary: 'white',
-        secondary: 'white',
-        disabled: 'white',
-      },
-      action: {
-        active: 'grey',
-        selected: 'grey',
-        disabledBackground: 'grey',
-        hover: '#3584e4',
-        disabled: 'grey',
-      },
-      background: {
-        default: '#2f2f2f',
-        paper: '#2f2f2f',
-      },
-      divider: '#2a2a2a',
-    },
-  });
-  return <div>
-          <div className={styles.textBar}>
-            <div className={styles.textBar1} onMouseEnter={() => handleClick("none")}/>
-              <BasicMenu />
-            </div>
-          </div>;
+	const darkTheme = createTheme({
+		palette: {
+		text: {
+			primary: 'white',
+			secondary: 'white',
+			disabled: 'white',
+		},
+		action: {
+			active: 'grey',
+			selected: 'grey',
+			disabledBackground: 'grey',
+			hover: '#3584e4',
+			disabled: 'grey',
+		},
+		background: {
+			default: '#2f2f2f',
+			paper: '#2f2f2f',
+		},
+		divider: '#2a2a2a',
+		},
+	});
+	return <div>
+			<div className={styles.textBar}>
+				<div className={styles.textBar1} onMouseEnter={() => handleClick("none")}/>
+				<BasicMenu />
+				</div>
+			</div>;
 }

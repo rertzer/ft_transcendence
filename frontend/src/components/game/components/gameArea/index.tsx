@@ -7,7 +7,7 @@ import { gameSocket } from "../../services/gameSocketService";
 import { IPlayer } from "./interfacesGame";
 import { IBall } from "./interfacesGame";
 import { IObstacles } from "./interfacesGame";
-import { MyContext } from "../../../../context/PageContext";
+import { PageContext } from "../../../../context/PageContext";
 
 function GameArea(props:any) {
 	const {roomId, gameWidth, gameHeight, playerName, gameStatus, setGameStatus, setRoomId, setModeGame} = useContext(gameContext);
@@ -257,7 +257,7 @@ function GameArea(props:any) {
 		}
 	};
 
-	const context = useContext(MyContext);
+	const context = useContext(PageContext);
 	if (!context) {
 	throw new Error('useContext must be used within a MyProvider');
 	}

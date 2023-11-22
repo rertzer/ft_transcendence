@@ -1,7 +1,7 @@
 .messageItem {
     display: flex;
     gap: 20px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     .messageInfo {
         display: flex;
         flex-direction: column;
@@ -21,7 +21,7 @@
         max-width: 80%;
         display: flex;
         flex-direction: column;
-        gap: 10px;
+        gap: 2px;
         overflow-wrap: break-word;
         p {
             background-color: white;
@@ -54,14 +54,14 @@
     }
     .userActions {
         width: 160px;
-        background-color: #2f2d52;
+        background-color: #000000;
         position: relative;
         display: flex;
         flex-direction: column;
         gap: 5px;
         border-radius: 0px 10px 10px 10px;
         overflow:show;
-        color: #ddddf7;
+        color: #ffffff;
         padding: 20px;
         font-size: 10px;
         .menuHeader {
@@ -95,7 +95,7 @@
 
 .service-message {
     p {
-        background-color: #2f2d52;
+        background-color: #000000;
         color: white;
         font-size: 10px;
         padding: 10px 20px;

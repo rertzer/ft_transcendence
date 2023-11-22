@@ -37,7 +37,6 @@ export class MyGateway {
 	server: Server;
 
 	handleConnection(client:Socket){
-		console.log("client toto connected : ", client.id)
 		client.on('disconnect', () => {
 			console.log("client disconect : ", client.id)
 			this.socketsLogin = this.socketsLogin.filter((s) => {return s.sock !== client;});
@@ -81,7 +80,7 @@ export class MyGateway {
 				}
 				await this.prismaChatService.addChatMessage(messageData.idOfChat, targetSocket.idOfLogin, messageData.content, getDate(), messageData.serviceMessage);
 				this.server.to(messageData.idOfChat.toString()).emit('newMessage', message);
-				this.server.to(messageData.idOfChat.toString()).emit('lastMessage', message);
+				// this.server.to(messageData.idOfChat.toString()).emit('lastMessage', message);
 			}
 		}
 	}
@@ -117,6 +116,8 @@ export class MyGateway {
 			if (receiverSocket)
 			{
 				const allGood = await this.privateConv.setDirectConv(messageData.sender, targetSocket.idOfLogin, messageData.receiver, targetSocket.sock, receiverSocket.sock);
+				const chatlister = new ChatLister(this.prismaChatService);
+				chatlister.listChatOfUser(targetSocket.idOfLogin, targetSocket.sock);
 			}
 		}
 	}

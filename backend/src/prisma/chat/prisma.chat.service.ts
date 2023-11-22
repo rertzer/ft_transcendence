@@ -36,6 +36,119 @@ export class PrismaChatService {
 		}
 	}
 
+	async updateChatWithPassword(password:string, type:string, chatId:number)
+	{
+		const updated = await this.prismaService.chatChannels.update({
+			where: {
+				id: chatId,
+			},
+			data: {
+				password: password,
+				type: type,
+			}
+		})
+		if (updated)
+			return true;
+		else
+			return false;
+	}
+
+	async userIsblocked(login: string, userBlockedLogin: string)
+	{
+		const getLogId = await this.getIdOfLogin(login);
+		const getBlockedId = await this.getIdOfLogin(userBlockedLogin);
+		if (getLogId && getBlockedId)
+		{
+			const isBlocked = await this.prismaService.blockedUser.findFirst({
+				where: {
+					user_id: getLogId,
+					blocked_user_id: getBlockedId,
+				}
+			})
+			if (isBlocked)
+				return true;
+		}
+		return false;
+	}
+
+	async blockUser(login: string, userBlockedLogin:string, date: Date)
+	{
+		const getLogId = await this.getIdOfLogin(login);
+		const getBlockedId = await this.getIdOfLogin(userBlockedLogin);
+		if (getLogId && getBlockedId)
+		{
+			const isBlocked = await this.prismaService.blockedUser.create({
+				data: {
+					user_id :getLogId,
+					blocked_user_id: getBlockedId,
+					date_blocked: date,	
+				}
+			})
+			if (isBlocked)
+				return (true);
+		}
+		return false;
+	}
+
+	async getListOfBlocked(login:string)
+	{
+		const getLogId = await this.getIdOfLogin(login);
+		if (getLogId)
+		{
+			const list = await this.prismaService.blockedUser.findMany({
+				where :{
+					user_id : getLogId,
+				}
+			})
+			return (list);
+		}
+	}
+
+	async unblockUser(login: string, userBlockedLogin:string)
+	{
+		const getLogId = await this.getIdOfLogin(login);
+		const getBlockedId = await this.getIdOfLogin(userBlockedLogin);
+		if (getLogId && getBlockedId)
+		{
+			const isBlocked = await this.prismaService.blockedUser.findFirst({
+				where: {
+					user_id: getLogId,
+					blocked_user_id: getBlockedId,
+				}
+			})
+			if (isBlocked)
+			{
+				const RemoveBlocked = await this.prismaService.blockedUser.delete({
+					where :{
+						id : isBlocked.id,
+					}
+				})
+				if (isBlocked)
+					return (true);
+			}
+
+		}
+		return false;
+	}
+
+	async updateChatTypeNoPass(chatId:number, chatType:string)
+	{
+		const updated = await this.prismaService.chatChannels.update({
+			where: {
+				id: chatId,
+			},
+			data: {
+				password: null,
+				type: chatType,
+			}
+		})
+		if (updated)
+			return true;
+		else
+			return false;
+
+	}
+
 	async BanUserFromChannel(idLogin: number, chatId: number)
 	{
 			const recordToDelete = await this.prismaService.chatChannelsUser.findFirst({
@@ -243,6 +356,28 @@ export class PrismaChatService {
 
 				return chatChannel.chatMessages;
 			}
+	}
+
+	async getChatChannelsUser(login:string, chatId: number)
+	{
+		const idOfLogin = await this.getIdOfLogin(login);
+		if (idOfLogin)
+		{
+			const chatUserId = await this.getIdOfChatChannelsUser(idOfLogin, chatId);
+			if (chatUserId)
+			{
+				const user = await this.prismaService.chatChannelsUser.findUnique({
+					where: {
+						id: chatUserId,
+					},
+				})
+				if (user)
+				{
+					return user;
+				}
+				
+			}
+		}
 	}
 
 	async addChatMessage(chatChanelId: number, loginId: number, message:string, date:Date, serviceMessage: boolean )

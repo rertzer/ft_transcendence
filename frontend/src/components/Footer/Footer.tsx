@@ -13,7 +13,7 @@ import LastPageIcon from '@mui/icons-material/LastPage';
 
 import { createTheme } from '@mui/material/styles';
 import { ThemeProvider } from '@emotion/react';
-import { MyContext } from '../../context/PageContext';
+import { PageContext } from '../../context/PageContext';
 import { useContext } from 'react';
 
 const theme = createTheme({
@@ -39,7 +39,7 @@ const marks = [
 
 function ContinuousSlider() {
 
-  const context = useContext(MyContext);
+  const context = useContext(PageContext);
   if (!context) {
     throw new Error('useContext must be used within a MyProvider');
   }
@@ -99,7 +99,7 @@ function ContinuousSlider() {
 }
 
 function Footer() {
-  const context = useContext(MyContext);
+  const context = useContext(PageContext);
   if (!context) {
     throw new Error('useContext must be used within a MyProvider');
   }

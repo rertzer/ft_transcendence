@@ -3,14 +3,14 @@ import styles from "./Body.module.css";
 import Numbers from "./Numbers/Numbers_dynamic";
 import Letters from "./Letters/Letters_dynamic";
 import Grid from "./Grid/Grid_dynamic";
-import { MyContext } from "../../context/PageContext";
+import { PageContext } from "../../context/PageContext";
 import React, { useContext, useState, useEffect } from 'react';
 import Game from "../game/Game";
 
 
 
 export function Body({}) {
-  const context = useContext(MyContext);
+  const context = useContext(PageContext);
 
   //HANDLE COORD CHANGE
   if (!context) {

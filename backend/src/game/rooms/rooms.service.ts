@@ -105,6 +105,7 @@ export class RoomsService  implements OnModuleInit{
 			else {
 				this.waitingRoomBasic.push(player);
 			}
+			console.log(this.waitingRoomAdvanced, this.waitingRoomBasic);
 			player.socket.emit('waiting_room_joined');
 		}
 		else {
@@ -117,6 +118,7 @@ export class RoomsService  implements OnModuleInit{
 			else {
 				this.waitingRoomBasic = this.waitingRoomBasic.filter(p => {return (p !== playerToRemoveFromWaitingRoom)});
 			}
+			console.log(this.waitingRoomAdvanced, this.waitingRoomBasic);
 		}
 	}
 
@@ -183,8 +185,10 @@ export class RoomsService  implements OnModuleInit{
 				idPlayerMove:-1,
 			}
 		)
-		room.gameStatus = 'WAITING_TO_START';
-		await this.addNewBddGame(room);
+		if (room.playerRight && room.playerLeft) {
+			room.gameStatus = 'WAITING_TO_START';
+			await this.addNewBddGame(room);
+		}
 		console.log('Player ', player.socket.id, ' added to Room ', room.id);
 		player.socket.emit('room_joined', {roomId: room.id});
 	};

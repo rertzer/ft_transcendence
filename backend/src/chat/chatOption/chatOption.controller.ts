@@ -1,11 +1,11 @@
 import { Body, Controller, Post, Get, Param } from "@nestjs/common";
 import { PrismaChatService } from "src/prisma/chat/prisma.chat.service";
-import { MutedUserService } from "../mutedUser/mutedUser.service";
-import { getDate } from "../utils/utils.service";
 import { MyGateway } from "../gateway/gateway.service";
 import { JoinChatService } from "../joinChat/joinChat.service";
 import { JwtGuard } from "src/auth/guard";
-import { UseGuards } from "@nestjs/common";
+import { getDate } from "../utils/utils.service";
+import { UseGuards, ParseIntPipe } from "@nestjs/common";
+import { ChatLister } from "../chatLister/chatLister.service";
 
 // @UseGuards(JwtGuard)
 @Controller('chatOption')
@@ -29,13 +29,32 @@ export class ChatOptController {
 
 	}
 
+	@Post('blockUser')
+	async blockUser(@Body() data: {blockedLogin:string, login:string})
+	{
+		return await this.prismaChatService.blockUser(data.login, data.blockedLogin, getDate());
+	}
+
+	@Post('unblockUser')
+	async unblockUser(@Body() data: {blockedLogin:string, login:string})
+	{
+		return await this.prismaChatService.unblockUser(data.login, data.blockedLogin);
+	}
+
+	@Post('isBlocked')
+	async isBlockUser(@Body() data: {blockedLogin:string, login:string})
+	{
+		return await this.prismaChatService.userIsblocked(data.login, data.blockedLogin);
+	}
+
 	@Post('banUser')
 	async banUser(@Body() user:{login:string, chatId: number}){
 		console.log("in ban user");
 		const idLogin = await this.prismaChatService.getIdOfLogin(user.login);
 		if (idLogin)
 		{
-			if (! await this.prismaChatService.isAdmin(idLogin, user.chatId) && ! await this.prismaChatService.isOwner(user.login, user.chatId))
+			const isOwner = await this.prismaChatService.isOwner(user.login, user.chatId);
+			if (!isOwner)
 			{
 				console.log("passed this step");
 				const banWorks = await this.prismaChatService.banUserPrism(idLogin, user.chatId);
@@ -54,7 +73,7 @@ export class ChatOptController {
 				return false;
 			}
 			else
-				return false
+				return {isOwner};
 		}
 		return (false);
 	}
@@ -62,14 +81,14 @@ export class ChatOptController {
 	@Get(':login/banned/:chatId')
 	async isUserBanned(
 		@Param('login') login: string,
-		@Param('chatId') chatId: string,
+		@Param('chatId', ParseIntPipe) chatId: number,
 	) {
 		console.log("username receive : ", login, "chat id :", chatId);
 		const SockArray = this.gateway.getSocketsArray()
 		const targetSocket = SockArray.find((socket) => socket.login === login);
 		if (targetSocket)
 		{
-			const isBanned = await this.prismaChatService.checkIfUserIsBanned(parseInt(chatId), targetSocket.idOfLogin);
+			const isBanned = await this.prismaChatService.checkIfUserIsBanned(chatId, targetSocket.idOfLogin);
 			console.log("is banned or not ?", isBanned);
 			return { isBanned };
 		}
@@ -82,7 +101,8 @@ export class ChatOptController {
 		const targetSocket = SockArray.find((socket) => socket.login === user.login);
 		if (targetSocket)
 		{
-			if (! await this.prismaChatService.isAdmin(targetSocket.idOfLogin, user.chatId) && ! await this.prismaChatService.isOwner(user.login, user.chatId))
+			const isOwner = await this.prismaChatService.isOwner(user.login, user.chatId);
+			if (!isOwner)
 			{
 				console.log("passed this step");
 				const kicked = await this.prismaChatService.kickUserFromChat(targetSocket.idOfLogin, user.chatId);
@@ -96,14 +116,15 @@ export class ChatOptController {
 				return false;
 			}
 			else
-				return false
+				return {isOwner}
 		}
 		else
 		{
 			const idLogin = await this.prismaChatService.getIdOfLogin(user.login);
 			if (idLogin)
 			{
-				if (! await this.prismaChatService.isAdmin(idLogin, user.chatId) && ! await this.prismaChatService.isOwner(user.login, user.chatId))
+				const isOwner = await this.prismaChatService.isOwner(user.login, user.chatId);
+				if (!isOwner)
 				{
 					console.log("passed this step");
 						const kicked = await this.prismaChatService.kickUserFromChat(idLogin, user.chatId);
@@ -115,11 +136,54 @@ export class ChatOptController {
 						return false;
 				}
 				else
-					return false
+					return {isOwner}
 			}
 			return false
 		}
 	}
+
+	@Post('changeType')
+	async changeChatType(@Body() chatType:{password:string, type: string, chatId: number, login: string})
+	{
+		let worked;
+		const isOwner = await this.prismaChatService.isOwner(chatType.login, chatType.chatId);
+		if (isOwner)
+		{
+			if (chatType.password.length > 0)
+			{
+				worked = await this.prismaChatService.updateChatWithPassword(chatType.password, chatType.type, chatType.chatId);
+			}
+			else 
+			{
+				worked = await this.prismaChatService.updateChatTypeNoPass(chatType.chatId, chatType.type);
+			}
+			return( worked);
+		}
+		else
+			return ("Not Owner")
+	}
+	
+	@Get("listOfBlockedUser/:login")
+	async listOfBlockUser(
+		@Param('login') login: string,
+	) {
+		const listBlocked = await this.prismaChatService.getListOfBlocked(login)
+		if (listBlocked)
+			return listBlocked;
+		else 
+			return false;
+	}
+
+	@Get(':login/info/:chatId')
+	async userInfo(
+		@Param('login') login: string,
+		@Param('chatId', ParseIntPipe) chatId: number,
+	) {
+		const userInfo = this.prismaChatService.getChatChannelsUser(login, chatId);
+		if (userInfo)
+			return userInfo;
+	}
+
 
 	@Post('joinChat')
 	async joinChat(@Body() user: {login:string, chat_id: number, password:string})
@@ -128,7 +192,9 @@ export class ChatOptController {
 		const targetSocket = SockArray.find((socket) => socket.login === user.login);
 		if (targetSocket !== undefined)
 		{
-			const value = this.joinChatservice.joinChat(targetSocket.idOfLogin, user.chat_id, "user", user.password, targetSocket.sock);
+			const value =  await this.joinChatservice.joinChat(targetSocket.idOfLogin, user.chat_id, "user", user.password, targetSocket.sock);
+			const chatlister = new ChatLister(this.prismaChatService);
+			chatlister.listChatOfUser(targetSocket.idOfLogin, targetSocket.sock);
 			return value;
 		}
 		return false;

@@ -6,6 +6,7 @@ import { useState, useEffect, useContext } from 'react';
 import  ConnectionContext from "../../context/authContext"
 import ChatContext, {IChatContext} from "../../context/chatContext";
 import { useLogin } from "../../components/user/auth";
+import GameContext from "../../context/gameContext";
 
 export type Channel = {
     id: number;
@@ -20,22 +21,16 @@ export type Channel = {
     dateSend: Date | null;
 }
 
-// export type Message = {
-//     msg: string;
-//     username: string;
-// 	login: string;
-//     date: Date;
-//     id: number;
-//     idOfChat: number;
-// }
-
 const ChatComponent = () => {
 
+    const auth = useLogin();
+    const {roomId, setRoomId} = useContext(GameContext);
     const [allChannels, setAllChannels] = useState<Channel[]>([])
-    const [needToUpdate, setNeedToUpdate] = useState(false);
+    const [blockedUsers, setBlockedUsers] = useState<number[]>([]);
+    const [needToUpdate, setNeedToUpdate] = useState("");
     const [activeChannel, setActiveChannel] = useState<Channel>({
         id: -1,
-        channelName: "Pong Chat",
+        channelName: "PongOffice Chat",
         chatPicture: "",
         type: "",
         status: "",
@@ -50,8 +45,41 @@ const ChatComponent = () => {
     activeChannel,
     setActiveChannel,
     needToUpdate,
-    setNeedToUpdate
+    setNeedToUpdate,
+    blockedUsers,
+    setBlockedUsers,
   }
+
+//   useEffect(() => {
+//     const fetchBlocked = async () => {
+//         const result = await getBlockedUsers();
+//         if (result)
+//             setBlockedUsers(result)
+//     }
+//     fetchBlocked();
+//     console.log(blockedUsers);
+//   }, []);
+
+// async function getBlockedUsers() {
+//     let blocked: number[] = [];
+//     try {
+//         const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/listOfBlockedUser/${auth.user.login}`);
+//         if (!response.ok) {
+//             throw new Error("Request failed");
+//         }
+//         const data = await response.json();
+//         if (data) {
+//             return (data);
+//         }
+//     }
+//     catch(error) {
+//         console.error("Error while getting blocked users", error);
+//     }
+// }
+useEffect(() => {
+    console.log("New room Id", roomId);
+  }, [roomId])
+
 
     return (
         <div className="chatcomponent">

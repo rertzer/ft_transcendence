@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect, useRef } from 'react';
-import { MyContext } from '../../../context/PageContext';
+import { PageContext } from '../../../context/PageContext';
 import styles from "./Numbers.module.css";
 
 function RepeatingNumbers() {
@@ -21,7 +21,7 @@ function RepeatingNumbers() {
 
   const forceUpdate = useForceUpdate();
 
-  const context = useContext(MyContext);
+  const context = useContext(PageContext);
   if (!context) {
     throw new Error('useContext must be used within a MyProvider');
   }

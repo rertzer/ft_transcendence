@@ -2,12 +2,12 @@ import { SelectBar } from './SelectBar';
 import { Tooltip } from "@mui/material";
 import styles from "./Header.module.css";
 import { useContext } from "react";
-import { MyContext } from '../../context/PageContext';
+import { PageContext } from '../../context/PageContext';
 import { useLogin } from '../user/auth';
 import { GameBar } from './GameBar';
 
 function Header({}) {
-  const context = useContext(MyContext);
+  const context = useContext(PageContext);
   if (!context) {
     throw new Error('useContext must be used within a MyProvider');
   }

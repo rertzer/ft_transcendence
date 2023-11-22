@@ -1,6 +1,6 @@
 import styles from "./SelectBarItem.module.css"
 import React, { useContext } from 'react';
-import { MyContext } from '../../../context/PageContext';
+import { PageContext } from '../../../context/PageContext';
 
 interface SelectBarProps {
   labelText: string;
@@ -9,7 +9,7 @@ interface SelectBarProps {
 }
 
 export function SelectBarItem( { labelText, left, width }  : SelectBarProps) {
-  const context = useContext(MyContext);
+  const context = useContext(PageContext);
   if (!context) {
     throw new Error('useContext must be used within a MyProvider');
   }

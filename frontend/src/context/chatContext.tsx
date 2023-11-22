@@ -18,8 +18,10 @@ export interface IChatContext {
 	setAllChannels: (allChannels: Channel[]) => void;
 	activeChannel: Channel,
 	setActiveChannel: (activeChannel: Channel) => void;
-	needToUpdate: boolean,
-	setNeedToUpdate: (bool: boolean) => void;
+	needToUpdate: string,
+	setNeedToUpdate: (str: string) => void;
+	blockedUsers: number[];
+	setBlockedUsers: (blocked: number[]) => void;
 };
 
 const defaultState:IChatContext = {
@@ -27,7 +29,7 @@ const defaultState:IChatContext = {
 	setAllChannels: () => {},
 	activeChannel: {
 		id: -1,
-		channelName: "Pong Chat",
+		channelName: "PongOffice Chat",
 		chatPicture: "",
 		type: "",
 		status: "",
@@ -36,8 +38,10 @@ const defaultState:IChatContext = {
 		msg: null
 	},
 	setActiveChannel: () => {},
-	needToUpdate: false,
+	needToUpdate: "",
 	setNeedToUpdate: () => {},
+	blockedUsers: [],
+	setBlockedUsers: () => {},
 };
 
 export default React.createContext(defaultState);

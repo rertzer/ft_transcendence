@@ -1,5 +1,4 @@
 import MenuIcon from '@mui/icons-material/Menu';
-import LockIcon from '@mui/icons-material/Lock';  // lock icon for channels protected by password
 import { Tooltip } from '@mui/material';
 import "./ListChannels.scss"
 import { useContext, useState, useEffect } from 'react';
@@ -38,8 +37,7 @@ export const ListChannels = (props: {showSubMenu: string, setShowSubMenu: Functi
 			setChanToJoin({id: -1, name: "", owner: "", type: "", password: null})
 		} else {
 			setErrorMessage("");
-			socket.emit('chatListOfUser', auth.user.login);
-			setNeedToUpdate(true);
+			setNeedToUpdate("joinedChat " + chanToJoin.id.toString());
 			toggleForm();
 
 		}
@@ -69,7 +67,7 @@ export const ListChannels = (props: {showSubMenu: string, setShowSubMenu: Functi
 		  body: JSON.stringify(messageData),
 		};
 		try {
-		  const response = await fetch('http://localhost:4000/chatOption/joinChat/', requestOptions);
+		  const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/joinChat/`, requestOptions);
 		  if (!response.ok) {
 			throw new Error('Request failed');
 		  }
@@ -131,7 +129,7 @@ export const ListChannels = (props: {showSubMenu: string, setShowSubMenu: Functi
 					onChange={(e) => setPassword(e.target.value)}
 					/>}
 				</div>
-				{ chanToJoin.id !== -1 && <button onClick={() => {DealWithIdChat(); setChanToJoin({id: -1, name: "", owner: "", type: "", password: null})}}>Join</button>}
+				{ chanToJoin.id !== -1 && <button onClick={() => {DealWithIdChat()}}>Join</button>}
 			</div>
 			<hr/>
 			{errorMessage !== "" &&
@@ -141,8 +139,9 @@ export const ListChannels = (props: {showSubMenu: string, setShowSubMenu: Functi
 			</div>}
             {availableChannels.filter(isNotAlreadyIn).map((chan) => {return (
 			<div className="channelItem" key={chan.id}>
-				<p onClick={() => {setChanToJoin(chan)}}>{chan.name}</p>
-				{chan.type === "protected by password" && <LockIcon />}
+				{chan.type === "protected by password" ?
+				<p onClick={() => {setChanToJoin(chan)}}>{chan.name + " (password)"}</p> : 
+				<p onClick={() => {setChanToJoin(chan)}}>{chan.name}</p>}
 			</div>
 			)
 			})}

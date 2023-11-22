@@ -1,43 +1,55 @@
 import React, { useState, useEffect, useRef, CSSProperties } from 'react';
 import { useContext } from 'react';
-import { MyContext } from '../../../context/PageContext';
+import { PageContext } from '../../../context/PageContext';
 import { Project } from '../../Sheets/Project/Project';
 import { Profile } from '../../Sheets/Profile/Profile';
 import { Data } from '../../Sheets/Data/Data';
 import { Contacts } from '../../Sheets/Contacts/Contacts';
 
 function PageSwitch () {
-  //GET SCROLL VALUE
-  const context = useContext(MyContext);
-  if (!context) {
-    throw new Error('useContext must be used within a MyProvider');
-  }
-  const { scroll, zoom } = context;
-  const { scrollX, scrollY } = scroll;
-  const [sx, setNewScrollX] = useState(scrollX);
-  const [sy, setNewScrollY] = useState(scrollY);
+   //GET SCROLL VALUE
+   const context = useContext(PageContext);
+   if (!context) {
+	 throw new Error('useContext must be used within a MyProvider');
+   }
+   const { scroll, zoom } = context;
+   const { scrollX, scrollY } = scroll;
+   const [sx, setNewScrollX] = useState(scrollX);
+   const [sy, setNewScrollY] = useState(scrollY);
 
-  useEffect(() => {
-    setNewScrollX(scrollX);
-    setNewScrollY(scrollY);
-  }, [scrollX, scrollY]);
-  switch(context?.page) {
-    case "Game" :
-      return Project(sx, sy, zoom);
-    case "Profile" :
-      return Profile(sx, sy, zoom);
-    case "Data" :
-      return Data(sx, sy, zoom);
-    case "Contacts" :
-      return Contacts(sx, sy, zoom);
-    default :
-      return;
-  }
+   useEffect(() => {
+	 setNewScrollX(scrollX);
+	 setNewScrollY(scrollY);
+   }, [scrollX, scrollY]);
+
+ //   let component = null;
+ //   switch(context?.page) {
+ //     case "Project" :
+ //       component = Project(sx, sy, zoom);
+ // 	  break;
+ //     case "Profile" :
+ // 		component = Profile(sx, sy, zoom);
+ // 	  break;
+ //     case "Data" :
+ // 		component = Data(sx, sy, zoom);
+ // 	  break;
+ //     case "Contacts" :
+ // 		component = <Contacts key={"contacts"} sx={sx} sy={sy} zoom={zoom}/>;
+ // 	  break;
+ //     default :
+ // 		break;
+ //   }
+   return (
+	 <div>
+		 {context?.page == "Data" && <Data key={"data"} sx={sx} sy={sy} zoom={zoom}/>}
+		 {context?.page == "Contacts" && <Contacts key={"contacts"} sx={sx} sy={sy} zoom={zoom}/>}
+	 </div>
+   );
 }
 
 function Grid() {
   //GET SCROLL VALUE
-  const context = useContext(MyContext);
+  const context = useContext(PageContext);
   if (!context) {
     throw new Error('useContext must be used within a MyProvider');
   }

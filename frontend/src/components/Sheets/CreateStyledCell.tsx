@@ -1,5 +1,6 @@
 import React from 'react';
 import "./Cells.css";
+import "./Contacts/Contacts.css"
 
 type CreateCellProps = {
   coordX: number;

@@ -1,9 +1,9 @@
 import styles from "./GameBar.module.css";
 import { useContext } from "react";
-import { MyContext } from "../../context/PageContext";
+import { PageContext } from "../../context/PageContext";
 
 export function GameBar () {
-	const context = useContext(MyContext);
+	const context = useContext(PageContext);
 	if (!context) {
 	throw new Error('useContext must be used within a MyProvider');
 	}

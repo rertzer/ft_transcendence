@@ -35,7 +35,7 @@ export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, On
 	private readonly gameService: GameLogicService;
 
 	@WebSocketServer()
-	server: Namespace;
+	server: Namespace; 
 
 	//Connexion 
 	handleConnection(client:Socket){
@@ -49,7 +49,7 @@ export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, On
     }
 	//Deconnexion A REVOIR
 	handleDisconnect(client: Socket) {
-		console.log(`Client disconnected ${client.id}`);
+		console.log(`GameSocket Client disconnected ${client.id}`);
 		const player = this.playersService.findOne(client);
 		if (player) {
 			const rooms_player = this.roomsService.findRoomsOfPlayer(player);

@@ -21,7 +21,7 @@ type SharedData = {
   updateGame: (newGame: { player1: string; player2: string; points1: number; points2: number}) => void;
 };
 
-const MyContext = createContext<SharedData | undefined>(undefined);
+const PageContext = createContext<SharedData | undefined>(undefined);
 
 type MyProviderProps = {
   children: ReactNode;
@@ -29,7 +29,7 @@ type MyProviderProps = {
 
 function MyProvider({ children }: MyProviderProps) {
   const [sharedData, setSharedData] = useState({
-    page:'Profile',
+    page:'none',
     menu:'none',
     chat:'none',
     zoom:125,
@@ -72,10 +72,10 @@ function MyProvider({ children }: MyProviderProps) {
   
 
   return (
-    <MyContext.Provider value={{ ...sharedData, updatePage, updateMenu, updateChat, updateZoom, updateToolbar, updatePageMenuChat, updateCoords, updateCoordsMenu, updateScroll, updateGame}}>
+    <PageContext.Provider value={{ ...sharedData, updatePage, updateMenu, updateChat, updateZoom, updateToolbar, updatePageMenuChat, updateCoords, updateCoordsMenu, updateScroll, updateGame}}>
       {children}
-    </MyContext.Provider>
+    </PageContext.Provider>
   );
 }
 
-export { MyProvider, MyContext };
+export { MyProvider, PageContext };

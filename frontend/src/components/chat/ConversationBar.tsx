@@ -1,22 +1,27 @@
 import "./ConversationBar.scss";
-import ProfileIcon from '@mui/icons-material/AccountBoxOutlined';
-import BlockIcon from '@mui/icons-material/BlockOutlined';
 import LogoutIcon from '@mui/icons-material/MeetingRoomOutlined';
 import CloseIcon from '@mui/icons-material/Close';
 import { Tooltip } from "@mui/material";
-import ConnectionContext from '../../context/authContext'
 import ChatContext from '../../context/chatContext'
 import { useContext, useState, useRef, useEffect } from "react";
 import { ChannelSettings } from "./ChannelSettings";
 import { useLogin } from "../../components/user/auth";
+import { WebsocketContext } from '../../context/chatContext';
+import { PageContext } from "../../context/PageContext";
 
 
 const ConversationBar = (props: {isOwner: boolean, isAdmin: boolean}) => {
 
 	const auth = useLogin();
     const {activeChannel, setActiveChannel} = useContext(ChatContext);
+    const context = useContext(PageContext);
+    if (!context) {
+      throw new Error('useContext must be used within a MyProvider');
+    }
+    const { updateChat } = context;
     const [showSubMenu, setShowSubMenu] = useState("none");
     let menuRef = useRef<HTMLInputElement>(null);
+    const socket = useContext(WebsocketContext);
 
     useEffect(() => {
 		const clickHandler = (e: any) => {
@@ -30,13 +35,32 @@ const ConversationBar = (props: {isOwner: boolean, isAdmin: boolean}) => {
 		}
 	});
 
+    async function leaveChannel() {
+        const requestOptions = {
+			method: 'post',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ login: auth.user.login, chatId: activeChannel.id})
+		};
+		const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/kickUser/`, requestOptions);
+        const messageData = {
+			username: auth.user.username,
+			login:auth.user.login,
+			content: auth.user.username + " has just left",
+			serviceMessage: true,
+			idOfChat: activeChannel.id,
+		}
+		socket.emit('newMessage', messageData);
+		const data = await response.json();
+		if (data.isOwner)
+			console.log("PLOP") //faudra surement faire un autre call, pour l'instant l'owner peut pas quitter son channel
+    }
+
     function findReceiverName(names: string) {
 
         let name = names.replace(auth.user.login, "");
         name.trim()
         return (name)
     }
-
         return (
             <div>
                 <div className='chatInfo'>
@@ -51,11 +75,11 @@ const ConversationBar = (props: {isOwner: boolean, isAdmin: boolean}) => {
                         }
                         {activeChannel.type !== "DM" &&
                              <Tooltip title="Leave channel" arrow>
-                                <LogoutIcon />
+                                <LogoutIcon onClick={leaveChannel}/>
                             </Tooltip>
                         }
                         <Tooltip title="Close conversation" arrow>
-                            <CloseIcon onClick={() => {setActiveChannel({id: -1, channelName: "Pong Chat", chatPicture: "", status: "", type: "", username: null, dateSend: null, msg: null})}} />
+                            <CloseIcon onClick={() => {updateChat('none')}} />
                         </Tooltip>
                     </div>
                 </div>
