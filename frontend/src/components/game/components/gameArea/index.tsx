@@ -271,23 +271,12 @@ function GameArea(props:any) {
 		printMenu({pong:pong, gameStatus: gameStatus, context:context, gameWidth:gameWidth, gameHeight:gameHeight, frontEndPlayerLeft:frontEndPlayerLeft, frontEndPlayerRight:frontEndPlayerRight,});
 	}
 
-	const leaveGame = (e: React.FormEvent) => {
-		e.preventDefault();
-		gameSocket.emit("i_am_leaving", {roomId});
-		setGameStatus('NOT_IN_GAME');
-		setRoomId(0);
-		setModeGame('');
-	};
-
 	return (
 		<>
 			<Canvas draw = {render} style={styleCanvas} />
 			<div><strong>You play on the {mySide} !</strong></div>
 			<div>Status {gameStatus?.toString()} for Room {roomId?.toString()}</div>
 			<div>PaddleSpeed {pong?.paddleSpeed}</div>
-			<form onSubmit={leaveGame} style={{position:"fixed", top:'500px', left:'500px'}}>
-				<button type="submit"> Leave the Game</button><br/>
-			</form>
 		</>
 	);
 };

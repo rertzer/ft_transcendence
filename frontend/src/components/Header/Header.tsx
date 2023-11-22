@@ -5,6 +5,7 @@ import { useContext } from "react";
 import { PageContext } from '../../context/PageContext';
 import { useLogin } from '../user/auth';
 import { GameBar } from './GameBar';
+import gameContext from "../../context/gameContext";
 
 function Header({}) {
   const context = useContext(PageContext);
@@ -16,12 +17,17 @@ function Header({}) {
   function handleClick(str : string) {
     updateMenu(str);
   }
+  function printGameMenu() : boolean {
+    if ('NOT_IN_GAME' === gameStatus || 'IN_WAITING_ROOM' === gameStatus || 'WAITING_FOR_PLAYER' === gameStatus)
+      return (false);
+    return (true);
+  }
   const auth = useLogin();
-
+  const {gameStatus} =useContext(gameContext);
   return <header className={styles.headerFrame} style={{ height: toolbar ? '65px' : '142px' }}>
         <div className={styles.headerBackground} style={{ height: toolbar ? '65px' : '142px' }}/>
         <div className={styles.line3}>
-          {page === "Game" ? <GameBar /> : <input className={styles.bar} /> }
+        {(printGameMenu()) ? <GameBar /> : <input className={styles.bar} /> }
           <img className={styles.buttonsIcon} alt="" src="/buttons.svg" />
           <div className={styles.menu}>
             <div className={styles.menuBackground} />
