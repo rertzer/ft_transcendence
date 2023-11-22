@@ -40,9 +40,9 @@ function PageSwitch () {
  // 		break;
  //   }
    return (
-	 <div>
-		 {context?.page == "Data" && <Data key={"data"} sx={sx} sy={sy} zoom={zoom}/>}
-		 {context?.page == "Contacts" && <Contacts key={"contacts"} sx={sx} sy={sy} zoom={zoom}/>}
+	 <div key={'switch'}>
+		 {context?.page == "Data" && <Data key={"data1"} sx={sx} sy={sy} zoom={zoom}/>}
+		 {context?.page == "Contacts" && <Contacts key={"contacts1"} sx={sx} sy={sy} zoom={zoom}/>}
 	 </div>
    );
 }
@@ -190,7 +190,7 @@ function Grid() {
       }} />)
 
   return (
-  <div>
+  <div key={'grid'}>
       {components}
   </div>);
 }

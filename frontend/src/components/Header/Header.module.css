@@ -53,7 +53,7 @@
   text-indent: 5px;
   font-size: 12px;
 }
-.tchatbox:focus {
+.bar:focus {
   outline: none;
 }
 .buttonsIcon {
@@ -220,6 +220,7 @@
 .user1:hover {
   color: white;
   cursor: pointer;
+  font-weight: 600;
 }
 .crossIcon{
   position: absolute;

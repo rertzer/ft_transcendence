@@ -99,7 +99,8 @@ function BasicMenu() {
 			<Divider/>
 			<ListItem button onClick={print}><ListItemText>Print </ListItemText></ListItem>
 			<ListItem button onClick={auth.logout}><ListItemText>Logout </ListItemText></ListItem>
-			<ListItem button onClick={closeTab}><ListItemText>Exit PongOffice </ListItemText></ListItem>
+			{window.opener !== null ? <ListItem button onClick={closeTab}><ListItemText>Exit PongOffice </ListItemText></ListItem> 
+                              : <ListItem ><ListItemText sx={{color: 'grey'}}>Exit PongOffice </ListItemText></ListItem>}
 		</List>
 		);
 	}
@@ -195,7 +196,8 @@ function BasicMenu() {
     return (
       <List dense onMouseLeave={() => handleClick("none")} sx={{color: 'white',}} style={{position: 'fixed', top:'64px', left:'190px', width:200, paddingTop: "0px", paddingBottom: "0px", backgroundColor: '#2f2f2f', border:'1px solid black'}} >
         <ListItem button onClick={openNewTab}><ListItemText>New Window </ListItemText></ListItem>
-        <ListItem button onClick={closeTab}><ListItemText>Close Window </ListItemText></ListItem>
+        {window.opener !== null ? <ListItem button onClick={closeTab}><ListItemText>Close Window </ListItemText></ListItem>
+                                : <ListItem ><ListItemText sx={{color: 'grey'}}>Close Window </ListItemText></ListItem>                                                   }
       </List>
     );
   }function  Help() {
@@ -329,10 +331,12 @@ function BasicMenu() {
 		divider: '#2a2a2a',
 		},
 	});
-	return <div>
+	return (
+    <div>
 			<div className={styles.textBar}>
-				<div className={styles.textBar1} onMouseEnter={() => handleClick("none")}/>
+				<div className={styles.textBar1}/>
+        { menu !== 'none' && <div style={{position: 'fixed', width:'100%', height:'100%'}} onMouseEnter={() => handleClick("none")}/>}
 				<BasicMenu />
-				</div>
-			</div>;
+			</div>
+		</div>);
 }
