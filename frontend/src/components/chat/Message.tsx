@@ -1,20 +1,22 @@
 import "./Message.scss"
 import { useContext, useEffect, useState, useRef } from "react";
-import  ConnectionContext from "../../context/authContext"
 import ChatContext, { WebsocketContext } from "../../context/chatContext";
 import { Link } from "react-router-dom";
 import { Channel } from "./ChatComponent";
 import { useLogin } from "../../components/user/auth";
+import GameContext from "../../context/gameContext";
+import { Navigate } from "react-router-dom";
 
 type uInfo = {
 	userStatus: string, // "owner", "admin", "user", "banned", "out" (if kicked or left)
 	friend: boolean
 }
 
-const  Message = (props: {username: string, login: string, date: string, msg: string, isOwner: boolean, isAdmin: boolean, chatId: number, service: boolean, isDM: boolean}) => {
+const  Message = (props: {username: string, login: string, date: string, msg: string, isOwner: boolean, isAdmin: boolean, chatId: number, service: boolean, isDM: boolean, msgId: number}) => {
 
     const auth = useLogin();
-	const {allChannels, setActiveChannel, setNeedToUpdate} = useContext(ChatContext)
+	const {roomId, setRoomId} = useContext(GameContext)
+	const {allChannels, activeChannel, setActiveChannel, setNeedToUpdate} = useContext(ChatContext)
     const [showUserActionsMenu, setShowUserActionsMenu] = useState(false);
 	const [userInfo, setUserInfo] = useState<uInfo>({userStatus: "user", friend: false})
 	const [errorMessage, setErrorMessage] = useState("");
@@ -182,7 +184,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ login: props.login, chatId: props.chatId})
 		};
-		const response = await fetch(`http://l${process.env.REACT_APP_URL_MACHINE}4000/chatOption/kickUser/`, requestOptions);
+		const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/kickUser/`, requestOptions);
 		const data = await response.json();
 		if (data.isOwner)
 			setErrorMessage(props.username + " cannot be kicked since he or she owns this channel")
@@ -255,12 +257,20 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 		};
 		const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/game/newRoom/`, requestOptions);
 		const data = await response.json();
-		console.log(data);
-		sendServiceMessage("You're invited to play a game on room " + data.roomId)
-		/**
-		 * Besoin de setRoomId avec data.roomId
-		 * Puis navigate vers Game
-		 */
+		sendServiceMessage("Classic game invitation received to play in room " + data.roomId)
+		setRoomId(data.roomId);
+	}
+
+	async function joinGame() {
+		const indexOfId = props.msg.lastIndexOf(" ") + 1;
+		const idToJoin = parseInt(props.msg.substring(indexOfId));
+		// const requestOptions = {
+		// 	method: 'delete',
+		// 	headers: { 'Content-Type': 'application/json' },
+		// 	body: JSON.stringify({chatId: props.chatId, msgId: props.msgId})
+		// };
+		// await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/`, requestOptions)
+		setRoomId(idToJoin);
 	}
 
 	if (messageType !== "service") {
@@ -277,7 +287,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 								{props.isDM || userInfo.userStatus === "" ? <h4>{props.username}</h4> : <h4>{props.username + " (" + userInfo.userStatus + ")"}</h4>}  
 								<hr></hr>
 								<div className="menuItems">
-									<div onClick={startGame}>Invite to play</div>
+									{props.isDM && roomId === 0 && <div onClick={startGame}>Invite to play</div>}
 									{userInfo.friend ? <div>Unfriend</div> : <div onClick={addToFriends}>Add to friends</div>}
 									{props.isDM === false && <div onClick={startDM}>Send DM</div>}
 									<Link to="/profile/1" style={{textDecoration:"none", color: "#ddddf7"}}>
@@ -309,7 +319,11 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 	} else {
 		return (
 			<div className="service-message" >
-				<p>{props.msg}</p>
+				{(props.isDM && props.login !== auth.user.login) &&
+					<div><p>{props.msg}</p><button onClick={joinGame}>Yes</button><button>No</button></div>}
+				{(props.isDM && props.login === auth.user.login) &&
+					<div><p>Classic game invitation sent</p></div>}
+				{props.isDM === false && <p>{props.msg}</p>}
 			</div>
 			);
 	}

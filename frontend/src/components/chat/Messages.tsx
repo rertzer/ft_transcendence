@@ -55,15 +55,12 @@ const Messages = (props: {chatId: number, isOwner: boolean, isAdmin: boolean, se
 					const add : ChatMessage = {msg: element.msg, username: element.username, login: element.login, date: newDateString, id: element.id, chatId: element.chatId, serviceMessage: element.serviceMessage}
 					setChatMessages((prevMessages) => [...prevMessages, add]);
 				}
-
 			setRender(false);
 		}
 	}, [chatHistory]);
 
 	useEffect(() => {
-
 		setChatMessages([]);
-
 	}, [props.chatId])
 
 	const endRef = useRef<HTMLDivElement>(null); //ref to empty div to autoscroll to bottom
@@ -89,7 +86,7 @@ const Messages = (props: {chatId: number, isOwner: boolean, isAdmin: boolean, se
 							return (
 							<div key={chat.date + chat.id} className="messageUnit">
 								{chat.chatId === props.chatId && (
-									 <Message date={chat.date} username={chat.username} login={chat.login} msg={chat.msg} isOwner={props.isOwner} isAdmin={props.isAdmin} chatId={props.chatId} service={chat.serviceMessage} isDM={props.isDM}/>
+									 <Message date={chat.date} username={chat.username} login={chat.login} msg={chat.msg} isOwner={props.isOwner} isAdmin={props.isAdmin} chatId={props.chatId} service={chat.serviceMessage} isDM={props.isDM} msgId={chat.id}/>
 								)}
 							</div>)
 			  			})}
