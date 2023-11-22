@@ -15,5 +15,9 @@ export class gameStatsControler {
 	){
 		return this.gameStatsService.getGameStatsUser(login);
 	}
+	@Get()
+	async getGameStatsAllUsers(){
+		return this.gameStatsService.getGameStatsAllUsers();
+	}
 	
 }
