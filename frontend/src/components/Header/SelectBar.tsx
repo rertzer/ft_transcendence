@@ -104,11 +104,11 @@ function  File() {
           <ListItemText onClick={() => newGame()}>New Game</ListItemText>
         </ListItem>
         <ListItem button>
-          <ListItemText onClick={() =>newGamePlus() }>New Game+</ListItemText>
+          <ListItemText onClick={() => newGamePlus() }>New Game+</ListItemText>
         </ListItem>
 
         <ListItem button>
-          <ListItemText onClick={() =>handlePage("Game") }>Form</ListItemText>
+          <ListItemText onClick={() => handlePage("Game") }>Form</ListItemText>
         </ListItem>
         <ListItem button onClick={() => handlePage("Profile")}><ListItemText>Profile </ListItemText></ListItem>
         <ListItem button onClick={() => handlePage("Data")}><ListItemText>Data </ListItemText></ListItem>
