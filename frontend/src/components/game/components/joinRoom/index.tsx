@@ -96,8 +96,10 @@ export function JoinRoom(props:IJoinRoomProps) {
 		e.preventDefault();
 		gameSocket.emit('display_info');
 	};
-
 	return (
+		<></>
+	)
+	/* return (
 		<div style={{position: 'relative', color: '#000000', backgroundColor: '#FFFFFF', top: '140px', left: '134px', height:'315px', width: '368px'}}>
 			<h4>Join a waiting Room : </h4>
 			<form onSubmit={joinWaitingRoom}>
@@ -123,5 +125,5 @@ export function JoinRoom(props:IJoinRoomProps) {
 			</form>
 			{RecievedRoomID > 0 &&  <strong><br/>You got the room number {RecievedRoomID}</strong>}
 		</div>
-	)
+	) */
 };
