@@ -81,7 +81,7 @@ const Chats = () => {
                                     socket.emit('retrieveMessage', {chatId: channel.id, messageToDisplay: 15 })
                                     }}}>
                                 <div className={activeChannel.id === channel.id ? "userChat active" : "userChat"}>
-                                    <img src={channel.chatPicture === null ? "" : channel.chatPicture} />
+                                    <img src={channel.type !== "DM" ? "img1.png" : "recuperer l'avatar"} />
                                     <div className='userChatInfo'>
                                         <h1>{channel.type !== "DM" ? channel.channelName : findReceiverName(channel.channelName)}</h1>
                                         <p>{channel.msg ? channel.msg : ""}</p>

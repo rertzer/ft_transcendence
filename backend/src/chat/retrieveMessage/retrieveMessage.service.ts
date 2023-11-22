@@ -29,7 +29,7 @@ export class RetrieveMessageService {
 							id: element.id,
 							login: user.login,
 							chatId: element.chat_channels_id,
-							serviceMessage: element.serviceMessage
+							serviceMessage: element.serviceMessage,
 						}
 						messageHistory.push(msg);
 					}

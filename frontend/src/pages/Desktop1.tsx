@@ -85,7 +85,14 @@ function Desktop1() {
     if (!context) {
       throw new Error('useContext must be used within a MyProvider');
     }
-    const { chat } = context;
+    const { chat, updatePage } = context;
+	const { roomId } = useContext(GameContext);
+
+	useEffect(() => {
+		if (roomId !== 0)
+			updatePage("Game");
+	}, [roomId]);
+	
     switch (chat) {
       case "Chat":
         return (<ChatComponent />);

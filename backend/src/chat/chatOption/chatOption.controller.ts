@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Get, Param } from "@nestjs/common";
+import { Body, Controller, Post, Get, Param,Delete } from "@nestjs/common";
 import { PrismaChatService } from "src/prisma/chat/prisma.chat.service";
 import { MyGateway } from "../gateway/gateway.service";
 import { JoinChatService } from "../joinChat/joinChat.service";
@@ -198,5 +198,13 @@ export class ChatOptController {
 			return value;
 		}
 		return false;
+	}
+
+	@Delete('deleteMessage/:idMessage')
+	async onDeleteMessage (
+		@Param('idMessage', ParseIntPipe) idMessage: number,
+	)
+	{
+		return await this.prismaChatService.deleteMessage(idMessage);
 	}
 }

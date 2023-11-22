@@ -3,10 +3,8 @@ import Sidebar from './Sidebar';
 import Chat from './Chat'
 import { WebsocketContext } from "../../context/chatContext";
 import { useState, useEffect, useContext } from 'react';
-import  ConnectionContext from "../../context/authContext"
 import ChatContext, {IChatContext} from "../../context/chatContext";
 import { useLogin } from "../../components/user/auth";
-import GameContext from "../../context/gameContext";
 
 export type Channel = {
     id: number;
@@ -24,7 +22,6 @@ export type Channel = {
 const ChatComponent = () => {
 
     const auth = useLogin();
-    const {roomId, setRoomId} = useContext(GameContext);
     const [allChannels, setAllChannels] = useState<Channel[]>([])
     const [blockedUsers, setBlockedUsers] = useState<number[]>([]);
     const [needToUpdate, setNeedToUpdate] = useState("");
@@ -50,37 +47,38 @@ const ChatComponent = () => {
     setBlockedUsers,
   }
 
-//   useEffect(() => {
-//     const fetchBlocked = async () => {
-//         const result = await getBlockedUsers();
-//         if (result)
-//             setBlockedUsers(result)
-//     }
-//     fetchBlocked();
-//     console.log(blockedUsers);
-//   }, []);
+  useEffect(() => {
+    const fetchBlocked = async () => {
+        const result = await getBlockedUsers();
+        if (result)
+            setBlockedUsers(result)
+    }
+    fetchBlocked();
+  }, []);
 
-// async function getBlockedUsers() {
-//     let blocked: number[] = [];
-//     try {
-//         const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/listOfBlockedUser/${auth.user.login}`);
-//         if (!response.ok) {
-//             throw new Error("Request failed");
-//         }
-//         const data = await response.json();
-//         if (data) {
-//             return (data);
-//         }
-//     }
-//     catch(error) {
-//         console.error("Error while getting blocked users", error);
-//     }
-// }
-useEffect(() => {
-    console.log("New room Id", roomId);
-  }, [roomId])
+async function getBlockedUsers() {
+    let blocked: number[] = [];
+    try {
+        const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/listOfBlockedUser/${auth.user.login}`);
+        if (!response.ok) {
+            throw new Error("Request failed");
+        }
+        const data = await response.json();
+        let result: number[] = [];
+        console.log(data);
+        if (data) {
+            data.map((element: any) => {
+                result.push(element.blocked_user_id)
+            })
+            return (result);
+        }
+    }
+    catch(error) {
+        console.error("Error while getting blocked users", error);
+    }
+}
 
-
+console.log("BLOCKED" , blockedUsers);
     return (
         <div className="chatcomponent">
             <div className='container'>

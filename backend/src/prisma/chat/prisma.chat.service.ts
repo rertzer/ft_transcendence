@@ -36,6 +36,18 @@ export class PrismaChatService {
 		}
 	}
 
+	async deleteMessage(idMesage: number)
+	{
+		const messageDelete = await this.prismaService.chatMsgHistory.delete({
+			where:{
+				id: idMesage,
+			}
+		})
+		if (messageDelete)
+			return (true);
+		return false;
+
+	}
 	async updateChatWithPassword(password:string, type:string, chatId:number)
 	{
 		const updated = await this.prismaService.chatChannels.update({
