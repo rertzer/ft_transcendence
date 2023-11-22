@@ -12,7 +12,7 @@ type uInfo = {
 	friend: boolean
 }
 
-const  Message = (props: {username: string, login: string, date: string, msg: string, isOwner: boolean, isAdmin: boolean, chatId: number, service: boolean, isDM: boolean}) => {
+const  Message = (props: {username: string, login: string, date: string, msg: string, isOwner: boolean, isAdmin: boolean, chatId: number, service: boolean, isDM: boolean, msgId: number}) => {
 
     const auth = useLogin();
 	const {roomId, setRoomId} = useContext(GameContext)
@@ -261,11 +261,16 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 		setRoomId(data.roomId);
 	}
 
-	function joinGame() {
+	async function joinGame() {
 		const indexOfId = props.msg.lastIndexOf(" ") + 1;
 		const idToJoin = parseInt(props.msg.substring(indexOfId));
+		// const requestOptions = {
+		// 	method: 'delete',
+		// 	headers: { 'Content-Type': 'application/json' },
+		// 	body: JSON.stringify({chatId: props.chatId, msgId: props.msgId})
+		// };
+		// await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/`, requestOptions)
 		setRoomId(idToJoin);
-		// ajouter fetch pour supprimer le message de la DB
 	}
 
 	if (messageType !== "service") {

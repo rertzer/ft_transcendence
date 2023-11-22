@@ -86,7 +86,7 @@ const Messages = (props: {chatId: number, isOwner: boolean, isAdmin: boolean, se
 							return (
 							<div key={chat.date + chat.id} className="messageUnit">
 								{chat.chatId === props.chatId && (
-									 <Message date={chat.date} username={chat.username} login={chat.login} msg={chat.msg} isOwner={props.isOwner} isAdmin={props.isAdmin} chatId={props.chatId} service={chat.serviceMessage} isDM={props.isDM}/>
+									 <Message date={chat.date} username={chat.username} login={chat.login} msg={chat.msg} isOwner={props.isOwner} isAdmin={props.isAdmin} chatId={props.chatId} service={chat.serviceMessage} isDM={props.isDM} msgId={chat.id}/>
 								)}
 							</div>)
 			  			})}
