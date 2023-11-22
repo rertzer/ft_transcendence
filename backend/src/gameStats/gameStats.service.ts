@@ -33,7 +33,48 @@ export class GameStatsService {
 				date_end: true,
 			}
 		});
-		return(gameWonByUser);
+		const gameLostByUser = await this.prismaService.game.findMany({
+			where: {
+				OR: [
+					{
+						player_one_id: id
+					},
+					{
+						player_two_id: id
+					},
+			  	],
+				NOT: {
+					winner_id:id
+				},
+			},
+			select: {
+				id:true, 
+				type:true, 
+				game_status:true,
+				player_one_id: true, 
+				player_two_id: true, 
+				player_one_score: true, 
+				player_two_score: true, 
+				date_begin:true, 
+				date_end: true,
+			}
+		});
+
+		const dataToReturn = {
+			userLogin:login, 
+			userId:id,
+			numberGames: (gameWonByUser.length + gameLostByUser.length),
+			numberGamesBasic: (gameWonByUser.filter((game)=>{return (game.type === 'BASIC')}).length + gameLostByUser.filter((game)=>{return (game.type === 'BASIC')}).length),
+			numberGamesAdvanced: (gameWonByUser.filter((game)=>{return (game.type === 'ADVANCED')}).length + gameLostByUser.filter((game)=>{return (game.type === 'ADVANCED')}).length),
+			numberWon: gameWonByUser.length, 
+			numberLost: gameLostByUser.length, 
+			numberWonBasic: gameWonByUser.filter((game)=>{return (game.type === 'BASIC')}).length, 
+			numberLostBasic: gameLostByUser.filter((game)=>{return (game.type === 'BASIC')}).length, 
+			numberWonAdvanced: gameWonByUser.filter((game)=>{return (game.type === 'ADVANCED')}).length,
+			numberLostAdvanced: gameLostByUser.filter((game)=>{return (game.type === 'ADVANCED')}).length,
+			
+		};
+		return (dataToReturn);		
 	}
 
 	async getGameStatsAllUsers() {
@@ -44,6 +85,7 @@ export class GameStatsService {
 				game_status:true,
 				player_one_id: true, 
 				player_two_id: true, 
+				winner_id:true,
 				player_one_score: true, 
 				player_two_score: true, 
 				date_begin:true, 

@@ -56,6 +56,7 @@ export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, On
 			rooms_player?.forEach((room) => {
 				this.roomsService.removePlayerFromRoom(player,room.id);
 			});
+			this.roomsService.removePlayerFromWaitingRooms(player);
 		};
 		this.playersService.remove(client);	
 	}
@@ -106,19 +107,21 @@ export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, On
 	}
 
 	@SubscribeMessage('i_am_leaving')
-	handleLeaving(@MessageBody() data:{roomId:number, key:string, idPlayerMove:number}, @ConnectedSocket() client:Socket){
-		console.log('I JUST GOT A LEAVING MESSAGE');
+	handleLeaving(@MessageBody() data:{waitingRoom:boolean, modeGame:TypeGame,  roomId:number}, @ConnectedSocket() client:Socket){
 		const player = this.playersService.findOne(client);
-		if (player){
+		if (player && data.waitingRoom){
+			if (data.modeGame === 'ADVANCED') {
+				this.roomsService.removePlayerFromAdvancedWaitingRoom(player)
+			};
+			if (data.modeGame === 'BASIC') {
+				this.roomsService.removePlayerFromBasicWaitingRoom(player)
+			};
+		}
+		else if (player) {
 			const room = this.roomsService.findRoomById(data.roomId);
 			player.roomState = player.roomState.filter(rs => {return (rs.room !== room)});
 			this.roomsService.removePlayerFromRoom(player, data.roomId);
 		} 
-	}
-
-	@SubscribeMessage('display_info')
-	handleDisplayInfo(){
-		this.roomsService.displayInfo();
 	}
 
 	@Interval(1000/60)

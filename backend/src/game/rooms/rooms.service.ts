@@ -25,7 +25,9 @@ export class RoomsService  implements OnModuleInit{
 		console.log("-------------------------------------------------");
 		console.log("gameParams : ", gameParams);
 		console.log("gameMaps : ", gameMaps);
-		console.log("this.rooms : ", this.rooms);
+		console.log("Rooms : ", this.rooms);
+		console.log("Waiting Room ADVANCED :", this.waitingRoomAdvanced);
+		console.log("Waiting Room BASIC :", this.waitingRoomBasic);
 	}
 
 	async createRoom(playerLeft:IPlayer, playerRight:IPlayer, typeGame:TypeGame) {
@@ -120,6 +122,19 @@ export class RoomsService  implements OnModuleInit{
 			}
 			console.log(this.waitingRoomAdvanced, this.waitingRoomBasic);
 		}
+	}
+
+	removePlayerFromWaitingRooms(player:IPlayer) {
+		this.waitingRoomAdvanced = this.waitingRoomAdvanced.filter((waitingPlayer) => {return (waitingPlayer !== player)});
+		this.waitingRoomBasic = this.waitingRoomBasic.filter((waitingPlayer) => {return (waitingPlayer !== player)});
+	}
+
+	removePlayerFromBasicWaitingRoom(player:IPlayer) {
+		this.waitingRoomBasic = this.waitingRoomBasic.filter((waitingPlayer) => {return (waitingPlayer !== player)});
+	}
+
+	removePlayerFromAdvancedWaitingRoom(player:IPlayer) {
+		this.waitingRoomAdvanced = this.waitingRoomAdvanced.filter((waitingPlayer) => {return (waitingPlayer !== player)});
 	}
 
 	removeRoom(room: Room) {

@@ -4,7 +4,7 @@ import { GameStatsService } from "./gameStats.service";
 import { JwtGuard } from '../auth/guard';
 import { UseGuards } from "@nestjs/common";
 
-@UseGuards(JwtGuard)
+//@UseGuards(JwtGuard)
 @Controller('gameStats')
 export class gameStatsControler {
 	constructor(private gameStatsService: GameStatsService){}

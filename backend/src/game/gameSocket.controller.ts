@@ -20,6 +20,7 @@ export class gameSocketControler {
 		console.log("giveMeARoom");
 		return (responseData);
 	}
+	
 	@Get()
 	print_state() {
 		this.roomsService.displayInfo();

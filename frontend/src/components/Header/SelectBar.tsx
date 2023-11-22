@@ -60,9 +60,14 @@ function BasicMenu() {
 			setModeGame('ADVANCED');
 			gameSocket.emit('match_me', {playerName:playerName, typeGame:'ADVANCED'});
 		}
-    const {roomId, playerName, setGameStatus, setRoomId, setModeGame} = useContext(gameContext);
+    const {roomId, playerName, setGameStatus, setRoomId, setModeGame, modeGame} = useContext(gameContext);
     const leaveRoom = () => {
-      gameSocket.emit("i_am_leaving", {roomId});
+		const dataToSend = {
+			waitingRoom: (gameStatus === 'IN_WAITING_ROOM'), 
+			modeGame: modeGame, 
+			roomId: roomId
+		};
+      gameSocket.emit("i_am_leaving", dataToSend);
       setGameStatus('NOT_IN_GAME');
       setRoomId(0);
       setModeGame('');
