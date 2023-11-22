@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: mbocquel <mbocquel@student.42.fr>          +#+  +:+       +#+         #
+#    By: pjay <pjay@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/08/01 17:12:15 by mbocquel          #+#    #+#              #
-#    Updated: 2023/11/16 18:35:00 by mbocquel         ###   ########.fr        #
+#    Updated: 2023/11/22 14:48:48 by pjay             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,12 +17,12 @@ CACHE_FILE = "/mnt/nfs/homes/$(USER)/.cache/yarn"
 all: 	$(SOURCES) env_front env_back
 		docker-compose -f ./docker-compose.yml up
 
-down:	$(SOURCES) env_front 
+down:	$(SOURCES) env_front
 		docker-compose -f ./docker-compose.yml down
 
 clean:	$(SOURCES)
 		docker-compose -f ./docker-compose.yml down -v
-		
+
 fclean:	clean
 		docker system prune -af
 
@@ -31,7 +31,7 @@ re:		fclean all
 env_back: /mnt/nfs/homes/$(USER)/env_ft_transcendence/env_back
 		@( \
 			if [ ! -e "backend/.env" ]; then \
-				cp /mnt/nfs/homes/mbocquel/env_ft_transcendence/env_back backend/.env; \
+				cp /mnt/nfs/homes/$(USER)/env_ft_transcendence/env_back backend/.env; \
 				echo "Env file backend added !"; \
 			fi; \
 		)
@@ -44,7 +44,7 @@ env_front:
 				echo "Env file frontend added !"; \
 			fi; \
 		)
-		
+
 cache: 	fclean
 		rm -rf $(CACHE_FILE)
 

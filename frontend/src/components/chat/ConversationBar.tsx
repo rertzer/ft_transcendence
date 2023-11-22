@@ -35,7 +35,7 @@ const ConversationBar = (props: {isOwner: boolean, isAdmin: boolean}) => {
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ login: auth.user.login, chatId: activeChannel.id})
 		};
-		const response = await fetch('http://localhost:4000/chatOption/kickUser/', requestOptions);
+		const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/kickUser/`, requestOptions);
         const messageData = {
 			username: auth.user.username,
 			login:auth.user.login,

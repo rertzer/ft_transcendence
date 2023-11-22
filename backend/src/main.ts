@@ -9,13 +9,13 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const prismaUser = new PrismaChatService;//toDelete
-  
+
   prismaUser.createUser();//toDelete
- 
+
 
   // Define your CORS options here
  /*  const corsOptions: CorsOptions = {
-    origin: 'http://localhost:3000', // Replace with your React app's URL
+    origin: 'http://${process.env.REACT_APP_URL_MACHINE}:3000', // Replace with your React app's URL
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true, // If you need to handle cookies or authentication
   }; */

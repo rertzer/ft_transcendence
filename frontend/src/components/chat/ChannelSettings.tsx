@@ -85,7 +85,7 @@ export const ChannelSettings = (props: {showSubMenu: string, setShowSubMenu: Fun
 
     async function inviteUserToChannel() {
 
-        /* 
+        /*
             const data = {
 				login: login, (pour verifier si le user est bien owner du channel)
                 toInvite: userToInvite
@@ -98,7 +98,7 @@ export const ChannelSettings = (props: {showSubMenu: string, setShowSubMenu: Fun
             body: JSON.stringify(data),
             };
 
-            let returnValue = await fetch('http://localhost:4000/chatOption/urlPourInviterQqunSurUnChannel', requestOptions)
+            let returnValue = await fetch('http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/urlPourInviterQqunSurUnChannel', requestOptions)
             (verifier la valeur de retour pour set le message d'erreur si necessaire, et si tout va bien on ferme le menu et on re-render)
         */
     }

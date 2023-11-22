@@ -48,6 +48,19 @@ export class PrismaFriendService extends PrismaClient{
 		return false
 	}
 
+	async getFriendRelationId(idLogin: number, idFriend:number)
+	{
+		const friend = await this.friend.findFirst({
+			where :{
+				user_id: idLogin,
+				friend_id: idFriend,
+			}
+		})
+		if (friend)
+			return friend.id
+		return false
+	}
+
 	async idFriendToDelete(idLogin: number, idFriend:number)
 	{
 		const friend = await this.friend.findFirst({
@@ -61,20 +74,84 @@ export class PrismaFriendService extends PrismaClient{
 		return false
 	}
 
-	async deleteFriend(idLogin:number, friend:string)
+	// async alreadyFriend(idLogin: number, idFriend:number)
+	// {
+	// 	console.log("whats happening", idLogin, idFriend);
+	// 	const friend = await this.friend.findFirst({
+	// 		where :{
+	// 			user_id: idLogin,
+	// 			friend_id: idFriend,
+	// 		}
+	// 	})
+	// 	console.log("friend = ", friend);
+	// 	if (friend)
+	// 		return friend.id
+	// 	 return undefined
+	// }
+
+	async deleteFriend(idLogin:number, idFriend:number)
 	{
-		const idFriend = await this.getIdOfLogin(friend);
-		if (idFriend)
-		{
-			const friendToDelete = await this.idFriendToDelete(idLogin, idFriend);
+			const friendToDelete = await this.getFriendRelationId(idLogin, idFriend);
+			console.log(friendToDelete);
 			if (friendToDelete)
 			{
-				const deleted = this.friend.delete({
+				const deleted = await this.friend.delete({
 				where :{
 					id: friendToDelete
 				}
 				})
+				if (deleted)
+					return true
 			}
+			return false
+	}
+
+	async checkInGame(id: number) {
+		const inGame = await this.game.findFirst({
+			where: {
+				game_status:"ONGOING",
+				OR: [
+					{
+						player_one_id: id,
+					},
+					{
+						player_two_id:id,
+					}
+				]
+			}
+		})
+		if (inGame)
+			return true;
+		return false;
+	}
+
+
+	async getLoginOfId(id:number)
+	{
+		const login = this.user.findFirst({
+			where: {
+				id: id,
+			}
+		})
+		if (login)
+			return (login);
+	}
+	async listAllFriends(login:string)
+	{
+		const idOfLogin = await this.getIdOfLogin(login);
+		if (idOfLogin)
+		{
+			const listsFriends = await this.friend.findMany({
+				where:{
+					user_id: idOfLogin
+				}
+			})
+			if (listsFriends)
+				return listsFriends;
 		}
 	}
+	// async removeFriend(login: string, friendToRemove: string)
+	// {
+	// 	const idLogin
+	// }
 }

@@ -77,7 +77,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 
 	async function checkIfAlreadyFriend() {
 		try {
-			const response = await fetch(`http://localhost:4000/friend/${auth.user.login}/${props.login}/isMyFriend`);
+			const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/friend/${auth.user.login}/${props.login}/isMyFriend`);
 			if (!response.ok) {
 				throw new Error("Request failed");
 			}
@@ -92,7 +92,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 
 	async function getUserInfo() {
 		try {
-			const response = await fetch(`http://localhost:4000/chatOption/${props.login}/info/${props.chatId}`);
+			const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/${props.login}/info/${props.chatId}`);
 			if (!response.ok) {
 				throw new Error("Request failed");
 			}
@@ -284,7 +284,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 						<div className="userOptions" ref={menuRef}>
 							<img src="" style={{cursor:"pointer"}} onClick={toggleUserActionsMenu}/>
 							<div className={showUserActionsMenu ? "userActions" : "userActions-hidden"}>
-								{props.isDM || userInfo.userStatus === "" ? <h4>{props.username}</h4> : <h4>{props.username + " (" + userInfo.userStatus + ")"}</h4>}  
+								{props.isDM || userInfo.userStatus === "" ? <h4>{props.username}</h4> : <h4>{props.username + " (" + userInfo.userStatus + ")"}</h4>}
 								<hr></hr>
 								<div className="menuItems">
 									{props.isDM && roomId === 0 && <div onClick={startGame}>Invite to play</div>}

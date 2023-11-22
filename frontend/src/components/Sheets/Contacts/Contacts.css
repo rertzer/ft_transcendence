@@ -1,30 +1,40 @@
-.title {
+.title_contacts {
     background-color: rgb(24, 65, 151);
     color: white;
     border: 2px solid black;
     font-weight: 500;
     text-align: center;
 }
-.background {
+.background_contacts {
     border: 2px solid black;
 }
-.linePair {
+.linePair_contacts {
     border: 1px solid lightgrey;
     background-color: rgb(249, 254, 255);
 }
-.lineUnpair {
+.lineUnpair_contacts {
     border: 1px solid lightgrey;
     background-color: rgb(212, 225, 230);
 }
-.text {
-    color: black;
+
+.text_contacts_connected {
+    color: rgb(0, 0, 0);
     display:block;
     text-align: right;
     border: 1px solid lightgrey;
     padding-right: 4px;
 }
-.invite {
-    color: black;
+
+.text_contacts_unconnected {
+	color: rgb(0, 0, 0);
+    display:block;
+    text-align: right;
+    border: 1px solid lightgrey;
+    padding-right: 4px;
+}
+
+.delete_contacts {
+	color: black;
     display:block;
     text-align: center;
     font-weight: 600;
@@ -32,23 +42,47 @@
     border: 1px solid green;
     border-right: 2px solid green;
     border-left: 2px solid green;
+	cursor: pointer;
 }
-.message {
-    color: black;
+.delete_contacts:hover {
+	color: black;
     display:block;
     text-align: center;
     font-weight: 600;
-    background-color: lightblue;
-    border: 1px solid blue;
-    border-right: 2px solid blue;
-    border-left: 2px solid blue;
+    background-color: rgb(218, 255, 218);
+    border: 1px solid darkgreen;
+    border-right: 2px solid darkgreen;
+    border-left: 2px solid darkgreen;
+	cursor: pointer;
 }
-.block {
+.block_contacts {
     color: black;
     display:block;
     text-align: center;
     font-weight: 600;
     background-color: lightcoral;
+    border: 1px solid red;
+    border-right: 4px solid red;
+    border-left: 2px solid red;
+}
+
+.status_connected {
+	color: green;
+    display:block;
+    text-align: center;
+    font-weight: 600;
+    /* background-color: ; */
+    border: 1px solid rgb(150, 240, 32);
+    border-right: 4px solid rgb(150, 240, 32);
+    border-left: 2px solid rgb(150, 240, 32);
+}
+
+.status_unconnected {
+	color: red;
+    display:block;
+    text-align: center;
+    font-weight: 600;
+    /* background-color: ; */
     border: 1px solid red;
     border-right: 4px solid red;
     border-left: 2px solid red;
