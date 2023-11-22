@@ -74,7 +74,6 @@ export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, On
 
 	@SubscribeMessage('match_me')
 	async handleJoinWaitingRoom(@MessageBody() data:{playerName:string, typeGame:TypeGame}, @ConnectedSocket() client:Socket){
-		console.log('COUCOU');
 		const player = this.playersService.findOne(client);
 		if (player) {
 			player.name = data.playerName;

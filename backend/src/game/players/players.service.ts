@@ -9,8 +9,6 @@ export class PlayersService {
 
 	create(player: IPlayer) {
 		this.players.push(player);
-		console.log('Create Player');
-
 	};
 
 	remove(clientSocket: Socket) {
@@ -30,6 +28,6 @@ export class PlayersService {
 	};
 
 	consoleLogPlayers() {
-		console.log(this.players);
+		console.log("Players : ",this.players);
 	}	
 }

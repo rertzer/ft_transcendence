@@ -254,7 +254,7 @@ export class RoomsService  implements OnModuleInit{
 			obstacles:room.obstacles,
 			gameStatus:room.gameStatus
 		};
-		if (room.playerLeft) {console.log("\x1b[33mJ'envie les infos sur la room a ", room.playerLeft.name,"\x1b[0m")}
+		if (room.playerLeft) {console.log("\x1b[33mSending Room Status to", room.playerLeft?.name," and ", room.playerRight?.name,"\x1b[0m")}
 		room.playerLeft?.socket.emit('room_status', data_to_send);
 		room.playerRight?.socket.emit('room_status', data_to_send);
 	}
@@ -287,6 +287,17 @@ export class RoomsService  implements OnModuleInit{
 			room.playerLeft?.socket.emit('game_state', data);
 			room.playerRight?.socket.emit('game_state', data);
 		});
+		//Remove room that are finished from the array of roomService of players
+		this.rooms.forEach((room)=> {
+			if (!(room.gameStatus === 'FINISHED' || room.gameStatus === 'FINISH_BY_FORFAIT')) return;
+			if (room.playerLeft) {
+				room.playerLeft.roomState = room.playerLeft.roomState.filter((roomState) => {return (roomState.room !== room)});
+			}
+			if (room.playerRight) {
+				room.playerRight.roomState = room.playerRight.roomState.filter((roomState) => {return (roomState.room !== room)});
+			}
+		});
+		this.rooms = this.rooms.filter((room) => { return !(room.gameStatus === 'FINISHED' || room.gameStatus === 'FINISH_BY_FORFAIT')});
 	}
 
 	playGameLoop() {
