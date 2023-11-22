@@ -6,6 +6,7 @@ import { useState, useEffect, useContext } from 'react';
 import  ConnectionContext from "../../context/authContext"
 import ChatContext, {IChatContext} from "../../context/chatContext";
 import { useLogin } from "../../components/user/auth";
+import GameContext from "../../context/gameContext";
 
 export type Channel = {
     id: number;
@@ -23,6 +24,7 @@ export type Channel = {
 const ChatComponent = () => {
 
     const auth = useLogin();
+    const {roomId, setRoomId} = useContext(GameContext);
     const [allChannels, setAllChannels] = useState<Channel[]>([])
     const [blockedUsers, setBlockedUsers] = useState<number[]>([]);
     const [needToUpdate, setNeedToUpdate] = useState("");
@@ -74,6 +76,10 @@ const ChatComponent = () => {
 //         console.error("Error while getting blocked users", error);
 //     }
 // }
+useEffect(() => {
+    console.log("New room Id", roomId);
+  }, [roomId])
+
 
     return (
         <div className="chatcomponent">

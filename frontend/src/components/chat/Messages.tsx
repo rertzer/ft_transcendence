@@ -55,15 +55,12 @@ const Messages = (props: {chatId: number, isOwner: boolean, isAdmin: boolean, se
 					const add : ChatMessage = {msg: element.msg, username: element.username, login: element.login, date: newDateString, id: element.id, chatId: element.chatId, serviceMessage: element.serviceMessage}
 					setChatMessages((prevMessages) => [...prevMessages, add]);
 				}
-
 			setRender(false);
 		}
 	}, [chatHistory]);
 
 	useEffect(() => {
-
 		setChatMessages([]);
-
 	}, [props.chatId])
 
 	const endRef = useRef<HTMLDivElement>(null); //ref to empty div to autoscroll to bottom

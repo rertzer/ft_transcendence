@@ -4,10 +4,14 @@ import Chats from "./Chats";
 import { useEffect, useContext } from "react";
 import ChatContext from "../../context/chatContext";
 import { WebsocketContext } from "../../context/chatContext";
+import { useLogin } from "../../components/user/auth";
+import GameContext from "../../context/gameContext";
 
 const Sidebar = () => {
 
 	const socket = useContext(WebsocketContext);
+    const auth = useLogin();
+    const {roomId, setRoomId} = useContext(GameContext);
     const {activeChannel, allChannels, setActiveChannel, needToUpdate, setNeedToUpdate} = useContext(ChatContext);
 
 	useEffect(() => {
@@ -39,10 +43,17 @@ const Sidebar = () => {
             const joinedId = parseInt(needToUpdate.substring(11));
             const channelJoined = allChannels.find(element => element.id === joinedId)
             if (channelJoined !== undefined) {
-                console.log("JOINED FOUND")
                 setActiveChannel(channelJoined);
                 socket.emit('retrieveMessage', {chatId: channelJoined.id, messageToDisplay: 15 })
                 setNeedToUpdate("");
+                const messageData = {
+                    username: auth.user.username,
+                    login:auth.user.login,
+                    content: auth.user.username + " has just joined",
+                    serviceMessage: true,
+                    idOfChat: channelJoined.id,
+                }
+                socket.emit('newMessage', messageData);
             }
         }
     }, [allChannels.length])

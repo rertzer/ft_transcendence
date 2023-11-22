@@ -36,14 +36,6 @@ export const ListChannels = (props: {showSubMenu: string, setShowSubMenu: Functi
 			setErrorMessage("Wrong password");
 			setChanToJoin({id: -1, name: "", owner: "", type: "", password: null})
 		} else {
-			const messageData = {
-				username: auth.user.username,
-				login:auth.user.login,
-				content: auth.user.username + " has just joined",
-				serviceMessage: true,
-				idOfChat: chanToJoin.id,
-			}
-			socket.emit('newMessage', messageData);
 			setErrorMessage("");
 			setNeedToUpdate("joinedChat " + chanToJoin.id.toString());
 			toggleForm();
@@ -137,7 +129,7 @@ export const ListChannels = (props: {showSubMenu: string, setShowSubMenu: Functi
 					onChange={(e) => setPassword(e.target.value)}
 					/>}
 				</div>
-				{ chanToJoin.id !== -1 && <button onClick={() => {DealWithIdChat(); setChanToJoin({id: -1, name: "", owner: "", type: "", password: null})}}>Join</button>}
+				{ chanToJoin.id !== -1 && <button onClick={() => {DealWithIdChat()}}>Join</button>}
 			</div>
 			<hr/>
 			{errorMessage !== "" &&

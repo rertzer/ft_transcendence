@@ -1,6 +1,5 @@
 import "./Message.scss"
 import { useContext, useEffect, useState, useRef } from "react";
-import  ConnectionContext from "../../context/authContext"
 import ChatContext, { WebsocketContext } from "../../context/chatContext";
 import { Link } from "react-router-dom";
 import { Channel } from "./ChatComponent";
@@ -17,7 +16,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 
     const auth = useLogin();
 	const {roomId, setRoomId} = useContext(GameContext)
-	const {allChannels, setActiveChannel, setNeedToUpdate} = useContext(ChatContext)
+	const {allChannels, activeChannel, setActiveChannel, setNeedToUpdate} = useContext(ChatContext)
     const [showUserActionsMenu, setShowUserActionsMenu] = useState(false);
 	const [userInfo, setUserInfo] = useState<uInfo>({userStatus: "user", friend: false})
 	const [errorMessage, setErrorMessage] = useState("");
@@ -185,7 +184,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ login: props.login, chatId: props.chatId})
 		};
-		const response = await fetch(`http://l${process.env.REACT_APP_URL_MACHINE}4000/chatOption/kickUser/`, requestOptions);
+		const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/kickUser/`, requestOptions);
 		const data = await response.json();
 		if (data.isOwner)
 			setErrorMessage(props.username + " cannot be kicked since he or she owns this channel")
@@ -258,21 +257,15 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 		};
 		const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/game/newRoom/`, requestOptions);
 		const data = await response.json();
-		sendServiceMessage("This is an invitation to play in room " + data.roomId)
+		sendServiceMessage("Classic game invitation received to play in room " + data.roomId)
 		setRoomId(data.roomId);
-		console.log("roomId = ", roomId);
-		// const url = "/game/" + data.roomId;
-		// return (<div>
-		// 	<Navigate to={url}></Navigate>
-		// </div>)
 	}
 
 	function joinGame() {
 		const indexOfId = props.msg.lastIndexOf(" ") + 1;
 		const idToJoin = parseInt(props.msg.substring(indexOfId));
-		console.log("idToLog =", idToJoin)
 		setRoomId(idToJoin);
-		console.log("roomId = ", roomId);
+		// ajouter fetch pour supprimer le message de la DB
 	}
 
 	if (messageType !== "service") {
@@ -323,6 +316,8 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 			<div className="service-message" >
 				{(props.isDM && props.login !== auth.user.login) &&
 					<div><p>{props.msg}</p><button onClick={joinGame}>Yes</button><button>No</button></div>}
+				{(props.isDM && props.login === auth.user.login) &&
+					<div><p>Classic game invitation sent</p></div>}
 				{props.isDM === false && <p>{props.msg}</p>}
 			</div>
 			);
