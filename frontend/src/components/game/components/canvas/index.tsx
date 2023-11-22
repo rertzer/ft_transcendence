@@ -1,11 +1,16 @@
 import {useEffect, useContext, useRef} from "react";
 import gameContext from '../../../../context/gameContext';
+import { MyContext } from "../../../../context/PageContext";
 
 
 export function Canvas(props:any) {
 	const {draw, ...rest} = props;
 	const canvasRef = useRef<HTMLInputElement>(null);
 	const {setGameHeight, setGameWidth } = useContext(gameContext);
+	const context = useContext(MyContext);
+	if (!context) {
+		throw new Error('useContext must be used within a MyProvider');
+	}
 
 	useEffect(()=> {
 		const canvas = canvasRef.current;
@@ -52,6 +57,6 @@ export function Canvas(props:any) {
 	},[]);
 
 	return (
-		<canvas ref={canvasRef} {...rest} style={{position: 'relative', width: '100%', heigth: '100%'}}  />
-	);
+			<canvas ref={canvasRef} {...rest} style={{position: 'relative', width: '100%', heigth: '100%'}}  />
+		);
 };

@@ -22,7 +22,7 @@ function PageSwitch () {
     setNewScrollY(scrollY);
   }, [scrollX, scrollY]);
   switch(context?.page) {
-    case "Project" :
+    case "Game" :
       return Project(sx, sy, zoom);
     case "Profile" :
       return Profile(sx, sy, zoom);

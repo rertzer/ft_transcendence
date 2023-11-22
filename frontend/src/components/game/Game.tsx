@@ -6,6 +6,7 @@ import { useLogin } from '../user/auth';
 import { GameStatus } from '../../context/gameContext';
 import { WaitingRoom } from './components/waitingRoom';
 import { gameSocket } from './services/gameSocketService';
+import { MyContext } from '../../context/PageContext';
 
 function Game() {
 	const {gameStatus, roomId, setGameStatus, playerName, setRoomId} = useContext(GameContext);

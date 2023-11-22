@@ -39,7 +39,7 @@
   width: 231px;
   text-align: center;
 }
-.tchatbox {
+.bar {
   position: absolute;
   width: calc(100% - 186px);
   right: 0;

@@ -81,7 +81,7 @@ function RepeatingLetters() {
               left: dynamicLeft,
               width: `${(80 + (zoom - 100)/2)}px`,
               height: '24px',}}
-            onMouseDown={() => handleUpdateCoords(i, -1)}>
+            onMouseDown={() => handleUpdateCoords(i + sy, -1)}>
           <div className={styles.background } style={{
           width: `${(80 + (zoom - 100)/2)}px`,
           backgroundColor: '#15539E',
@@ -103,7 +103,7 @@ function RepeatingLetters() {
                 left: dynamicLeft,
                 width: `${(80 + (zoom - 100)/2)}`,
                 height: '24px',}}
-              onMouseDown={() => handleUpdateCoords(i, -1)}>
+              onMouseDown={() => handleUpdateCoords(i + sy, -1)}>
             <div className={styles.background} style={{width: `${(80 + (zoom - 100)/2)}px`,}}>{string}</div>
             <div className={styles.letter} />
         </div>);

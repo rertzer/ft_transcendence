@@ -110,7 +110,7 @@ function Footer() {
   }
   function selectNext() {
     switch(page) {
-      case "Project" :
+      case "Game" :
         updatePage("Profile");
         break;
       case "Profile" :
@@ -126,7 +126,7 @@ function Footer() {
   function selectPrev() {
     switch(page) {
       case "Profile" :
-        updatePage("Project");
+        updatePage("Game");
         break;
       case "Data" :
         updatePage("Profile");
@@ -140,7 +140,7 @@ function Footer() {
   }
   function getPagePlace() {
     switch(page) {
-      case "Project" :
+      case "Game" :
         return 1;
       case "Profile" :
         return 2;
@@ -154,11 +154,11 @@ function Footer() {
   }
   return (
 	<footer className={styles.bottom} >
-    <FirstPageIcon className={styles.arrow} onClick={() =>updatePage("Project")}/>
+    <FirstPageIcon className={styles.arrow} onClick={() =>updatePage("Game")}/>
     <SkipPreviousIcon className={styles.arrow} onClick={() =>selectPrev()}/>
     <SkipNextIcon className={styles.arrow} onClick={() =>selectNext()}/>
-    <LastPageIcon className={styles.arrow} onClick={() =>updatePage("Contacts")}/>
-    <div className={page === "Project" ? styles.sheetPageSelected : styles.sheetPage} style={{left:'100px', width:'50px'}} onClick={() =>updatePage("Project")}>
+    <LastPageIcon className={styles.arrow} onClick={() =>updatePage("Game")}/>
+    <div className={(page === "Game") ? styles.sheetPageSelected : styles.sheetPage} style={{left:'100px', width:'50px'}} onClick={() =>updatePage("Game")}>
       <div className={styles.text}>Game</div>
     </div>
     <div className={page === "Profile" ? styles.sheetPageSelected : styles.sheetPage} style={{left:'150px', width:'50px'}} onClick={() =>updatePage("Profile")}>
