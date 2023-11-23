@@ -1,13 +1,11 @@
 import "./EditProfile.scss";
-import { Link, Navigate } from "react-router-dom";
-// import UserContext from "../context/userContext";
-import { useContext, useEffect, useState, MouseEvent } from "react";
+import { useEffect, useState, MouseEvent } from "react";
 import { useLogin } from "../components/user/auth";
-import StringField from "../components/user/StringField";
 import TwoFAToken from "../components/user/TwoFAToken";
 
 function Twofa() {
   const auth = useLogin();
+
 
   let tmp = auth.user.username;
   if (tmp == null) tmp = "";

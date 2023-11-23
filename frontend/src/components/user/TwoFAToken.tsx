@@ -1,9 +1,14 @@
 import { MouseEvent, useContext, useEffect, useState } from "react";
 import { useLogin } from "./auth";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function TwoFAToken(props: {}) {
   const auth = useLogin();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const redirectPath = location.state?.path || "/";
   const [token, setToken] = useState("");
+  const [tokenOk, setTokenOk] = useState();
 
   const handleToken = async (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -18,8 +23,17 @@ function TwoFAToken(props: {}) {
       });
       const answer = await fileData.json();
       console.log("Answer is ", answer);
+      setTokenOk(answer);
     }
   };
+
+  useEffect(() => {
+    if (tokenOk) {
+      navigate("/", { replace: true });
+    } else if (tokenOk === false) {
+      navigate("/login", { replace: true });
+    }
+  }, [tokenOk]);
 
   return (
     <form>
