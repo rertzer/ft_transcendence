@@ -76,7 +76,7 @@ function Desktop1() {
 			socket.emit("newChatConnection", auth.user.login);
 		}
 		console.log("yo send something pls : " , socket.id);
-	},[auth.user]);
+	},[]);
 
   const forceUpdate = useForceUpdate();
 

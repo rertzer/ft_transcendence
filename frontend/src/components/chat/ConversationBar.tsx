@@ -38,7 +38,8 @@ const ConversationBar = (props: {isOwner: boolean, isAdmin: boolean}) => {
     async function leaveChannel() {
         const requestOptions = {
 			method: 'post',
-			headers: { 'Content-Type': 'application/json' },
+			headers: { 'Content-Type': 'application/json' ,
+			Authorization: `Bearer ${auth.user.access_token}`},
 			body: JSON.stringify({ login: auth.user.login, chatId: activeChannel.id})
 		};
 		const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/kickUser/`, requestOptions);

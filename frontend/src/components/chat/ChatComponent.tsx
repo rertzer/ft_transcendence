@@ -20,8 +20,8 @@ export type Channel = {
 }
 
 const ChatComponent = () => {
-
     const auth = useLogin();
+    const bearer = `Bearer ${auth.user.access_token}`;
     const [allChannels, setAllChannels] = useState<Channel[]>([])
     const [blockedUsers, setBlockedUsers] = useState<number[]>([]);
     const [needToUpdate, setNeedToUpdate] = useState("");
@@ -59,8 +59,12 @@ const ChatComponent = () => {
 
 async function getBlockedUsers() {
     let blocked: number[] = [];
+    console.log("ACCESS TOKEN:", auth.user.access_token)
     try {
-        const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/listOfBlockedUser/${auth.user.login}`);
+        const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/listOfBlockedUser/${auth.user.login}`, {
+            method: "GET",
+            headers: { Authorization: bearer},
+          });
         if (!response.ok) {
             throw new Error("Request failed");
         }

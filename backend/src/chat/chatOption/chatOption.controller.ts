@@ -7,7 +7,7 @@ import { getDate } from "../utils/utils.service";
 import { UseGuards, ParseIntPipe } from "@nestjs/common";
 import { ChatLister } from "../chatLister/chatLister.service";
 
-// @UseGuards(JwtGuard)
+@UseGuards(JwtGuard)
 @Controller('chatOption')
 export class ChatOptController {
 	constructor(private prismaChatService:PrismaChatService, private gateway: MyGateway, private joinChatservice : JoinChatService) {}
@@ -153,7 +153,7 @@ export class ChatOptController {
 			{
 				worked = await this.prismaChatService.updateChatWithPassword(chatType.password, chatType.type, chatType.chatId);
 			}
-			else 
+			else
 			{
 				worked = await this.prismaChatService.updateChatTypeNoPass(chatType.chatId, chatType.type);
 			}
@@ -162,7 +162,7 @@ export class ChatOptController {
 		else
 			return ("Not Owner")
 	}
-	
+
 	@Get("listOfBlockedUser/:login")
 	async listOfBlockUser(
 		@Param('login') login: string,
@@ -170,7 +170,7 @@ export class ChatOptController {
 		const listBlocked = await this.prismaChatService.getListOfBlocked(login)
 		if (listBlocked)
 			return listBlocked;
-		else 
+		else
 			return false;
 	}
 
@@ -179,7 +179,9 @@ export class ChatOptController {
 		@Param('login') login: string,
 		@Param('chatId', ParseIntPipe) chatId: number,
 	) {
+		console.log("hey succeed");
 		const userInfo = this.prismaChatService.getChatChannelsUser(login, chatId);
+
 		if (userInfo)
 			return userInfo;
 	}
