@@ -31,29 +31,32 @@ export class ChatOptController {
 	}
 
 	@Post('inviteUser')
-	async inviteUser(@Body() data:{ownerLogin:string, username:string, chatId:number})
+	async inviteUser(@Body() data:{ownerLogin:string, username:string, chat_id:number})
 	{
-		if (await this.prismaChatService.isOwner(data.ownerLogin, data.chatId))
+		if (await this.prismaChatService.isOwner(data.ownerLogin, data.chat_id))
 		{
 			const id = await this.prismaChatService.getIdOfUsername(data.username)
 			if ( id > 0)
 			{
-				if (await this.prismaChatService.userAlreadyInChat(id, data.chatId))
+				if (!await this.prismaChatService.userAlreadyInChat(id, data.chat_id))
 				{
-					if (await this.prismaChatService.addChanelUser(data.chatId, id, "user", getDate(), null))
-						return ("ok");
-					return ("issue while adding new user")
+					if (await this.prismaChatService.addChanelUser(data.chat_id, id, "user", getDate(), null))
+					{
+
+						return ({message: "ok"});
+					}
+					return ({message: "issue while adding new user"})
 				}
-				return ("Already in")
+				return ({message: `User ${data.username} is already in this channel`})
 			}
 			else 
 			{
-				return ("Doesn't exist")
+				return ({message: `User ${data.username} doesn't exist`})
 			}
 		}
 		else
 		{
-			return("not Owner of chat")
+			return({message: "You cannot invite anyone if you don't own the channel"})
 		}
 		
 	}

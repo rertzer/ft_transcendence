@@ -429,6 +429,7 @@ export class PrismaChatService {
 
 	async isOwner(login : string, chatId: number)
 	{
+		console.log("login = ", login, chatId)
 		const heIsOwner = await this.prismaService.chatChannels.findUnique({
 			where: {
 				id: chatId,
@@ -527,9 +528,11 @@ export class PrismaChatService {
 	 async addChanelUser(channel_id : number, user_id : number, user_role:string, date_joined:Date, date_left:Date | null)
 	{
 		if (await this.userHasChatChannelsUser(user_id, channel_id)) {
+			console.log("user inside ??")
 			return (0);
 		}
 		else {
+			console.log("channel trying to join:", channel_id, user_id, user_role)
 			const newMessage = await this.prismaService.chatChannelsUser.create ({
 				data: {
 					channel_id: channel_id,
