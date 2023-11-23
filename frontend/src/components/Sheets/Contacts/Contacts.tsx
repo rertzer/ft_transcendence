@@ -44,12 +44,12 @@ function AddLine(sx: number, sy: number, zoom: number, name: string, key: number
 		try {
 			const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/friend/deleteFriend/${key}/${auth.user.id}`, {
 				method: 'DELETE',
+				headers: { Authorization: auth.getBearer() },
 			});
 			if (!response.ok) {
 				console.error(`Error fetching friends: ${response.status}`);
-				return;
+				return ;
 			}
-
 			const data = await response.json();
 			console.log("data receive = ", data);
 			if (!data) {
@@ -93,8 +93,8 @@ export function Contacts(props: { sx: number, sy: number, zoom: number }) {
 			try {
 				const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/friend/listFriends/${auth.user.login}`, {
 					method: 'GET',
+					headers: { Authorization: auth.getBearer() },
 				});
-
 				if (!response.ok) {
 					console.error(`Error fetching friends: ${response.status}`);
 					return;

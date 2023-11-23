@@ -52,7 +52,11 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 	async function checkIfUserIsBanned() {
 
 		try {
-			const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/${props.login}/banned/${props.chatId}`);
+			const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/${props.login}/banned/${props.chatId}`, {
+				method: "GET",
+				headers: { Authorization: auth.getBearer() },
+			  }
+			);
 			if (!response.ok) {
 				throw new Error("Request failed");
 			}
@@ -77,7 +81,10 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 
 	async function checkIfAlreadyFriend() {
 		try {
-			const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/friend/${auth.user.login}/${props.login}/isMyFriend`);
+			const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/friend/${auth.user.login}/${props.login}/isMyFriend`, {
+				method: "GET",
+				headers: { Authorization: auth.getBearer() },
+			  });
 			if (!response.ok) {
 				throw new Error("Request failed");
 			}
@@ -92,7 +99,10 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 
 	async function getUserInfo() {
 		try {
-			const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/${props.login}/info/${props.chatId}`);
+			const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/${props.login}/info/${props.chatId}`, {
+				method: "GET",
+				headers: { Authorization: auth.getBearer() },
+			  });
 			if (!response.ok) {
 				throw new Error("Request failed");
 			}
@@ -138,7 +148,8 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 
 		const requestOptions = {
 			method: 'post',
-			headers: { 'Content-Type': 'application/json' },
+			headers: { 'Content-Type': 'application/json' ,
+			Authorization: auth.getBearer()},
 			body: JSON.stringify({ login: props.login, chatId: props.chatId})
 		};
 		const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/setAdmin/`, requestOptions)
@@ -160,7 +171,8 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 	async function banUser() {
 		const requestOptions = {
 			method: 'post',
-			headers: { 'Content-Type': 'application/json' },
+			headers: { 'Content-Type': 'application/json',
+			Authorization: auth.getBearer() },
 			body: JSON.stringify({ login: props.login, chatId: props.chatId})
 		};
 		let banned = await checkIfUserIsBanned();
@@ -181,7 +193,8 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 	async function kickUser() {
 		const requestOptions = {
 			method: 'post',
-			headers: { 'Content-Type': 'application/json' },
+			headers: { 'Content-Type': 'application/json',
+			Authorization: auth.getBearer() },
 			body: JSON.stringify({ login: props.login, chatId: props.chatId})
 		};
 		const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/kickUser/`, requestOptions);
@@ -229,7 +242,8 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 	{
 		const requestOptions = {
 			method: 'post',
-			headers: { 'Content-Type': 'application/json' },
+			headers: { 'Content-Type': 'application/json',
+			Authorization: auth.getBearer() },
 			body: JSON.stringify({ login: auth.user.login, friendToAdd: props.login})
 		};
 		toggleUserActionsMenu();
@@ -241,7 +255,8 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 	async function blockUser() {
 		const requestOptions = {
 			method: 'post',
-			headers: { 'Content-Type': 'application/json' },
+			headers: { 'Content-Type': 'application/json',
+			Authorization: auth.getBearer() },
 			body: JSON.stringify({blockedLogin: props.login, login: auth.user.login})
 		};
 		const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/blockUser/`, requestOptions);
@@ -252,7 +267,8 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 	async function startGame() {
 		const requestOptions = {
 			method: 'post',
-			headers: { 'Content-Type': 'application/json' },
+			headers: { 'Content-Type': 'application/json' ,
+			Authorization: auth.getBearer()},
 			body: JSON.stringify({typeGame: "BASIC"})
 		};
 		const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/game/newRoom/`, requestOptions);

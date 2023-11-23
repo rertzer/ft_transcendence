@@ -63,7 +63,8 @@ export const ListChannels = (props: {showSubMenu: string, setShowSubMenu: Functi
 		}
 		const requestOptions = {
 		  method: 'post',
-		  headers: { 'Content-Type': 'application/json' },
+		  headers: { 'Content-Type': 'application/json' ,
+		  Authorization: auth.getBearer()},
 		  body: JSON.stringify(messageData),
 		};
 		try {
@@ -140,7 +141,7 @@ export const ListChannels = (props: {showSubMenu: string, setShowSubMenu: Functi
             {availableChannels.filter(isNotAlreadyIn).map((chan) => {return (
 			<div className="channelItem" key={chan.id}>
 				{chan.type === "protected by password" ?
-				<p onClick={() => {setChanToJoin(chan)}}>{chan.name + " (password)"}</p> : 
+				<p onClick={() => {setChanToJoin(chan)}}>{chan.name + " (password)"}</p> :
 				<p onClick={() => {setChanToJoin(chan)}}>{chan.name}</p>}
 			</div>
 			)

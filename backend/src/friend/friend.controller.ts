@@ -6,7 +6,7 @@ import { JwtGuard } from '../auth/guard';
 import { GetUser } from '../auth/decorator';
 import { UseGuards,ParseIntPipe } from "@nestjs/common";
 
-// @UseGuards(JwtGuard)
+@UseGuards(JwtGuard)
 @Controller('friend')
 export class addFriendController {
 	constructor(private prismaFriendService: PrismaFriendService, private gateway: MyGateway)
