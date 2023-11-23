@@ -24,12 +24,13 @@ export class RetrieveMessageService {
 					{
 						const msg = {
 							msg: element.message,
-							username: user?.username,
+							username: user.username,
 							date: element.date_sent,
 							id: element.id,
 							login: user.login,
 							chatId: element.chat_channels_id,
 							serviceMessage: element.serviceMessage,
+							userId: user.id,
 						}
 						messageHistory.push(msg);
 					}

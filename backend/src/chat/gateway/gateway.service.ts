@@ -76,7 +76,8 @@ export class MyGateway {
 					date: getDate(),
 					id: lastMessageId,
 					idOfChat: messageData.idOfChat,
-					serviceMessage: messageData.serviceMessage
+					serviceMessage: messageData.serviceMessage,
+					userId:targetSocket.idOfLogin,
 				}
 				await this.prismaChatService.addChatMessage(messageData.idOfChat, targetSocket.idOfLogin, messageData.content, getDate(), messageData.serviceMessage);
 				this.server.to(messageData.idOfChat.toString()).emit('newMessage', message);

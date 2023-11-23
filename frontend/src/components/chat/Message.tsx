@@ -19,9 +19,9 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 	if (!context) {
 		throw new Error('useContext must be used within a MyProvider');
 	}
-	const { updateChat, updatePage } = context;
+	const { updateChat } = context;
 	const {roomId, setRoomId} = useContext(GameContext)
-	const {allChannels, activeChannel, setActiveChannel, setNeedToUpdate} = useContext(ChatContext)
+	const {allChannels, activeChannel, setActiveChannel, setNeedToUpdate, setBlockedUsers } = useContext(ChatContext)
     const [showUserActionsMenu, setShowUserActionsMenu] = useState(false);
 	const [userInfo, setUserInfo] = useState<uInfo>({userStatus: "user", friend: false})
 	const [errorMessage, setErrorMessage] = useState("");
@@ -265,7 +265,21 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 		};
 		try {
 			const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/blockUser/`, requestOptions);
-			const data = await response.json();
+			if (!response.ok) {
+				throw new Error("Request failed");
+			}
+			const response2 = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/listOfBlockedUser/${auth.user.login}`);
+			if (!response2.ok) {
+				throw new Error("Request failed");
+			}
+			const data = await response2.json();
+			let result: number[] = [];
+			if (data) {
+				data.map((element: any) => {
+					result.push(element.blocked_user_id)
+				})
+				setBlockedUsers(result);
+			}
 			toggleUserActionsMenu();
 		}
 		catch (error) {

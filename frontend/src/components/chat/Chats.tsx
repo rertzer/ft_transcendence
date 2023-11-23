@@ -10,7 +10,7 @@ const Chats = () => {
 
     const socket = useContext(WebsocketContext);
     const auth = useLogin();
-	const {activeChannel, setActiveChannel, allChannels, setAllChannels} = useContext(ChatContext);
+	const {activeChannel, setActiveChannel, allChannels, setAllChannels, blockedUsers} = useContext(ChatContext);
 
     useEffect(() => {
 
@@ -84,7 +84,8 @@ const Chats = () => {
                                     <img src={channel.type !== "DM" ? "img1.png" : "recuperer l'avatar"} />
                                     <div className='userChatInfo'>
                                         <h1>{channel.type !== "DM" ? channel.channelName : findReceiverName(channel.channelName)}</h1>
-                                        <p>{channel.msg ? channel.msg : ""}</p>
+                                        {blockedUsers.find(element => element === channel.userId) && <p>-blocked user-</p>}
+                                        {blockedUsers.find(element => element === channel.userId) === undefined && <p>{channel.msg ? channel.msg : ""}</p>}
                                     </div>
                                 </div>
                             </div>

@@ -35,7 +35,8 @@ const defaultState:IChatContext = {
 		status: "",
 		username: null,
 		dateSend: null,
-		msg: null
+		msg: null,
+		userId: null,
 	},
 	setActiveChannel: () => {},
 	needToUpdate: "",

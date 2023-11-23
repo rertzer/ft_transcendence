@@ -14,9 +14,9 @@ export type Channel = {
     status: string;
     /*---------LastMessageReceive-------*/
     username: string | null; // bien differencier username et uid unique en cas de changement de username
-	// login: string ;
     msg: string| null;
     dateSend: Date | null;
+    userId: number | null;
 }
 
 const ChatComponent = () => {
@@ -33,7 +33,8 @@ const ChatComponent = () => {
         status: "",
         username: null,
         dateSend: null,
-        msg: null
+        msg: null,
+        userId: null,
     })
 
   const ChatValue: IChatContext = {
@@ -65,7 +66,6 @@ async function getBlockedUsers() {
         }
         const data = await response.json();
         let result: number[] = [];
-        console.log(data);
         if (data) {
             data.map((element: any) => {
                 result.push(element.blocked_user_id)
