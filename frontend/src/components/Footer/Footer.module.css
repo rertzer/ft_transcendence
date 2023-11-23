@@ -9,9 +9,32 @@
     left: 0;
     bottom: 0;
 }
+.bottomLight {
+    bottom: 0;
+    background-color: white;
+    color: black;
+    box-shadow: 0 2px 0#ebebeb inset;
+    height: 52px;
+    position: fixed;
+    width: 100%;
+    right: 0;
+    left: 0;
+    bottom: 0;
+}
 .sep {
     bottom: 0;
     background-color: var(--color-darkslategray-100);
+    box-shadow: 0 1px 0#919190 inset;
+    height: 24px;
+    position: fixed;
+    width: calc(100% - 70px);
+    right: 0;
+    left: 0;
+    bottom: 0;
+}
+.sepLight {
+    bottom: 0;
+    background-color: white;
     box-shadow: 0 1px 0#919190 inset;
     height: 24px;
     position: fixed;
@@ -45,12 +68,32 @@
     bottom: 0px;
     border-left: 1px solid #2b2b2b ;
 }
+.buttonLight {
+    color: #484848;
+    background-color: white;
+    height: 50px;
+    width: 70px;
+    position: fixed;
+    right: 0px;
+    bottom: 0px;
+    border-left: 1px solid #7c7c7c ;
+}
 .button:hover {
     color: #3580dc;
     width: 70px;
     right: 0px;
 }
+.buttonLight:hover {
+    color: #3580dc;
+    width: 70px;
+    right: 0px;
+}
 .slidder {
+    position:fixed;
+    bottom:7px;
+    right:70px;
+}
+.slidderLight {
     position:fixed;
     bottom:7px;
     right:70px;
@@ -72,6 +115,20 @@
 .sheetPage:hover {
     background-color:#585857;
 }
+.sheetPageLight {
+    font-size: 11px;
+    font-weight: 400;
+    height: 26px;
+    position:fixed;
+    bottom: 24px;
+    text-align: center;
+    display: table-cell;
+    vertical-align: middle;
+    cursor: default;
+}
+.sheetPageLight:hover {
+    background-color:#c5c5c5;
+}
 .sheetPageSelected {
     font-size: 11px;
     font-weight: 600;
@@ -80,6 +137,19 @@
     bottom: 24px;
     border-bottom: 3px solid #919190;
     background-color: #2b2b2b;
+    text-align: center;
+    display: inline;
+    vertical-align: middle;
+    cursor: default;
+}
+.sheetPageSelectedLight {
+    font-size: 11px;
+    font-weight: 600;
+    height: 26px;
+    position:fixed;
+    bottom: 24px;
+    border-bottom: 3px solid #919190;
+    background-color: #d9d9d9;
     text-align: center;
     display: inline;
     vertical-align: middle;

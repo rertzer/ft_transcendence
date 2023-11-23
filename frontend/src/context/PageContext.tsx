@@ -6,6 +6,7 @@ type SharedData = {
   chat: string;
   zoom: number;
   toolbar: boolean;
+  dark: boolean;
   coords: { coordX: number; coordY: number };
   scroll: { scrollX: number; scrollY: number };
   game: { player1: string; player2: string; points1: number; points2: number};
@@ -14,6 +15,7 @@ type SharedData = {
   updateChat: (chat: string) => void;
   updateZoom: (zoom: number) => void;
   updateToolbar: (newTool: boolean) => void;
+  updateDark: (newDark: boolean) => void;
   updatePageMenuChat: (page:string, menu: string, chat: string) => void;
   updateCoords: (newCoords: { coordX: number; coordY: number }) => void;
   updateCoordsMenu: (newCoords: { coordX: number; coordY: number }, newMenu: string) => void;
@@ -34,6 +36,7 @@ function MyProvider({ children }: MyProviderProps) {
     chat:'none',
     zoom:125,
     toolbar:false,
+    dark: window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches,
     coords: { coordX: 0, coordY: 0 },
     scroll: { scrollX: 0, scrollY: 0 },
     game: {player1: "player1", player2: "player2", points1: 0, points2: 0},
@@ -54,6 +57,9 @@ function MyProvider({ children }: MyProviderProps) {
   const updateToolbar = (newData: boolean) => {
     setSharedData({ ...sharedData, toolbar: newData });
   };
+  const updateDark = (newDark: boolean) => {
+    setSharedData({ ...sharedData, dark: newDark });
+  };
   const updatePageMenuChat = (newPage: string, newMenu: string, newChat: string) => {
     setSharedData({ ...sharedData, page: newPage, menu: newMenu, chat: newChat});
   };
@@ -72,7 +78,7 @@ function MyProvider({ children }: MyProviderProps) {
   
 
   return (
-    <PageContext.Provider value={{ ...sharedData, updatePage, updateMenu, updateChat, updateZoom, updateToolbar, updatePageMenuChat, updateCoords, updateCoordsMenu, updateScroll, updateGame}}>
+    <PageContext.Provider value={{ ...sharedData, updatePage, updateMenu, updateChat, updateZoom, updateToolbar, updateDark, updatePageMenuChat, updateCoords, updateCoordsMenu, updateScroll, updateGame}}>
       {children}
     </PageContext.Provider>
   );

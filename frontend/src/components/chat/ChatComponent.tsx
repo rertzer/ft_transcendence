@@ -7,6 +7,7 @@ import  ConnectionContext from "../../context/authContext"
 import ChatContext, {IChatContext} from "../../context/chatContext";
 import { useLogin } from "../../components/user/auth";
 import GameContext from "../../context/gameContext";
+import ChatIcon from '@mui/icons-material/Chat';
 
 export type Channel = {
     id: number;
@@ -112,5 +113,5 @@ const NoChat = (props: {message: string}) => {
     }
 }, [])
 
-    return (<div className='noChat'>{props.message}</div>);
+    return (<div className='noChat'><ChatIcon style={{fontSize:'100px'}}/></div>);
 }

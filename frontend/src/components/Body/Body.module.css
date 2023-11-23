@@ -26,6 +26,15 @@
   height: 100%;
   bottom: 0;
 }
+.rightLettersBackgroundLight {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: #f6f5f4;
+  width: 31px;
+  height: 100%;
+  bottom: 0;
+}
 .rightLettersFrame {
   position: fixed;
   box-sizing: border-box;
@@ -35,12 +44,33 @@
   width: 25px;
   height: 100%;
 }
+.rightLettersFrameLight {
+  position: fixed;
+  box-sizing: border-box;
+  top: 166px;
+  left: 1%;
+  border-left: 1px solid var(--color-gray-100);
+  width: 25px;
+  height: 100%;
+  color: rgb(66, 66, 66);
+}
 .up {
   position: fixed;
   box-sizing: border-box;
   top: 142px;
   left: 1%;
   background-color: var(--color-darkslategray-100);
+  border-right: 0.5px solid var(--color-gray-100);
+  border-bottom: 0.5px solid var(--color-gray-100);
+  width: 31px;
+  height: 24px;
+}
+.upLight {
+  position: fixed;
+  box-sizing: border-box;
+  top: 142px;
+  left: 1%;
+  background-color: #f6f5f4;
   border-right: 0.5px solid var(--color-gray-100);
   border-bottom: 0.5px solid var(--color-gray-100);
   width: 31px;
@@ -78,12 +108,12 @@
   background-color: var(--color-darkslategray-100);
   width: 100%;
 }
-.rightScrollZone1 {
+.rightScrollZoneLight {
   position: absolute;
   height: 100%;
   top: 0;
   right: 0;
   bottom: 0;
-  background-color: var(--color-darkslategray-100);
+  background-color: white;
   width: 100%;
 }

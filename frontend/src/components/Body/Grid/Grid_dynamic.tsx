@@ -5,40 +5,24 @@ import { Project } from '../../Sheets/Project/Project';
 import { Profile } from '../../Sheets/Profile/Profile';
 import { Data } from '../../Sheets/Data/Data';
 import { Contacts } from '../../Sheets/Contacts/Contacts';
+import gameContext from '../../../context/gameContext';
 
 function PageSwitch () {
-   //GET SCROLL VALUE
-   const context = useContext(PageContext);
-   if (!context) {
-	 throw new Error('useContext must be used within a MyProvider');
-   }
-   const { scroll, zoom } = context;
-   const { scrollX, scrollY } = scroll;
-   const [sx, setNewScrollX] = useState(scrollX);
-   const [sy, setNewScrollY] = useState(scrollY);
+  //GET SCROLL VALUE
+  const context = useContext(PageContext);
+  if (!context) {
+  throw new Error('useContext must be used within a MyProvider');
+  }
+  const { scroll, zoom } = context;
+  const { scrollX, scrollY } = scroll;
+  const [sx, setNewScrollX] = useState(scrollX);
+  const [sy, setNewScrollY] = useState(scrollY);
 
-   useEffect(() => {
-	 setNewScrollX(scrollX);
-	 setNewScrollY(scrollY);
-   }, [scrollX, scrollY]);
+  useEffect(() => {
+  setNewScrollX(scrollX);
+  setNewScrollY(scrollY);
+  }, [scrollX, scrollY]);
 
- //   let component = null;
- //   switch(context?.page) {
- //     case "Project" :
- //       component = Project(sx, sy, zoom);
- // 	  break;
- //     case "Profile" :
- // 		component = Profile(sx, sy, zoom);
- // 	  break;
- //     case "Data" :
- // 		component = Data(sx, sy, zoom);
- // 	  break;
- //     case "Contacts" :
- // 		component = <Contacts key={"contacts"} sx={sx} sy={sy} zoom={zoom}/>;
- // 	  break;
- //     default :
- // 		break;
- //   }
    return (
 	 <div key={'switch'}>
 		 {context?.page == "Data" && <Data key={"data1"} sx={sx} sy={sy} zoom={zoom}/>}
@@ -54,11 +38,12 @@ function Grid() {
     throw new Error('useContext must be used within a MyProvider');
   }
 
-  const { scroll } = context;
+  const { scroll, toolbar } = context;
   const { scrollX, scrollY } = scroll;
 
   const [sx, setNewScrollX] = useState(scrollX);
   const [sy, setNewScrollY] = useState(scrollY);
+  const {modeGame, gameStatus} = useContext(gameContext);
 
   useEffect(() => {
     setNewScrollX(scrollX);
@@ -188,6 +173,41 @@ function Grid() {
           backgroundColor: 'rgba(21, 83, 158, 0.3)',
           pointerEvents:'none',
       }} />)
+
+  components.push(
+    <div key={'waiting room'} style={{position: 'fixed', top: toolbar ? '89px' : '166px', left: 'calc(1% + 31px)', color: '#000000'} }>
+      { (gameStatus === 'IN_WAITING_ROOM') && modeGame === 'BASIC' && 
+      <div
+      key={`basic waiting room`}
+      style={{
+        position: 'absolute',
+        top: (scroll.scrollX > 1) ? '-100px' : `${(20 + (zoom - 100) / 8) * (1 - scroll.scrollX)}px`,
+        left: `${0 + (80 + (zoom - 100) / 2) * (1 - scroll.scrollY)}px`,
+        width: `${(80 + (zoom - 100) / 2) * 5}px`,
+        height: `${(20 + (zoom - 100) / 8) * 1}px`,
+        fontSize: `${12 + ((zoom - 100) / 16)}px`,
+        backgroundColor: 'white',
+        textAlign: 'center',
+        border: '1px solid black',
+      }}>
+        You are in the waiting room to join a <b>basic</b> game! 
+      </div>}
+      { (gameStatus === 'IN_WAITING_ROOM') && modeGame === 'ADVANCED' && <div
+      key={`advanced waiting room`}
+      style={{
+        position: 'absolute',
+        top: (scroll.scrollX > 1) ? '-100px' : `${(20 + (zoom - 100) / 8) * (1 - scroll.scrollX)}px`,
+        left: `${0 + (80 + (zoom - 100) / 2) * (1 - scroll.scrollY)}px`,
+        width: `${(80 + (zoom - 100) / 2) * 5}px`,
+        height: `${(20 + (zoom - 100) / 8) * 1}px`,
+        fontSize: `${12 + ((zoom - 100) / 16)}px`,
+        backgroundColor: 'white',
+        textAlign: 'center',
+        border: '1px solid black',
+      }}>
+        You are in the waiting room to join an <b>advanced</b> game! 
+      </div>}
+    </div>)
 
   return (
   <div key={'grid'}>

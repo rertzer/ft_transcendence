@@ -24,9 +24,6 @@ function App() {
     createRoutesFromElements(
       <Route>
 	  <Route path="/" element={<RequireAuth><Desktop1 /></RequireAuth>} >
-		<Route path="/" element={<Home />} />
-		<Route path="/" element={<Profile />} />
-		<Route path="/" element={<Game />} />
       </Route>
 	  <Route path="/login" element={<Login />} />
 	  <Route path="*" element={<Welcome />} />

@@ -31,7 +31,7 @@ function Login() {
         token_status = true;
 
         auth.login(token);
-        navigate(redirectPath, { replace: true });
+        navigate('/', { replace: true });
       }
       setTokenOk(token_status);
     } catch (e) {

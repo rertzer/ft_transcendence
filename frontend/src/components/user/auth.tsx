@@ -32,6 +32,8 @@ export const LoginProvider = ({ children }: any) => {
   const login = (raw_token: any) => {
     sessionStorage.setItem("Token", JSON.stringify(raw_token));
     token = raw_token;
+    setImage( "https://img.lamontagne.fr/c6BQg2OSHIeQEv4GJfr_br_8h5DGcOy84ruH2ZResWQ/fit/657/438/sm/0/bG9jYWw6Ly8vMDAvMDAvMDMvMTYvNDYvMjAwMDAwMzE2NDYxMQ.jpg"
+    );
     reload();
   };
 

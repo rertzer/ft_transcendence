@@ -6,13 +6,15 @@ import { PageContext } from '../../context/PageContext';
 import { useLogin } from '../user/auth';
 import { GameBar } from './GameBar';
 import gameContext from "../../context/gameContext";
+import CloseIcon from '@mui/icons-material/Close';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 function Header({}) {
   const context = useContext(PageContext);
   if (!context) {
     throw new Error('useContext must be used within a MyProvider');
   }
-  const { menu, page, updateMenu } = context;
+  const { dark, updateMenu, updatePage } = context;
   const { toolbar } = context;
   function handleClick(str : string) {
     updateMenu(str);
@@ -25,42 +27,43 @@ function Header({}) {
   const auth = useLogin();
   const {gameStatus} =useContext(gameContext);
   return <header className={styles.headerFrame} style={{ height: toolbar ? '65px' : '142px' }}>
-        <div className={styles.headerBackground} style={{ height: toolbar ? '65px' : '142px' }}/>
+        <div className={dark ? styles.headerBackground : styles.headerBackgroundLight} style={{ height: toolbar ? '65px' : '142px' }}/>
         <div className={styles.line3}>
-        {(printGameMenu()) ? <GameBar /> : <input className={styles.bar} /> }
+        {(printGameMenu()) ? <GameBar /> : <input className={dark ? styles.bar : styles.barLight} /> }
           <img className={styles.buttonsIcon} alt="" src="/buttons.svg" />
           <div className={styles.menu}>
-            <div className={styles.menuBackground} />
+            <div className={dark ? styles.menuBackground : styles.menuBackgroundLight} />
             <div className={styles.buttpn}>
-              <div className={styles.buttonBackground} />
-              <img className={styles.buttpnChild} alt="" src="/star-1.svg" />
+              <div className={dark ? styles.buttonBackground : styles.buttonBackgroundLight} />
+              <ArrowDropDownIcon  sx={{fontSize:'22px'}} className={dark ? styles.buttonChild : styles.buttonChildLight} />
             </div>
             <div className={styles.frameText}>
-              <div className={styles.basicSansCs}>User2</div>
+              <div className={dark ? styles.basicSansCs : styles.basicSansCsLight}>User2</div>
             </div>
           </div>
         </div>
         <div className={styles.line2}>
           <div className={styles.menu2}>
-            <div className={styles.menuBackground} />
+            <div className={dark ? styles.menuBackground : styles.menuBackgroundLight} />
             <div className={styles.buttpn}>
-              <div className={styles.buttonBackground} />
-              <img className={styles.buttpnChild} alt="" src="/star-1.svg" />
+              <div className={dark ? styles.buttonBackground : styles.buttonBackgroundLight} />
+              <ArrowDropDownIcon sx={{fontSize:'22px'}} className={dark ? styles.buttonChild : styles.buttonChildLight} />
             </div>
             <div className={styles.frameText}>
-              <div className={styles.basicSansCs}>Basic Sans Cs</div>
+              <div className={dark ? styles.basicSansCs : styles.basicSansCsLight}>Basic Sans Cs</div>
             </div>
           </div>
         </div>
         <SelectBar     />
         <div className={styles.titleBar} onMouseEnter={() => handleClick("none")}>
-          <div className={styles.titleBarBackground} />
-          <div className={styles.untitled1}>Untitled 1 - PongOffice Calc</div>
-          <div className={styles.user}>
-            <img className={styles.userChild} alt="" src="/ellipse-1@2x.png" style={{cursor:"pointer"}}/>
+          <div className={dark ? styles.titleBarBackground : styles.titleBarBackgroundLight} />
+          <div className={dark ? styles.untitled1 : styles.untitled1Light}>Untitled 1 - PongOffice Calc</div>
+          <div className={styles.user} onClick={() => updatePage("Profile")}>
+            <img className={styles.userChild} alt="" src={auth.image} style={{cursor:"pointer"}}/>
             <span className={styles.user1}>{auth.user.username}</span>
-            <Tooltip onClick={auth.logout} className={styles.crossButton}title="Log out" arrow>
-              <img className={styles.crossIcon} alt="" src="/cross.svg" style={{cursor:"pointer", right: "8px"}}/>
+            <Tooltip onClick={auth.logout} className={dark ? styles.crossButton : styles.crossButtonLight}title="Log out" arrow>
+              <CloseIcon style={{fontSize:"18px", cursor:"pointer"}}/>
+              {/* <img className={styles.crossIcon} alt="" src="/cross.svg" style={{cursor:"pointer", right: "8px"}}/> */}
             </Tooltip>
           </div>
         </div>
