@@ -3,28 +3,28 @@ import { useNavigate, useLocation } from "react-router-dom";
 import React, { MouseEvent, useEffect, useState } from "react";
 import { useLogin } from "../components/user/auth";
 
-function Redirect() {
+function RedirectTfa() {
   const auth = useLogin();
   const navigate = useNavigate();
   const [tokenOk, setTokenOk] = useState<boolean | undefined>();
   const [key, setKey] = useState<string | undefined>();
+  const [tfaToken, setTfaToken] = useState("");
 
   const location = useLocation();
   console.log("location", location.search);
   const queryParams = new URLSearchParams(location.search);
   const param_key = queryParams.get("key");
   if (param_key && param_key !== key) setKey(param_key);
-  
+
   console.log("url ", queryParams, "key is", param_key);
 
   const getToken = async () => {
-    const flatkey = JSON.stringify({ key });
-    console.log("asking for", flatkey);
-    const data = await fetch("/ft_auth/token", {
+    console.log("asking for", JSON.stringify({ key, tfaToken }));
+    const data = await fetch("/ft_auth/tfatoken", {
       mode: "cors",
       method: "POST",
       headers: { "Content-Type": "application/json; charset=utf-8" },
-      body: flatkey,
+      body: JSON.stringify({ key, tfa_token: tfaToken }),
     });
     console.log("receive data", data);
     const token = await data.json();
@@ -38,19 +38,15 @@ function Redirect() {
     }
     setTokenOk(isOk);
   };
- 
-  useEffect(() => {
-    if (key) {
-      try {
-        console.log("ici");
-        getToken();
-      } catch (e) {
-        console.log(e);
-      }
-    } else {
-      console.log("no key");
+
+  const handleTfaToken = async (event: MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    if (tfaToken) {
+      getToken();
     }
-  }, [key]);
+  };
+
+  useEffect(() => {}, [key]);
 
   useEffect(() => {
     if (tokenOk) {
@@ -65,11 +61,25 @@ function Redirect() {
       <div className="card">
         <div className="left">
           <h1>Log in</h1>
-          <p>login in progress, please wait</p>
+          <form>
+            <input
+              type="text"
+              placeholder={"enter the token"}
+              value={tfaToken}
+              onChange={(e) => setTfaToken(e.target.value)}
+            />
+            <button
+              onClick={(e) => {
+                handleTfaToken(e);
+              }}
+            >
+              submit
+            </button>
+          </form>
         </div>
       </div>
     </div>
   );
 }
 
-export default Redirect;
+export default RedirectTfa;

@@ -8,7 +8,7 @@ function TwoFAToken(props: {}) {
   const handleToken = async (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     if (token) {
-      const fileData = await fetch("twofa/validate", {
+      const fileData = await fetch("/twofa/validate", {
         method: "POST",
         headers: {
           "Content-Type": "application/json; charset=utf-8",

@@ -16,6 +16,7 @@ function Desktop1() {
   const auth = useLogin();
   const windowHeighthRef = useRef(window.innerHeight);
   console.log("A", auth.user);
+  
   useEffect(() => {
   const handleResize = () => {
 	console.log("B", auth.user);

@@ -14,6 +14,7 @@ import { RequireAuth } from "./components/user/requireAuth";
 import EditProfile from "./routes/EditProfile";
 import Twofa from './routes/TwoFA';
 import Redirect from './routes/Redirect';
+import RedirectTfa from './routes/RedirectTfa';
 
 function App() {
   const socket = useContext(WebsocketContext);
@@ -33,6 +34,7 @@ function App() {
       </Route>
 	  <Route path="/login" element={<Login />} />
     <Route path="/redirect" element={<Redirect />} /> 
+    <Route path="/redirect/twofa" element={<RedirectTfa />} /> 
     <Route path="/profile" element={<RequireAuth> <Profile /></RequireAuth>} />
     <Route path="/edit" element={<RequireAuth> <EditProfile /></RequireAuth>} />
     <Route path="/twofa" element={<RequireAuth> <Twofa /></RequireAuth>} />

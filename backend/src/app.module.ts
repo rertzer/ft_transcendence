@@ -24,7 +24,6 @@ import { FriendModule } from './friend/friend.module';
     }),
     AuthModule,
     FtAuthModule,
-    TwoFAModule,
     UserModule,
     PrismaModule,
     ChatModule,
