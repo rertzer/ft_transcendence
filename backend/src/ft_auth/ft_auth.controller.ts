@@ -10,6 +10,7 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { FtAuthService } from './ft_auth.service';
 import { Request, Response } from 'express';
+import { TfaToken } from './dto/TfaToken.dto';
 
 @Controller('ft_auth')
 export class FtAuthController {
@@ -29,5 +30,11 @@ export class FtAuthController {
   ftAuthToken(@Body('key') key:string){
     console.log("received key", key);
     return this.ftAuthService.provideTokenByKey(key);
+  }
+
+  @Post('tfatoken')
+  ftAuthTfaToken(@Body() tfa_token: TfaToken){
+    console.log("received", tfa_token);
+    return this.ftAuthService.provideTokenByKeyAndTfa(tfa_token);
   }
 }

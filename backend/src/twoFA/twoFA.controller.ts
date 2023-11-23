@@ -24,6 +24,6 @@ export class TwoFAController {
     return user;
   }
 
-  @Get('authenticate')
-  authenticate(@Req() req: any) {}
+  // @Get('authenticate')
+  // authenticate(@Req() req: any) {}
 }

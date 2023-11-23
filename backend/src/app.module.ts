@@ -27,7 +27,6 @@ import { GameStatsModule } from './gameStats/gameStats.module';
     }),
     AuthModule,
     FtAuthModule,
-    TwoFAModule,
     UserModule,
     PrismaModule,
     ChatModule,
