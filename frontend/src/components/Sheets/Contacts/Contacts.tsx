@@ -44,7 +44,7 @@ function AddLine(sx: number, sy: number, zoom: number, name: string, key: number
 		try {
 			const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/friend/deleteFriend/${key}/${auth.user.id}`, {
 				method: 'DELETE',
-				headers: { Authorization: `Bearer ${auth.user.access_token}`},
+				headers: { Authorization: auth.getBearer()},
 			});
 			if (!response.ok) {
 				console.error(`Error fetching friends: ${response.status}`);
@@ -93,7 +93,7 @@ export function Contacts(props: { sx: number, sy: number, zoom: number }) {
 			try {
 				const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/friend/listFriends/${auth.user.login}`, {
 					method: 'GET',
-					headers: { Authorization: `Bearer ${auth.user.access_token}`},
+					headers: { Authorization: auth.getBearer()},
 				});
 				if (!response.ok) {
 					console.error(`Error fetching friends: ${response.status}`);

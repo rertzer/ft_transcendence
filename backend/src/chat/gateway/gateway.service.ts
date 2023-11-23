@@ -37,6 +37,7 @@ export class MyGateway {
 	server: Server;
 
 	handleConnection(client:Socket){
+		console.log("connected = , ", client.id)
 		client.on('disconnect', () => {
 			console.log("client disconect : ", client.id)
 			this.socketsLogin = this.socketsLogin.filter((s) => {return s.sock !== client;});
@@ -128,6 +129,7 @@ export class MyGateway {
 		const targetSocket = this.socketsLogin.find((socket) => socket.sock === client);
 		if (targetSocket !== undefined)
 		{
+			console.log("hey");
 			const CreateRoom = new CreateChatService(this.prismaChatService);
 			CreateRoom.createChat(messageData.login, targetSocket.idOfLogin ,messageData.chatPassword, messageData.chatName, messageData.chatType, targetSocket.sock);
 		}

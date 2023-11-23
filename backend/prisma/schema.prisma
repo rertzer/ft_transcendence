@@ -2,7 +2,8 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["referentialActions"]
 }
 
 datasource db {
@@ -64,7 +65,7 @@ model ChatChannels {
   password String?
 
   chatMessages       ChatMsgHistory[]     @relation("ChatMessages")
-  channelOwner       User                 @relation("ChatChannelsOwner", fields: [owner], references: [id])
+  channelOwner       User                 @relation("ChatChannelsOwner", fields: [owner], references: [id], onDelete: Cascade)
   channelsUsers      ChatChannelsUser[]   @relation("ChatChannelsUser")
   // Add other fields...
   UsersBannedToChats UsersBannedToChats[]
@@ -101,10 +102,10 @@ model TwoFA {
 }
 
 model Friend {
-  id                Int     @id @default(autoincrement())
-  user_id           Int
-  friend_id         Int
-  user              User    @relation("UserToFriends", fields: [user_id], references: [id])
+  id        Int  @id @default(autoincrement())
+  user_id   Int
+  friend_id Int
+  user      User @relation("UserToFriends", fields: [user_id], references: [id])
 }
 
 model Game {

@@ -64,7 +64,7 @@ export const ListChannels = (props: {showSubMenu: string, setShowSubMenu: Functi
 		const requestOptions = {
 		  method: 'post',
 		  headers: { 'Content-Type': 'application/json' ,
-		  Authorization: `Bearer ${auth.user.access_token}`},
+		  Authorization: auth.getBearer()},
 		  body: JSON.stringify(messageData),
 		};
 		try {

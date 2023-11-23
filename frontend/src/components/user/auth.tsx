@@ -95,7 +95,6 @@ export const LoginProvider = ({ children }: any) => {
   };
 
   const getBearer = () => {
-    reload();
     return "Bearer " + token.access_token;
   };
 

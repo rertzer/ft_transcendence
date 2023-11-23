@@ -36,6 +36,34 @@ export class PrismaChatService {
 		}
 	}
 
+	async userAlreadyInChat(userId: number, chatId:number)
+	{
+		const inChat = await this.prismaService.chatChannelsUser.findFirst({
+			where:{
+				channel_id: chatId,
+				user_id: userId,
+			}
+		})
+		if (inChat)
+			return (true);
+		return false;
+	}
+
+	async getIdOfUsername(username: string){
+
+		const user = await this.prismaService.user.findFirst({
+			where: {
+				username: username,
+			}
+		})
+		if (user)
+			return user.id;
+		else
+		{
+			return 0;
+		}
+	}
+
 	async deleteMessage(idMesage: number)
 	{
 		const messageDelete = await this.prismaService.chatMsgHistory.delete({
@@ -63,6 +91,88 @@ export class PrismaChatService {
 			return true;
 		else
 			return false;
+	}
+
+	async retrieveChannelsUsers(chat_id:number)
+	{
+		const list = await this.prismaService.chatChannelsUser.findMany({
+			where: {
+				channel_id: chat_id,
+				banned:false,
+				kicked:false,
+			}
+		})
+		if (list)
+			return list;
+	}
+
+	async findOldestMember(tabOfUser:any, ownerId:number)
+	{
+		let lastId = (tabOfUser.find((element: any) => element.id != ownerId)).id;
+		let lastDate:Date = (tabOfUser.find((element: any) => element.id != ownerId)).date_joined;
+		for (const element of tabOfUser)
+		{
+			if (lastDate < element.date_joined && ownerId !== element.id )
+			{
+				lastDate = element.date_joined;
+				lastId = element.id;
+			}
+		}
+		return (lastId)
+	}
+
+	async leaveAsOwner(userId:number, chatId:number)
+	{
+		const listUsersOfChat = await this.retrieveChannelsUsers(chatId)
+		console.log("listUser", listUsersOfChat)
+		if (listUsersOfChat)
+		{
+			if (listUsersOfChat.length == 1)
+			{
+				const deleted = await this.prismaService.chatChannels.delete({
+					where: {
+						id: chatId
+					}
+				})
+				console.log("deleted = ", deleted);
+				if (deleted)
+					return true
+			}
+			else
+			{
+				const oldestChatChannelsUser = await this.findOldestMember(listUsersOfChat,userId);
+				const idChannelUser = await this.getIdOfChatChannelsUser(userId, chatId);
+				console.log("id channel user:", idChannelUser);
+				if (idChannelUser)
+				{
+					const succeed = await this.prismaService.chatChannelsUser.update({
+						where: {
+							id:idChannelUser
+						},
+						data:{
+							kicked:true,
+							user_role: "user"
+						}
+					})
+					console.log("oldestChatChannelsUser = ", oldestChatChannelsUser);
+					if (succeed && oldestChatChannelsUser)
+					{
+
+							console.log("aeeerererrereeer");
+							await this.prismaService.chatChannelsUser.update({
+								where:{
+									id:oldestChatChannelsUser,
+								},
+								data:{
+									user_role: "owner"
+								}
+							})
+						console.log("lol");
+					}
+				}
+			}
+		}
+
 	}
 
 	async userIsblocked(login: string, userBlockedLogin: string)

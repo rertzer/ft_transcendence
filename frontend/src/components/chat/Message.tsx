@@ -59,7 +59,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 		try {
 			const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/${props.login}/banned/${props.chatId}`, {
 				method: "GET",
-				headers: { Authorization: `Bearer ${auth.user.access_token}`},
+				headers: { Authorization: auth.getBearer()},
 			  }
 			);
 			if (!response.ok) {
@@ -88,7 +88,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 		try {
 			const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/friend/${auth.user.login}/${props.login}/isMyFriend`, {
 				method: "GET",
-				headers: { Authorization: `Bearer ${auth.user.access_token}`},
+				headers: { Authorization: auth.getBearer()},
 			  });
 			if (!response.ok) {
 				throw new Error("Request failed");
@@ -106,7 +106,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 		try {
 			const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/${props.login}/info/${props.chatId}`, {
 				method: "GET",
-				headers: { Authorization: `Bearer ${auth.user.access_token}`},
+				headers: { Authorization: auth.getBearer()},
 			  });
 			if (!response.ok) {
 				throw new Error("Request failed");
@@ -154,7 +154,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 		const requestOptions = {
 			method: 'post',
 			headers: { 'Content-Type': 'application/json' ,
-			Authorization: `Bearer ${auth.user.access_token}`},
+			Authorization: auth.getBearer()},
 			body: JSON.stringify({ login: props.login, chatId: props.chatId})
 		};
 		try {
@@ -177,7 +177,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 		const requestOptions = {
 			method: 'post',
 			headers: { 'Content-Type': 'application/json',
-			Authorization: `Bearer ${auth.user.access_token}`},
+			Authorization: auth.getBearer()},
 			body: JSON.stringify({ login: props.login, chatId: props.chatId})
 		};
 		try {
@@ -204,7 +204,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 		const requestOptions = {
 			method: 'post',
 			headers: { 'Content-Type': 'application/json',
-			Authorization: `Bearer ${auth.user.access_token}`},
+			Authorization: auth.getBearer()},
 			body: JSON.stringify({ login: props.login, chatId: props.chatId})
 		};
 		try {
@@ -258,7 +258,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 		const requestOptions = {
 			method: 'post',
 			headers: { 'Content-Type': 'application/json',
-			Authorization: `Bearer ${auth.user.access_token}`},
+			Authorization: auth.getBearer()},
 			body: JSON.stringify({ login: auth.user.login, friendToAdd: props.login})
 		};
 		try {
@@ -275,7 +275,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 		const requestOptions = {
 			method: 'post',
 			headers: { 'Content-Type': 'application/json',
-			Authorization: `Bearer ${auth.user.access_token}`},
+			Authorization: auth.getBearer()},
 			body: JSON.stringify({blockedLogin: props.login, login: auth.user.login})
 		};
 		try {
@@ -283,7 +283,10 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 			if (!response.ok) {
 				throw new Error("Request failed");
 			}
-			const response2 = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/listOfBlockedUser/${auth.user.login}`);
+			const response2 = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/listOfBlockedUser/${auth.user.login}`, {
+				method: "GET",
+				headers: { Authorization: auth.getBearer()},
+			  });
 			if (!response2.ok) {
 				throw new Error("Request failed");
 			}
@@ -306,7 +309,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 		const requestOptions = {
 			method: 'post',
 			headers: { 'Content-Type': 'application/json' ,
-			Authorization: `Bearer ${auth.user.access_token}`},
+			Authorization: auth.getBearer()},
 			body: JSON.stringify({typeGame: mode})
 		};
 		try {
@@ -327,7 +330,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 		try {
 			const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/deleteMessage/${props.msgId}`, {
 				method: 'DELETE',
-				headers: { Authorization: `Bearer ${auth.user.access_token}`},
+				headers: { Authorization: auth.getBearer()},
 			});
 			if (!response.ok) {
 				console.error(`Error fetching friends: ${response.status}`);

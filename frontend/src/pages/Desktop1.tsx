@@ -30,6 +30,22 @@ function Desktop1() {
 		})
 	}, []);
 
+	useEffect(() => {
+	  console.log("rkeklkrer");
+	  socket.connect();
+	  
+	  return (()=>{
+		socket.disconnect();
+	  })
+	}, []);
+
+	useEffect(() => {
+		if (auth.user.login) {
+			setPlayerName(auth.user.login);
+			socket.emit("newChatConnection", auth.user.login);
+		}
+	},[auth.user.login])
+
 	const gameContextValue :IGameContextProps = {
 		roomId,
 		setRoomId,
@@ -63,20 +79,11 @@ function Desktop1() {
     };
 }, []);
 
-//   useEffect(() => {
-	// 	console.log("user send = ", user.login);
-	// 	console.log("rkeklkrer");
-	// 	socket.connect();
-	//     }, []);
 
-	useEffect(() => {
-		console.log("C", auth.user);
-		if (auth.user.login) {
-			setPlayerName(auth.user.login);
-			socket.emit("newChatConnection", auth.user.login);
-		}
-		console.log("yo send something pls : " , socket.id);
-	},[]);
+	// useEffect(() => {
+	// 	console.log("C", auth.user);
+	// 	console.log("yo send something pls : " , socket.id);
+	// },[auth.user.login]);
 
   const forceUpdate = useForceUpdate();
 

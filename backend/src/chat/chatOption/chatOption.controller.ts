@@ -6,6 +6,7 @@ import { JwtGuard } from "src/auth/guard";
 import { getDate } from "../utils/utils.service";
 import { UseGuards, ParseIntPipe } from "@nestjs/common";
 import { ChatLister } from "../chatLister/chatLister.service";
+import * as argon from 'argon2';
 
 @UseGuards(JwtGuard)
 @Controller('chatOption')
@@ -27,6 +28,34 @@ export class ChatOptController {
 			return false;
 		}
 
+	}
+
+	@Post('inviteUser')
+	async inviteUser(@Body() data:{ownerLogin:string, username:string, chatId:number})
+	{
+		if (await this.prismaChatService.isOwner(data.ownerLogin, data.chatId))
+		{
+			const id = await this.prismaChatService.getIdOfUsername(data.username)
+			if ( id > 0)
+			{
+				if (await this.prismaChatService.userAlreadyInChat(id, data.chatId))
+				{
+					if (await this.prismaChatService.addChanelUser(data.chatId, id, "user", getDate(), null))
+						return ("ok");
+					return ("issue while adding new user")
+				}
+				return ("Already in")
+			}
+			else 
+			{
+				return ("Doesn't exist")
+			}
+		}
+		else
+		{
+			return("not Owner of chat")
+		}
+		
 	}
 
 	@Post('blockUser')
@@ -142,6 +171,27 @@ export class ChatOptController {
 		}
 	}
 
+	@Post('leaveChat')
+	async onLeaveChat(@Body() data:{login:string, chatId: number})
+	{
+		const id = await this.prismaChatService.getIdOfLogin(data.login);
+		if (id)
+		{
+			if (!await this.prismaChatService.isOwner(data.login, data.chatId))
+			{
+				const succeed = await this.prismaChatService.kickUserFromChat(id, data.chatId);
+				if (succeed)
+					return (true);
+			}
+			else 
+			{
+				const succeed = await this.prismaChatService.leaveAsOwner(id,data.chatId);
+				if (succeed)
+					return (true);
+			}
+		}
+	}
+
 	@Post('changeType')
 	async changeChatType(@Body() chatType:{password:string, type: string, chatId: number, login: string})
 	{
@@ -151,7 +201,8 @@ export class ChatOptController {
 		{
 			if (chatType.password.length > 0)
 			{
-				worked = await this.prismaChatService.updateChatWithPassword(chatType.password, chatType.type, chatType.chatId);
+				const hashed_password = await argon.hash(chatType.password,);
+				worked = await this.prismaChatService.updateChatWithPassword(hashed_password, chatType.type, chatType.chatId);
 			}
 			else
 			{

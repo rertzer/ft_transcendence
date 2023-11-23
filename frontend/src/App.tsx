@@ -13,12 +13,7 @@ import { RequireAuth } from "./components/user/requireAuth";
 import EditProfile from "./routes/EditProfile";
 
 function App() {
-  const socket = useContext(WebsocketContext);
-
-  useEffect(() => {
-    console.log("rkeklkrer");
-    socket.connect();
-  }, []);
+ 
 
   const router = createBrowserRouter(
     createRoutesFromElements(

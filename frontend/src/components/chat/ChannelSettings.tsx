@@ -33,7 +33,7 @@ export const ChannelSettings = (props: {showSubMenu: string, setShowSubMenu: Fun
         const requestOptions = {
 			method: 'post',
 			headers: { 'Content-Type': 'application/json',
-			Authorization: `Bearer ${auth.user.access_token}`},
+			Authorization: auth.getBearer()},
 			body: JSON.stringify({ password: password, type: "protected by password", chatId: activeChannel.id, login: auth.user.login})
 		};
 		const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/changeType/`, requestOptions);
@@ -61,7 +61,7 @@ export const ChannelSettings = (props: {showSubMenu: string, setShowSubMenu: Fun
         const requestOptions = {
 			method: 'post',
 			headers: { 'Content-Type': 'application/json' ,
-			Authorization: `Bearer ${auth.user.access_token}`},
+			Authorization: auth.getBearer()},
 			body: JSON.stringify({ password: "", type: newType, chatId: activeChannel.id, login: auth.user.login})
 		};
 		const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/changeType/`, requestOptions);

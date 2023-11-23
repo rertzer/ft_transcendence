@@ -39,21 +39,25 @@ const ConversationBar = (props: {isOwner: boolean, isAdmin: boolean}) => {
         const requestOptions = {
 			method: 'post',
 			headers: { 'Content-Type': 'application/json' ,
-			Authorization: `Bearer ${auth.user.access_token}`},
+			Authorization: auth.getBearer()},
 			body: JSON.stringify({ login: auth.user.login, chatId: activeChannel.id})
 		};
-		const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/kickUser/`, requestOptions);
-        const messageData = {
-			username: auth.user.username,
-			login:auth.user.login,
-			content: auth.user.username + " has just left",
-			serviceMessage: true,
-			idOfChat: activeChannel.id,
-		}
-		socket.emit('newMessage', messageData);
-		const data = await response.json();
-		if (data.isOwner)
-			console.log("PLOP") //faudra surement faire un autre call, pour l'instant l'owner peut pas quitter son channel
+        try {
+            const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/leaveChat/`, requestOptions);
+            const messageData = {
+                username: auth.user.username,
+                login:auth.user.login,
+                content: auth.user.username + " has just left",
+                serviceMessage: true,
+                idOfChat: activeChannel.id,
+            }
+            socket.emit('newMessage', messageData);
+            const data = await response.json();
+            console.log("DATA", data);
+        }
+        catch (error) {
+            console.error("Error while leaving channel", error);
+        }
     }
 
     function findReceiverName(names: string) {
