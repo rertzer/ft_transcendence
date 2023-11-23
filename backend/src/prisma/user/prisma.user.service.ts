@@ -9,6 +9,9 @@ import {
 } from '@nestjs/common';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { PrismaClient } from '@prisma/client';
+import { twoFASecretDto } from 'src/twoFA/dto/twoFASecret.dto';
+import { twoFAActivatedDto } from 'src/twoFA/dto/twoFAActivated.dto';
+import { FtUser } from 'src/ft_auth/dto/FtUser.dto';
 
 
 @Injectable()
@@ -66,13 +69,42 @@ export class PrismaUserService extends PrismaClient
     }
   }
   
-  async createUser(dto: LoginDto) {
+  async setTfaSecret(dto: twoFASecretDto){
+    try {
+      const user = await this.user.update({
+        where: {
+          login: dto.login,
+        },
+        data: {tfa_secret: dto.secret},
+      });
+      return user;
+    } catch (error) {
+      throw new BadRequestException('Bad request');
+    }
+  }
+  async setTfaActivated(dto: twoFAActivatedDto){
+    try {
+      const user = await this.user.update({
+        where: {
+          login: dto.login,
+        },
+        data: {tfa_activated: dto.verified},
+      });
+      return user;
+    } catch (error) {
+      throw new BadRequestException('Bad request');
+    }
+  }
+
+  async createUser(dto: FtUser) {
     try {
       const user = await this.user.create({
         data: {
           login: dto.login,
-          username: dto.login,
-          email: dto.login + '@student.42.fr',
+          username: dto.username,
+          first_name: dto.first_name,
+          last_name: dto.last_name,
+          email: dto.email,
           role: 'player',
         },
       });
