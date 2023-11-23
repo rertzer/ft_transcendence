@@ -9,9 +9,7 @@ export class TwoFAService {
 
   async setup(login: string) {
     console.log("TFA setup, login is", login);
-    const secret = speakeasy.generateSecret();
-  
-
+    const secret = speakeasy.generateSecret({ name: `PongOffice ${login}` });
     const user = await this.prisma.setTfaSecret({
       login,
       secret: secret.ascii,
@@ -36,7 +34,7 @@ export class TwoFAService {
       });
       console.log("verification is", verified);
     }
-      user = await this.prisma.setTfaActivated({login, verified});
+    user = await this.prisma.setTfaActivated({ login, verified });
 
     return user;
   }
@@ -53,7 +51,6 @@ export class TwoFAService {
       });
       console.log("verification is", verified);
     }
-     
     return verified;
   }
 }
