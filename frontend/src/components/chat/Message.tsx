@@ -21,7 +21,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 	}
 	const { updateChat } = context;
 	const {roomId, setRoomId} = useContext(GameContext)
-	const {allChannels, activeChannel, setActiveChannel, setNeedToUpdate, setBlockedUsers } = useContext(ChatContext)
+	const {allChannels, setActiveChannel, setNeedToUpdate, setBlockedUsers } = useContext(ChatContext)
     const [showUserActionsMenu, setShowUserActionsMenu] = useState(false);
 	const [userInfo, setUserInfo] = useState<uInfo>({userStatus: "user", friend: false})
 	const [errorMessage, setErrorMessage] = useState("");
@@ -218,7 +218,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 			}
 		}
 		catch (error) {
-			console.log("Error while kicking user", error);
+			console.error("Error while kicking user", error);
 		}
 	}
 
@@ -246,7 +246,6 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 				sender: auth.user.login,
 				receiver: props.login,
 			}
-			console.log(messageData)
 			socket.emit('newPrivateConv', messageData);
 			setNeedToUpdate("newDM " + props.username);
 			toggleUserActionsMenu();
@@ -337,12 +336,6 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 				return;
 			}
 			const data = await response.json();
-			console.log("data receive = ", data);
-			if (!data) {
-				console.log('No list of friends');
-			} else {
-				console.log("hey all good");
-			}
 		} catch (error) {
 			console.error('Error removing message:', error);
 		}

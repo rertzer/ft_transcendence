@@ -62,6 +62,7 @@ async function getBlockedUsers() {
         if (data) {
             data.map((element: any) => {
                 result.push(element)
+                return 0;
             })
             return (result);
         }
@@ -79,8 +80,6 @@ useEffect(() => {
     }
     fetchBlocked();
   }, []);
-  
-  console.log("BLOCKED", blockedUsers)
 
     return (
         <div className="chatcomponent">

@@ -4,13 +4,12 @@ import "./ChannelSettings.scss"
 import { useContext, useState } from 'react';
 import ChatContext, {WebsocketContext} from '../../context/chatContext';
 import { useLogin } from "../../components/user/auth";
-import { act } from 'react-dom/test-utils';
 
 
 export const ChannelSettings = (props: {showSubMenu: string, setShowSubMenu: Function}) => {
 
     const socket = useContext(WebsocketContext);
-    const {activeChannel, setNeedToUpdate} = useContext(ChatContext);
+    const {activeChannel} = useContext(ChatContext);
     const [userToInvite, setUserToInvite] = useState('');
 	const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState("");
@@ -110,7 +109,6 @@ export const ChannelSettings = (props: {showSubMenu: string, setShowSubMenu: Fun
             try {
                 const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/inviteUser`, requestOptions);
                 const data = await response.json();
-                console.log("DATA:",data.message);
                 if (data.message !== "ok") {
                     setErrorMessage(data.message);
                 } else {
