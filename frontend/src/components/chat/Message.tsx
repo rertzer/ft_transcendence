@@ -44,10 +44,10 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 	useEffect(() => {
 		socket.on("userIsMute", (userIsMute:boolean) => {
 
-			if(!userIsMute) // il faudra afficher un truc dans ca cas la
+			if(!userIsMute) 
 				console.log("print something")
 			else
-				console.log(" i am mute");
+				console.log(" i am muted");
 		})
         return () => {
 			socket.off("userIsMute");

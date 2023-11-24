@@ -79,6 +79,8 @@ useEffect(() => {
     }
     fetchBlocked();
   }, []);
+  
+  console.log("BLOCKED", blockedUsers)
 
     return (
         <div className="chatcomponent">
@@ -104,7 +106,6 @@ const NoChat = (props: {message: string}) => {
     useEffect(() => {
 
     socket.on('newMessage', (chatHistoryReceive :{msg: string, username: string, login: string, date: Date, id: number, idOfChat:number, serviceMessage: boolean, userId: number}) => {
-        console.log("Dans le Nochat de ChatComponent.tsx", blockedUsers)
         if (blockedUsers.find(element => element.idUser === chatHistoryReceive.userId) === undefined)
             socket.emit("chatListOfUser",auth.user.login);
     });

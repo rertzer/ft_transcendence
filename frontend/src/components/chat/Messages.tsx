@@ -4,6 +4,7 @@ import "./Messages.scss";
 import { useContext, useState } from 'react';
 import chatContext, { WebsocketContext } from "../../context/chatContext";
 import { useLogin } from "../../components/user/auth";
+import { usePrevious } from "@uidotdev/usehooks";
 
 type ChatMessage = {
 	msg: string;
@@ -23,6 +24,7 @@ const Messages = (props: {chatId: number, isOwner: boolean, setIsOwner: Function
 	const { blockedUsers } = useContext(chatContext)
 	const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
 	const [chatMessages,setChatMessages] = useState<ChatMessage[]>([]);
+	const previousLen = usePrevious(chatMessages.length);
 
 	useEffect(() => {
 			socket.on('chatMsgHistory', (chatHistoryReceive : ChatMessage[]) => {
@@ -34,7 +36,6 @@ const Messages = (props: {chatId: number, isOwner: boolean, setIsOwner: Function
 			newDateString = newDateString.slice(newDateString.indexOf("T") + 1, newDateString.indexOf("T") + 9);
 			const add : ChatMessage = {msg: chatHistoryReceive.msg, username: chatHistoryReceive.username, login: chatHistoryReceive.login, date: newDateString, id: chatHistoryReceive.id, chatId: chatHistoryReceive.idOfChat, serviceMessage: chatHistoryReceive.serviceMessage, userId: chatHistoryReceive.userId}
 			setChatMessages((prevMessages) => [...prevMessages, add]);
-			console.log("Dans le newMessage de Messages.tsx", blockedUsers)
 			if (blockedUsers.find(element => element.idUser === chatHistoryReceive.userId) === undefined)
 				socket.emit("chatListOfUser",auth.user.login);
 			if (props.isAdmin === false && add.serviceMessage === true && add.msg === auth.user.username + " is now an administrator of this channel")
@@ -72,12 +73,18 @@ const Messages = (props: {chatId: number, isOwner: boolean, setIsOwner: Function
 
 	useEffect(() => {
 		if (chatMessages.length > 0) {
-			endRef.current?.scrollIntoView({
-				behavior: "smooth",
-				block: "end",
-			});
+			if (previousLen === chatMessages.length - 1) {
+				endRef.current?.scrollIntoView({
+					behavior: "smooth",
+					block: "end",
+				});
+			} else {
+				endRef.current?.scrollIntoView({
+					behavior: "auto",
+					block: "end",
+				});
+			}
 		}
-
 	}, [chatMessages.length]);
 
 	return (
