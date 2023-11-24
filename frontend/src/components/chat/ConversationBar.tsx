@@ -8,6 +8,8 @@ import { ChannelSettings } from "./ChannelSettings";
 import { useLogin } from "../../components/user/auth";
 import { WebsocketContext } from '../../context/chatContext';
 import { PageContext } from "../../context/PageContext";
+import { act } from "react-dom/test-utils";
+import { UnblockUsers } from "./UnblockUsers";
 
 
 const ConversationBar = (props: {isOwner: boolean, isAdmin: boolean}) => {
@@ -78,14 +80,23 @@ const ConversationBar = (props: {isOwner: boolean, isAdmin: boolean}) => {
                                 <ChannelSettings showSubMenu={showSubMenu} setShowSubMenu={setShowSubMenu}/>
                             </div>
                         }
-                        {activeChannel.type !== "DM" &&
+                        {activeChannel.type !== "DM" && activeChannel.id !== -1 &&
                              <Tooltip title="Leave channel" arrow>
                                 <LogoutIcon onClick={leaveChannel}/>
                             </Tooltip>
                         }
-                        <Tooltip title="Close conversation" arrow>
-                            <CloseIcon onClick={() => {updateChat('none')}} />
-                        </Tooltip>
+                        {activeChannel.id === -1 &&
+                            <div ref={menuRef}>
+                                <UnblockUsers showSubMenu={showSubMenu} setShowSubMenu={setShowSubMenu}/>
+                            </div>}
+                        {activeChannel.id === -1 && 
+                            <Tooltip title="Close chat" arrow>
+                                <CloseIcon onClick={() => {updateChat('none')}} />
+                            </Tooltip>}
+                        {activeChannel.id !== -1 &&
+                            <Tooltip title="Close conversation" arrow>
+                                <CloseIcon onClick={() => {setActiveChannel({id: -1, channelName: "PongOffice Chat", chatPicture: "", type: "", status: "", username: null, dateSend: null, msg: null, userId: null})}}/>
+                            </Tooltip>}
                     </div>
                 </div>
             </div>

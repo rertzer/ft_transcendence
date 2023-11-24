@@ -1,0 +1,53 @@
+.blockedUsers {
+    .blockedSubmenu {
+        width: 360px;
+        background-color: #4d4d4d;
+        top: 50px;
+        right: 20px;
+        position: absolute;
+        border-radius: 10px 00px 10px 10px;
+        color: #ddddf7;
+        padding: 20px;
+        cursor: auto;
+        max-height: 600px;
+        overflow: scroll;
+        display: flex;
+        flex-direction: column;
+        &::-webkit-scrollbar {
+            display: none;
+        }
+        .passwordManagement {
+            padding: 20px;
+        }
+        .inviteUsers {
+            padding: 20px;
+        }
+        button {
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            background-color: #404040;
+            color: #ddddf7;
+            border-radius: 10px;
+            height: 50px;
+            width: 100px;
+            cursor: pointer;
+            position: sticky;
+        }
+        .blockedItem {
+            margin-top: 10px;
+            p {
+                cursor: pointer;
+                background-color: #404040;
+                padding-left: 20px;
+                padding-right: 20px;
+                padding-top: 5px;
+                padding-bottom: 5px;
+                border-radius: 10px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
+    }
+}
