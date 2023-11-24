@@ -35,7 +35,7 @@ const Messages = (props: {chatId: number, isOwner: boolean, isAdmin: boolean, se
 			newDateString = newDateString.slice(newDateString.indexOf("T") + 1, newDateString.indexOf("T") + 9);
 			const add : ChatMessage = {msg: chatHistoryReceive.msg, username: chatHistoryReceive.username, login: chatHistoryReceive.login, date: newDateString, id: chatHistoryReceive.id, chatId: chatHistoryReceive.idOfChat, serviceMessage: chatHistoryReceive.serviceMessage, userId: chatHistoryReceive.userId}
 			setChatMessages((prevMessages) => [...prevMessages, add]);
-			if (blockedUsers.find(element => element === chatHistoryReceive.userId) === undefined)
+			if (blockedUsers.find(element => element.idUser === chatHistoryReceive.userId) === undefined)
 				socket.emit("chatListOfUser",auth.user.login);
 			if (props.isAdmin === false && add.serviceMessage === true && add.msg === auth.user.username + " is now an administrator of this channel")
 				props.setIsAdmin(true);
@@ -84,7 +84,7 @@ const Messages = (props: {chatId: number, isOwner: boolean, isAdmin: boolean, se
 				) : (
 					<div className='messageArray'>
 						{chatMessages.map((message) => {
-							if (blockedUsers.find(element => element === message.userId) === undefined) {
+							if (blockedUsers.find(element => element.idUser === message.userId) === undefined) {
 							return (
 							<div key={message.date + message.id} className="messageUnit">
 								{message.chatId === props.chatId && (

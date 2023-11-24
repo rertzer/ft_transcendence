@@ -291,10 +291,10 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 				throw new Error("Request failed");
 			}
 			const data = await response2.json();
-			let result: number[] = [];
+			let result: {idUser: number, username: string, login: string}[] = [];
 			if (data) {
 				data.map((element: any) => {
-					result.push(element.blocked_user_id)
+					result.push(element)
 				})
 				setBlockedUsers(result);
 			}

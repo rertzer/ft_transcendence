@@ -23,7 +23,7 @@ export type Channel = {
 const ChatComponent = () => {
     const auth = useLogin();
     const [allChannels, setAllChannels] = useState<Channel[]>([])
-    const [blockedUsers, setBlockedUsers] = useState<number[]>([]);
+    const [blockedUsers, setBlockedUsers] = useState<{idUser: number, username: string, login: string}[]>([]);
     const [needToUpdate, setNeedToUpdate] = useState("");
     const [activeChannel, setActiveChannel] = useState<Channel>({
         id: -1,
@@ -49,7 +49,6 @@ const ChatComponent = () => {
   }
 
 async function getBlockedUsers() {
-    let blocked: number[] = [];
     try {
         const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/listOfBlockedUser/${auth.user.login}`, {
             method: "GET",
@@ -59,12 +58,11 @@ async function getBlockedUsers() {
             throw new Error("Request failed");
         }
         const data = await response.json();
-        let result: number[] = [];
-        console.log("DATA: ", data)
+        let result: {idUser: number, username: string, login: string}[] = [];
         if (data) {
             data.map((element: any) => {
-                result.push(element.blocked_user_id)
-        })
+                result.push(element)
+            })
             return (result);
         }
     }

@@ -84,8 +84,8 @@ const Chats = () => {
                                     <img src={channel.type !== "DM" ? "img1.png" : "recuperer l'avatar"} />
                                     <div className='userChatInfo'>
                                         <h1>{channel.type !== "DM" ? channel.channelName : findReceiverName(channel.channelName)}</h1>
-                                        {blockedUsers.find(element => element === channel.userId) && <p></p>}
-                                        {blockedUsers.find(element => element === channel.userId) === undefined && <p>{channel.msg ? channel.msg : ""}</p>}
+                                        {blockedUsers.find(element => element.idUser === channel.userId) && <p></p>}
+                                        {blockedUsers.find(element => element.idUser === channel.userId) === undefined && <p>{channel.msg ? channel.msg : ""}</p>}
                                     </div>
                                 </div>
                             </div>

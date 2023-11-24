@@ -182,7 +182,6 @@ export class PrismaChatService {
 							owner: userIdOfNewOwner,
 						}
 					})
-
 				}
 			}
 		}
@@ -233,6 +232,7 @@ export class PrismaChatService {
 
 	async blockUser(login: string, userBlockedLogin:string, date: Date)
 	{
+		console.log("login who ask for block :", login, "user to block = ", userBlockedLogin);
 		const getLogId = await this.getIdOfLogin(login);
 		const getBlockedId = await this.getIdOfLogin(userBlockedLogin);
 		if (getLogId && getBlockedId)

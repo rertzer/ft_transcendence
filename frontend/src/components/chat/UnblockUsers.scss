@@ -1,5 +1,5 @@
 .blockedUsers {
-    .blockedSubmenu {
+    .submenu {
         width: 360px;
         background-color: #4d4d4d;
         top: 50px;
@@ -13,14 +13,12 @@
         overflow: scroll;
         display: flex;
         flex-direction: column;
+        .span {
+            margin-left: auto;
+            margin-right: auto;
+        }
         &::-webkit-scrollbar {
             display: none;
-        }
-        .passwordManagement {
-            padding: 20px;
-        }
-        .inviteUsers {
-            padding: 20px;
         }
         button {
             margin-left: auto;

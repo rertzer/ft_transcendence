@@ -34,7 +34,26 @@ export const UnblockUsers = (props: {showSubMenu: string, setShowSubMenu: Functi
             const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/unblockUser/`, requestOptions);
             if (!response.ok)
                 throw new Error("Request failed");
-            const 
+            const response2 = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/listOfBlockedUser/${auth.user.login}`, {
+                method: "GET",
+                headers: { Authorization: auth.getBearer()},
+                });
+            if (!response2.ok) {
+                throw new Error("Request failed");
+            }
+            const data = await response2.json();
+            let result: {idUser: number, username: string, login: string}[] = [];
+            if (data) {
+                data.map((element: any) => {
+                    result.push(element)
+                })
+                setBlockedUsers(result);
+                toggleForm();
+                setToUnblock("");
+            }
+        }
+        catch (error) {
+            console.error("Error while unblocking user", error);
         }
     }
 
@@ -44,12 +63,15 @@ export const UnblockUsers = (props: {showSubMenu: string, setShowSubMenu: Functi
             <BlockIcon onClick={toggleForm}/>
         </Tooltip>
         {props.showSubMenu === "blocked" &&
-            <div className="blockedSubmenu">
+            <div className="submenu">
+                <div className="top">
                 {toUnblock === "" ? <span>Blocked users</span> : <span>Do you want to unblock {toUnblock} ?</span>}
                 {toUnblock !== "" && <button onClick={() => {unblock()}}>Unblock</button>}
+            </div>
+            <hr/>
                 <div className="blockedList">
                     {blockedUsers.map((element) => {
-                        return (<div className="blockedItem" key={element} onClick={() => {setToUnblock(element.toString())}}><p>User id number{element}</p></div>)
+                        return (<div className="blockedItem" key={element.idUser} onClick={() => {setToUnblock(element.username)}}><p>{element.username}</p></div>)
                     })}
                 </div>
             </div>}
