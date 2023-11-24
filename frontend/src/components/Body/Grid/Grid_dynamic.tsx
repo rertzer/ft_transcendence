@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef, CSSProperties } from 'react';
 import { useContext } from 'react';
 import { PageContext } from '../../../context/PageContext';
-import { Project } from '../../Sheets/Project/Project';
-import { Profile } from '../../Sheets/Profile/Profile';
+import Profile from '../../../routes/Profile';
+import EditProfile from '../../../routes/EditProfile';
 import { Data } from '../../Sheets/Data/Data';
 import { Contacts } from '../../Sheets/Contacts/Contacts';
 import gameContext from '../../../context/gameContext';
@@ -13,7 +13,7 @@ function PageSwitch () {
   if (!context) {
   throw new Error('useContext must be used within a MyProvider');
   }
-  const { scroll, zoom } = context;
+  const { scroll, zoom, toolbar } = context;
   const { scrollX, scrollY } = scroll;
   const [sx, setNewScrollX] = useState(scrollX);
   const [sy, setNewScrollY] = useState(scrollY);
@@ -25,8 +25,9 @@ function PageSwitch () {
 
    return (
 	 <div key={'switch'}>
-		 {context?.page == "Data" && <Data key={"data1"} sx={sx} sy={sy} zoom={zoom}/>}
-		 {context?.page == "Contacts" && <Contacts key={"contacts1"} sx={sx} sy={sy} zoom={zoom}/>}
+      {context?.page === "Profile" && <Profile/>}
+		  {context?.page === "Data" && <Data key={"data1"} sx={sx} sy={sy} zoom={zoom} />}
+		  {context?.page === "Contacts" && <Contacts key={"contacts1"} sx={sx} sy={sy} zoom={zoom} toolbar={toolbar}/>}
 	 </div>
    );
 }
@@ -76,7 +77,7 @@ function Grid() {
     throw new Error('useContext must be used within a MyProvider');
   }
 
-  const { zoom, coords, updateCoords } = context;
+  const { zoom, coords, page, updateCoords } = context;
   const { coordX, coordY } = coords;
 
   const [x, setNewCoordX] = useState(coordX);
@@ -176,7 +177,7 @@ function Grid() {
 
   components.push(
     <div key={'waiting room'} style={{position: 'fixed', top: toolbar ? '89px' : '166px', left: 'calc(1% + 31px)', color: '#000000'} }>
-      { (gameStatus === 'IN_WAITING_ROOM') && modeGame === 'BASIC' && 
+      { (gameStatus === 'IN_WAITING_ROOM') && page == "Game" && modeGame === 'BASIC' && 
       <div
       key={`basic waiting room`}
       style={{
@@ -192,7 +193,7 @@ function Grid() {
       }}>
         You are in the waiting room to join a <b>basic</b> game! 
       </div>}
-      { (gameStatus === 'IN_WAITING_ROOM') && modeGame === 'ADVANCED' && <div
+      { (gameStatus === 'IN_WAITING_ROOM') && page == "Game" && modeGame === 'ADVANCED' && <div
       key={`advanced waiting room`}
       style={{
         position: 'absolute',

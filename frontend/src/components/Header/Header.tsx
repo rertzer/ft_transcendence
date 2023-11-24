@@ -60,7 +60,7 @@ function Header({}) {
           <div className={dark ? styles.untitled1 : styles.untitled1Light}>Untitled 1 - PongOffice Calc</div>
           <div className={styles.user} onClick={() => updatePage("Profile")}>
             <img className={styles.userChild} alt="" src={auth.image} style={{cursor:"pointer"}}/>
-            <span className={styles.user1}>{auth.user.username}</span>
+            <span className={dark ?  styles.user1 :  styles.user1Light}>{auth.user.username}</span>
             <Tooltip onClick={auth.logout} className={dark ? styles.crossButton : styles.crossButtonLight}title="Log out" arrow>
               <CloseIcon style={{fontSize:"18px", cursor:"pointer"}}/>
               {/* <img className={styles.crossIcon} alt="" src="/cross.svg" style={{cursor:"pointer", right: "8px"}}/> */}

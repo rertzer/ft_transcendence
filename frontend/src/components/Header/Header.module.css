@@ -273,6 +273,11 @@
     font-size: 14px;
     mix-blend-mode: normal;
     cursor: default;
+    width:30%;
+    height: 27px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .untitled1Light {
   position: absolute;
@@ -318,6 +323,18 @@
 }
 .user1:hover {
   color: white;
+  cursor: pointer;
+  font-weight: 600;
+}.user1Light {
+  position: relative;
+  top: 6px;
+  right: 70px;
+  text-align: right;
+  text-emphasis-color: #e2e2e2;
+  color:#282828;
+}
+.user1Light:hover {
+  color: black;
   cursor: pointer;
   font-weight: 600;
 }

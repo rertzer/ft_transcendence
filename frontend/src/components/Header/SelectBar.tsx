@@ -5,7 +5,7 @@ import { PageContext } from '../../context/PageContext';
 import GameContext from '../../context/gameContext';
 
 import Divider from '@mui/material/Divider';
-// import MenuItem from '@mui/material/MenuItem';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
 import ListItemText from '@mui/material/ListItemText';
 import Typography from '@mui/material/Typography';
 import ContentCut from '@mui/icons-material/ContentCut';
@@ -20,21 +20,16 @@ import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 import InfoIcon from '@mui/icons-material/Info';
 import KeyboardIcon from '@mui/icons-material/Keyboard';
 import PsychologyAltIcon from '@mui/icons-material/PsychologyAlt';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
 
 import { useLogin } from '../user/auth';
 import { gameSocket } from '../game/services/gameSocketService';
 import gameContext from '../../context/gameContext';
 
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-//import CssBaseline from '@mui/material/CssBaseline';
 
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import { light } from '@mui/material/styles/createPalette';
-//import ListItemText from '@mui/material/ListItemText';
 
 function BasicMenu() {
-	const {setModeGame, playerName} = useContext(gameContext);
 	function  File() {
 		const context = useContext(PageContext);
 		if (!context) {
@@ -72,7 +67,7 @@ function BasicMenu() {
     const {gameStatus} = useContext(GameContext);
 
 		return (
-		<List dense onMouseLeave={() => handleClick("none")} sx={{color: dark ? 'white' : '#111111',}} style={{position: 'fixed', top:'64px', width:200, paddingTop: "0px", paddingBottom: "0px", backgroundColor: dark ? '#2f2f2f': 'white', border: dark ? '1px solid black' : '1px solid grey'}} >
+		<List dense onMouseLeave={() => handleClick("none")}  sx={{color: dark ? 'white' : '#111111',}} style={{position: 'fixed', top:'64px', width:200, paddingTop: "0px", paddingBottom: "0px", backgroundColor: dark ? '#2f2f2f': 'white', border: dark ? '1px solid black' : '1px solid grey'}} >
 			{gameStatus === 'NOT_IN_GAME' && <ListItem button>
 			  <ListItemText onClick={() => newBasicGame ()}>New Basic Game</ListItemText>
 			</ListItem>}
@@ -160,7 +155,7 @@ function BasicMenu() {
       else
         updateZoom(zoom - increment);
     }
-    const { toolbar, chat, updateToolbar, updateChat } = context;
+    const { toolbar, updateToolbar } = context;
     function toggleToolbar() {
       updateToolbar(!toolbar);
     }
@@ -269,7 +264,7 @@ function BasicMenu() {
   const darkTheme = createTheme({
     palette: {
       text: {
-        primary: '#FFFFFF',
+        primary: dark ? '#FFFFFF' : '#FF0000',
         secondary: '#FFFFFF',
         disabled: 'grey',
       },
@@ -277,7 +272,7 @@ function BasicMenu() {
         active: 'white',
         selected: 'white',
         disabledBackground: 'white',
-        hover: '#15539e',
+        hover: dark ? '#15539e' : '#2f7ddb',
         disabled: 'white',
       },
       background: {
@@ -290,15 +285,15 @@ function BasicMenu() {
   const lightTheme = createTheme({
     palette: {
       text: {
-        primary: '#000000',
-        secondary: '#00000',
+        primary: '#FF0000',
+        secondary: 'white',
         disabled: 'light-grey',
       },
       action: {
-        active: 'black',
-        selected: 'black',
+        active: 'white',
+        selected: 'white',
         disabledBackground: 'black',
-        hover: '#15539e',
+        hover: '#2f7ddb',
         disabled: 'black',
       },
       background: {

@@ -14,7 +14,7 @@
   left: 0px;
   height: 29px;
   overflow: hidden;
-  color: white;
+  color: rgb(255, 255, 255);
 }
 .file:hover {
   color:#3580dc;
@@ -42,4 +42,10 @@
 .fileLight:hover {
   color:#3580dc;
   border-bottom: solid 2px #15539e;
+}
+.text_list {
+  color:black;
+}
+.text_list:hover {
+  color: white;
 }
