@@ -18,19 +18,19 @@ export class PrismaFriendService extends PrismaClient{
 
 	async addFriend(idLogin: number, newFriend: string)
 	{
-		console.log("idlogin -= ",idLogin, "new friend  =", newFriend);
+
 			const idFriend = await this.getIdOfLogin(newFriend);
-			console.log("id friend = ",idFriend)
+
 			if (idFriend && await this.alreadyFriend(idLogin, idFriend) == false)
 			{
-				console.log("passsed this")
+
 				const created = await this.friend.create ({
 					data : {
 						user_id: idLogin,
 						friend_id: idFriend,
 					}
 				})
-				console.log("created or nah : ", created);
+
 				return created;
 			}
 	}
@@ -76,14 +76,14 @@ export class PrismaFriendService extends PrismaClient{
 
 	// async alreadyFriend(idLogin: number, idFriend:number)
 	// {
-	// 	console.log("whats happening", idLogin, idFriend);
+
 	// 	const friend = await this.friend.findFirst({
 	// 		where :{
 	// 			user_id: idLogin,
 	// 			friend_id: idFriend,
 	// 		}
 	// 	})
-	// 	console.log("friend = ", friend);
+
 	// 	if (friend)
 	// 		return friend.id
 	// 	 return undefined
@@ -92,7 +92,7 @@ export class PrismaFriendService extends PrismaClient{
 	async deleteFriend(idLogin:number, idFriend:number)
 	{
 			const friendToDelete = await this.getFriendRelationId(idLogin, idFriend);
-			console.log(friendToDelete);
+
 			if (friendToDelete)
 			{
 				const deleted = await this.friend.delete({

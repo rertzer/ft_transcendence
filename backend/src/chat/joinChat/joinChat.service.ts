@@ -24,7 +24,7 @@ export class JoinChatService{
 		}
 		if (!await this.prismaService.checkIfUserIsBanned(chat_id, loginId))
 		{
-			console.log("hey ??? ")
+
 			const added = await this.addUserToChat(loginId, chat_id, user_role, password);
 			if (!added)
 			{
@@ -62,23 +62,23 @@ export class JoinChatService{
 	{
 		const getPasswordOfChat = await this.prismaService.getPasswordOfChat(chat_id);
 		let pwMatches = false;
-		console.log("password :", password, getPasswordOfChat);
+
 		// let hashed_password
 		if (password !== null && getPasswordOfChat != undefined)
 		{
-			// hashed_password = await argon.hash(password,); 
-			// console.log("password :", hashed_password);
-			console.log("wordpass :", getPasswordOfChat);
+			// hashed_password = await argon.hash(password,);
+
+
 			pwMatches = await argon.verify(
 				getPasswordOfChat,
 				password,
 			)
-			console.log("pwmathch ", pwMatches);
+
 		}
 		else {
 			// hashed_password = password;
 		}
-		// console.log("hey ??? mdp = ", hashed_password, getPasswordOfChat);
+
 		if (password == null ||  pwMatches)
 		{
 			await this.prismaService.userHasbeenKickedInChat(loginId, chat_id) == true //user updated to removed kicked value
