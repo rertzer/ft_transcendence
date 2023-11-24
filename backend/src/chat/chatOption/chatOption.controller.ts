@@ -16,10 +16,10 @@ export class ChatOptController {
 	@Post('setAdmin')
 	async setUserAsAdmin(@Body() user:{login:string, chatId: number}){
 		const id = await this.prismaChatService.getIdOfLogin(user.login);
-		console.log("hey owner, id = ", id);
+
 		if (id && (await this.prismaChatService.isAdmin(id, user.chatId)) == false)
 		{
-			console.log("passed this step")
+
 			await this.prismaChatService.changeChatUserRole(user.chatId, id, "admin");
 			return true;
 		}
@@ -42,14 +42,16 @@ export class ChatOptController {
 				{
 					if (await this.prismaChatService.addChanelUser(data.chat_id, id, "user", getDate(), null))
 					{
-
+						const connect = this.gateway.getSocketsArray().find((elem) => elem.idOfLogin === id);
+						if (connect)
+							connect.sock.join(data.chat_id.toString());
 						return ({message: "ok"});
 					}
 					return ({message: "issue while adding new user"})
 				}
 				return ({message: `User ${data.username} is already in this channel`})
 			}
-			else 
+			else
 			{
 				return ({message: `User ${data.username} doesn't exist`})
 			}
@@ -58,7 +60,7 @@ export class ChatOptController {
 		{
 			return({message: "You cannot invite anyone if you don't own the channel"})
 		}
-		
+
 	}
 
 	@Post('blockUser')
@@ -81,14 +83,14 @@ export class ChatOptController {
 
 	@Post('banUser')
 	async banUser(@Body() user:{login:string, chatId: number}){
-		console.log("in ban user");
+
 		const idLogin = await this.prismaChatService.getIdOfLogin(user.login);
 		if (idLogin)
 		{
 			const isOwner = await this.prismaChatService.isOwner(user.login, user.chatId);
 			if (!isOwner)
 			{
-				console.log("passed this step");
+
 				const banWorks = await this.prismaChatService.banUserPrism(idLogin, user.chatId);
 				if (banWorks)
 				{
@@ -96,7 +98,7 @@ export class ChatOptController {
 					const targetSocket = SockArray.find((socket) => socket.login === user.login);
 					if (targetSocket)
 					{
-						console.log("removed the socket of :",user.login, "from the sock room number:", user.chatId)
+
 						await this.gateway.onChatListOfUser(targetSocket.login, targetSocket.sock);
 						targetSocket.sock.leave(user.chatId.toString())
 						return true
@@ -115,20 +117,20 @@ export class ChatOptController {
 		@Param('login') login: string,
 		@Param('chatId', ParseIntPipe) chatId: number,
 	) {
-		console.log("username receive : ", login, "chat id :", chatId);
+
 		const SockArray = this.gateway.getSocketsArray()
 		const targetSocket = SockArray.find((socket) => socket.login === login);
 		if (targetSocket)
 		{
 			const isBanned = await this.prismaChatService.checkIfUserIsBanned(chatId, targetSocket.idOfLogin);
-			console.log("is banned or not ?", isBanned);
+
 			return { isBanned };
 		}
 	}
 
 	@Post('kickUser')
 	async kickUser(@Body() user:{login:string, chatId: number}) {
-		console.log("in kick user ", user.login);
+
 		const SockArray = this.gateway.getSocketsArray()
 		const targetSocket = SockArray.find((socket) => socket.login === user.login);
 		if (targetSocket)
@@ -136,11 +138,11 @@ export class ChatOptController {
 			const isOwner = await this.prismaChatService.isOwner(user.login, user.chatId);
 			if (!isOwner)
 			{
-				console.log("passed this step");
+
 				const kicked = await this.prismaChatService.kickUserFromChat(targetSocket.idOfLogin, user.chatId);
 				if (kicked)
 				{
-					console.log("removed the socket of :",user.login, "from the sock room number:", user.chatId)
+
 					await this.gateway.onChatListOfUser(user.login, targetSocket.sock);
 					targetSocket.sock.leave(user.chatId.toString())
 					return true
@@ -158,11 +160,11 @@ export class ChatOptController {
 				const isOwner = await this.prismaChatService.isOwner(user.login, user.chatId);
 				if (!isOwner)
 				{
-					console.log("passed this step");
+
 						const kicked = await this.prismaChatService.kickUserFromChat(idLogin, user.chatId);
 						if (kicked)
 						{
-							console.log("kickedd :", user.login);
+
 							return true
 						}
 						return false;
@@ -177,17 +179,20 @@ export class ChatOptController {
 	@Post('leaveChat')
 	async onLeaveChat(@Body() data:{login:string, chatId: number})
 	{
+
 		const id = await this.prismaChatService.getIdOfLogin(data.login);
 		if (id)
 		{
 			if (!await this.prismaChatService.isOwner(data.login, data.chatId))
 			{
+
 				const succeed = await this.prismaChatService.kickUserFromChat(id, data.chatId);
 				if (succeed)
 					return (true);
 			}
-			else 
+			else
 			{
+
 				const succeed = await this.prismaChatService.leaveAsOwner(id,data.chatId);
 				if (succeed)
 					return (true);
@@ -233,7 +238,7 @@ export class ChatOptController {
 		@Param('login') login: string,
 		@Param('chatId', ParseIntPipe) chatId: number,
 	) {
-		console.log("hey succeed");
+
 		const userInfo = this.prismaChatService.getChatChannelsUser(login, chatId);
 
 		if (userInfo)

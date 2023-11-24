@@ -15,14 +15,14 @@ export class addFriendController {
 	@Post('addFriend')
 	async addFriend(@Body() data:{login:string, friendToAdd:string})
 	{
-		console.log("oin add friend");
+
 		const SockArray = this.gateway.getSocketsArray()
 		const targetSocket = SockArray.find((socket) => socket.login === data.login);
 		if (targetSocket)
 		{
-			console.log("in addFriend a pass");
+
 			const done = await this.prismaFriendService.addFriend(targetSocket.idOfLogin, data.friendToAdd)
-			console.log("worked = ",done );
+
 		}
 	}
 
@@ -37,7 +37,7 @@ export class addFriendController {
 		if (idLog && idFriend)
 		{
 			const friend = await this.prismaFriendService.alreadyFriend(idLog, idFriend);
-			console.log("friend or nah = ", friend);
+
 			return friend;
 		}
 	}
@@ -47,11 +47,11 @@ export class addFriendController {
 		@Param('idFriend', ParseIntPipe) idFriend:number,
 		@Param('idUser', ParseIntPipe) idUser:number)
 	{
-		console.log("in delete friend, id friend = ", idFriend,"id user", idUser)
+
 		const succeed = await this.prismaFriendService.deleteFriend(idUser, idFriend)
 		if (succeed)
 		{
-			console.log("succeeeeeeeedddd")
+
 		}
 	}
 
@@ -62,7 +62,7 @@ export class addFriendController {
 	{
 		const listFriends = [];
 		let connected;
-		console.log("in list friends");
+
 		const list = await this.prismaFriendService.listAllFriends(login);
 		if (list)
 		{
