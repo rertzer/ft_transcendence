@@ -8,7 +8,7 @@ import { useLogin } from "../user/auth";
 export const UnblockUsers = (props: {showSubMenu: string, setShowSubMenu: Function}) => {
 
     const {blockedUsers, setBlockedUsers} = useContext(ChatContext);
-    const [toUnblock, setToUnblock] = useState("");
+    const [toUnblock, setToUnblock] = useState({idUser: -1, username: "", login: ""});
     const auth = useLogin()
 
     const toggleForm = () => {
@@ -21,7 +21,7 @@ export const UnblockUsers = (props: {showSubMenu: string, setShowSubMenu: Functi
 
     async function unblock() {
         const data = {
-            blockedLogin: "TOTOOOOOOOO",
+            blockedLogin: toUnblock.login,
             login: auth.user.login,
         };
         const requestOptions = {
@@ -49,7 +49,7 @@ export const UnblockUsers = (props: {showSubMenu: string, setShowSubMenu: Functi
                 })
                 setBlockedUsers(result);
                 toggleForm();
-                setToUnblock("");
+                setToUnblock({idUser: -1, username: "", login: ""});
             }
         }
         catch (error) {
@@ -65,13 +65,13 @@ export const UnblockUsers = (props: {showSubMenu: string, setShowSubMenu: Functi
         {props.showSubMenu === "blocked" &&
             <div className="submenu">
                 <div className="top">
-                {toUnblock === "" ? <span>Blocked users</span> : <span>Do you want to unblock {toUnblock} ?</span>}
-                {toUnblock !== "" && <button onClick={() => {unblock()}}>Unblock</button>}
+                {toUnblock.username === "" ? <span>Blocked users</span> : <span>Do you want to unblock {toUnblock.username} ?</span>}
+                {toUnblock.username !== "" && <button onClick={() => {unblock()}}>Unblock</button>}
             </div>
             <hr/>
                 <div className="blockedList">
                     {blockedUsers.map((element) => {
-                        return (<div className="blockedItem" key={element.idUser} onClick={() => {setToUnblock(element.username)}}><p>{element.username}</p></div>)
+                        return (<div className="blockedItem" key={element.idUser} onClick={() => {setToUnblock(element)}}><p>{element.username}</p></div>)
                     })}
                 </div>
             </div>}

@@ -160,11 +160,9 @@ export class ChatOptController {
 				const isOwner = await this.prismaChatService.isOwner(user.login, user.chatId);
 				if (!isOwner)
 				{
-
 						const kicked = await this.prismaChatService.kickUserFromChat(idLogin, user.chatId);
 						if (kicked)
 						{
-
 							return true
 						}
 						return false;
@@ -179,7 +177,6 @@ export class ChatOptController {
 	@Post('leaveChat')
 	async onLeaveChat(@Body() data:{login:string, chatId: number})
 	{
-
 		const id = await this.prismaChatService.getIdOfLogin(data.login);
 		if (id)
 		{
@@ -192,10 +189,9 @@ export class ChatOptController {
 			}
 			else
 			{
-
-				const succeed = await this.prismaChatService.leaveAsOwner(id,data.chatId);
-				if (succeed)
-					return (true);
+				const newOwner = await this.prismaChatService.leaveAsOwner(id,data.chatId);	 
+				console.log("new owner username = ", newOwner);
+				return {username: newOwner};
 			}
 		}
 	}

@@ -124,7 +124,7 @@ export class PrismaChatService {
 		return (lastId)
 	}
 
-	async getUserIdOfChatChannelUserId(chatUserId:number)
+	async getUserOfChatChannelUserId(chatUserId:number)
 	{
 		const userId = await this.prismaService.chatChannelsUser.findFirst({
 			where:{
@@ -136,7 +136,7 @@ export class PrismaChatService {
 		})
 
 		if (userId)
-			return userId.chatChannelsUser.id;
+			return userId.chatChannelsUser;
 	}
 
 	async changeOwner(userId:number, listUsersOfChat:any, chatId:number )
@@ -170,8 +170,7 @@ export class PrismaChatService {
 						user_role: "owner"
 					}
 				})
-				const userIdOfNewOwner = await this.getUserIdOfChatChannelUserId(oldestChatChannelsUser);
-
+				const userIdOfNewOwner = await this.getUserOfChatChannelUserId(oldestChatChannelsUser);
 				if (userIdOfNewOwner)
 				{
 					const updateChatOwner = await this.prismaService.chatChannels.update({
@@ -179,9 +178,10 @@ export class PrismaChatService {
 							id:chatId
 						},
 						data:{
-							owner: userIdOfNewOwner,
+							owner: userIdOfNewOwner.id,
 						}
 					})
+					return (userIdOfNewOwner.username); //login ou username
 				}
 			}
 		}
@@ -206,7 +206,7 @@ export class PrismaChatService {
 			}
 			else
 			{
-				const succeed = await this.changeOwner(userId, listUsersOfChat, chatId);
+				return await this.changeOwner(userId, listUsersOfChat, chatId);
 
 			}
 		}
@@ -250,26 +250,28 @@ export class PrismaChatService {
 		return false;
 	}
 
+	async getUserOfId(id: number)
+	{
+		const user = this.prismaService.user.findFirst({
+			where: {
+				id: id,
+			}
+		})
+		if (user)
+			return user;
+	}
+
 	async getListOfBlocked(login:string)
 	{
 		const getLogId = await this.getIdOfLogin(login);
 		console.log("hey //")
 		if (getLogId)
 		{
-		console.log("hey// //")
-
+			console.log("hey// //")
 			const list = await this.prismaService.blockedUser.findMany({
 				where :{
 					user_id : getLogId,
 				},
-				include: {
-					user: {
-						select: {
-							username: true,
-							login: true,
-						},
-				},
-			}
 			})
 			console.log(list);
 			const listChanged = [];
@@ -279,12 +281,16 @@ export class PrismaChatService {
 
 				for (const element of list)
 				{
-					const obj = {
-						idUser: element.user_id,
-						username:  element.user.username,
-						login: element.user.login,
+					const userBlocked = await this.getUserOfId(element.blocked_user_id)
+					if (userBlocked)
+					{
+						const obj = {
+							idUser: element.blocked_user_id,
+							username:  userBlocked.username,
+							login: userBlocked.login,
+						}
+						listChanged.push(obj);
 					}
-					listChanged.push(obj);
 				}
 				console.log("new list =",listChanged, "end of new list");
 				return (listChanged);
@@ -297,6 +303,7 @@ export class PrismaChatService {
 	{
 		const getLogId = await this.getIdOfLogin(login);
 		const getBlockedId = await this.getIdOfLogin(userBlockedLogin);
+		console.log("blocker:", login, "blocked", userBlockedLogin);
 		if (getLogId && getBlockedId)
 		{
 			const isBlocked = await this.prismaService.blockedUser.findFirst({

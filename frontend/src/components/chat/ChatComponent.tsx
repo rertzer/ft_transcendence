@@ -99,12 +99,14 @@ const NoChat = (props: {message: string}) => {
 
     const auth = useLogin();
     const socket = useContext(WebsocketContext);
+    const {blockedUsers} = useContext(ChatContext);
 
     useEffect(() => {
 
-    socket.on('newMessage', (chatHistoryReceive :{msg: string, username: string, date: Date, id: number, idOfChat:number, serviceMessage: boolean}) => {
-
-        socket.emit("chatListOfUser",auth.user.login);
+    socket.on('newMessage', (chatHistoryReceive :{msg: string, username: string, login: string, date: Date, id: number, idOfChat:number, serviceMessage: boolean, userId: number}) => {
+        console.log("Dans le Nochat de ChatComponent.tsx", blockedUsers)
+        if (blockedUsers.find(element => element.idUser === chatHistoryReceive.userId) === undefined)
+            socket.emit("chatListOfUser",auth.user.login);
     });
     return () => {
         socket.off('newMessage');

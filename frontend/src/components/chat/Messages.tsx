@@ -16,7 +16,7 @@ type ChatMessage = {
 	userId: number; // a ajouter !
 }
 
-const Messages = (props: {chatId: number, isOwner: boolean, isAdmin: boolean, setIsAdmin: Function, isDM: boolean}) => {
+const Messages = (props: {chatId: number, isOwner: boolean, setIsOwner: Function, isAdmin: boolean, setIsAdmin: Function, isDM: boolean}) => {
 	const auth = useLogin();
 	const [render, setRender] = useState(false);
 	const socket = useContext(WebsocketContext);
@@ -30,15 +30,18 @@ const Messages = (props: {chatId: number, isOwner: boolean, isAdmin: boolean, se
 			setRender(true);
 		});
 		socket.on('newMessage', (chatHistoryReceive :{msg: string, username: string, login: string, date: Date, id: number, idOfChat:number, serviceMessage: boolean, userId: number}) => {
-			console.log("receive a new message :", chatHistoryReceive);
 			let newDateString = chatHistoryReceive.date.toString();
 			newDateString = newDateString.slice(newDateString.indexOf("T") + 1, newDateString.indexOf("T") + 9);
 			const add : ChatMessage = {msg: chatHistoryReceive.msg, username: chatHistoryReceive.username, login: chatHistoryReceive.login, date: newDateString, id: chatHistoryReceive.id, chatId: chatHistoryReceive.idOfChat, serviceMessage: chatHistoryReceive.serviceMessage, userId: chatHistoryReceive.userId}
 			setChatMessages((prevMessages) => [...prevMessages, add]);
+			console.log("Dans le newMessage de Messages.tsx", blockedUsers)
 			if (blockedUsers.find(element => element.idUser === chatHistoryReceive.userId) === undefined)
 				socket.emit("chatListOfUser",auth.user.login);
 			if (props.isAdmin === false && add.serviceMessage === true && add.msg === auth.user.username + " is now an administrator of this channel")
 				props.setIsAdmin(true);
+			else if (props.isOwner === false && add.serviceMessage === true && add.msg.indexOf(auth.user.username + " now owns this channel") !== -1)
+				props.setIsOwner(true);
+				
 		});
 		return () => {
 

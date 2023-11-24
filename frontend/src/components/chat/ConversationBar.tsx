@@ -46,16 +46,28 @@ const ConversationBar = (props: {isOwner: boolean, isAdmin: boolean}) => {
 		};
         try {
             const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/leaveChat/`, requestOptions);
-            const messageData = {
-                username: auth.user.username,
-                login:auth.user.login,
-                content: auth.user.username + " has just left",
-                serviceMessage: true,
-                idOfChat: activeChannel.id,
+            const data = await response.json();
+            let messageData;
+            if (data.username) {
+                messageData = {
+                    username: auth.user.username,
+                    login:auth.user.login,
+                    content: auth.user.username + " has just left, " + data.username + " now owns this channel",
+                    serviceMessage: true,
+                    idOfChat: activeChannel.id,
+                }
+            }
+            else {
+                messageData = {
+                    username: auth.user.username,
+                    login:auth.user.login,
+                    content: auth.user.username + " has just left",
+                    serviceMessage: true,
+                    idOfChat: activeChannel.id,
+                }
             }
             socket.emit('newMessage', messageData);
-            const data = await response.json();
-            console.log("DATA", data);
+            
         }
         catch (error) {
             console.error("Error while leaving channel", error);
