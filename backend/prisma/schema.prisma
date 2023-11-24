@@ -2,8 +2,7 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["referentialActions"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -52,8 +51,8 @@ model ChatChannelsUser {
   date_left        DateTime?
   kicked           Boolean
   banned           Boolean
-  chatChannelsUser User             @relation("chatChanelUser", fields: [user_id], references: [id], map: "chat_channels_user")
-  channel          ChatChannels     @relation("ChatChannelsUser", fields: [channel_id], references: [id])
+  chatChannelsUser User             @relation("chatChanelUser", fields: [user_id], references: [id], map: "chat_channels_user", onDelete: Cascade)
+  channel          ChatChannels     @relation("ChatChannelsUser", fields: [channel_id], references: [id], onDelete: Cascade)
   messagesSent     ChatMsgHistory[] @relation("ChatMessagesSender")
 }
 
@@ -78,8 +77,8 @@ model ChatMsgHistory {
   message               String
   serviceMessage        Boolean
   date_sent             DateTime
-  channel               ChatChannels     @relation("ChatMessages", fields: [chat_channels_id], references: [id])
-  sender                ChatChannelsUser @relation("ChatMessagesSender", fields: [chat_channels_user_id], references: [id])
+  channel               ChatChannels     @relation("ChatMessages", fields: [chat_channels_id], references: [id], onDelete: Cascade)
+  sender                ChatChannelsUser @relation("ChatMessagesSender", fields: [chat_channels_user_id], references: [id], onDelete: Cascade)
 }
 
 model DirectMsg {

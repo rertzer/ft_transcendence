@@ -129,7 +129,7 @@ export class PrismaChatService {
 		{
 			if (listUsersOfChat.length == 1)
 			{
-				const deleted = await this.prismaService.chatChannels.delete({
+				const deleted = await this.prismaService.chatChannels.deleteMany({
 					where: {
 						id: chatId
 					}
@@ -203,7 +203,7 @@ export class PrismaChatService {
 				data: {
 					user_id :getLogId,
 					blocked_user_id: getBlockedId,
-					date_blocked: date,	
+					date_blocked: date,
 				}
 			})
 			if (isBlocked)
@@ -498,7 +498,7 @@ export class PrismaChatService {
 				{
 					return user;
 				}
-				
+
 			}
 		}
 	}

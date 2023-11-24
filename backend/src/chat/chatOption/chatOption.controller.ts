@@ -42,14 +42,16 @@ export class ChatOptController {
 				{
 					if (await this.prismaChatService.addChanelUser(data.chat_id, id, "user", getDate(), null))
 					{
-
+						const connect = this.gateway.getSocketsArray().find((elem) => elem.idOfLogin === id);
+						if (connect)
+							connect.sock.join(data.chat_id.toString());
 						return ({message: "ok"});
 					}
 					return ({message: "issue while adding new user"})
 				}
 				return ({message: `User ${data.username} is already in this channel`})
 			}
-			else 
+			else
 			{
 				return ({message: `User ${data.username} doesn't exist`})
 			}
@@ -58,7 +60,7 @@ export class ChatOptController {
 		{
 			return({message: "You cannot invite anyone if you don't own the channel"})
 		}
-		
+
 	}
 
 	@Post('blockUser')
@@ -186,7 +188,7 @@ export class ChatOptController {
 				if (succeed)
 					return (true);
 			}
-			else 
+			else
 			{
 				const succeed = await this.prismaChatService.leaveAsOwner(id,data.chatId);
 				if (succeed)
