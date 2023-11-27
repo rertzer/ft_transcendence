@@ -1,4 +1,3 @@
-import { responsiveFontSizes } from "@mui/material";
 import { drawRect, drawText } from "./draw";
 import { IGameParam, IPlayer } from "./interfacesGame";
 import { GameStatus } from "../../../../context/gameContext";

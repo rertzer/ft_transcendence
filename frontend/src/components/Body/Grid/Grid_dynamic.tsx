@@ -40,7 +40,7 @@ function PageSwitch () {
  // 		break;
  //   }
    return (
-	 <div>
+	 <div key={"switch"}>
 		 {context?.page == "Data" && <Data key={"data"} sx={sx} sy={sy} zoom={zoom}/>}
 		 {context?.page == "Contacts" && <Contacts key={"contacts"} sx={sx} sy={sy} zoom={zoom}/>}
 	 </div>

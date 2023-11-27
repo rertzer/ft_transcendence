@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import styles from "./Header.module.css";
 import style from "./SelectBar.module.css"
 import { PageContext } from '../../context/PageContext';
-import { GameStatus } from '../../context/gameContext';
+import GameContext from '../../context/gameContext';
 
 import Divider from '@mui/material/Divider';
 // import MenuItem from '@mui/material/MenuItem';
@@ -60,15 +60,42 @@ function BasicMenu() {
 			setModeGame('ADVANCED');
 			gameSocket.emit('match_me', {playerName:playerName, typeGame:'ADVANCED'});
 		}
+    const {roomId, playerName, setGameStatus, setRoomId, setModeGame, modeGame} = useContext(gameContext);
+    const leaveRoom = () => {
+		const dataToSend = {
+			waitingRoom: (gameStatus === 'IN_WAITING_ROOM'), 
+			modeGame: modeGame, 
+			roomId: roomId
+		};
+      gameSocket.emit("i_am_leaving", dataToSend);
+      setGameStatus('NOT_IN_GAME');
+      setRoomId(0);
+      setModeGame('');
+      updatePageMenuChat("Game", 'none', chat);
+    };
+    const {gameStatus} = useContext(GameContext);
 
 		return (
 		<List dense onMouseLeave={() => handleClick("none")} sx={{color: 'white',}} style={{position: 'fixed', top:'64px', width:200, paddingTop: "0px", paddingBottom: "0px", backgroundColor: '#2f2f2f', border:'1px solid black'}} >
-			<ListItem button>
-			<ListItemText onClick={() => newBasicGame ()}>New Basic Game</ListItemText>
-			</ListItem>
-			<ListItem button>
-			<ListItemText onClick={() => newAdvancedGame()}>New Advanced Game</ListItemText>
-			</ListItem>
+			{gameStatus === 'NOT_IN_GAME' && <ListItem button>
+			  <ListItemText onClick={() => newBasicGame ()}>New Basic Game</ListItemText>
+			</ListItem>}
+			{gameStatus === 'NOT_IN_GAME' && <ListItem button>
+			  <ListItemText onClick={() => newAdvancedGame()}>New Advanced Game</ListItemText>
+			</ListItem>}
+			{gameStatus === 'NOT_IN_GAME' && <ListItem sx={{color: 'grey'}}>
+			  <ListItemText>Leave room</ListItemText>
+			</ListItem>}
+      {gameStatus !== 'NOT_IN_GAME' && <ListItem sx={{color: 'grey'}}>
+			  <ListItemText>New Basic Game</ListItemText>
+			</ListItem>}
+			{gameStatus !== 'NOT_IN_GAME' && <ListItem sx={{color: 'grey'}}>
+			  <ListItemText>New Advanced Game</ListItemText>
+			</ListItem>}
+			{gameStatus !== 'NOT_IN_GAME' && <ListItem button>
+			  <ListItemText onClick={() => leaveRoom()}>Leave Room</ListItemText>
+			</ListItem>}
+      <Divider/>
 			<ListItem button onClick={() => handlePage("Profile")}><ListItemText>Profile </ListItemText></ListItem>
 			<ListItem button onClick={() => handlePage("Data")}><ListItemText>Data </ListItemText></ListItem>
 			<ListItem button onClick={() => handlePage("Contacts")}><ListItemText>Contacts </ListItemText></ListItem>
