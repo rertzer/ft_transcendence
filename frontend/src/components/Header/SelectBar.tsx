@@ -1,11 +1,12 @@
-import { useContext} from 'react';
+import { useContext, useEffect, useState } from 'react';
 import styles from "./Header.module.css";
 import style from "./SelectBar.module.css"
 import { PageContext } from '../../context/PageContext';
-import GameContext, { GameStatus } from '../../context/gameContext';
-import Divider from '@mui/material/Divider';
-import ListItemText from '@mui/material/ListItemText';
+
 import ListItemButton from '@mui/material/ListItemButton';
+import Divider from '@mui/material/Divider';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import ListItemText from '@mui/material/ListItemText';
 import Typography from '@mui/material/Typography';
 import ContentCut from '@mui/icons-material/ContentCut';
 import ContentCopy from '@mui/icons-material/ContentCopy';
@@ -19,12 +20,11 @@ import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
 import InfoIcon from '@mui/icons-material/Info';
 import KeyboardIcon from '@mui/icons-material/Keyboard';
 import PsychologyAltIcon from '@mui/icons-material/PsychologyAlt';
-import { useLogin } from '../user/auth';
-import { gameSocket } from '../game/services/gameSocketService';
-import gameContext from '../../context/gameContext';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
+import { useLogin } from '../user/auth';
+import { gameSocket } from '../game/services/gameSocketService';
+import gameContext, { GameStatus } from '../../context/gameContext';
 
 function BasicMenu() {
 	function  File() {
@@ -32,11 +32,9 @@ function BasicMenu() {
 		if (!context) {
 			throw new Error('useContext must be used within a MyProvider');
 		}
-
 		const { updateMenu } = context;
 		const auth = useLogin();
-		const {roomId, playerName, setGameStatus, setRoomId, setModeGame, modeGame} = useContext(gameContext);
-		
+		const {roomId, playerName, setGameStatus, setRoomId, setModeGame, gameStatus} = useContext(gameContext);
 		function print() {
 			updateMenu('none');
 			window.print();
@@ -59,21 +57,15 @@ function BasicMenu() {
 			setModeGame('ADVANCED');
 			gameSocket.emit('match_me', {playerName:playerName, typeGame:'ADVANCED'});
 		}
-
+		
 		const leaveRoom = () => {
-			const dataToSend = {
-				waitingRoom: (gameStatus === 'IN_WAITING_ROOM'), 
-				modeGame: modeGame, 
-				roomId: roomId
-			};
-			gameSocket.emit("i_am_leaving", dataToSend);
+			gameSocket.emit("i_am_leaving", {roomId});
 			setGameStatus('NOT_IN_GAME');
 			setRoomId(0);
 			setModeGame('');
 			updatePageMenuChat("Game", 'none', chat);
 		};
 		
-		const {gameStatus} = useContext(GameContext);
 
 		const newGamePossible = (status:GameStatus) :boolean => {
 			const statusOk = ['NOT_IN_GAME', 'FINISHED', 'FINISH_BY_FORFAIT'];
@@ -82,24 +74,24 @@ function BasicMenu() {
 		};
 
 		const leaveRoomPossible = (status:GameStatus) :boolean => {
-			return (!newGamePossible(status) || status === 'FINISH_BY_FORFAIT');
+			return (status !== 'NOT_IN_GAME');
 		};
 
 		return (
-			<List dense onMouseLeave={() => handleClick("none")} sx={{color: 'white',}} style={{position: 'fixed', top:'64px', width:200, paddingTop: "0px", paddingBottom: "0px", backgroundColor: '#2f2f2f', border:'1px solid black'}} >
+			<List dense onMouseLeave={() => handleClick("none")}  sx={{color: dark ? 'white' : '#111111',}} style={{position: 'fixed', top:'64px', width:200, paddingTop: "0px", paddingBottom: "0px", backgroundColor: dark ? '#2f2f2f': 'white', border: dark ? '1px solid black' : '1px solid grey'}} >
 				{newGamePossible(gameStatus) && <ListItemButton>
 					<ListItemText onClick={() => newBasicGame ()}>New Basic Game</ListItemText>
 				</ListItemButton>}
 				{newGamePossible(gameStatus) && <ListItemButton>
 					<ListItemText onClick={() => newAdvancedGame()}>New Advanced Game</ListItemText>
 				</ListItemButton>}
-				{!leaveRoomPossible(gameStatus) && <ListItem sx={{color: 'grey'}}>
+				{!leaveRoomPossible(gameStatus) && <ListItem sx={{color: 'grey'}} style={{cursor: 'default'}}>
 					<ListItemText>Leave room</ListItemText>
 				</ListItem>}
-				{!newGamePossible(gameStatus) && <ListItem sx={{color: 'grey'}}>
+				{!newGamePossible(gameStatus) && <ListItem sx={{color: 'grey'}} style={{cursor: 'default'}}>
 					<ListItemText>New Basic Game</ListItemText>
 				</ListItem>}
-				{!newGamePossible(gameStatus) && <ListItem sx={{color: 'grey'}}>
+				{!newGamePossible(gameStatus) && <ListItem sx={{color: 'grey'}} style={{cursor: 'default'}}>
 					<ListItemText>New Advanced Game</ListItemText>
 				</ListItem>}
 				{leaveRoomPossible(gameStatus) && <ListItemButton>
@@ -117,8 +109,7 @@ function BasicMenu() {
 				</ListItemButton>
 				<Divider/>
 				<ListItemButton onClick={() => handleChat("Chat")}>
-					{chat === "Chat" ? <CheckBoxOutlinedIcon fontSize="small"/>: <CheckBoxOutlineBlankIcon fontSize="small"/>} 
-					<ListItemText style={{position:'relative', left:'10px'}}>Chat </ListItemText>
+					{chat === "Chat" ? <CheckBoxOutlinedIcon fontSize="small"/>: <CheckBoxOutlineBlankIcon fontSize="small"/>} <ListItemText style={{position:'relative', left:'10px'}}>Chat </ListItemText>
 				</ListItemButton>
 				<Divider/>
 				<ListItemButton onClick={print}>
@@ -127,9 +118,8 @@ function BasicMenu() {
 				<ListItemButton onClick={auth.logout}>
 					<ListItemText>Logout </ListItemText>
 				</ListItemButton>
-				<ListItemButton onClick={closeTab}>
-					<ListItemText>Exit PongOffice </ListItemText>
-				</ListItemButton>
+				{window.opener !== null ? <ListItemButton onClick={closeTab}><ListItemText>Exit PongOffice </ListItemText></ListItemButton> 
+									: <ListItem ><ListItemText sx={{color: 'grey'}} style={{cursor: 'default'}}>Exit PongOffice </ListItemText></ListItem>}
 			</List>
 		);
 	}
@@ -144,7 +134,7 @@ function BasicMenu() {
 		const { coordX, coordY } = coords;
 
 		return (
-			<List dense onMouseLeave={() => handleClick("none")} sx={{color: 'white',}} style={{position: 'fixed', top:'64px', left:'45px', width:200, paddingTop: "0px", paddingBottom: "0px", backgroundColor: '#2f2f2f', border:'1px solid black'}} >
+			<List dense onMouseLeave={() => handleClick("none")} sx={{color: dark ? 'white' : '#111111',}} style={{position: 'fixed', top:'64px', left:'45px', width:200, paddingTop: "0px", paddingBottom: "0px",backgroundColor: dark ? '#2f2f2f': 'white', border: dark ? '1px solid black' : '1px solid grey'}} >
 				<ListItemButton >
 					<ContentCopy fontSize="small"/>
 					<ListItemText style={{position:'relative', left:'10px'}}>Copy</ListItemText>
@@ -161,9 +151,15 @@ function BasicMenu() {
 					<Typography fontSize="12px" color="text.disabled">Ctrl+V</Typography>
 				</ListItemButton>
 				<Divider/>
-				<ListItemButton onClick={() => updateCoordsMenu({coordX: -1,coordY: coordY}, 'none')}><ListItemText>Select Row </ListItemText></ListItemButton>
-				<ListItemButton onClick={() => updateCoordsMenu({coordX: coordX,coordY: -1},'none')}><ListItemText>Select Column </ListItemText></ListItemButton>
-				<ListItemButton onClick={() => updateCoordsMenu({coordX: -1,coordY: -1}, 'none')}><ListItemText>Select All </ListItemText></ListItemButton>
+				<ListItemButton onClick={() => updateCoordsMenu({coordX: -1,coordY: coordY}, 'none')}>
+					<ListItemText>Select Row </ListItemText>
+					</ListItemButton>
+				<ListItemButton onClick={() => updateCoordsMenu({coordX: coordX,coordY: -1},'none')}>
+					<ListItemText>Select Column </ListItemText>
+				</ListItemButton>
+				<ListItemButton onClick={() => updateCoordsMenu({coordX: -1,coordY: -1}, 'none')}>
+					<ListItemText>Select All </ListItemText>
+				</ListItemButton>
 			</List>
 		);
 	}
@@ -173,31 +169,27 @@ function BasicMenu() {
 		if (!context) {
 			throw new Error('useContext must be used within a MyProvider');
 		}
+
 		const { zoom, updateZoom } = context;
 		const increment = 10;
-
 		function add_zoom() {
-			if (zoom + increment > 200)
-				updateZoom(200);
-			else
-				updateZoom(zoom + increment);
+			if (zoom + increment > 200) updateZoom(200);
+			else updateZoom(zoom + increment);
 			console.log(zoom);
 		}
 
 		function reduce_zoom() {
-			if (zoom - increment < 50)
-				updateZoom(50);
-			else
-			updateZoom(zoom - increment);
-    	}
+			if (zoom - increment < 50) updateZoom(50);
+			else updateZoom(zoom - increment);
+		}
 
-    	const {toolbar, chat, updateToolbar, updateChat } = context;
-    	function toggleToolbar() {
+		const { toolbar, updateToolbar } = context;
+		function toggleToolbar() {
 			updateToolbar(!toolbar);
 		}
-		
-    	return (
-			<List dense onMouseLeave={() => handleClick("none")} sx={{color: 'white',}} style={{position: 'fixed', top:'64px', left:'90px', width:200, paddingTop: "0px", paddingBottom: "0px", backgroundColor: '#2f2f2f', border:'1px solid black'}} >
+
+		return (
+			<List dense onMouseLeave={() => handleClick("none")} sx={{color: dark ? 'white' : '#111111',}} style={{position: 'fixed', top:'64px', left:'90px', width:200, paddingTop: "0px", paddingBottom: "0px",backgroundColor: dark ? '#2f2f2f': 'white', border: dark ? '1px solid black' : '1px solid grey'}} >
 				<ListItemButton onClick={toggleToolbar}>
 					{toolbar ? <CheckBoxOutlineBlankIcon fontSize="small"/>: <CheckBoxOutlinedIcon fontSize="small"/>} 
 					<ListItemText style={{position:'relative', left:'10px'}}>Toolbar </ListItemText>
@@ -216,16 +208,28 @@ function BasicMenu() {
 	}
 
 	function  Styles() {
+		const context = useContext(PageContext);
+		if (!context) {
+			throw new Error('useContext must be used within a MyProvider');
+		}
+
+		const {dark, updateDark} = context;
+
+		function lightMode(mode: boolean) {
+			handleClick("none");
+			updateDark(mode);
+		}
+
 		return (
-			<List dense onMouseLeave={() => handleClick("none")} sx={{color: 'white',}} style={{position: 'fixed', top:'64px', left:'135px', width:200, paddingTop: "0px", paddingBottom: "0px", backgroundColor: '#2f2f2f', border:'1px solid black'}} >
-			<ListItemButton>
-				<RadioButtonUncheckedIcon style={{height:'15px'}}/>
-				<ListItemText style={{position:'relative', left:'10px'}}>Light </ListItemText>
-			</ListItemButton>
-			<ListItemButton>
-				<RadioButtonCheckedIcon style={{height:'15px'}}/>
-				<ListItemText style={{position:'relative', left:'10px'}}>Dark </ListItemText>
-			</ListItemButton>
+			<List dense onMouseLeave={() => handleClick("none")} sx={{color: dark ? 'white' : '#111111',}} style={{position: 'fixed', top:'64px', left:'135px', width:200, paddingTop: "0px", paddingBottom: "0px", backgroundColor: dark ? '#2f2f2f': 'white', border: dark ? '1px solid black' : '1px solid grey'}} >
+				<ListItemButton onClick={() => lightMode(false)}>
+					{dark ? <RadioButtonUncheckedIcon style={{height:'15px'}}/> : <RadioButtonCheckedIcon style={{height:'15px'}}/>}
+					<ListItemText style={{position:'relative', left:'10px'}}>Light </ListItemText>
+				</ListItemButton>
+				<ListItemButton onClick={() => lightMode(true)}>
+					{dark ? <RadioButtonCheckedIcon style={{height:'15px'}}/> : <RadioButtonUncheckedIcon style={{height:'15px'}}/> }
+					<ListItemText style={{position:'relative', left:'10px'}}>Dark </ListItemText>
+				</ListItemButton>
 			</List>
 		);
 	}
@@ -235,30 +239,33 @@ function BasicMenu() {
 			const isLocalhost = window.location.hostname === 'localhost';
 			let url;
 			if (isLocalhost)
-			url = 'http://localhost:3000/';
+				url = 'http://localhost:3000/';
 			else 
-			url = 'http://' + process.env.REACT_APP_URL_MACHINE + ':3000/';
+				url = 'http://' + process.env.REACT_APP_URL_MACHINE + ':3000/';
 			window.open(url, '_blank');
 		}
+		
 		function closeTab() {
 			window.close();
 		}
-
 		return (
-			<List dense onMouseLeave={() => handleClick("none")} sx={{color: 'white',}} style={{position: 'fixed', top:'64px', left:'190px', width:200, paddingTop: "0px", paddingBottom: "0px", backgroundColor: '#2f2f2f', border:'1px solid black'}} >
-			<ListItemButton onClick={openNewTab}>
-				<ListItemText>New Window </ListItemText>
-			</ListItemButton>
-			<ListItemButton onClick={closeTab}>
-				<ListItemText>Close Window </ListItemText>
+			<List dense onMouseLeave={() => handleClick("none")} sx={{color: dark ? 'white' : '#111111',}} style={{position: 'fixed', top:'64px', left:'190px', width:200, paddingTop: "0px", paddingBottom: "0px", backgroundColor: dark ? '#2f2f2f': 'white', border: dark ? '1px solid black' : '1px solid grey'}} >
+				<ListItemButton onClick={openNewTab}>
+					<ListItemText>New Window </ListItemText>
 				</ListItemButton>
+				{window.opener !== null && <ListItemButton onClick={closeTab}>
+					<ListItemText>Close Window </ListItemText>
+				</ListItemButton>}
+				{window.opener === null && <ListItem >
+					<ListItemText sx={{color: 'grey'}} style={{cursor: 'default'}}>Close Window </ListItemText>
+				</ListItem>}
 			</List>
 		);
 	}
-		
+	
 	function  Help() {
 		return (
-			<List dense onMouseLeave={() => handleClick("none")} sx={{color: 'white',}} style={{position: 'fixed', top:'64px', left:'255px', width:200, paddingTop: "0px", paddingBottom: "0px", backgroundColor: '#2f2f2f', border:'1px solid black'}} >
+			<List dense onMouseLeave={() => handleClick("none")} sx={{color: dark ? 'white' : '#111111',}} style={{position: 'fixed', top:'64px', left:'255px', width:200, paddingTop: "0px", paddingBottom: "0px", backgroundColor: dark ? '#2f2f2f': 'white', border: dark ? '1px solid black' : '1px solid grey'}} >
 				<ListItemButton>
 					<PsychologyAltIcon fontSize="small"/>
 					<ListItemText style={{position:'relative', left:'10px'}}>What's this ? </ListItemText>
@@ -282,20 +289,20 @@ function BasicMenu() {
 			throw new Error('useContext must be used within a MyProvider');
 		}
 		switch(context?.menu) {
-		case "File" :
-			return <File/>;
-		case "Edit" :
-			return <Edit/>;
-		case "View" :
-			return <View/>;
-		case "Styles" :
-			return <Styles/>;
-		case "Window" :
-			return <Window/>;
-		case "Help" :
-			return <Help/>;
-		default :
-			return;
+			case "File" :
+				return <File/>;
+			case "Edit" :
+				return <Edit/>;
+			case "View" :
+				return <View/>;
+			case "Styles" :
+				return <Styles/>;
+			case "Window" :
+				return <Window/>;
+			case "Help" :
+				return <Help/>;
+			default :
+				return;
 		}
 	}
 
@@ -303,22 +310,27 @@ function BasicMenu() {
 	if (!context) {
 		throw new Error('useContext must be used within a MyProvider');
 	}
-	const { page, chat, updatePageMenuChat, updateMenu} = context;
+	
+	const { page, chat, dark, updatePageMenuChat, updateMenu, updateGame } = context;
+	
 	function handleClick(str : string) {
 		updateMenu(str);
 	}
+
 	function handlePage(str : string) {
 		updatePageMenuChat(str, "none", chat);
 		console.log(page);
 	}
+
 	function handleChat(str : string) {
 		if (str === chat) updatePageMenuChat(page, "none", "none");
 		else updatePageMenuChat(page, "none", str);
 	}
+
 	const darkTheme = createTheme({
 		palette: {
-		text: {
-			primary: '#FFFFFF',
+			text: {
+			primary: dark ? '#FFFFFF' : '#FF0000',
 			secondary: '#FFFFFF',
 			disabled: 'grey',
 		},
@@ -326,7 +338,7 @@ function BasicMenu() {
 			active: 'white',
 			selected: 'white',
 			disabledBackground: 'white',
-			hover: '#15539e',
+			hover: dark ? '#15539e' : '#2f7ddb',
 			disabled: 'white',
 		},
 		background: {
@@ -336,30 +348,51 @@ function BasicMenu() {
 		divider: '#1a1a1a',
 		},
 	});
+
+	const lightTheme = createTheme({
+		palette: {
+			text: {
+				primary: '#FF0000',
+				secondary: 'white',
+				disabled: 'light-grey',
+			},
+		action: {
+			active: 'white',
+			selected: 'white',
+			disabledBackground: 'black',
+			hover: '#2f7ddb',
+			disabled: 'black',
+		},
+		background: {
+			default: 'white',
+			paper: 'white',
+		},
+		divider: '#1a1a1a',
+		},
+	});
 	const divStyle = {
 		left: '0px',
 		width: '45px',
 	};
-
 	return (
-		<ThemeProvider theme={darkTheme}>
-			<div className={style.file} style={{left: '0px',width: '45px'}} onMouseEnter={() => handleClick("File")}>
-				<div className={style.file1} style={{width: '45px'}}>File</div>
+		<ThemeProvider theme={dark ? darkTheme : lightTheme}>
+			<div className={dark ? style.file : style.fileLight} style={{left: '0px',width: '45px'}} onMouseEnter={() => handleClick("File")}>
+				<div className={dark ? style.file1 : style.file1Light} style={{width: '45px'}}>File</div>
 			</div>
-			<div className={style.file} style={{left: '45px',width: '45px'}} onMouseEnter={() => handleClick("Edit")}>
-				<div className={style.file1} style={{width: '45px',}}>Edit</div>
+			<div className={dark ? style.file : style.fileLight} style={{left: '45px',width: '45px'}} onMouseEnter={() => handleClick("Edit")}>
+				<div className={dark ? style.file1 : style.file1Light} style={{width: '45px',}}>Edit</div>
 			</div>
-			<div className={style.file} style={{left: '90px',width: '45px'}} onMouseEnter={() => handleClick("View")}>
-				<div className={style.file1} style={{width: '45px',}}>View</div>
+			<div className={dark ? style.file : style.fileLight} style={{left: '90px',width: '45px'}} onMouseEnter={() => handleClick("View")}>
+				<div className={dark ? style.file1 : style.file1Light} style={{width: '45px',}}>View</div>
 			</div>
-			<div className={style.file} style={{left: '135px',width: '55px'}} onMouseEnter={() => handleClick("Styles")}>
-				<div className={style.file1} style={{width: '55px',}}>Styles</div>
+			<div className={dark ? style.file : style.fileLight} style={{left: '135px',width: '55px'}} onMouseEnter={() => handleClick("Styles")}>
+				<div className={dark ? style.file1 : style.file1Light} style={{width: '55px',}}>Styles</div>
 			</div>
-			<div className={style.file} style={{left: '190px',width: '65px'}} onMouseEnter={() => handleClick("Window")}>
-				<div className={style.file1} style={{width: '65px',}}>Window</div>
+			<div className={dark ? style.file : style.fileLight} style={{left: '190px',width: '65px'}} onMouseEnter={() => handleClick("Window")}>
+				<div className={dark ? style.file1 : style.file1Light} style={{width: '65px',}}>Window</div>
 			</div>
-			<div className={style.file} style={{left: '255px',width: '45px'}} onMouseEnter={() => handleClick("Help")}>
-				<div className={style.file1} style={{width: '45px',}}>Help</div>
+			<div className={dark ? style.file : style.fileLight} style={{left: '255px',width: '45px'}} onMouseEnter={() => handleClick("Help")}>
+				<div className={dark ? style.file1 : style.file1Light} style={{width: '45px',}}>Help</div>
 			</div>
 			{BarSwitch()}
 		</ThemeProvider>
@@ -371,38 +404,12 @@ export function SelectBar({}) {
 	if (!context) {
 		throw new Error('useContext must be used within a MyProvider');
 	}
-	const { menu, updateMenu } = context;
-	function handleClick(str : string) {
-		updateMenu(str);
-	}
-
-	const darkTheme = createTheme({
-		palette: {
-		text: {
-			primary: 'white',
-			secondary: 'white',
-			disabled: 'white',
-		},
-		action: {
-			active: 'grey',
-			selected: 'grey',
-			disabledBackground: 'grey',
-			hover: '#3584e4',
-			disabled: 'grey',
-		},
-		background: {
-			default: '#2f2f2f',
-			paper: '#2f2f2f',
-		},
-		divider: '#2a2a2a',
-		},
-	});
-
+	const { menu, dark, updateMenu } = context;
 	return (
 		<div>
 			<div className={styles.textBar}>
 				<div className={dark ? styles.textBar1 : styles.textBar1Light}/>
-        { menu !== 'none' && <div onMouseEnter={() => updateMenu("none")} style={{position: 'fixed', width:'100%', height:'100%'}}/>}
+				{ menu !== 'none' && <div onMouseEnter={() => updateMenu("none")} style={{position: 'fixed', width:'100%', height:'100%'}}/>}
 				<BasicMenu />
 			</div>
 		</div>
