@@ -18,7 +18,7 @@ function App() {
   useEffect(() => {
     console.log("rkeklkrer");
     socket.connect();
-  }, []);
+  }, [socket]);
 
   const router = createBrowserRouter(
     createRoutesFromElements(

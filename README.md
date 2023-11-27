@@ -10,3 +10,6 @@ A website for the mighty Pong contest
 
 - Mieux gerer la fin de la partie avec la destruction des room qui le doivent. 
 - API REST pour avoir les stats des parties des utilisateurs. 
+
+
+Quand on a fini le jeu, on doit pouvoir avoir les bouton new game directement dispo. 

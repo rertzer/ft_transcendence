@@ -10,7 +10,7 @@ import { IObstacles } from "./interfacesGame";
 import { PageContext } from "../../../../context/PageContext";
 
 function GameArea(props:any) {
-	const {roomId, gameWidth, gameHeight, playerName, gameStatus, setGameStatus, setRoomId, setModeGame} = useContext(gameContext);
+	const {roomId, gameWidth, gameHeight, playerName, gameStatus, setGameStatus} = useContext(gameContext);
 	const [timeLastFrame, setTimeLastFrame] = useState(new Date());
 	const [idPlayerMove, setIdPlayerMove] = useState(0);
 	const [myPlayerMoves, setMyPlayerMoves] = useState<{idPlayerMove: number, dy:number}[]>([]);
@@ -91,7 +91,7 @@ function GameArea(props:any) {
 	
 	useEffect(() => {
 		gameSocket.emit("give_me_room_status", {roomId});
-	},[]);
+	},[roomId]);
 
 	useEffect(()=> {
 		function onConnect() {
@@ -189,7 +189,7 @@ function GameArea(props:any) {
 			gameSocket.off('game_state', onGameState);
 		}	
 
-	}, [myPlayerMoves]);
+	}, [myPlayerMoves, mySide, roomId, setGameStatus]);
 
 	useEffect(() => {
 		const handleKey = (event: KeyboardEvent) => {
@@ -263,7 +263,7 @@ function GameArea(props:any) {
 	}
 	const { game, updateGame } = context;
 	function render(context:CanvasRenderingContext2D):void {
-		if (game.player1 != frontEndPlayerLeft.name || game.player2 != frontEndPlayerRight.name || game.points1 != frontEndPlayerLeft.score || game.points2 != frontEndPlayerRight.score)
+		if (game.player1 !== frontEndPlayerLeft.name || game.player2 !== frontEndPlayerRight.name || game.points1 !== frontEndPlayerLeft.score || game.points2 !== frontEndPlayerRight.score)
 			updateGame({player1: frontEndPlayerLeft.name, player2: frontEndPlayerRight.name, points1: frontEndPlayerLeft.score, points2: frontEndPlayerRight.score});
 		moveMyPlayerImediately();
 		context.clearRect(0, 0, context.canvas.width, context.canvas.height)

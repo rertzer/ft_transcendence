@@ -1,5 +1,5 @@
 import { IPlayer, IBall, IGameParam, IObstacles } from "./interfacesGame";
-import { drawCircle, drawRect, drawText } from "./draw";
+import { drawRect, drawText } from "./draw";
 
 function printGame(params:{
 	context:CanvasRenderingContext2D,
