@@ -1,6 +1,7 @@
 import React from 'react';
 import "./Cells.css";
 import "./Contacts/Contacts.css";
+import "./Profile.css";
 import { PageContext } from '../../context/PageContext';
 import { useContext } from 'react';
 

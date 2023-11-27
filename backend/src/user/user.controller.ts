@@ -31,8 +31,7 @@ export class UserController {
     @GetUser('login') user_login: string,
     @Param('login') login: string,
   ) {
-    if (user_login === login)
-      return this.userService.fetchByLogin(login);
+    return this.userService.fetchByLogin(login);
     throw new ForbiddenException('Who are you?');
   }
 

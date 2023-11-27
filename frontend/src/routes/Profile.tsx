@@ -10,9 +10,57 @@ import { PageContext } from "../context/PageContext";
 import { useContext, useRef, useEffect } from "react";
 import { CreateStyledCell } from "../components/Sheets/CreateStyledCell";
 import { Create } from "@mui/icons-material";
+import styles from "./Profile.module.css";
 
 function Profile() {
+  
+  const empty_user = {
+    id: 0,
+    username: "",
+    first_name: "",
+    last_name: "",
+    login: "",
+    email: "",
+    avatar: "",
+    role: "",
+    password: "",
+    game_won: 0,
+    game_lost: 0,
+    game_played: 0,
+  };
+  const [image, setImage] = useState(
+    "https://img.lamontagne.fr/c6BQg2OSHIeQEv4GJfr_br_8h5DGcOy84ruH2ZResWQ/fit/657/438/sm/0/bG9jYWw6Ly8vMDAvMDAvMDMvMTYvNDYvMjAwMDAwMzE2NDYxMQ.jpg"
+  );
   const auth = useLogin();
+  const [user, setUser] = useState(empty_user);
+
+  const fetchImage = async () => {
+    const bearer = auth.getBearer();
+    const res = await fetch("/user/avatar/" + user.avatar, {
+      method: "GET",
+      headers: { Authorization: bearer },
+    });
+    console.log("fetchImage on route /user/avatar/", user.avatar);
+    const imageBlob = await res.blob();
+    const imageObjectURL = URL.createObjectURL(imageBlob);
+    setImage(imageObjectURL);
+  };
+
+  const fetchUser = async (login: string) => {
+    const bearer = auth.getBearer();
+    console.log("bearer is", bearer);
+    const data = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/user/` + login, {
+      method: "GET",
+      headers: { Authorization: bearer },
+    });
+    const newUser = await data.json();
+    if (newUser.message) {
+      console.log("Bad Bad");
+    } else {
+      setUser(newUser);
+    }
+  };
+
 
   const [edit, setEdit] = useState(false);
   const context = useContext(PageContext);
@@ -38,14 +86,28 @@ function Profile() {
 
   function calculate_edit_Y() {
     const result = Math.floor((windowWidthRef.current - (windowWidthRef.current / 100 * 2 + 31))/(80 + (zoom - 100) / 2) - 1);
-    return (result > 3 ? result : 3);
+    return (result > 3 ? result : 4);
   }
+  if (user.login === '') {
+    fetchUser("jojo");
+  }
+  useEffect(() => {
+    if (user.avatar !== null && user.avatar !== "") {
+      console.log("fetching image", user.avatar);
+      try {
+        fetchImage().catch((e) => console.log("Failed to fetch the avatar"));
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  }, [user]);
+
   return (
     <div style={{ position:'fixed',
                   color:'black',
                   backgroundColor:'red',
                   top: toolbar ? '89px' : '166px' }}>
-      <img  src={auth.image} 
+      <img  src={image} 
             alt="" className="profilePic" 
             style={{  width:`${(80 + (zoom - 100) / 2) * 2}px`,
                       height:`${(20 + (zoom - 100) / 8) * 5}px`,
@@ -53,15 +115,16 @@ function Profile() {
                       position: 'absolute',
                       top: `${(20 + (zoom - 100) / 8) * (2 - scroll.scrollX)}px`,
                       left: `${0 + (80 + (zoom - 100) / 2) * (1 - scroll.scrollY)}px`, }} />
-      <CreateStyledCell coordX={8} coordY={1} width={1} height={1} text={"Username"} fontSize={12}/>
-      <CreateStyledCell coordX={8} coordY={2} width={1} height={1} text={auth?.user.username} fontSize={12}/>
-      <CreateStyledCell coordX={9} coordY={1} width={1} height={1} text={"Login"} fontSize={12}/>
-      <CreateStyledCell coordX={9} coordY={2} width={1} height={1} text={auth?.user.login} fontSize={12}/>
-      <CreateStyledCell coordX={10} coordY={1} width={1} height={1} text={"Game Won"} fontSize={12}/>
-      <CreateStyledCell coordX={10} coordY={2} width={1} height={1} text={auth?.user.game_won} fontSize={12}/>
-      <CreateStyledCell coordX={11} coordY={1} width={1} height={1} text={"Game Lost"} fontSize={12}/>
-      <CreateStyledCell coordX={11} coordY={2} width={1} height={1} text={auth?.user.game_won} fontSize={12}/>
-      <CreateStyledCell coordX={2} coordY={calculate_edit_Y()} width={1} height={1} text={"Edit Profile"} fontSize={12}/>
+      <CreateStyledCell coordX={8} coordY={1} width={1} height={1} text={"Username"} className={"title_profile"} fontSize={12}/>
+      <CreateStyledCell coordX={8} coordY={2} width={1} height={1} text={auth?.user.username} className={"data_profile"} fontSize={12}/>
+      <CreateStyledCell coordX={9} coordY={1} width={1} height={1} text={"Login"} className={"title_profile"} fontSize={12}/>
+      <CreateStyledCell coordX={9} coordY={2} width={1} height={1} text={auth?.user.login} className={"data_profile"} fontSize={12}/>
+      <CreateStyledCell coordX={10} coordY={1} width={1} height={1} text={"Game Won"} className={"title_profile"} fontSize={12}/>
+      <CreateStyledCell coordX={10} coordY={2} width={1} height={1} text={auth?.user.game_won} className={"data_profile"} fontSize={12}/>
+      <CreateStyledCell coordX={11} coordY={1} width={1} height={1} text={"Game Lost"} className={"title_profile"} fontSize={12}/>
+      <CreateStyledCell coordX={11} coordY={2} width={1} height={1} text={auth?.user.game_won} className={"data_profile"} fontSize={12}/>
+      <CreateStyledCell coordX={8} coordY={1} width={2} height={4} text={""} className={"border_profile"} fontSize={12}/>
+      <CreateStyledCell coordX={2} coordY={calculate_edit_Y()} width={1} height={1} text={"Edit Profile"} className={"edit_profile"} fontSize={12}/>
       {/* <div className="profileContainer">
         <div className="uInfo">
           <div className="left">{auth.user && <p>{auth.user.username}</p>}</div>
