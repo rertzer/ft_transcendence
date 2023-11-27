@@ -71,6 +71,7 @@ function RepeatingNumbers() {
               width: '31px',
               height: `${(20 + (zoom - 100)/8)}px`,
               backgroundColor: '#15539E',
+              color: 'white',
               fontWeight:'bold',
               outline:'0px solid #104482',}}
             onMouseDown={() => handleUpdateCoords(-1, i - 1)}>

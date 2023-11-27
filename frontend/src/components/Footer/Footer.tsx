@@ -30,6 +30,20 @@ const theme = createTheme({
   },
 });
 
+const themeLight = createTheme({
+  palette: {
+    primary: {
+      main: "#555555",
+    },
+    secondary: {
+      main: '#555555',
+    },
+  },
+  typography: {
+    fontSize: 10,
+  },
+});
+
 const marks = [
   {
     value: 125,
@@ -43,7 +57,7 @@ function ContinuousSlider() {
   if (!context) {
     throw new Error('useContext must be used within a MyProvider');
   }
-  const { zoom, updateZoom } = context;
+  const { zoom, dark, updateZoom } = context;
   const increment = 5;
   function add_zoom() {
     if (zoom + increment > 200)
@@ -70,9 +84,9 @@ function ContinuousSlider() {
         <Stack spacing={0.5} direction="row" sx={{ mb: 1 }} alignItems="center">
           <RemoveCircleIcon
             fontSize='small'
-            style={{color:'#AAAAAA', position:'relative', top:'0.5px', height:'14px'}}
+            style={{color: dark ? '#AAAAAA' : '#555555', position:'relative', top:'0.5px', height:'14px'}}
             onClick={reduce_zoom}/>
-            <ThemeProvider theme={theme}>
+            <ThemeProvider theme={dark ? theme : themeLight}>
               <Slider 
                 size="small"
                 aria-label="Small"
@@ -86,7 +100,7 @@ function ContinuousSlider() {
             </ThemeProvider>
           <AddCircleIcon 
             fontSize='small' 
-            style={{color:'#AAAAAA', position:'relative', top:'0.5px', height:'14px'}}
+            style={{color:dark ? '#AAAAAA' : '#555555', position:'relative', top:'0.5px', height:'14px'}}
             onClick={add_zoom}/>
             <div style={{position: 'relative', left:'7px'}}>
               {zoom - 25}%
@@ -103,8 +117,7 @@ function Footer() {
   if (!context) {
     throw new Error('useContext must be used within a MyProvider');
   }
-  const { chat, updateChat } = context;
-  const { page, updatePage } = context;
+  const { chat, page, dark, updatePage, updateChat } = context;
   const handleChat = (str : string) => {
     updateChat(str);
   }
@@ -153,34 +166,34 @@ function Footer() {
     }
   }
   return (
-	<footer className={styles.bottom} >
+	<footer className={dark ? styles.bottom : styles.bottomLight} >
     <FirstPageIcon className={styles.arrow} onClick={() =>updatePage("Game")}/>
     <SkipPreviousIcon className={styles.arrow} onClick={() =>selectPrev()}/>
     <SkipNextIcon className={styles.arrow} onClick={() =>selectNext()}/>
     <LastPageIcon className={styles.arrow} onClick={() =>updatePage("Game")}/>
-    <div className={(page === "Game") ? styles.sheetPageSelected : styles.sheetPage} style={{left:'100px', width:'50px'}} onClick={() =>updatePage("Game")}>
+    <div className={(page === "Game") ? (dark ? styles.sheetPageSelected : styles.sheetPageSelectedLight) : (dark ? styles.sheetPage : styles.sheetPageLight)} style={{left:'100px', width:'50px'}} onClick={() =>updatePage("Game")}>
       <div className={styles.text}>Game</div>
     </div>
-    <div className={page === "Profile" ? styles.sheetPageSelected : styles.sheetPage} style={{left:'150px', width:'50px'}} onClick={() =>updatePage("Profile")}>
+    <div className={page === "Profile" ? (dark ? styles.sheetPageSelected : styles.sheetPageSelectedLight) : (dark ? styles.sheetPage : styles.sheetPageLight)} style={{left:'150px', width:'50px'}} onClick={() =>updatePage("Profile")}>
      <div className={styles.text}>Profile</div>
     </div>
-    <div className={page === "Data" ? styles.sheetPageSelected : styles.sheetPage} style={{left:'200px', width:'50px'}} onClick={() =>updatePage("Data")}>
+    <div className={page === "Data" ? (dark ? styles.sheetPageSelected : styles.sheetPageSelectedLight) : (dark ? styles.sheetPage : styles.sheetPageLight)} style={{left:'200px', width:'50px'}} onClick={() =>updatePage("Data")}>
      <div className={styles.text}>Data</div>
     </div>
-    <div className={page === "Contacts" ? styles.sheetPageSelected : styles.sheetPage} style={{left:'250px', width:'70px'}} onClick={() =>updatePage("Contacts")}>
+    <div className={page === "Contacts" ? (dark ? styles.sheetPageSelected : styles.sheetPageSelectedLight) : (dark ? styles.sheetPage : styles.sheetPageLight)} style={{left:'250px', width:'70px'}} onClick={() =>updatePage("Contacts")}>
       <div className={styles.text}>Contacts</div>
     </div>
-	  <div className={styles.sep} />
+	  <div className={dark ? styles.sep : styles.sepLight} />
     <div style={{position:'fixed', bottom:'2px', left:'8px'}}>Sheet {getPagePlace()} of 4</div>
     {
       chat === "Chat" ?
-      <div className={styles.button} onClick={() => handleChat("none")}>
+      <div className={dark ? styles.button : styles.buttonLight}  onClick={() => handleChat("none")}>
        <ContactSupportIcon className={styles.icon} /> 
         <span className={styles.contact}>
           Chat
         </span>
       </div> :
-      <div className={styles.button} onClick={() => handleChat("Chat")}>
+      <div className={dark ? styles.button : styles.buttonLight} onClick={() => handleChat("Chat")}>
         <ContactSupportIcon className={styles.icon} /> 
         <span className={styles.contact}>
           Chat

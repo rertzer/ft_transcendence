@@ -26,12 +26,11 @@ function Login() {
       let token_status = false;
       if (token.message) {
         console.log("Bad login");
-        //setLogin("");
       } else {
         token_status = true;
 
         auth.login(token);
-        navigate(redirectPath, { replace: true });
+        navigate('/', { replace: true });
       }
       setTokenOk(token_status);
     } catch (e) {

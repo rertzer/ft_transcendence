@@ -22,7 +22,7 @@ const Chatbar = () => {
 
     return (
         <div className='chatbar'>
-            <span className='chatlogo'>PongOffice Chat</span>
+            <span className='chatlogo'></span>
             <div className='icons' ref={menuRef}>
                 <ListChannels showSubMenu={showSubMenu} setShowSubMenu={setShowSubMenu}/>
                 <AddChat showSubMenu={showSubMenu} setShowSubMenu={setShowSubMenu}/>

@@ -118,7 +118,7 @@ function EditProfile() {
                 handleAvatar(e);
               }}
             />
-            {userOk && <Navigate to="/profile"></Navigate>}
+            {userOk && <Navigate to="/"></Navigate>}
             <button onClick={handleUser}>Edit</button>
           </form>
         </div>

@@ -9,9 +9,9 @@ export function GameBar () {
 	if (!context) {
 	throw new Error('useContext must be used within a MyProvider');
 	}
-	const { game } = context;
+	const { game, dark } = context;
     return (
-    <div className={styles.bar}>
+    <div className={dark ? styles.bar : styles.barLight}>
         <div className={styles.leftText}>{game.player1} : {game.points1} points</div>
         <div className={styles.rightText}>{game.player2} : {game.points2} points</div>
     </div>)

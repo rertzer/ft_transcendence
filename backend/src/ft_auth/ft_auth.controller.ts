@@ -3,20 +3,38 @@ import {
   Get,
   UseGuards,
   Req,
+  Res,
+  Body,
+  Post,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { FtAuthService } from './ft_auth.service';
+import { Request, Response } from 'express';
+import { TfaToken } from './dto/TfaToken.dto';
 
-@UseGuards(AuthGuard('oauth2'))
 @Controller('ft_auth')
 export class FtAuthController {
   constructor(private ftAuthService: FtAuthService) {}
   
+  @UseGuards(AuthGuard('oauth2'))
   @Get('login')
-  login(@Req() req: any) {}
-
+  login(@Req() req: Request) {console.log("inside login", req)}
+  
+  @UseGuards(AuthGuard('oauth2'))
   @Get('callback')
-  ftAuthRedirect(@Req() req: any) {
-    return this.ftAuthService.loginCb(req);
+  ftAuthRedirect(@Req() req: Request, @Res() res: Response) {
+   return this.ftAuthService.loginCb(req, res);  
+  }
+  
+  @Post('token')
+  ftAuthToken(@Body('key') key:string){
+    console.log("received key", key);
+    return this.ftAuthService.provideTokenByKey(key);
+  }
+
+  @Post('tfatoken')
+  ftAuthTfaToken(@Body() tfa_token: TfaToken){
+    console.log("received", tfa_token);
+    return this.ftAuthService.provideTokenByKeyAndTfa(tfa_token);
   }
 }

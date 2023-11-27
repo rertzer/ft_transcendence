@@ -5,9 +5,9 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import * as argon from 'argon2';
 import { LoginDto } from './dto';
 import { PrismaUserService } from 'src/prisma/user/prisma.user.service';
+import { FtUser } from 'src/ft_auth/dto/FtUser.dto';
 
 @Injectable()
 export class AuthService {
@@ -19,8 +19,16 @@ export class AuthService {
 
   async login(dto: LoginDto) {
     let user = await this.prismaUser.getUserByLogin(dto.login);
+    const logo : FtUser ={
+      login: dto.login,
+      username: dto.login,
+      first_name: 'Joseph',
+      last_name: 'Lanza',
+      email: dto.login + '@student.42.fr',
+
+    }
     if (!user) {
-      user = await this.prismaUser.createUser(dto);
+     user = await this.prismaUser.createUser(logo);
     }
     if (!user) {
       throw new ImATeapotException("For real: I'm a Teapot");

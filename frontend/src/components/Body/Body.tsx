@@ -35,7 +35,7 @@ export function Body({}) {
   }, [coordX, coordY]);
 
   //HANDLE SCROLL CHANGE
-  const { scroll, updateScroll } = context;
+  const { scroll, dark, updateScroll } = context;
   const { scrollX, scrollY } = scroll;
 
   const [sx, setNewScrollX] = useState(scrollX);
@@ -65,20 +65,19 @@ export function Body({}) {
           <Grid />
         </div>
 
-        <div className={styles.up} style={{top: toolbar ? '65px' : '142px' }} onMouseDown={() => handleUpdateCoords(-1, -1)}/>
-        <div className
-={styles.rightLettersFrame} style={{top: toolbar ? '89px' : '166px' }}>
-          <div className={styles.rightLettersBackground} />
+        <div className={dark ? styles.up : styles.upLight} style={{top: toolbar ? '65px' : '142px' }} onMouseDown={() => handleUpdateCoords(-1, -1)}/>
+        <div className={dark ? styles.rightLettersFrame : styles.rightLettersFrameLight} style={{top: toolbar ? '89px' : '166px' }}>
+          <div className={dark ? styles.rightLettersBackground : styles.rightLettersBackgroundLight} />
           <Numbers />
         </div>
         <div className={styles.letters} style={{top: toolbar ? '65px' : '142px' }}>
           <Letters />
         </div>
         <div className={styles.racketPlayer2}>
-          <div className={styles.rightScrollZone} />
+          <div className={dark ? styles.rightScrollZone : styles.rightScrollZoneLight} />
         </div>
         <div className={styles.racketPlayer1}>
-          <div className={styles.rightScrollZone1} />
+          <div className={dark ? styles.rightScrollZone : styles.rightScrollZoneLight} />
         </div>
 		    { context?.page === "Game" && <Game />}
       </div>

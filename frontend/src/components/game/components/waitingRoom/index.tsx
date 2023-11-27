@@ -33,38 +33,6 @@ export function WaitingRoom(props:any) {
 	}, [setGameStatus, setRoomId]);
 
 	return (
-		<div onClick={() => console.log(modeGame)} style={{position: 'fixed', top: toolbar ? '89px' : '166px', left: 'calc(1% + 31px)', color: '#000000'} }>
-			{ modeGame === 'BASIC' && 
-			<div
-			key={`basic waiting room`}
-			style={{
-			  position: 'absolute',
-			  top: (scroll.scrollX > 1) ? '-100px' : `${(20 + (zoom - 100) / 8) * (1 - scroll.scrollX)}px`,
-			  left: `${0 + (80 + (zoom - 100) / 2) * (1 - scroll.scrollY)}px`,
-			  width: `${(80 + (zoom - 100) / 2) * 5}px`,
-			  height: `${(20 + (zoom - 100) / 8) * 1}px`,
-			  fontSize: `${12 + ((zoom - 100) / 16)}px`,
-			  backgroundColor: 'white',
-			  textAlign: 'center',
-			  border: '1px solid black',
-			}}>
-			You are in the waiting room to join a <b>basic</b> game! 
-		  </div>}
-			{ modeGame === 'ADVANCED' && <div
-			key={`basic waiting room`}
-			style={{
-			  position: 'absolute',
-			  top: (scroll.scrollX > 1) ? '-100px' : `${(20 + (zoom - 100) / 8) * (1 - scroll.scrollX)}px`,
-			  left: `${0 + (80 + (zoom - 100) / 2) * (1 - scroll.scrollY)}px`,
-			  width: `${(80 + (zoom - 100) / 2) * 5}px`,
-			  height: `${(20 + (zoom - 100) / 8) * 1}px`,
-			  fontSize: `${12 + ((zoom - 100) / 16)}px`,
-			  backgroundColor: 'white',
-			  textAlign: 'center',
-			  border: '1px solid black',
-			}}>
-			You are in the waiting room to join an <b>advanced</b> game! 
-		  </div>}
-		</div>
+		<div></div>
 	)
 }

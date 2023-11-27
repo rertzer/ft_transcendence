@@ -45,11 +45,11 @@ function RepeatingLetters() {
 
   const components = [];
 
-  const { scroll, updateScroll } = context;
+  const { scroll, dark } = context;
   const { scrollX, scrollY } = scroll;
   const [sx, setNewScrollX] = useState(scrollX);
   const [sy, setNewScrollY] = useState(scrollY);
-  const { zoom, updateZoom } = context;
+  const { zoom } = context;
     
   useEffect(() => {
     setNewScrollX(scrollX);
@@ -102,9 +102,10 @@ function RepeatingLetters() {
                 top: '0px',
                 left: dynamicLeft,
                 width: `${(80 + (zoom - 100)/2)}`,
-                height: '24px',}}
+                height: '24px',
+              }}
               onMouseDown={() => handleUpdateCoords(i + sy, -1)}>
-            <div className={styles.background} style={{width: `${(80 + (zoom - 100)/2)}px`,}}>{string}</div>
+            <div className={dark ? styles.background : styles.backgroundLight} style={{width: `${(80 + (zoom - 100)/2)}px`,}}>{string}</div>
             <div className={styles.letter} />
         </div>);
     }
