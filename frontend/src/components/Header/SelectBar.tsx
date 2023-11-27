@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import styles from "./Header.module.css";
 import style from "./SelectBar.module.css"
 import { PageContext } from '../../context/PageContext';
-import GameContext from '../../context/gameContext';
+import GameContext, { GameStatus } from '../../context/gameContext';
 
 import Divider from '@mui/material/Divider';
 // import MenuItem from '@mui/material/MenuItem';
@@ -50,12 +50,14 @@ function BasicMenu() {
 			window.close();
 		}
 		function newBasicGame (){
+			leaveRoom();
 			handlePage("Game");
 			setModeGame('BASIC');
 			gameSocket.emit('match_me', {playerName:playerName, typeGame:'BASIC'});
 		}
 
 		function newAdvancedGame() {
+			leaveRoom();
 			handlePage("Game");
 			setModeGame('ADVANCED');
 			gameSocket.emit('match_me', {playerName:playerName, typeGame:'ADVANCED'});
@@ -73,26 +75,37 @@ function BasicMenu() {
       setModeGame('');
       updatePageMenuChat("Game", 'none', chat);
     };
+	
     const {gameStatus} = useContext(GameContext);
+
+	const newGamePossible = (status:GameStatus) :boolean => {
+		const statusOk = ['NOT_IN_GAME', 'FINISHED', 'FINISH_BY_FORFAIT'];
+		if (statusOk.indexOf(status) !== -1) return (true);
+		else return (false);
+	};
+
+	const leaveRoomPossible = (status:GameStatus) :boolean => {
+		return (!newGamePossible(status) || status === 'FINISH_BY_FORFAIT');
+	};
 
 		return (
 		<List dense onMouseLeave={() => handleClick("none")} sx={{color: 'white',}} style={{position: 'fixed', top:'64px', width:200, paddingTop: "0px", paddingBottom: "0px", backgroundColor: '#2f2f2f', border:'1px solid black'}} >
-			{gameStatus === 'NOT_IN_GAME' && <ListItem button>
+			{newGamePossible(gameStatus) && <ListItem button>
 			  <ListItemText onClick={() => newBasicGame ()}>New Basic Game</ListItemText>
 			</ListItem>}
-			{gameStatus === 'NOT_IN_GAME' && <ListItem button>
+			{newGamePossible(gameStatus) && <ListItem button>
 			  <ListItemText onClick={() => newAdvancedGame()}>New Advanced Game</ListItemText>
 			</ListItem>}
-			{gameStatus === 'NOT_IN_GAME' && <ListItem sx={{color: 'grey'}}>
+			{!leaveRoomPossible(gameStatus) && <ListItem sx={{color: 'grey'}}>
 			  <ListItemText>Leave room</ListItemText>
 			</ListItem>}
-      {gameStatus !== 'NOT_IN_GAME' && <ListItem sx={{color: 'grey'}}>
+     		{!newGamePossible(gameStatus) && <ListItem sx={{color: 'grey'}}>
 			  <ListItemText>New Basic Game</ListItemText>
 			</ListItem>}
-			{gameStatus !== 'NOT_IN_GAME' && <ListItem sx={{color: 'grey'}}>
+			{!newGamePossible(gameStatus) && <ListItem sx={{color: 'grey'}}>
 			  <ListItemText>New Advanced Game</ListItemText>
 			</ListItem>}
-			{gameStatus !== 'NOT_IN_GAME' && <ListItem button>
+			{leaveRoomPossible(gameStatus) && <ListItem button>
 			  <ListItemText onClick={() => leaveRoom()}>Leave Room</ListItemText>
 			</ListItem>}
       <Divider/>
