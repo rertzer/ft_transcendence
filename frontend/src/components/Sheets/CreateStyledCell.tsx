@@ -19,7 +19,7 @@ type CreateCellProps = {
 };
 
 export function CreateStyledCell({
-  coordX, coordY, width, height, text, fontSize, className, // Accept a className as a prop
+  coordX, coordY, width, height, text, fontSize, className, onClick
 }: CreateCellProps) {
   const context = useContext(PageContext);
   if (!context) { throw new Error('useContext must be used within a MyProvider');}
@@ -36,6 +36,7 @@ export function CreateStyledCell({
         fontSize: `${fontSize + ((zoom - 100) / 16)}px`,
       }}
       className={`cell ${className}`}
+      onClick={onClick}
     >
       {text}
     </div>

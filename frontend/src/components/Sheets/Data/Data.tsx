@@ -39,7 +39,11 @@ function alternateLine(sx: number, sy: number, zoom: number, size: number) {
 function AddLine(sx: number, sy: number, zoom: number, key: number, coordX:number, username: string, numberGames: number, numberWon: number, numberLost: number, totalGameDuration: number) {
 
   const classname= "dataItem";
-  if ()
+  let ratio: string;
+  if (numberGames === 0)
+    ratio = "Not yet";
+  else
+    ratio = (numberWon / numberGames).toString();
 
 	return (<div key={key}>
           <CreateStyledCell
@@ -59,7 +63,7 @@ function AddLine(sx: number, sy: number, zoom: number, key: number, coordX:numbe
             text={numberLost.toString()} fontSize={12} className={classname} />
           <CreateStyledCell
             coordX={coordX} coordY={6} width={1} height={1}
-            text={numberLost.toString()} fontSize={12} className={classname} />
+            text={ratio} fontSize={12} className={classname} />
           <CreateStyledCell
             coordX={coordX} coordY={7} width={1} height={1}
             text={totalGameDuration.toString()} fontSize={12} className={classname} />
@@ -139,6 +143,21 @@ function sortUsers(users: User[], by: string) {
           return -1;
         return 0;
       });
+    else if (by === "Ratio") {
+      users.sort((a: User, b: User)=>{
+        let ratioA = 0;
+        let ratioB = 0;
+        if (a.numberGames !== 0)
+          ratioA = (a.numberWon / a.numberGames);
+        if (b.numberGames !== 0)
+          ratioB = (b.numberWon / b.numberGames);
+        if (ratioA < ratioB)
+          return 1;
+        if (ratioA > ratioB)
+          return -1;
+        return 0;
+      });
+    }
   return (users);
 }
   console.log("USERLIST", userList);
