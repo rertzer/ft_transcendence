@@ -39,7 +39,7 @@ function alternateLine(sx: number, sy: number, zoom: number, size: number) {
 function AddLine(sx: number, sy: number, zoom: number, key: number, coordX:number, username: string, numberGames: number, numberWon: number, numberLost: number, totalGameDuration: number) {
 
   const classname= "dataItem";
-  if ()
+
 
 	return (<div key={key}>
           <CreateStyledCell

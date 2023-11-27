@@ -13,22 +13,24 @@ import EditProfile from "./routes/EditProfile";
 import Twofa from './routes/TwoFA';
 import Redirect from './routes/Redirect';
 import RedirectTfa from './routes/RedirectTfa';
+import { PageProvider } from './context/PageContext';
 
 function App() {
  
-
   const router = createBrowserRouter(
     createRoutesFromElements(
-      <Route>
-	  <Route path="/" element={<RequireAuth><Desktop1 /></RequireAuth>} >
-      </Route>
-	  <Route path="/login" element={<Login />} />
-    <Route path="/redirect" element={<Redirect />} /> 
-    <Route path="/redirect/twofa" element={<RedirectTfa />} /> 
-    <Route path="/profile" element={<RequireAuth> <Profile /></RequireAuth>} />
-    <Route path="/edit" element={<RequireAuth> <EditProfile /></RequireAuth>} />
-    <Route path="/twofa" element={<RequireAuth> <Twofa /></RequireAuth>} />
-	  <Route path="*" element={<Welcome />} />
+    <Route>
+	    <Route path="/" element={<RequireAuth><Desktop1 /></RequireAuth>} />
+      <Route path="/game" element={<RequireAuth><PageProvider page_url={"Game"}><Desktop1 /></PageProvider></RequireAuth>} />
+      <Route path="/profile" element={<RequireAuth><PageProvider page_url={"Profile"}><Desktop1 /></PageProvider></RequireAuth>} />
+      <Route path="/data" element={<RequireAuth><PageProvider page_url={"Data"}><Desktop1 /></PageProvider></RequireAuth>} />
+      <Route path="/contacts" element={<RequireAuth><PageProvider page_url={"Contacts"}><Desktop1 /></PageProvider></RequireAuth>} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/redirect" element={<Redirect />} /> 
+      <Route path="/redirect/twofa" element={<RedirectTfa />} /> 
+      <Route path="/edit" element={<RequireAuth> <EditProfile /></RequireAuth>} />
+      <Route path="/twofa" element={<RequireAuth> <Twofa /></RequireAuth>} />
+      <Route path="*" element={<Welcome />} />
 	  </Route>
     )
   );
@@ -36,9 +38,9 @@ function App() {
 
   return (
     <div >
-		<LoginProvider>
-			<RouterProvider router={router} />
-		</LoginProvider>
+      <LoginProvider>
+        <RouterProvider router={router} />
+      </LoginProvider>
     </div>
   );
 }

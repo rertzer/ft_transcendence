@@ -27,11 +27,12 @@ const PageContext = createContext<SharedData | undefined>(undefined);
 
 type MyProviderProps = {
   children: ReactNode;
+  page_url: string;
 };
 
-function MyProvider({ children }: MyProviderProps) {
+function PageProvider({ children, page_url }: MyProviderProps) {
   const [sharedData, setSharedData] = useState({
-    page:'Profile',
+    page: page_url,
     menu:'none',
     chat:'none',
     zoom:125,
@@ -84,4 +85,4 @@ function MyProvider({ children }: MyProviderProps) {
   );
 }
 
-export { MyProvider, PageContext };
+export { PageProvider, PageContext };

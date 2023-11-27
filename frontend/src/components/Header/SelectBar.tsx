@@ -26,10 +26,12 @@ import ListItem from '@mui/material/ListItem';
 import { useLogin } from '../user/auth';
 import { gameSocket } from '../game/services/gameSocketService';
 import gameContext from '../../context/gameContext';
+import { useNavigate } from 'react-router-dom';
 
 
 
 function BasicMenu() {
+  const navigate = useNavigate();
 	function  File() {
 		const context = useContext(PageContext);
 		if (!context) {
@@ -259,6 +261,7 @@ function BasicMenu() {
   function handlePage(str : string) {
     updatePageMenuChat(str, "none", chat);
     console.log(page);
+    navigate("/" + str);
   }
   function handleChat(str : string) {
     if (str === chat)

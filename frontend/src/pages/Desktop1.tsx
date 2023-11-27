@@ -4,13 +4,14 @@ import { Body } from '../components/Body/Body';
 import { useEffect, useRef } from "react";
 import styles from "./Desktop1.module.css";
 import { useContext, useState } from 'react';
-import { PageContext, MyProvider } from '../context/PageContext';
+import { PageContext } from '../context/PageContext';
 import ChatComponent from '../components/chat/ChatComponent';
 import { WebsocketContext } from "../context/chatContext";
 import { useLogin } from "../components/user/auth";
 import { gameSocket } from '../components/game/services/gameSocketService';
 import { GameStatus } from '../context/gameContext';
 import GameContext, { IGameContextProps } from '../context/gameContext';
+import { useLocation } from 'react-router-dom';
 
 function Desktop1() {
 
@@ -111,14 +112,12 @@ function Desktop1() {
   const [Chat] = useState("none");
   return (
     <div className={styles.desktop1} style={{height: windowHeighthRef.current}}>
-      <MyProvider>
-	  	<GameContext.Provider value={gameContextValue}>
-        	<Body />
-        	<Header />
-        	<Footer/>
-        	<DisplayChat />
+		<GameContext.Provider value={gameContextValue}>
+			<Body />
+			<Header />
+			<Footer/>
+			<DisplayChat />
 		</GameContext.Provider>
-      </MyProvider>
     </div>
   );
 }

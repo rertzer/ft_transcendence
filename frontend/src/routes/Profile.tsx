@@ -124,7 +124,8 @@ function Profile() {
       <CreateStyledCell coordX={11} coordY={1} width={1} height={1} text={"Game Lost"} className={"title_profile"} fontSize={12}/>
       <CreateStyledCell coordX={11} coordY={2} width={1} height={1} text={auth?.user.game_won} className={"data_profile"} fontSize={12}/>
       <CreateStyledCell coordX={8} coordY={1} width={2} height={4} text={""} className={"border_profile"} fontSize={12}/>
-      <CreateStyledCell coordX={2} coordY={calculate_edit_Y()} width={1} height={1} text={"Edit Profile"} className={"edit_profile"} fontSize={12}/>
+      <CreateStyledCell coordX={2} coordY={calculate_edit_Y()} width={1} height={1} text={"Edit Profile"} className={"edit_profile"} fontSize={12} onClick={() => setEdit(true)}/>
+      {edit && <Navigate to="/edit"></Navigate>}
       {/* <div className="profileContainer">
         <div className="uInfo">
           <div className="left">{auth.user && <p>{auth.user.username}</p>}</div>
