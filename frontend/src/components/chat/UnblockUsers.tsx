@@ -45,7 +45,7 @@ export const UnblockUsers = (props: {showSubMenu: string, setShowSubMenu: Functi
             let result: {idUser: number, username: string, login: string}[] = [];
             if (data) {
                 data.map((element: any) => {
-                    result.push(element)
+                    return result.push(element)
                 })
                 setBlockedUsers(result);
                 toggleForm();

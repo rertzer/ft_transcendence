@@ -48,38 +48,37 @@ const ChatComponent = () => {
     setBlockedUsers,
   }
 
-async function getBlockedUsers() {
-    try {
-        const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/listOfBlockedUser/${auth.user.login}`, {
-            method: "GET",
-            headers: { Authorization: auth.getBearer()},
-          });
-        if (!response.ok) {
-            throw new Error("Request failed");
-        }
-        const data = await response.json();
-        let result: {idUser: number, username: string, login: string}[] = [];
-        if (data) {
-            data.map((element: any) => {
-                result.push(element)
-                return 0;
-            })
-            return (result);
-        }
-    }
-    catch(error) {
-        console.error("Error while getting blocked users", error);
-    }
-}
-
 useEffect(() => {
+    async function getBlockedUsers() {
+        try {
+            const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/listOfBlockedUser/${auth.user.login}`, {
+                method: "GET",
+                headers: { Authorization: auth.getBearer()},
+              });
+            if (!response.ok) {
+                throw new Error("Request failed");
+            }
+            const data = await response.json();
+            let result: {idUser: number, username: string, login: string}[] = [];
+            if (data) {
+                data.map((element: any) => {
+                    result.push(element)
+                    return 0;
+                })
+                return (result);
+            }
+        }
+        catch(error) {
+            console.error("Error while getting blocked users", error);
+        }
+    }
     const fetchBlocked = async () => {
         const result = await getBlockedUsers();
         if (result)
             setBlockedUsers(result)
     }
     fetchBlocked();
-  }, []);
+  }, [auth]);
 
     return (
         <div className="chatcomponent">
@@ -111,7 +110,7 @@ const NoChat = (props: {message: string}) => {
     return () => {
         socket.off('newMessage');
     }
-}, [])
+}, [auth.user.login, blockedUsers, socket])
 
     return (<div>
                 <ConversationBar isOwner={false} isAdmin={false}/>

@@ -49,7 +49,7 @@ const Messages = (props: {chatId: number, isOwner: boolean, setIsOwner: Function
 			socket.off('chatMsgHistory');
 			socket.off('newMessage');
 		}
-	}, [])
+	}, [auth.user.login, auth.user.username, blockedUsers, props, socket])
 
 	useEffect(() => {
 		if (render === true)
@@ -63,7 +63,7 @@ const Messages = (props: {chatId: number, isOwner: boolean, setIsOwner: Function
 				}
 			setRender(false);
 		}
-	}, [chatHistory]);
+	}, [chatHistory, render]);
 
 	useEffect(() => {
 		setChatMessages([]);
@@ -85,7 +85,7 @@ const Messages = (props: {chatId: number, isOwner: boolean, setIsOwner: Function
 				});
 			}
 		}
-	}, [chatMessages.length]);
+	}, [chatMessages.length, previousLen]);
 
 	return (
         <div className='messages'>
@@ -109,6 +109,8 @@ const Messages = (props: {chatId: number, isOwner: boolean, setIsOwner: Function
 										msgId={message.id}/>
 								)}
 							</div>)
+							} else {
+								return (0);
 							}
 			  			})}
 			  		</div>

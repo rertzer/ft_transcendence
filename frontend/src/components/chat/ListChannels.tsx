@@ -3,7 +3,6 @@ import { Tooltip } from '@mui/material';
 import "./ListChannels.scss"
 import { useContext, useState, useEffect } from 'react';
 import { WebsocketContext } from '../../context/chatContext';
-import  ConnectionContext from "../../context/authContext";
 import chatContext from '../../context/chatContext';
 import { useLogin } from "../../components/user/auth";
 
@@ -95,7 +94,7 @@ export const ListChannels = (props: {showSubMenu: string, setShowSubMenu: Functi
 		return () => {
 			socket.off("chatList");
 		}
-	}, [props.showSubMenu]);
+	}, [props.showSubMenu, socket]);
 
     const toggleForm = () => {
         if (props.showSubMenu !== "list") {

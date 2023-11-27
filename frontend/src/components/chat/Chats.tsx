@@ -1,7 +1,6 @@
 import "./Chats.scss";
 import { WebsocketContext } from "../../context/chatContext";
-import React, { useContext, useState, useEffect, useRef, Component } from 'react';
-import ConnectionContext from '../../context/authContext'
+import { useContext, useEffect, useRef } from 'react';
 import ChatContext from "../../context/chatContext";
 import { Channel } from './ChatComponent';
 import { useLogin } from "../../components/user/auth";
@@ -13,7 +12,7 @@ const Chats = () => {
 	const {activeChannel, setActiveChannel, allChannels, setAllChannels, blockedUsers} = useContext(ChatContext);
 
     useEffect(() => {
-        trigger();
+        socket.emit('chatListOfUser', auth.user.login);
         socket.on("ListOfChatOfUser", (channelsListReceive : Channel[]) => {
             setAllChannels(channelsListReceive);
         });
@@ -21,11 +20,11 @@ const Chats = () => {
         return () => {
 			socket.off("ListOfChatOfUser");
         }
-    }, [])
+    }, [setAllChannels, socket, auth.user.login])
 
-    function trigger() {
-       socket.emit('chatListOfUser', auth.user.login);
-    }
+    // function trigger() {
+    //    socket.emit('chatListOfUser', auth.user.login);
+    // }
 
     const startRef = useRef<HTMLDivElement>(null);
 
@@ -36,7 +35,7 @@ const Chats = () => {
                 block: "end",
             });
         }
-    }, []);
+    }, [allChannels.length]);
 
     function moveMostRecentUp(chatsOfUser: Channel[]) {
 
@@ -78,12 +77,12 @@ const Chats = () => {
                             else
                                 return (
                                 <div key={channel.id} onClick={() => {
-                                        if (channel.id != activeChannel.id) {
+                                        if (channel.id !== activeChannel.id) {
                                         setActiveChannel(channel);
                                         socket.emit('retrieveMessage', {chatId: channel.id, messageToDisplay: 15 })
                                         }}}>
                                     <div className={activeChannel.id === channel.id ? "userChat active" : "userChat"}>
-                                        <img src={channel.type !== "DM" ? "img1.png" : "recuperer l'avatar"} />
+                                        <img src={channel.type !== "DM" ? "img1.png" : "recuperer l'avatar"} alt="user avatar"/>
                                         <div className='userChatInfo'>
                                             <h1>{channel.type !== "DM" ? channel.channelName : findReceiverName(channel.channelName)}</h1>
                                             {blockedUsers.find(element => element.idUser === channel.userId) && <p>blocked message</p>}

@@ -1,16 +1,13 @@
-import { useContext, useEffect } from 'react';
 import './styles.scss';
 import { createBrowserRouter, createRoutesFromElements,RouterProvider, Route } from 'react-router-dom';
 import Login from './routes/Login';
 import Home from './routes/Home';
 import Profile from './routes/Profile';
-import { WebsocketContext } from './context/chatContext';
 import Desktop1 from './pages/Desktop1';
 import Game from './components/game/Game';
 import Welcome from "./routes/Welcome";
 import { LoginProvider } from "./components/user/auth";
 import { RequireAuth } from "./components/user/requireAuth";
-import EditProfile from "./routes/EditProfile";
 
 function App() {
  

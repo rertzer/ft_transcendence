@@ -52,7 +52,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
         return () => {
 			socket.off("userIsMute");
 		}
-    }, [])
+    }, [socket])
 
 	async function checkIfUserIsBanned() {
 
@@ -158,7 +158,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 			body: JSON.stringify({ login: props.login, chatId: props.chatId})
 		};
 		try {
-			const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/setAdmin/`, requestOptions)
+			await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/setAdmin/`, requestOptions)
 			toggleUserActionsMenu();
 			sendServiceMessage(props.username + " is now an administrator of this channel");
 		}
@@ -293,7 +293,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 			let result: {idUser: number, username: string, login: string}[] = [];
 			if (data) {
 				data.map((element: any) => {
-					result.push(element)
+					return result.push(element)
 				})
 				setBlockedUsers(result);
 			}
@@ -332,10 +332,9 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 				headers: { Authorization: auth.getBearer()},
 			});
 			if (!response.ok) {
-				console.error(`Error fetching friends: ${response.status}`);
+				console.error(`Error deleting invite: ${response.status}`);
 				return;
 			}
-			const data = await response.json();
 		} catch (error) {
 			console.error('Error removing message:', error);
 		}
@@ -349,17 +348,17 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 				<div className='messageInfo'>
 					{messageType === "owner" ?
 						<div>
-							<img src="" />  {/*faudra mettre la photo de profil ici   */}
+							<img src="" alt="user Avatar"/>  {/*faudra mettre la photo de profil ici   */}
 						</div> :
 						<div className="userOptions" ref={menuRef}>
-							<img src="" style={{cursor:"pointer"}} onClick={toggleUserActionsMenu}/>
+							<img src="" alt="user Avatar" style={{cursor:"pointer"}} onClick={toggleUserActionsMenu}/>
 							<div className={showUserActionsMenu ? "userActions" : "userActions-hidden"}>
 								{props.isDM || userInfo.userStatus === "" ? <h4>{props.username}</h4> : <h4>{props.username + " (" + userInfo.userStatus + ")"}</h4>}
 								<hr></hr>
 								<div className="menuItems">
 									{props.isDM && roomId === 0 && <div onClick={() => {startGame("BASIC")}}>Invite to Classic Game</div>}
 									{props.isDM && roomId === 0 && <div onClick={() => {startGame("ADVANCED")}}>Invite to Advanced Game</div>}
-									{userInfo.friend ? <div>Unfriend</div> : <div onClick={addToFriends}>Add to friends</div>}
+									{!userInfo.friend && <div onClick={addToFriends}>Add to friends</div>}
 									{props.isDM === false && <div onClick={startDM}>Send DM</div>}
 									<Link to="/profile/1" style={{textDecoration:"none", color: "#ddddf7"}}>
 										<div>Show profile</div>

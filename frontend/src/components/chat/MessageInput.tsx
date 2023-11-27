@@ -1,16 +1,8 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext } from 'react';
 import "./MessageInput.scss"
 import { WebsocketContext } from '../../context/chatContext';
 import { useLogin } from "../../components/user/auth";
-import  ConnectionContext from "../../context/authContext"
 
-
-// type ChatHistory = {
-// 	msg: string;
-// 	username: string;
-// 	date: string;
-// 	id: number;
-// }
 const MessageInput = (props: {chatId: number}) => {
 
 	const [value, setValue] = useState('');

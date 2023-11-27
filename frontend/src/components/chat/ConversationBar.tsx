@@ -8,7 +8,6 @@ import { ChannelSettings } from "./ChannelSettings";
 import { useLogin } from "../../components/user/auth";
 import { WebsocketContext } from '../../context/chatContext';
 import { PageContext } from "../../context/PageContext";
-import { act } from "react-dom/test-utils";
 import { UnblockUsers } from "./UnblockUsers";
 
 
