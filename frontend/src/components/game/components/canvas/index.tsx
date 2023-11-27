@@ -57,6 +57,6 @@ export function Canvas(props:any) {
 	},[]);
 
 	return (
-		<canvas ref={canvasRef} {...rest} style={{position: 'relative', width: '100%', heigth: '100%', cursor:'cell'}}  />
+		<canvas ref={canvasRef} {...rest} style={{position: 'relative', width: '100%', heigth: '100%', cursor:'cell', pointerEvents:'none'}}  />
 	);
 };
