@@ -129,7 +129,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 
     async function toggleUserActionsMenu() {
 		const info: uInfo = {userStatus: "", friend: false};
-		if (showUserActionsMenu === false && props.isDM === false) {
+		if (showUserActionsMenu === false) {
 			info.userStatus =  await getUserInfo();
 			info.friend = await checkIfAlreadyFriend();
 			setUserInfo(info);

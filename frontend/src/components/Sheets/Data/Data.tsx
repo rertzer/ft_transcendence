@@ -2,7 +2,6 @@ import {useState, useEffect, useContext} from 'react';
 import { useLogin } from '../../user/auth';
 import { PageContext } from "../../../context/PageContext";
 import { CreateStyledCell } from '../CreateStyledCell';
-import ChatComponent from '../../chat/ChatComponent';
 
 type User = {
   userId: number,        
@@ -38,56 +37,6 @@ function alternateLine(sx: number, sy: number, zoom: number, size: number) {
 	return (<div key={"alternateLines"}>{lines}</div>);
 }
 
-function convertSeconds(seconds: number) {
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
-  const remainingSeconds = Math.floor(seconds % 60);
-  const hoursStr = (hours > 9 ? hours.toString() : "0" + hours.toString());
-  const minutesStr = (minutes > 9 ? minutes.toString() : "0" + minutes.toString());
-  const remainingSecStr = (remainingSeconds > 9 ? remainingSeconds.toString() : "0" + remainingSeconds.toString());
-
-    return `${hoursStr}:${minutesStr}:${remainingSecStr}`
-}
-
-function AddLine(key: number, coordX:number, user: User, myLogin: string, reverseRank: number, reverseBool: number) {
-
-  let classname: string;
-  if (myLogin === user.userLogin)
-    classname = "dataItemSelf";
-  else
-    classname = "dataItem";
-  let ratio: string;
-  if (user.numberGames === 0)
-    ratio = "Not yet";
-  else
-    ratio = (user.numberWon / user.numberGames).toFixed(3).toString();
-  const playTime = convertSeconds(user.totalGameDurationInSec);
-
-	return (<div key={key}>
-          <CreateStyledCell
-            coordX={coordX} coordY={1} width={1} height={1}
-            text={reverseBool === 1 ? key.toString() : reverseRank.toString()} fontSize={12} className={classname} />
-          <CreateStyledCell
-            coordX={coordX} coordY={2} width={1} height={1}
-            text={user.userUsername} fontSize={12} className={classname} />
-          <CreateStyledCell
-            coordX={coordX} coordY={3} width={1} height={1}
-            text={user.numberGames.toString()} fontSize={12} className={classname} />
-          <CreateStyledCell
-            coordX={coordX} coordY={4} width={1} height={1}
-            text={user.numberWon.toString()} fontSize={12} className={classname} />
-          <CreateStyledCell
-            coordX={coordX} coordY={5} width={1} height={1}
-            text={user.numberLost.toString()} fontSize={12} className={classname} />
-          <CreateStyledCell
-            coordX={coordX} coordY={6} width={1} height={1}
-            text={ratio} fontSize={12} className={classname} />
-          <CreateStyledCell
-            coordX={coordX} coordY={7} width={1} height={1}
-            text={playTime} fontSize={12} className={classname} />
-        </div>)
-}
-
 export function Data(props: {sx: number, sy: number, zoom: number}) {
 
   const [userList, setUserList] = useState<User[]>([]);
@@ -98,7 +47,7 @@ export function Data(props: {sx: number, sy: number, zoom: number}) {
 	if (!context) {
 		throw new Error('useContext must be used within a MyProvider');
 	}
-	const { updateChat } = context;
+	const { updateChat, chat } = context;
 
   useEffect(() => {
 		const getUsers = async () => {
@@ -122,6 +71,60 @@ export function Data(props: {sx: number, sy: number, zoom: number}) {
 		}
 		getUsers();
 	}, [])
+
+  function convertSeconds(seconds: number) {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const remainingSeconds = Math.floor(seconds % 60);
+    const hoursStr = (hours > 9 ? hours.toString() : "0" + hours.toString());
+    const minutesStr = (minutes > 9 ? minutes.toString() : "0" + minutes.toString());
+    const remainingSecStr = (remainingSeconds > 9 ? remainingSeconds.toString() : "0" + remainingSeconds.toString());
+  
+      return `${hoursStr}:${minutesStr}:${remainingSecStr}`
+  }
+  
+  function AddLine(key: number, coordX:number, user: User, myLogin: string, reverseRank: number, reverseBool: number) {
+  
+    let classname: string;
+    if (myLogin === user.userLogin)
+      classname = "dataItemSelf";
+    else
+      classname = "dataItem";
+    let ratio: string;
+    if (user.numberGames === 0)
+      ratio = "Not yet";
+    else
+      ratio = (user.numberWon / user.numberGames).toFixed(3).toString();
+    const playTime = convertSeconds(user.totalGameDurationInSec);
+  
+    return (<div key={key}>
+            <CreateStyledCell
+              coordX={coordX} coordY={1} width={1} height={1}
+              text={reverseBool === 1 ? key.toString() : reverseRank.toString()} fontSize={12} className={classname} />
+            {classname === "dataItem" ? 
+              <div onClick={() =>{sendDM(user.userUsername, user.userLogin)}} style={{cursor: "pointer"}}><CreateStyledCell
+                coordX={coordX} coordY={2} width={1} height={1}
+                text={user.userUsername} fontSize={12} className={classname} /></div> : 
+              <CreateStyledCell
+                coordX={coordX} coordY={2} width={1} height={1}
+                text={user.userUsername} fontSize={12} className={classname} />}
+            <CreateStyledCell
+              coordX={coordX} coordY={3} width={1} height={1}
+              text={user.numberGames.toString()} fontSize={12} className={classname} />
+            <CreateStyledCell
+              coordX={coordX} coordY={4} width={1} height={1}
+              text={user.numberWon.toString()} fontSize={12} className={classname} />
+            <CreateStyledCell
+              coordX={coordX} coordY={5} width={1} height={1}
+              text={user.numberLost.toString()} fontSize={12} className={classname} />
+            <CreateStyledCell
+              coordX={coordX} coordY={6} width={1} height={1}
+              text={ratio} fontSize={12} className={classname} />
+            <CreateStyledCell
+              coordX={coordX} coordY={7} width={1} height={1}
+              text={playTime} fontSize={12} className={classname} />
+          </div>)
+  }
 
 function sortUsers(users: User[], by: string) {
     if (by === "Won")
@@ -182,7 +185,10 @@ function sortUsers(users: User[], by: string) {
 }
 
 function sendDM(username: string, login: string) {
-  updateChat("Chat New DM " + username + "/" + login);
+  if (chat === "none")
+    updateChat("Chat New DM " + username + "/" + login);
+  else
+    updateChat("none");
 }
 
   return (

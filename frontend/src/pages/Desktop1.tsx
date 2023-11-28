@@ -106,6 +106,7 @@ function Desktop1() {
 	else
 		return (<div/>);
   }
+
   const [Chat] = useState("none");
   return (
     <div className={styles.desktop1} style={{height: windowHeighthRef.current}}>

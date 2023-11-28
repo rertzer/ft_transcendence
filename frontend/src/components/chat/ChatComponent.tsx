@@ -6,6 +6,7 @@ import { useState, useEffect, useContext } from 'react';
 import ChatContext, {IChatContext} from "../../context/chatContext";
 import { useLogin } from "../../components/user/auth";
 import ConversationBar from "./ConversationBar";
+import { PageContext } from "../../context/PageContext";
 
 export type Channel = {
     id: number;
@@ -21,6 +22,11 @@ export type Channel = {
 }
 
 const ChatComponent = (props: {newDM: string}) => {
+    const context = useContext(PageContext);
+	if (!context) {
+		throw new Error('useContext must be used within a MyProvider');
+	}
+	const { updateChat, chat } = context;
     const auth = useLogin();
     const socket = useContext(WebsocketContext);
     const [DM, setDM] = useState(props.newDM.search("New DM") !== -1 ? true : false)
@@ -60,7 +66,7 @@ useEffect(() => {
             socket.off("ListOfChatOfUser");
         }
     }
-});
+}, []);
 
 useEffect(() => {
     async function getBlockedUsers() {
@@ -95,11 +101,12 @@ useEffect(() => {
   }, [auth]);
 
   useEffect(() => {
-    console.log("channels", allChannels);
     if (DM === true) {
         startDmFromTop();
-        if (activeChannel.id !== -1)
+        if (activeChannel.id !== -1) {
             setDM(false);
+            updateChat("Chat");
+        }
     }
   }, [allChannels])
 
@@ -121,17 +128,15 @@ async function startDmFromTop() {
     const targetLogin = props.newDM.substring(props.newDM.indexOf("/") + 1);
     let existingConversation = checkIfDmExists(targetUsername);
     if (existingConversation !== -1) {
-        console.log("EXISTING");
         setActiveChannel(allChannels[existingConversation]);
-        socket.emit('retrieveMessage', {chatId: allChannels[existingConversation].id, messageToDisplay: 15 })
+        if (activeChannel.id !== -1)
+            socket.emit('retrieveMessage', {chatId: allChannels[existingConversation].id, messageToDisplay: 15 })
     } else {
-        console.log("CREATING");
         const messageData = {
             sender: auth.user.login,
             receiver: targetLogin,
         }
         socket.emit('newPrivateConv', messageData);
-        console.log("MESSAGE", messageData)
         setNeedToUpdate("newDM " + targetUsername);
     }
 }

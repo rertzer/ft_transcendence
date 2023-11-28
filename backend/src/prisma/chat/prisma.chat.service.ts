@@ -823,35 +823,35 @@ export class PrismaChatService {
 		});
 		if (existingUser) {
 
-		} else {
-			// User doesn't exist, create a new user
-			const newUser = await this.prismaService.user.create({
-				data: {
-					username: 'toto',
-					first_name: 'John',
-					login: 'toto',
-					last_name: 'Doe',
-					email: 'johndoe@example.com',
-					role: 'user',
-					game_won: 0,
-					game_lost: 0,
-					game_played: 0,
-				},
-			});
-			const newUser2 = await this.prismaService.user.create({
-				data: {
-					username: 'coco',
-					first_name: 'jay',
-					last_name: ';avf',
-					login: 'coco',
-					email: 'johndoeff@example.com',
-					role: 'user',
-			  game_won: 0,
-			  game_lost: 0,
-			  game_played: 0,
-			  // Add other user fields as needed
-			},
-		});
+		// } else {
+		// 	// User doesn't exist, create a new user
+		// 	const newUser = await this.prismaService.user.create({
+		// 		data: {
+		// 			username: 'toto',
+		// 			first_name: 'John',
+		// 			login: 'toto',
+		// 			last_name: 'Doe',
+		// 			email: 'johndoe@example.com',
+		// 			role: 'user',
+		// 			game_won: 0,
+		// 			game_lost: 0,
+		// 			game_played: 0,
+		// 		},
+		// 	});
+		// 	const newUser2 = await this.prismaService.user.create({
+		// 		data: {
+		// 			username: 'coco',
+		// 			first_name: 'jay',
+		// 			last_name: ';avf',
+		// 			login: 'coco',
+		// 			email: 'johndoeff@example.com',
+		// 			role: 'user',
+		// 	  game_won: 0,
+		// 	  game_lost: 0,
+		// 	  game_played: 0,
+		// 	  // Add other user fields as needed
+		// 	},
+		// });
 
 		}
 		} catch (error) {

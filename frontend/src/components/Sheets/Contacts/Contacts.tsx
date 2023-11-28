@@ -85,10 +85,13 @@ export function Contacts(props: { sx: number, sy: number, zoom: number, toolbar:
 	if (!context) {
 		throw new Error('useContext must be used within a MyProvider');
 	}
-	const { updateChat } = context;
+	const { updateChat, chat } = context;
 
 	function sendDM(username: string, login: string) {
-		updateChat("Chat New DM " + username + "/" + login);
+		if (chat === "none")
+			updateChat("Chat New DM " + username + "/" + login);
+		else
+			updateChat("none");
 	  }
 	  const getUser = async () => {
 		  try {
