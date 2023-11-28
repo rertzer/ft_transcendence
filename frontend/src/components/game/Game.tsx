@@ -38,7 +38,7 @@ function Game() {
 	return (
 		<>
 			{ gameStatus === 'NOT_IN_GAME' && <JoinRoom />}
-			{ gameStatus === 'IN_WAITING_ROOM'&& <WaitingRoom /> }
+			{ gameStatus === 'IN_WAITING_ROOM' && <WaitingRoom /> }
 			{ gameStatus !== 'IN_WAITING_ROOM' && gameStatus !== 'NOT_IN_GAME' && <GameArea />}
 		</>
 	)

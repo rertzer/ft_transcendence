@@ -68,9 +68,7 @@ export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, On
 		const responseData = {
 			roomId:newRoomId?.id
 		}
-		console.log('the new room id is ',newRoomId)
 		client.emit('new_empty_room', responseData);
-
 	}
 
 	@SubscribeMessage('match_me')
@@ -85,7 +83,6 @@ export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, On
 
 	@SubscribeMessage('join_room')
 	async handleJoinGame(@MessageBody() data:{roomId:number, playerName:string}, @ConnectedSocket() client:Socket){
-		console.log("I got a join room request for ", data);
 		const player = this.playersService.findOne(client);
 		if (player) {
 			player.name = data.playerName;
@@ -96,7 +93,6 @@ export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, On
 
 	@SubscribeMessage('give_me_room_status')
 	handleGiveMeRoomStatus(@MessageBody() data:{roomId:number}, @ConnectedSocket() client:Socket){
-		console.log("I got a give_me_room_status request for ", data.roomId);
 		const room = this.roomsService.findRoomById(data.roomId);
 		if (room) this.roomsService.sendRoomStatus(room);
 	}
