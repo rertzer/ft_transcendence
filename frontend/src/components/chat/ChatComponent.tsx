@@ -20,8 +20,10 @@ export type Channel = {
     userId: number | null;
 }
 
-const ChatComponent = (props: {newDM: boolean}) => {
+const ChatComponent = (props: {newDM: string}) => {
     const auth = useLogin();
+    const socket = useContext(WebsocketContext);
+    const [DM, setDM] = useState(props.newDM.search("New DM") !== -1 ? true : false)
     const [allChannels, setAllChannels] = useState<Channel[]>([])
     const [blockedUsers, setBlockedUsers] = useState<{idUser: number, username: string, login: string}[]>([]);
     const [needToUpdate, setNeedToUpdate] = useState("");
@@ -47,6 +49,18 @@ const ChatComponent = (props: {newDM: boolean}) => {
     blockedUsers,
     setBlockedUsers,
   }
+useEffect(() => {
+    if (allChannels.length === 0) {
+        socket.emit('chatListOfUser', auth.user.login);
+        socket.on("ListOfChatOfUser", (channelsListReceive : Channel[]) => {
+            setAllChannels(channelsListReceive);
+        });
+    
+        return () => {
+            socket.off("ListOfChatOfUser");
+        }
+    }
+});
 
 useEffect(() => {
     async function getBlockedUsers() {
@@ -80,6 +94,47 @@ useEffect(() => {
     fetchBlocked();
   }, [auth]);
 
+  useEffect(() => {
+    console.log("channels", allChannels);
+    if (DM === true) {
+        startDmFromTop();
+        if (activeChannel.id !== -1)
+            setDM(false);
+    }
+  }, [allChannels])
+
+  function checkIfDmExists(targetUsername: string) {
+    const index = allChannels.findIndex((element: Channel) => {
+        if (element.type !== "DM")
+            return false;
+        const name1 = element.channelName.substring(0, element.channelName.indexOf(" "));
+        const name2 = element.channelName.substring(element.channelName.indexOf(" ") + 1);
+        if (targetUsername === name1 || targetUsername === name2)
+            return true;
+        return false;
+    });
+    return (index);
+}
+
+async function startDmFromTop() {
+    const targetUsername = props.newDM.substring(12, props.newDM.indexOf("/"));
+    const targetLogin = props.newDM.substring(props.newDM.indexOf("/") + 1);
+    let existingConversation = checkIfDmExists(targetUsername);
+    if (existingConversation !== -1) {
+        console.log("EXISTING");
+        setActiveChannel(allChannels[existingConversation]);
+        socket.emit('retrieveMessage', {chatId: allChannels[existingConversation].id, messageToDisplay: 15 })
+    } else {
+        console.log("CREATING");
+        const messageData = {
+            sender: auth.user.login,
+            receiver: targetLogin,
+        }
+        socket.emit('newPrivateConv', messageData);
+        console.log("MESSAGE", messageData)
+        setNeedToUpdate("newDM " + targetUsername);
+    }
+}
 
     return (
         <div className="chatcomponent">

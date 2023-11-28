@@ -182,8 +182,7 @@ function sortUsers(users: User[], by: string) {
 }
 
 function sendDM(username: string, login: string) {
-  updateChat("Chat New DM");
-  ChatComponent.
+  updateChat("Chat New DM " + username + "/" + login);
 }
 
   return (

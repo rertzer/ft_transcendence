@@ -186,7 +186,7 @@ function Footer() {
 	  <div className={dark ? styles.sep : styles.sepLight} />
     <div style={{position:'fixed', bottom:'2px', left:'8px'}}>Sheet {getPagePlace()} of 4</div>
     {
-      chat === "Chat" ?
+      chat.search("Chat") !== -1 ?
       <div className={dark ? styles.button : styles.buttonLight}  onClick={() => handleChat("none")}>
        <ContactSupportIcon className={styles.icon} /> 
         <span className={styles.contact}>

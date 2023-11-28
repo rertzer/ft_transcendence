@@ -100,15 +100,11 @@ function Desktop1() {
 		if (roomId !== 0)
 			updatePage("Game");
 	}, [roomId]);
-	
-    switch (chat) {
-      case "Chat":
-        return (<ChatComponent newDM={false}/>);
-	  case "Chat New DM":
-		return (<ChatComponent newDM={true}/>)
-      default:
-        return (<div/>);
-    }
+
+	if (chat === "Chat" || chat.search("New DM") !== -1)
+		return (<ChatComponent newDM={chat}/>);
+	else
+		return (<div/>);
   }
   const [Chat] = useState("none");
   return (
