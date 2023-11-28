@@ -120,16 +120,23 @@ export class MyGateway {
 	async onNewPrivateConv(@MessageBody() messageData: {sender: string, receiver: string}, @ConnectedSocket() client:Socket)
 	{
 		const targetSocket = this.socketsLogin.find((socket) => socket.sock === client);
-		if (targetSocket !== undefined)
-		{
-			const receiverSocket = this.socketsLogin.find((socket) => socket.login === messageData.receiver)
-			if (receiverSocket)
-			{
-				const allGood = await this.privateConv.setDirectConv(messageData.sender, targetSocket.idOfLogin, messageData.receiver, targetSocket.sock, receiverSocket.sock);
-				const chatlister = new ChatLister(this.prismaChatService);
-				chatlister.listChatOfUser(targetSocket.idOfLogin, targetSocket.sock);
-			}
-		}
+        if (targetSocket !== undefined)
+        {
+            const receiverSocket = this.socketsLogin.find((socket) => socket.login === messageData.receiver)
+            if (receiverSocket)
+            {
+                const allGood = await this.privateConv.setDirectConv(messageData.sender, targetSocket.idOfLogin, messageData.receiver, targetSocket.sock, receiverSocket.sock);
+                const chatlister = new ChatLister(this.prismaChatService);
+                chatlister.listChatOfUser(targetSocket.idOfLogin, targetSocket.sock);
+            }
+            else
+            {
+                const allGood = await this.privateConv.setDirectConv(messageData.sender, targetSocket.idOfLogin, messageData.receiver, targetSocket.sock, null);
+                const chatlister = new ChatLister(this.prismaChatService);
+                chatlister.listChatOfUser(targetSocket.idOfLogin, targetSocket.sock);
+
+            }
+        }
 	}
 
 	@SubscribeMessage('createChat')

@@ -47,6 +47,16 @@
     border: 1px solid rgb(150, 0, 0);
 	cursor: pointer;
 }
+
+.DM_contacts {
+    color: black;
+    display:block;
+    text-align: center;
+    font-weight: 600;
+    background-color: blue;
+    border: 1px solid rgb(150, 0, 0);
+	cursor: pointer;
+}
 .delete_contacts:hover {
 	color: black;
     display:block;

@@ -138,6 +138,50 @@ export class PrismaChatService {
 		if (userId)
 			return userId.chatChannelsUser;
 	}
+	
+	async getAllDm(oldUsername: string)
+    {
+        const arrayOfDm = await this.prismaService.chatChannels.findMany({
+            where: {
+                type: "DM",
+                name: {
+                    contains: oldUsername,
+                }
+            }
+        })
+        if (arrayOfDm)
+        {
+            console.log("array of dm:", arrayOfDm);
+            return (arrayOfDm);
+        }
+    }
+
+    async updateNewUsernameOnDm(arrayOfDm:any, oldUsername:string, newUsername:string)
+    {
+        console.log("oldUsername = ", oldUsername, "new username = ", newUsername);
+        for (const element of arrayOfDm)
+        {
+            console.log(element.name)
+            const nameParts = element.name.split(' ');
+            console.log(nameParts);
+            const indexOfOldUsername = nameParts.indexOf(oldUsername);
+            console.log("index = ", indexOfOldUsername);
+            if (indexOfOldUsername !== -1) {
+                nameParts[indexOfOldUsername] = newUsername;
+                const newName = nameParts.join(' ');
+                const worked = await this.prismaService.chatChannels.update({
+                    where:{
+                        id:element.id,
+                    },
+                    data:{
+                        name: newName,
+                    }
+                })
+                if (worked)
+                    console.log("updated with name : ", newName);
+            }
+        }
+    }
 
 	async changeOwner(userId:number, listUsersOfChat:any, chatId:number )
 	{

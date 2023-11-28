@@ -88,6 +88,7 @@ export class addFriendController {
 						username: getLoginOfId.username,
 						connected: connected,
 						id: getLoginOfId.id,
+						login: getLoginOfId.login,
 					}
 					listFriends.push(friend);
 				}

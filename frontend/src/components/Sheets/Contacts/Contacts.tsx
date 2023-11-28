@@ -1,8 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { CreateStyledCell } from '../CreateStyledCell';
 import { useLogin } from '../../user/auth';
-import { findRenderedDOMComponentWithClass } from 'react-dom/test-utils';
-import { log } from 'console';
 import { PageContext } from '../../../context/PageContext';
 
 function alternateLine(size: number) {
@@ -21,7 +19,7 @@ function alternateLine(size: number) {
 	return (<div key={'alternateLines' + size}>{lines}</div>);
 }
 
-export function AddLine(props: {scrollX: number, scrollY: number, toolbar: boolean, zoom: number, name: string, id: number, coordX:number, connected: string, avatar: string, key:string}) {
+export function AddLine(props: {scrollX: number, scrollY: number, toolbar: boolean, zoom: number, name: string, coordX:number, connected: string, avatar: string, key:string}) {
 
 	const auth = useLogin();
 		let add;
@@ -41,27 +39,8 @@ export function AddLine(props: {scrollX: number, scrollY: number, toolbar: boole
 		classname= "status_unconnected"
 	}
 
-	async function removeFriend() {
-		try {
-			const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/friend/deleteFriend/${props.id}/${auth.user.id}`, {
-				method: 'DELETE',
-				headers: { Authorization: auth.getBearer()},
-			});
-			if (!response.ok) {
-				console.error(`Error fetching friends: ${response.status}`);
-				return ;
-			}
-			const data = await response.json();
-			console.log("data receive = ", data);
-			if (!data) {
-				console.log('No list of friends');
-			} else {
-				console.log("hey all good");
-			}
-		} catch (error) {
-			console.error('Error removinf friends:', error);
-		}
-	}
+	
+
 		//creer un bouton on click qui te redirige vers le user ?
 	return (
 		<div key={props.name}>
@@ -86,11 +65,7 @@ export function AddLine(props: {scrollX: number, scrollY: number, toolbar: boole
 				coordX={props.coordX} coordY={2} width={1} height={1}
 				text={add} fontSize={12} className={classname} />
 			</div>
-			<div key={"removeFriend"} onClick={removeFriend}>
-				<CreateStyledCell
-					coordX={props.coordX} coordY={3} width={1} height={1} key={"3"}
-					text={'unfriend'} fontSize={12} className={"delete_contacts"} />
-			</div>
+			
 		</div>)
 }
 
@@ -99,39 +74,64 @@ type listOfFriend = {
 	username: string,
 	connected: string,
 	id: number,
+	login:string,
 }
 
 export function Contacts(props: { sx: number, sy: number, zoom: number, toolbar: boolean }) {
 	const [listOfFriend, setListOfFriend] = useState<listOfFriend[]>([]);
 	const [sizeOfList, setSizeOfList] = useState(0);
 	const auth = useLogin();
+	const context = useContext(PageContext);
+	if (!context) {
+		throw new Error('useContext must be used within a MyProvider');
+	}
+	const { updateChat } = context;
 
-	useEffect(() => {
-		const getUser = async () => {
-			try {
-				const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/friend/listFriends/${auth.user.login}`, {
-					method: 'GET',
-					headers: { Authorization: auth.getBearer()},
-				});
-				if (!response.ok) {
-					console.error(`Error fetching friends: ${response.status}`);
-					return;
-				}
+	function sendDM(username: string, login: string) {
+		updateChat("Chat New DM " + username + "/" + login);
+	  }
+	  const getUser = async () => {
+		  try {
+			  const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/friend/listFriends/${auth.user.login}`, {
+				  method: 'GET',
+				  headers: { Authorization: auth.getBearer()},
+			  });
+			  if (!response.ok) {
+				  console.error(`Error fetching friends: ${response.status}`);
+				  return;
+			  }
 
-				const data = await response.json();
-				console.log("data receive = ", data);
-				if (!data) {
-					console.log('No list of friends');
-				} else {
-					console.log("hey all good");
-					setListOfFriend(data);
-				}
-			} catch (error) {
-				console.error('Error fetching friends:', error);
+			  const data = await response.json();
+			  console.log("data receive = ", data);
+			  if (!data) {
+				  console.log('No list of friends');
+			  } else {
+				  console.log("hey all good");
+				  setListOfFriend(data);
+			  }
+		  } catch (error) {
+			  console.error('Error fetching friends:', error);
+		  }
+	  }
+	  async function removeFriend(idOfUser:number) {
+		try {
+			const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/friend/deleteFriend/${idOfUser}/${auth.user.id}`, {
+				method: 'DELETE',
+				headers: { Authorization: auth.getBearer()},
+			});
+			if (!response.ok) {
+				console.error(`Error fetching friends: ${response.status}`);
+				return ;
 			}
+		} catch (error) {
+			console.error('Error removing friends:', error);
 		}
 		getUser();
-		const intervalId = setInterval(getUser, 1000);
+	}
+
+	useEffect(() => {
+		getUser();
+		const intervalId = setInterval(getUser, 5000);
 
 		return () => clearInterval(intervalId);
 	}, [])
@@ -154,7 +154,16 @@ export function Contacts(props: { sx: number, sy: number, zoom: number, toolbar:
 			{listOfFriend.map((friend, index) => {
       console.log(friend);
       const variableToPass = 4 + index; // Commence à 4 et s'incrémente à chaque itération
-      return (<AddLine scrollX={props.sx} scrollY={props.sy} toolbar={props.toolbar} zoom={props.zoom} name={friend.username} id={friend.id} coordX={variableToPass} connected={friend.connected} avatar={friend.avatar} key={`${friend.id}`}/>)
+      return (<div><AddLine scrollX={props.sx} scrollY={props.sy} toolbar={props.toolbar} zoom={props.zoom} name={friend.username} coordX={variableToPass} connected={friend.connected} avatar={friend.avatar} key={`${friend.id}`}/>
+	  	<div onClick={()=>{sendDM(friend.username, friend.login)}}><CreateStyledCell
+		  coordX={variableToPass} coordY={3} width={1} height={1} key={"3"}
+		  text={'send DM'} fontSize={12} className={"DM_contacts"} /></div>
+  		<div key={"removeFriend"} onClick={() =>removeFriend(friend.id)}>
+		<CreateStyledCell
+			coordX={variableToPass} coordY={4} width={1} height={1} key={"3"}
+			text={'unfriend'} fontSize={12} className={"delete_contacts"} />
+		</div>
+		</div>)
     })}
 			<CreateStyledCell coordX={3} coordY={1} width={2} height={sizeOfList === 0 ? 2 : sizeOfList + 1} text={''} fontSize={0} className={"border"} key={"border"}/>
 		</div>);

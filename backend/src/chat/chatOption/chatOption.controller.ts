@@ -29,6 +29,20 @@ export class ChatOptController {
 		}
 
 	}
+	
+	@Post("updateDmName")
+    async updateDmName(
+        @Body() data: {
+            OldUsername:string, newUsername:string}
+    )
+    {
+        console.log("old username and new", data.OldUsername, data.newUsername);
+        const arrayOfDm = await this.prismaChatService.getAllDm(data.OldUsername);
+        if (arrayOfDm)
+        {
+            await this.prismaChatService.updateNewUsernameOnDm(arrayOfDm, data.OldUsername, data.newUsername)
+        }
+    }
 
 	@Post('inviteUser')
 	async inviteUser(@Body() data:{ownerLogin:string, username:string, chat_id:number})
