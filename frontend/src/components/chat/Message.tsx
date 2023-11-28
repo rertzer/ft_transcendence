@@ -235,7 +235,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 		return (index);
 	}
 
-	async function startDM() {
+	async function startDmFromMessage() {
 
 		let existingConversation = checkIfDmExists();
 		if (existingConversation !== -1) {
@@ -359,7 +359,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 									{props.isDM && roomId === 0 && <div onClick={() => {startGame("BASIC")}}>Invite to Classic Game</div>}
 									{props.isDM && roomId === 0 && <div onClick={() => {startGame("ADVANCED")}}>Invite to Advanced Game</div>}
 									{!userInfo.friend && <div onClick={addToFriends}>Add to friends</div>}
-									{props.isDM === false && <div onClick={startDM}>Send DM</div>}
+									{props.isDM === false && <div onClick={startDmFromMessage}>Send DM</div>}
 									<Link to="/profile/1" style={{textDecoration:"none", color: "#ddddf7"}}>
 										<div>Show profile</div>
 									</Link>

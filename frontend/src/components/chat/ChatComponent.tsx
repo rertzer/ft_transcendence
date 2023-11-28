@@ -20,7 +20,7 @@ export type Channel = {
     userId: number | null;
 }
 
-const ChatComponent = () => {
+const ChatComponent = (props: {newDM: boolean}) => {
     const auth = useLogin();
     const [allChannels, setAllChannels] = useState<Channel[]>([])
     const [blockedUsers, setBlockedUsers] = useState<{idUser: number, username: string, login: string}[]>([]);
@@ -79,6 +79,7 @@ useEffect(() => {
     }
     fetchBlocked();
   }, [auth]);
+
 
     return (
         <div className="chatcomponent">

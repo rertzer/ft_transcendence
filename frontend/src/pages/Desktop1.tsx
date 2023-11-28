@@ -103,7 +103,9 @@ function Desktop1() {
 	
     switch (chat) {
       case "Chat":
-        return (<ChatComponent />);
+        return (<ChatComponent newDM={false}/>);
+	  case "Chat New DM":
+		return (<ChatComponent newDM={true}/>)
       default:
         return (<div/>);
     }
