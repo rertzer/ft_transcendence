@@ -31,7 +31,6 @@ export function Canvas(props:any) {
 		const canvas = canvasRef.current;
 		// @ts-ignore: Object is possibly 'null'.
 		const context:CanvasRenderingContext2D = canvas.getContext('2d');
-		//ATTENTION LE RESIZE NE FONCTIONNE QUE POUR ELARGIR LA PAGE, IL FAUDRAIT VOIR AVEC THIBAUT POUR GERER EN CSS LA TAILLE DE L'ELEMENT GAMEAREA 
 		const handleResize = () => {
 			const width = canvasRef.current?.parentElement?.clientWidth;
 			const height = canvasRef.current?.parentElement?.clientHeight;
@@ -54,9 +53,9 @@ export function Canvas(props:any) {
 		return () => {
 			window.removeEventListener("resize", handleResize);
 		}
-	},[]);
+	},[setGameWidth, setGameHeight]);
 
 	return (
-		<canvas ref={canvasRef} {...rest} style={{position: 'relative', width: '100%', heigth: '100%', cursor:'cell'}}  />
+		<canvas ref={canvasRef} {...rest} style={{position: 'relative', width: '100%', heigth: '100%', cursor:'cell', pointerEvents:'none'}}  />
 	);
 };

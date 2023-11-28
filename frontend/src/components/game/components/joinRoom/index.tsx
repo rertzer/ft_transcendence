@@ -45,10 +45,6 @@ export function JoinRoom(props:IJoinRoomProps) {
 
 	}, [RecievedRoomID, setGameStatus, setRoomId]);
 
-	const askToDisplayInfoBack = (e: React.FormEvent) => {
-		e.preventDefault();
-		gameSocket.emit('display_info');
-	};
 	return (
 		<></>
 	)

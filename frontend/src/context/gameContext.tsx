@@ -30,6 +30,6 @@ const defaultState:IGameContextProps = {
 	setModeGame: () => {}, 
 	gameStatus: 'NOT_IN_GAME',
 	setGameStatus:  () => {}
-};
+}; 
 
 export default React.createContext(defaultState);

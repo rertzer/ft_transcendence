@@ -5,7 +5,7 @@ import { UseGuards } from "@nestjs/common";
 import { RoomsService } from "./rooms/rooms.service";
 import { PlayersService } from "./players/players.service";
 
-//@UseGuards(JwtGuard)
+@UseGuards(JwtGuard)
 @Controller('game')
 export class gameSocketControler {
 	constructor(private roomsService: RoomsService, private playerService: PlayersService){}
@@ -17,7 +17,6 @@ export class gameSocketControler {
 		const responseData = {
 			roomId:newRoomId?.id
 		}
-		console.log("giveMeARoom");
 		return (responseData);
 	}
 	

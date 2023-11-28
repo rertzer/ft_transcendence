@@ -31,7 +31,6 @@ export class RoomsService  implements OnModuleInit{
 	}
 
 	async createRoom(playerLeft:IPlayer, playerRight:IPlayer, typeGame:TypeGame) {
-		console.log("\x1b[33mJe rentre dans createRoom\x1b[0m")
 		const room = this.createEmptyRoom(typeGame);
 		if (!room) return null; 
 		room.gameStatus = 'WAITING_TO_START';
@@ -60,10 +59,8 @@ export class RoomsService  implements OnModuleInit{
 	};
 
 	createEmptyRoom(typeGame:TypeGame) : Room | null {
-		console.log("\x1b[33mJe rentre dans createEmptyRoom\x1b[0m");
 		const gameParam = gameParams.find((gp) => {return (gp.type === typeGame)});
 		if (typeof(gameParam) === 'undefined')  {
-			console.log("\x1b[31m Attetion, j'ai pas ete capabe de trouver les game Params\x1b[0m");
 			return null
 		};
 		const newRoom: Room = {
@@ -100,18 +97,15 @@ export class RoomsService  implements OnModuleInit{
 	async joinWaitingRoom(player:IPlayer, typeGame:TypeGame) {
 		const waitingPlayers = (typeGame === 'ADVANCED' ? this.waitingRoomAdvanced.filter((p) => {return (p.idBdd !== player.idBdd)}) : this.waitingRoomBasic.filter((p) => {return (p.idBdd !== player.idBdd)}));
 		if (waitingPlayers.length === 0) {
-			console.log('I am adding', player.name , 'to the waiting list for', typeGame)
 			if (typeGame === 'ADVANCED') {
 				this.waitingRoomAdvanced.push(player);
 			} 
 			else {
 				this.waitingRoomBasic.push(player);
 			}
-			console.log(this.waitingRoomAdvanced, this.waitingRoomBasic);
 			player.socket.emit('waiting_room_joined');
 		}
 		else {
-			console.log('The waiting room is not empty')
 			const playerToRemoveFromWaitingRoom = waitingPlayers[0];
 			await this.createRoom(playerToRemoveFromWaitingRoom, player, typeGame);
 			if (typeGame === 'ADVANCED') {
@@ -120,7 +114,6 @@ export class RoomsService  implements OnModuleInit{
 			else {
 				this.waitingRoomBasic = this.waitingRoomBasic.filter(p => {return (p !== playerToRemoveFromWaitingRoom)});
 			}
-			console.log(this.waitingRoomAdvanced, this.waitingRoomBasic);
 		}
 	}
 
@@ -140,7 +133,6 @@ export class RoomsService  implements OnModuleInit{
 	removeRoom(room: Room) {
 		this.rooms = this.rooms.filter((r) => {return r !== room;});
 		console.log('Remove room');
-		console.log('Rooms :', this.rooms);
 	};
 
 	getAllRoom(): Room[] {
@@ -209,7 +201,6 @@ export class RoomsService  implements OnModuleInit{
 	};
 
 	async addNewBddGame(room:Room) {
-		console.log('Creating a new reccord on the BDD');
 		const roomToUpdate = room;
 		const bddGame = await this.prismaService.addNewGame(room).then(
 			(bddGame) => {
@@ -269,7 +260,6 @@ export class RoomsService  implements OnModuleInit{
 			obstacles:room.obstacles,
 			gameStatus:room.gameStatus
 		};
-		if (room.playerLeft) {console.log("\x1b[33mSending Room Status to", room.playerLeft?.name," and ", room.playerRight?.name,"\x1b[0m")}
 		room.playerLeft?.socket.emit('room_status', data_to_send);
 		room.playerRight?.socket.emit('room_status', data_to_send);
 	}
