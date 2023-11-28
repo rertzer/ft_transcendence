@@ -49,7 +49,7 @@ export class ChatOptController {
 				}
 				return ({message: `User ${data.username} is already in this channel`})
 			}
-			else 
+			else
 			{
 				return ({message: `User ${data.username} doesn't exist`})
 			}
@@ -58,7 +58,7 @@ export class ChatOptController {
 		{
 			return({message: "You cannot invite anyone if you don't own the channel"})
 		}
-		
+
 	}
 
 	@Post('blockUser')
@@ -186,7 +186,7 @@ export class ChatOptController {
 				if (succeed)
 					return (true);
 			}
-			else 
+			else
 			{
 				const succeed = await this.prismaChatService.leaveAsOwner(id,data.chatId);
 				if (succeed)
@@ -226,6 +226,20 @@ export class ChatOptController {
 			return listBlocked;
 		else
 			return false;
+	}
+
+	@Post("updateDmName")
+	async updateDmName(
+		@Body() data: {
+			OldUsername:string, newUsername:string}
+	)
+	{
+		console.log("old username and new", data.OldUsername, data.newUsername);
+		const arrayOfDm = await this.prismaChatService.getAllDm(data.OldUsername);
+		if (arrayOfDm)
+		{
+			await this.prismaChatService.updateNewUsernameOnDm(arrayOfDm, data.OldUsername, data.newUsername)
+		}
 	}
 
 	@Get(':login/info/:chatId')

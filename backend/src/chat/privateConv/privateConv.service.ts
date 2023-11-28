@@ -9,7 +9,7 @@ export class PrivateConvService {
 	constructor(private prismaService:PrismaChatService){
 	}
 
-	async setDirectConv(creator:string, creatorId:number, receiver: string, sockSender:Socket, sockReceiver: Socket)
+	async setDirectConv(creator:string, creatorId:number, receiver: string, sockSender:Socket, sockReceiver: Socket | null)
 	{
 			const ChatCreated = await this.createDirectConv(creator, creatorId, receiver);
 			if (ChatCreated)
@@ -32,9 +32,10 @@ export class PrivateConvService {
 		return false;
 	}
 
-	async addSocketToRoom(chat_id: number, senderSock: Socket, receiverSock: Socket) {
+	async addSocketToRoom(chat_id: number, senderSock: Socket, receiverSock: Socket | null) {
 		senderSock.join(chat_id.toString());
-		receiverSock.join(chat_id.toString());
+		if (receiverSock)
+			receiverSock.join(chat_id.toString());
 	}
 
 	async createDirectConv(creator:string,creatorId:number, receiver: string)

@@ -121,6 +121,13 @@ export class MyGateway {
 				const chatlister = new ChatLister(this.prismaChatService);
 				chatlister.listChatOfUser(targetSocket.idOfLogin, targetSocket.sock);
 			}
+			else
+			{
+				const allGood = await this.privateConv.setDirectConv(messageData.sender, targetSocket.idOfLogin, messageData.receiver, targetSocket.sock, null);
+				const chatlister = new ChatLister(this.prismaChatService);
+				chatlister.listChatOfUser(targetSocket.idOfLogin, targetSocket.sock);
+
+			}
 		}
 	}
 
