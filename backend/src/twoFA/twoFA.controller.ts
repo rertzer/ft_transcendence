@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards, Req, Body, Post } from '@nestjs/common';
+import { Controller, Get, UseGuards, Body, Post } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { TwoFAService } from './twoFA.service';
 import { GetUser } from 'src/auth/decorator';
@@ -23,7 +23,4 @@ export class TwoFAController {
     console.log('Controller received answer:', user);
     return user;
   }
-
-  // @Get('authenticate')
-  // authenticate(@Req() req: any) {}
 }

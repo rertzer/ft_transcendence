@@ -2,6 +2,7 @@ import {
   ForbiddenException,
   ImATeapotException,
   Injectable,
+  InternalServerErrorException,
 } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
@@ -32,8 +33,8 @@ export class FtAuthService {
     console.log("tfa status", user.tfa_activated);
     const randKey = this.setTemporaryKey(user.login, user.tfa_activated);
     if (user.tfa_activated)
-      res.redirect(`http://localhost:3000/redirect/twofa?key=${randKey}`);
-    else res.redirect(`http://localhost:3000/redirect?key=${randKey}`);
+      res.redirect(this.config.get('PONG_FRONT_CALLBACK') + `/twofa?key=${randKey}`);
+    else res.redirect(this.config.get('PONG_FRONT_CALLBACK') + `?key=${randKey}`);
 
     return {
       success: "true",
@@ -46,7 +47,7 @@ export class FtAuthService {
       user = await this.prismaUser.createUser(dto);
     }
     if (!user) {
-      throw new ImATeapotException("For real: I'm a Teapot");
+      throw new InternalServerErrorException("Can't create the user");
     }
     return user;
   }

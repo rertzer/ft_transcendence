@@ -23,10 +23,8 @@ export class TwoFAService {
   }
   async validate(login: string, token: string) {
     let verified = false;
-    console.log("Validation", login, token);
     let user = await this.prisma.getUserByLogin(login);
     if (user && user.tfa_secret) {
-      console.log("verif in progress...");
       verified = speakeasy.totp.verify({
         secret: user.tfa_secret,
         encoding: "ascii",
@@ -41,7 +39,6 @@ export class TwoFAService {
 
   async authenticate(login: string, token: string) {
     let verified = false;
-    console.log("Validation", login, token);
     let user = await this.prisma.getUserByLogin(login);
     if (user && user.tfa_secret) {
       verified = speakeasy.totp.verify({
@@ -49,7 +46,6 @@ export class TwoFAService {
         encoding: "ascii",
         token,
       });
-      console.log("verification is", verified);
     }
     return verified;
   }

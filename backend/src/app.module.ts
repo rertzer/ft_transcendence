@@ -1,24 +1,19 @@
-import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import { ChatModule } from './chat/chat.module';
-import { AuthModule } from './auth/auth.module';
-import { UserModule } from './user/user.module';
-import { PrismaModule } from './prisma/prisma.module';
-import { AppService } from './app.service';
-import { AppController } from './app.controller';
-import { FtAuthModule } from './ft_auth/ft_auth.module';
-import { TwoFAModule } from './twoFA/twoFA.module';
-import { MutedUserModule } from './chat/mutedUser/mutedUser.module';
-import { GameSocketModule } from './game/gameSocket.module';
-import { PlayersModule } from './game/players/players.module';
-import { RoomsModule } from './game/rooms/rooms.module';
-
-import { PlayersService } from './game/players/players.service';
-import { RoomsService } from './game/rooms/rooms.service';
-import { GameLogicModule } from './game/gameLogic/gameLogic.module';
-import { FriendModule } from './friend/friend.module';
-import { GameStatsModule } from './gameStats/gameStats.module';
-
+import { Module } from "@nestjs/common";
+import { ConfigModule } from "@nestjs/config";
+import { ChatModule } from "./chat/chat.module";
+import { AuthModule } from "./auth/auth.module";
+import { UserModule } from "./user/user.module";
+import { PrismaModule } from "./prisma/prisma.module";
+import { AppService } from "./app.service";
+import { AppController } from "./app.controller";
+import { FtAuthModule } from "./ft_auth/ft_auth.module";
+import { MutedUserModule } from "./chat/mutedUser/mutedUser.module";
+import { GameSocketModule } from "./game/gameSocket.module";
+import { PlayersModule } from "./game/players/players.module";
+import { RoomsModule } from "./game/rooms/rooms.module";
+import { GameLogicModule } from "./game/gameLogic/gameLogic.module";
+import { FriendModule } from "./friend/friend.module";
+import { GameStatsModule } from "./gameStats/gameStats.module";
 
 @Module({
   imports: [
@@ -34,9 +29,9 @@ import { GameStatsModule } from './gameStats/gameStats.module';
     GameSocketModule,
     PlayersModule,
     RoomsModule,
-	GameLogicModule,
+    GameLogicModule,
     FriendModule,
-	GameStatsModule, 
+    GameStatsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

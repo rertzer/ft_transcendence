@@ -1,6 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import * as fs from 'fs';
-import { PrismaService } from '../prisma/prisma.service';
 import { EditDto } from 'src/auth/dto';
 import {PrismaUserService} from 'src/prisma/user/prisma.user.service';
 import { User } from '@prisma/client';

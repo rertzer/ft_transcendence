@@ -2,7 +2,6 @@ import {
   BadRequestException,
   Body,
   Controller,
-  ForbiddenException,
   Get,
   Param,
   Post,
@@ -22,13 +21,11 @@ import { GetUser } from '../auth/decorator';
 
 @UseGuards(JwtGuard)
 @Controller('user')
-//@ApiTags('user')
 export class UserController {
   constructor(private userService: UserService) {}
 
   @Get(':login')
   fetchByLogin(
-    @GetUser('login') user_login: string,
     @Param('login') login: string,
   ) {
       return this.userService.fetchByLogin(login);

@@ -1,20 +1,16 @@
-import { Injectable } from '@nestjs/common';
-import { PassportStrategy } from '@nestjs/passport';
-import { Strategy } from 'passport';
-import { ConfigService } from '@nestjs/config';
-import { PrismaUserService } from 'src/prisma/user/prisma.user.service';
-
+import { Injectable } from "@nestjs/common";
+import { PassportStrategy } from "@nestjs/passport";
+import { Strategy } from "passport";
+import { ConfigService } from "@nestjs/config";
+import { PrismaUserService } from "src/prisma/user/prisma.user.service";
 
 @Injectable()
-export class TwoFAStrategy extends PassportStrategy(
-  Strategy,
-  'twofa',
-) {
+export class TwoFAStrategy extends PassportStrategy(Strategy, "twofa") {
   constructor(
     private config: ConfigService,
-    private prisma: PrismaUserService,
+    private prisma: PrismaUserService
   ) {
     super({});
   }
-  async validate(){}
+  async validate() {}
 }
