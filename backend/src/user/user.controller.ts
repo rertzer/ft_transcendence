@@ -31,9 +31,7 @@ export class UserController {
     @GetUser('login') user_login: string,
     @Param('login') login: string,
   ) {
-    if (user_login === login)
       return this.userService.fetchByLogin(login);
-    throw new ForbiddenException('Who are you?');
   }
 
   @Get('avatar/:avatar')
@@ -60,7 +58,6 @@ export class UserController {
         `attachment; filename=${avatar}`,
       );
       fileStream.then((fs) => fs.pipe(response));
-      //response.send(file);
     }
   }
 
