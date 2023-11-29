@@ -22,10 +22,6 @@ const Chats = () => {
         }
     }, [setAllChannels, socket, auth.user.login])
 
-    // function trigger() {
-    //    socket.emit('chatListOfUser', auth.user.login);
-    // }
-
     const startRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {

@@ -190,7 +190,6 @@ function sendDM(username: string, login: string) {
   else
     updateChat("none");
 }
-
   return (
     <div key={"contact"}>
       {alternateLine(props.sx, props.sy, props.zoom, userList.length)}

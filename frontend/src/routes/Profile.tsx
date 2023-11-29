@@ -89,7 +89,7 @@ function Profile() {
     return (result > 3 ? result : 4);
   }
   if (user.login === '') {
-    fetchUser("jojo");
+    // fetchUser("jojo");
   }
   useEffect(() => {
     if (user.avatar !== null && user.avatar !== "") {

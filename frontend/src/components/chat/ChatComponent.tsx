@@ -61,7 +61,6 @@ useEffect(() => {
         socket.on("ListOfChatOfUser", (channelsListReceive : Channel[]) => {
             setAllChannels(channelsListReceive);
         });
-    
         return () => {
             socket.off("ListOfChatOfUser");
         }
@@ -140,7 +139,11 @@ async function startDmFromTop() {
         setNeedToUpdate("newDM " + targetUsername);
     }
 }
-
+    console.log("allChans", allChannels)
+    console.log("needTo", needToUpdate)
+    console.log("DM", DM);
+    console.log("blocked", blockedUsers)
+    console.log("active", activeChannel)
     return (
         <div className="chatcomponent">
             <div className='container'>

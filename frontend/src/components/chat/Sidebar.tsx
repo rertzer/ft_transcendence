@@ -5,18 +5,20 @@ import { useEffect, useContext } from "react";
 import ChatContext from "../../context/chatContext";
 import { WebsocketContext } from "../../context/chatContext";
 import { useLogin } from "../../components/user/auth";
+import { usePrevious } from "@uidotdev/usehooks";
 
 const Sidebar = () => {
 
 	const socket = useContext(WebsocketContext);
     const auth = useLogin();
     const {activeChannel, allChannels, setActiveChannel, needToUpdate, setNeedToUpdate} = useContext(ChatContext);
+    const previousLen = usePrevious(allChannels.length);
 
 	useEffect(() => {
         const id = activeChannel.id;
         if (needToUpdate === "" && id !== -1 && allChannels.find(element => element.id === id) === undefined)
             setActiveChannel({id: -1, channelName: "PongOffice Chat", chatPicture: "", type: "", status: "", username: null, dateSend: null, msg: null, userId: null});
-        else if (needToUpdate === "addChat" && allChannels.length > 0) {
+        else if (needToUpdate === "addChat" && allChannels.length > 0 && previousLen === allChannels.length - 1) {
             setActiveChannel(allChannels[allChannels.length - 1]);
 			socket.emit('retrieveMessage', {chatId: allChannels[allChannels.length - 1].id, messageToDisplay: 15 })
             setNeedToUpdate("");
