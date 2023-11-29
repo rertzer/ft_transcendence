@@ -1,8 +1,7 @@
-import React from 'react';
 import "./Cells.css";
 import "./Contacts/Contacts.css";
 import "./Data/Data.css";
-import "./Profile.css";
+import "./Profile/Profile.css";
 import { PageContext } from '../../context/PageContext';
 import { useContext } from 'react';
 
@@ -22,7 +21,7 @@ export function CreateStyledCell({
   coordX, coordY, width, height, text, fontSize, className, onClick // Accept a className as a prop
 }: CreateCellProps) {
   const context = useContext(PageContext);
-  if (!context) { throw new Error('useContext must be used within a MyProvider');}
+  if (!context) { throw new Error('useContext must be used within a MyProvider'); }
   const { scroll, zoom } = context;
   return (
     <div
@@ -34,6 +33,8 @@ export function CreateStyledCell({
         width: `${(80 + (zoom - 100) / 2) * width}px`,
         height: `${(20 + (zoom - 100) / 8) * height}px`,
         fontSize: `${fontSize + ((zoom - 100) / 16)}px`,
+        textOverflow: 'ellipsis',
+        overflow: 'hidden',
       }}
       className={`cell ${className}`}
       onClick={onClick}

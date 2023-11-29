@@ -6,22 +6,24 @@ import Grid from "./Grid/Grid_dynamic";
 import { PageContext } from "../../context/PageContext";
 import React, { useContext, useState, useEffect } from 'react';
 import Game from "../game/Game";
+import { PageUrlContext } from "../../context/PageUrlContext";
 
 
 
 export function Body({}) {
   const context = useContext(PageContext);
+  const url_context = useContext(PageUrlContext);
+  if (!context) { throw new Error('useContext must be used within a MyProvider'); }
 
-  //HANDLE COORD CHANGE
-  if (!context) {
-    throw new Error('useContext must be used within a MyProvider');
-  }
+  const { scroll, dark, coords, toolbar, updateCoords, updateScroll } = context;
 
-  const { coords, updateCoords } = context;
   const { coordX, coordY } = coords;
-
   const [x, setNewCoordX] = useState(coordX);
   const [y, setNewCoordY] = useState(coordY);
+
+  const { scrollX, scrollY } = scroll;
+  const [sx, setNewScrollX] = useState(scrollX);
+  const [sy, setNewScrollY] = useState(scrollY);
 
   const handleUpdateCoords = (a: number, b: number) => {
     setNewCoordX(a);
@@ -34,14 +36,6 @@ export function Body({}) {
     setNewCoordY(coordY);
   }, [coordX, coordY]);
 
-  //HANDLE SCROLL CHANGE
-  const { scroll, dark, updateScroll } = context;
-  const { scrollX, scrollY } = scroll;
-
-  const [sx, setNewScrollX] = useState(scrollX);
-  const [sy, setNewScrollY] = useState(scrollY);
-  const {toolbar} = context;
-  
   const handleUpdateScroll = (event: any) => {
     let i = 0;
     if (event.deltaY < 0)
@@ -79,7 +73,7 @@ export function Body({}) {
         <div className={styles.racketPlayer1}>
           <div className={dark ? styles.rightScrollZone : styles.rightScrollZoneLight} />
         </div>
-		    { context?.page === "Game" && <Game />}
+		    { url_context?.page === "Game" && <Game />}
       </div>
   )
 }

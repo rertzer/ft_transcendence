@@ -1,50 +1,57 @@
 import React, { useState, useEffect, useRef, CSSProperties } from 'react';
 import { useContext } from 'react';
 import { PageContext } from '../../../context/PageContext';
-import Profile from '../../../routes/Profile';
+import Profile from '../../Sheets/Profile/Profile';
 import EditProfile from '../../../routes/EditProfile';
 import { Data } from '../../Sheets/Data/Data';
 import { Contacts } from '../../Sheets/Contacts/Contacts';
 import gameContext from '../../../context/gameContext';
+import { PageUrlContext } from '../../../context/PageUrlContext';
 
-function PageSwitch () {
+function PageSwitch() {
   //GET SCROLL VALUE
   const context = useContext(PageContext);
-  if (!context) {
-  throw new Error('useContext must be used within a MyProvider');
-  }
+  const url_context = useContext(PageUrlContext);
+  if (!context) { throw new Error('useContext must be used within a MyProvider'); }
   const { scroll, zoom, toolbar } = context;
   const { scrollX, scrollY } = scroll;
   const [sx, setNewScrollX] = useState(scrollX);
   const [sy, setNewScrollY] = useState(scrollY);
 
   useEffect(() => {
-  setNewScrollX(scrollX);
-  setNewScrollY(scrollY);
+    setNewScrollX(scrollX);
+    setNewScrollY(scrollY);
   }, [scrollX, scrollY]);
 
-   return (
-	 <div key={'switch'}>
-      {context?.page === "Profile" && <Profile/>}
-		  {context?.page === "Data" && <Data key={"data1"} sx={sx} sy={sy} zoom={zoom} />}
-		  {context?.page === "Contacts" && <Contacts key={"contacts1"} sx={sx} sy={sy} zoom={zoom} toolbar={toolbar}/>}
-	 </div>
-   );
+  return (
+    <div key={'switch'}>
+      {url_context?.page === "Profile" && <Profile />}
+      {url_context?.page === "Data" && <Data key={"data1"} sx={sx} sy={sy} zoom={zoom} />}
+      {url_context?.page === "Contacts" && <Contacts key={"contacts1"} sx={sx} sy={sy} zoom={zoom} toolbar={toolbar} />}
+    </div>
+  );
 }
 
 function Grid() {
   //GET SCROLL VALUE
+  const url_context = useContext(PageUrlContext);
   const context = useContext(PageContext);
-  if (!context) {
-    throw new Error('useContext must be used within a MyProvider');
-  }
+  if (!context) { throw new Error('useContext must be used within a MyProvider'); }
+  
+  const { div, zoom, coords, scroll, toolbar, updateCoords } = context;
 
-  const { scroll, toolbar } = context;
   const { scrollX, scrollY } = scroll;
-
   const [sx, setNewScrollX] = useState(scrollX);
   const [sy, setNewScrollY] = useState(scrollY);
-  const {modeGame, gameStatus} = useContext(gameContext);
+
+  const { coordX, coordY } = coords;
+  const [x, setNewCoordX] = useState(coordX);
+  const [y, setNewCoordY] = useState(coordY);
+
+  const { font, bold, italic, underLined, align } = div;
+
+  const { modeGame, gameStatus } = useContext(gameContext);
+
 
   useEffect(() => {
     setNewScrollX(scrollX);
@@ -72,16 +79,6 @@ function Grid() {
 
   const forceUpdate = useForceUpdate();
 
-  //HANDLE COORD CHANGE
-  if (!context) {
-    throw new Error('useContext must be used within a MyProvider');
-  }
-
-  const { zoom, coords, page, updateCoords } = context;
-  const { coordX, coordY } = coords;
-
-  const [x, setNewCoordX] = useState(coordX);
-  const [y, setNewCoordY] = useState(coordY);
 
   const handleUpdateCoords = (a: number, b: number) => {
     setNewCoordX(a);
@@ -95,27 +92,31 @@ function Grid() {
   }, [coordX, coordY]);
 
   const components = [];
-  for (let i:number = sy; (i - sy) * (80 + ((zoom - 100))/2) < windowWidthRef.current; i++) {
-    for (let j:number = sx; (j - sx) * (20 + ((zoom - 100))/8) < windowHeightRef.current; j++)
-    {
-        const dynamicLeft = `${(i - sy) * (80 + ((zoom - 100))/2)}px`;
-        const dynamicTop = `${(j - sx) * (20 + ((zoom - 100))/8)}px`;
-        components.push(
-          <input key={`x:${i} y:${j}`} size={1} onMouseDown={() => handleUpdateCoords(i, j)} style={{
-              position: 'absolute',
-              top: dynamicTop,
-              left: dynamicLeft,
-              width: `${80 + ((zoom - 100))/2}px`,
-              height: `${20 + ((zoom - 100))/8}px`,
-              boxSizing: 'border-box',
-              border: '0.5px solid #C0C0C0',
-              fontSize: `${10 +((zoom - 100)/16)}px`,
-              textIndent: '3px',
-          }}
-          onFocus={(e) =>   {
+  for (let i: number = sy; (i - sy) * (80 + ((zoom - 100)) / 2) < windowWidthRef.current; i++) {
+    for (let j: number = sx; (j - sx) * (20 + ((zoom - 100)) / 8) < windowHeightRef.current; j++) {
+      const dynamicLeft = `${(i - sy) * (80 + ((zoom - 100)) / 2)}px`;
+      const dynamicTop = `${(j - sx) * (20 + ((zoom - 100)) / 8)}px`;
+      components.push(
+        <input key={`x:${i} y:${j}`} size={1} onMouseDown={() => handleUpdateCoords(i, j)} style={{
+          position: 'absolute',
+          top: dynamicTop,
+          left: dynamicLeft,
+          width: `${80 + ((zoom - 100)) / 2}px`,
+          height: `${20 + ((zoom - 100)) / 8}px`,
+          boxSizing: 'border-box',
+          border: '0.5px solid #C0C0C0',
+          fontSize: `${11 + ((zoom - 100) / 16)}px`,
+          textIndent: '3px',
+          textAlign: align as 'left' | 'right' | 'center' | 'justify',
+          fontWeight: context?.div.bold ? 'bold': 'normal',
+          fontStyle: context?.div.italic ? 'italic': '',
+          textDecoration: context?.div.underLined ? 'underline': '',
+          fontFamily: context?.div.font,
+        }}
+          onFocus={(e) => {
             e.target.style.outline = 'none';
           }}>
-          </input>)
+        </input>)
     }
   }
   let x_square = x - sy;
@@ -126,96 +127,93 @@ function Grid() {
     y_square = 0;
   components.push(
     <div key={"highlight_cell"} style={{
-        position: 'absolute',
-        left: `${x_square * (80 + ((zoom - 100)/2))}px`,
-        top: `${y_square * (20 + ((zoom - 100)/8))}px`,
-        width: `${80 + ((zoom - 100)/2)}px`,
-        height: `${20 + ((zoom - 100)/8)}px`,
-        border: '1px solid #15539E',
-        outline: '1px solid #15539E',
-        pointerEvents:'none',
+      position: 'absolute',
+      left: `${x_square * (80 + ((zoom - 100) / 2))}px`,
+      top: `${y_square * (20 + ((zoom - 100) / 8))}px`,
+      width: `${80 + ((zoom - 100) / 2)}px`,
+      height: `${20 + ((zoom - 100) / 8)}px`,
+      border: '1px solid #15539E',
+      outline: '1px solid #15539E',
+      pointerEvents: 'none',
     }} />);
   if (y_square !== -1 && x_square !== -1)
-    components.push(<div key={"bluesquare"} style={{position: 'relative', top: `${(y_square * (20 + (zoom - 100)/8)) + (18 + (zoom - 100)/8)}px`, left: `${((x_square * (80 + (zoom - 100)/2)) + (77 + (zoom - 100)/2))}px`, width: '5px', height: '5px', backgroundColor:'#15539E',}}></div>);
+    components.push(<div key={"bluesquare"} style={{ position: 'relative', top: `${(y_square * (20 + (zoom - 100) / 8)) + (18 + (zoom - 100) / 8)}px`, left: `${((x_square * (80 + (zoom - 100) / 2)) + (77 + (zoom - 100) / 2))}px`, width: '5px', height: '5px', backgroundColor: '#15539E', }}></div>);
 
   components.push(PageSwitch());
 
   //HIGHLIGHT COLUMN, LINE OR EVERYTHING
-  let div_width = `${(80 + ((zoom - 100)/2))}px`;
-  let div_height = `${(20 + ((zoom - 100)/8))}px`;
-  let div_top = `${y_square * (20 + ((zoom - 100)/8))}px`;
-  let div_left = `${x_square * (80 + ((zoom - 100)/2))}px`;
-  if (x === -1 && y === -1)
-  {
+  let div_width = `${(80 + ((zoom - 100) / 2))}px`;
+  let div_height = `${(20 + ((zoom - 100) / 8))}px`;
+  let div_top = `${y_square * (20 + ((zoom - 100) / 8))}px`;
+  let div_left = `${x_square * (80 + ((zoom - 100) / 2))}px`;
+  if (x === -1 && y === -1) {
     div_height = '100%';
     div_width = '100%';
     div_top = '0px';
     div_left = '0px';
   }
-  else if (x === -1)
-  {
+  else if (x === -1) {
     div_width = '100%';
     div_left = '0px';
   }
-  else if (y === -1)
-  {
+  else if (y === -1) {
     div_height = '100%';
     div_top = '0px';
   }
   if (x === -1 || y === -1)
     components.push(
-        <div key={"highlight_column"} style={{
-          position: 'absolute',
-          top: div_top,
-          left: div_left,
-          width: div_width,
-          height: div_height,
-          outline: '0.5px solid #15539E',
-          backgroundColor: 'rgba(21, 83, 158, 0.3)',
-          pointerEvents:'none',
+      <div key={"highlight_column"} style={{
+        position: 'absolute',
+        top: div_top,
+        left: div_left,
+        width: div_width,
+        height: div_height,
+        outline: '0.5px solid #15539E',
+        backgroundColor: 'rgba(21, 83, 158, 0.3)',
+        pointerEvents: 'none',
       }} />)
 
   components.push(
-    <div key={'waiting room'} style={{position: 'fixed', top: toolbar ? '89px' : '166px', left: 'calc(1% + 31px)', color: '#000000'} }>
-      { (gameStatus === 'IN_WAITING_ROOM') && page == "Game" && modeGame === 'BASIC' && 
-      <div
-      key={`basic waiting room`}
-      style={{
-        position: 'absolute',
-        top: (scroll.scrollX > 1) ? '-100px' : `${(20 + (zoom - 100) / 8) * (1 - scroll.scrollX)}px`,
-        left: `${0 + (80 + (zoom - 100) / 2) * (1 - scroll.scrollY)}px`,
-        width: `${(80 + (zoom - 100) / 2) * 5}px`,
-        height: `${(20 + (zoom - 100) / 8) * 1}px`,
-        fontSize: `${12 + ((zoom - 100) / 16)}px`,
-        backgroundColor: 'white',
-        textAlign: 'center',
-        border: '1px solid black',
-      }}>
-        You are in the waiting room to join a <b>basic</b> game! 
-      </div>}
-      { (gameStatus === 'IN_WAITING_ROOM') && page == "Game" && modeGame === 'ADVANCED' && <div
-      key={`advanced waiting room`}
-      style={{
-        position: 'absolute',
-        top: (scroll.scrollX > 1) ? '-100px' : `${(20 + (zoom - 100) / 8) * (1 - scroll.scrollX)}px`,
-        left: `${0 + (80 + (zoom - 100) / 2) * (1 - scroll.scrollY)}px`,
-        width: `${(80 + (zoom - 100) / 2) * 5}px`,
-        height: `${(20 + (zoom - 100) / 8) * 1}px`,
-        fontSize: `${12 + ((zoom - 100) / 16)}px`,
-        backgroundColor: 'white',
-        textAlign: 'center',
-        border: '1px solid black',
-      }}>
-        You are in the waiting room to join an <b>advanced</b> game! 
+    <div key={'waiting room'} style={{ position: 'fixed', top: toolbar ? '89px' : '166px', left: 'calc(1% + 31px)', color: '#000000' }}>
+      {(gameStatus === 'IN_WAITING_ROOM') && url_context?.page == "Game" && modeGame === 'BASIC' &&
+        <div
+          key={`basic waiting room`}
+          style={{
+            position: 'absolute',
+            top: (scroll.scrollX > 1) ? '-100px' : `${(20 + (zoom - 100) / 8) * (1 - scroll.scrollX)}px`,
+            left: `${0 + (80 + (zoom - 100) / 2) * (1 - scroll.scrollY)}px`,
+            width: `${(80 + (zoom - 100) / 2) * 5}px`,
+            height: `${(20 + (zoom - 100) / 8) * 1}px`,
+            fontSize: `${12 + ((zoom - 100) / 16)}px`,
+            backgroundColor: 'white',
+            textAlign: 'center',
+            border: '1px solid black',
+          }}>
+          You are in the waiting room to join a <b>basic</b> game!
+        </div>}
+      {(gameStatus === 'IN_WAITING_ROOM') && url_context?.page == "Game" && modeGame === 'ADVANCED' && <div
+        key={`advanced waiting room`}
+        style={{
+          position: 'absolute',
+          top: (scroll.scrollX > 1) ? '-100px' : `${(20 + (zoom - 100) / 8) * (1 - scroll.scrollX)}px`,
+          left: `${0 + (80 + (zoom - 100) / 2) * (1 - scroll.scrollY)}px`,
+          width: `${(80 + (zoom - 100) / 2) * 5}px`,
+          height: `${(20 + (zoom - 100) / 8) * 1}px`,
+          fontSize: `${12 + ((zoom - 100) / 16)}px`,
+          backgroundColor: 'white',
+          textAlign: 'center',
+          border: '1px solid black',
+        }}>
+        You are in the waiting room to join an <b>advanced</b> game!
       </div>}
     </div>)
 
+  
   return (
-  <div key={'grid'}>
+    <div key={'grid'}>
       {components}
-  </div>);
+    </div>);
 }
-
 function useForceUpdate() {
   const [, setTick] = useState(0);
   const forceUpdate = () => {

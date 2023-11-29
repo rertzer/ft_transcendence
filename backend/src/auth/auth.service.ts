@@ -22,8 +22,8 @@ export class AuthService {
     const logo : FtUser ={
       login: dto.login,
       username: dto.login,
-      first_name: 'Joseph',
-      last_name: 'Lanza',
+      first_name: 'default',
+      last_name: 'default',
       email: dto.login + '@student.42.fr',
 
     }

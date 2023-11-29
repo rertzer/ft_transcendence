@@ -85,6 +85,7 @@ export const LoginProvider = ({ children }: any) => {
   const edit = (user: any) => {
     setUser(user);
   };
+  
   const getLogin = () => {
     return token.login;
   };

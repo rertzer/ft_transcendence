@@ -22,9 +22,7 @@ function RepeatingNumbers() {
   const forceUpdate = useForceUpdate();
 
   const context = useContext(PageContext);
-  if (!context) {
-    throw new Error('useContext must be used within a MyProvider');
-  }
+  if (!context) { throw new Error('useContext must be used within a MyProvider'); }
 
   const { coords, updateCoords } = context;
   const { coordX, coordY } = coords;

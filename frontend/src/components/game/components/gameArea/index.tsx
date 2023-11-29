@@ -258,9 +258,7 @@ function GameArea(props:any) {
 	};
 
 	const context = useContext(PageContext);
-	if (!context) {
-	throw new Error('useContext must be used within a MyProvider');
-	}
+	if (!context) { throw new Error('useContext must be used within a MyProvider'); }
 	const { game, updateGame } = context;
 	function render(context:CanvasRenderingContext2D):void {
 		if (game.player1 !== frontEndPlayerLeft.name || game.player2 !== frontEndPlayerRight.name || game.points1 !== frontEndPlayerLeft.score || game.points2 !== frontEndPlayerRight.score)

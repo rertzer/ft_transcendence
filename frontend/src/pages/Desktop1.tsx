@@ -11,7 +11,8 @@ import { useLogin } from "../components/user/auth";
 import { gameSocket } from '../components/game/services/gameSocketService';
 import { GameStatus } from '../context/gameContext';
 import GameContext, { IGameContextProps } from '../context/gameContext';
-import { useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 function Desktop1() {
 
@@ -22,6 +23,7 @@ function Desktop1() {
 	const [gameHeight, setGameHeight] = useState(0);
 	const [modeGame, setModeGame] = useState('');
 	const [gameStatus, setGameStatus] = useState<GameStatus>('NOT_IN_GAME');
+	const { login_url } = useParams();
 
 	useEffect(() => {
 		gameSocket.connect();
@@ -92,15 +94,16 @@ function Desktop1() {
   function DisplayChat() {
     const context = useContext(PageContext);
     if (!context) {
-      throw new Error('useContext must be used within a MyProvider');
+		throw new Error('useContext must be used within a MyProvider');
     }
-    const { chat, updatePage } = context;
-	const { roomId } = useContext(GameContext);
+    const { chat } = context;
+	// const navigate = useNavigate();
+	// const { roomId } = useContext(GameContext);
 
-	useEffect(() => {
-		if (roomId !== 0)
-			updatePage("Game");
-	}, [roomId]);
+	// useEffect(() => {
+	// 	if (roomId !== 0)
+	// 		navigate("/game");
+	// }, [roomId]);
 	
     switch (chat) {
       case "Chat":

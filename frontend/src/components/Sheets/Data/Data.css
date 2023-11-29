@@ -1,7 +1,7 @@
 .title_data {
     background-color: rgb(24, 65, 151);
     color: white;
-    border: 2px solid black;
+    border: 1px solid black;
     font-weight: 500;
     text-align: center;
     cursor: pointer;
@@ -66,7 +66,6 @@
     border-right: 4px solid red;
     border-left: 2px solid red;
 }
-
 .dataItem {
 	color: black;
     display:block;
@@ -74,6 +73,8 @@
     font-weight: 600;
     /* background-color: ; */
     border: 1px solid rgb(117, 117, 117);
-    border-right: solid rgb(117, 117, 117);
-    border-left: solid rgb(117, 117, 117);
+}
+.border {
+    border: 2px solid black;
+    pointer-events: none;
 }

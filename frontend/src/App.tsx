@@ -3,7 +3,7 @@ import { createBrowserRouter, createRoutesFromElements,RouterProvider, Route } f
 //import Login from './routes/FtLogin';
 import Login from './routes/Login';
 import Home from './routes/Home';
-import Profile from './routes/Profile';
+import Profile from './components/Sheets/Profile/Profile';
 import Desktop1 from './pages/Desktop1';
 import Game from './components/game/Game';
 import Welcome from "./routes/Welcome";
@@ -13,6 +13,7 @@ import EditProfile from "./routes/EditProfile";
 import Twofa from './routes/TwoFA';
 import Redirect from './routes/Redirect';
 import RedirectTfa from './routes/RedirectTfa';
+import { PageUrlProvider } from './context/PageUrlContext';
 import { PageProvider } from './context/PageContext';
 
 function App() {
@@ -20,11 +21,12 @@ function App() {
   const router = createBrowserRouter(
     createRoutesFromElements(
     <Route>
-	    <Route path="/" element={<RequireAuth><Desktop1 /></RequireAuth>} />
-      <Route path="/game" element={<RequireAuth><PageProvider page_url={"Game"}><Desktop1 /></PageProvider></RequireAuth>} />
-      <Route path="/profile" element={<RequireAuth><PageProvider page_url={"Profile"}><Desktop1 /></PageProvider></RequireAuth>} />
-      <Route path="/data" element={<RequireAuth><PageProvider page_url={"Data"}><Desktop1 /></PageProvider></RequireAuth>} />
-      <Route path="/contacts" element={<RequireAuth><PageProvider page_url={"Contacts"}><Desktop1 /></PageProvider></RequireAuth>} />
+	    <Route path="/" element={<RequireAuth><PageUrlProvider page_url={"Profile"}><Desktop1 /></PageUrlProvider></RequireAuth>} />
+      <Route path="/game" element={<RequireAuth><PageUrlProvider page_url={"Game"}><Desktop1 /></PageUrlProvider></RequireAuth>} />
+      <Route path="/profile" element={<RequireAuth><PageUrlProvider page_url={"Profile"}><Desktop1 /></PageUrlProvider></RequireAuth>} />
+      <Route path="/profile/:login_url" element={<RequireAuth><PageUrlProvider page_url={"Profile"}><Desktop1 /></PageUrlProvider></RequireAuth>} />
+      <Route path="/data" element={<RequireAuth><PageUrlProvider page_url={"Data"}><Desktop1 /></PageUrlProvider></RequireAuth>} />
+      <Route path="/contacts" element={<RequireAuth><PageUrlProvider page_url={"Contacts"}><Desktop1 /></PageUrlProvider></RequireAuth>} />
       <Route path="/login" element={<Login />} />
       <Route path="/redirect" element={<Redirect />} /> 
       <Route path="/redirect/twofa" element={<RedirectTfa />} /> 
@@ -39,7 +41,9 @@ function App() {
   return (
     <div >
       <LoginProvider>
-        <RouterProvider router={router} />
+        <PageProvider>
+          <RouterProvider router={router} />
+        </PageProvider>
       </LoginProvider>
     </div>
   );

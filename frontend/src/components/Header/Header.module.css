@@ -47,7 +47,7 @@
   width: 150px;
   height: 35px;
   left: 12px;
-  width: 231px;
+  width: 277px;
   text-align: center;
 }
 .bar {
@@ -141,6 +141,9 @@
   background-color: var(--color-darkslategray-100);
   width: 27px;
 }
+.buttonBackground:hover {
+  background-color: rgb(35, 35, 35);
+}
 .buttonBackgroundLight {
   position: absolute;
   right: 0;
@@ -152,11 +155,15 @@
   background-color: white;
   width: 27px;
 }
+.buttonBackgroundLight:hover {
+  background-color: rgb(212, 212, 212);
+}
 .buttonChild {
   position: absolute;
   right: 3px;
   bottom: 3px;
   border-radius: var(--br-12xs);
+  pointer-events: none;
 }
 .buttonChildLight {
   position: absolute;
@@ -164,6 +171,7 @@
   bottom: 3px;
   border-radius: var(--br-12xs);
   color: rgb(28, 28, 28);
+  pointer-events: none;
 }
 .frameText {
   position: absolute;
@@ -182,6 +190,9 @@
   align-items: center;
   height: 16px;
   font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow:ellipsis;
 }
 .basicSansCsLight {
   position: absolute;
@@ -193,6 +204,9 @@
   height: 16px;
   font-size: 12px;
   color: black;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow:ellipsis;
 }
 .menu2 {
   position: absolute;
@@ -268,7 +282,7 @@
 .untitled1 {
     position: absolute;
     top: 8px;
-    left: calc(50% - 83.23px);
+    left: calc(50% - 15%);
     font-weight: 600;
     font-size: 14px;
     mix-blend-mode: normal;

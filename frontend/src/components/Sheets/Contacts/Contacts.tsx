@@ -80,7 +80,7 @@ export function AddLine(props: {scrollX: number, scrollY: number, toolbar: boole
 			</div>
 			<div key={"1"}><CreateStyledCell
 				coordX={props.coordX} coordY={1} width={1} height={1} 
-				text={props.name} fontSize={12} className={classname} />
+				text={props.name} fontSize={12} className={"contacts"} />
 			</div>
 			<div key={"2"}><CreateStyledCell
 				coordX={props.coordX} coordY={2} width={1} height={1}

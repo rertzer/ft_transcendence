@@ -62,7 +62,7 @@ function AddLine(sx: number, sy: number, zoom: number, key: number, coordX:numbe
             text={numberLost.toString()} fontSize={12} className={classname} />
           <CreateStyledCell
             coordX={coordX} coordY={7} width={1} height={1}
-            text={totalGameDuration.toString()} fontSize={12} className={classname} />
+            text={Math.floor(totalGameDuration).toString()+"s"} fontSize={12} className={classname} />
         </div>)
 }
 
@@ -170,5 +170,6 @@ function sortUsers(users: User[], by: string) {
         const variableToPass = 4 + index;
         return AddLine(props.sx, props.sy, props.zoom, index + 1, variableToPass, user.userUsername, user.numberGames, user.numberWon, user.numberLost, user.totalGameDurationInSec)
       })}
+      <CreateStyledCell coordX={3} coordY={1} width={7} height={userList.length + 1} text={''} fontSize={0} className={'border'}/>
      </div>);
 }
