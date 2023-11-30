@@ -20,7 +20,7 @@ function Redirect() {
   const getToken = async () => {
     const flatkey = JSON.stringify({ key });
     console.log("asking for", flatkey);
-    const data = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/ft_auth/token`, {
+    const data = await fetch(`https://${process.env.REACT_APP_URL_MACHINE}:4000/ft_auth/token`, {
       mode: "cors",
       method: "POST",
       headers: { "Content-Type": "application/json; charset=utf-8" },

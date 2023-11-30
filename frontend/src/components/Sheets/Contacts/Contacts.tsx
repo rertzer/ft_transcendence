@@ -42,7 +42,7 @@ function AddLine(sx: number, sy: number, zoom: number, name: string, key: number
 
 	async function removeFriend() {
 		try {
-			const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/friend/deleteFriend/${key}/${auth.user.id}`, {
+			const response = await fetch(`https://${process.env.REACT_APP_URL_MACHINE}:4000/friend/deleteFriend/${key}/${auth.user.id}`, {
 				method: 'DELETE',
 			});
 			if (!response.ok) {
@@ -91,7 +91,7 @@ export function Contacts(props: { sx: number, sy: number, zoom: number }) {
 	useEffect(() => {
 		const getUser = async () => {
 			try {
-				const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/friend/listFriends/${auth.user.login}`, {
+				const response = await fetch(`https://${process.env.REACT_APP_URL_MACHINE}:4000/friend/listFriends/${auth.user.login}`, {
 					method: 'GET',
 				});
 

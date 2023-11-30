@@ -67,7 +67,7 @@ export const ListChannels = (props: {showSubMenu: string, setShowSubMenu: Functi
 		  body: JSON.stringify(messageData),
 		};
 		try {
-		  const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/joinChat/`, requestOptions);
+		  const response = await fetch(`https://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/joinChat/`, requestOptions);
 		  if (!response.ok) {
 			throw new Error('Request failed');
 		  }

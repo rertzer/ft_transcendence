@@ -52,7 +52,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 	async function checkIfUserIsBanned() {
 
 		try {
-			const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/${props.login}/banned/${props.chatId}`);
+			const response = await fetch(`https://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/${props.login}/banned/${props.chatId}`);
 			if (!response.ok) {
 				throw new Error("Request failed");
 			}
@@ -77,7 +77,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 
 	async function checkIfAlreadyFriend() {
 		try {
-			const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/friend/${auth.user.login}/${props.login}/isMyFriend`);
+			const response = await fetch(`https://${process.env.REACT_APP_URL_MACHINE}:4000/friend/${auth.user.login}/${props.login}/isMyFriend`);
 			if (!response.ok) {
 				throw new Error("Request failed");
 			}
@@ -92,7 +92,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 
 	async function getUserInfo() {
 		try {
-			const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/${props.login}/info/${props.chatId}`);
+			const response = await fetch(`https://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/${props.login}/info/${props.chatId}`);
 			if (!response.ok) {
 				throw new Error("Request failed");
 			}
@@ -141,7 +141,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ login: props.login, chatId: props.chatId})
 		};
-		const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/setAdmin/`, requestOptions)
+		const response = await fetch(`https://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/setAdmin/`, requestOptions)
 		.catch((error) => {
 			console.error('Error checking user status:', error);
 		  });
@@ -167,7 +167,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 		if (banned) {
 			setErrorMessage(props.username + " is already banned");
 		} else {
-			const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/banUser/`, requestOptions);
+			const response = await fetch(`https://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/banUser/`, requestOptions);
 			const data = await response.json();
 			if (data.isOwner)
 				setErrorMessage(props.username + " cannot be banned since he or she owns this channel")
@@ -184,7 +184,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ login: props.login, chatId: props.chatId})
 		};
-		const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/kickUser/`, requestOptions);
+		const response = await fetch(`https://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/kickUser/`, requestOptions);
 		const data = await response.json();
 		if (data.isOwner)
 			setErrorMessage(props.username + " cannot be kicked since he or she owns this channel")
@@ -233,7 +233,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 			body: JSON.stringify({ login: auth.user.login, friendToAdd: props.login})
 		};
 		toggleUserActionsMenu();
-		await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/friend/addFriend/`, requestOptions)
+		await fetch(`https://${process.env.REACT_APP_URL_MACHINE}:4000/friend/addFriend/`, requestOptions)
 
 	}
 
@@ -244,7 +244,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({blockedLogin: props.login, login: auth.user.login})
 		};
-		const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/blockUser/`, requestOptions);
+		const response = await fetch(`https://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/blockUser/`, requestOptions);
 		const data = await response.json();
 		console.log(data);
 	}
@@ -255,7 +255,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({typeGame: "BASIC"})
 		};
-		const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/game/newRoom/`, requestOptions);
+		const response = await fetch(`https://${process.env.REACT_APP_URL_MACHINE}:4000/game/newRoom/`, requestOptions);
 		const data = await response.json();
 		sendServiceMessage("Classic game invitation received to play in room " + data.roomId)
 		setRoomId(data.roomId);
@@ -269,7 +269,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 		// 	headers: { 'Content-Type': 'application/json' },
 		// 	body: JSON.stringify({chatId: props.chatId, msgId: props.msgId})
 		// };
-		// await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/`, requestOptions)
+		// await fetch(`https://${process.env.REACT_APP_URL_MACHINE}:4000/`, requestOptions)
 		setRoomId(idToJoin);
 	}
 

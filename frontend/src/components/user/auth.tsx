@@ -24,16 +24,13 @@ export const LoginProvider = ({ children }: any) => {
   };
   const [user, setUser] = useState(empty_user);
   console.log("Inside Login Provider");
-  const [image, setImage] = useState(
-    "norminet.jpeg"
-  );
+  const [image, setImage] = useState("norminet.jpeg");
 
   //////////////////////////////////////// Functions ///////////////////////////////////////////////////
   const login = (raw_token: any) => {
     sessionStorage.setItem("Token", JSON.stringify(raw_token));
     token = raw_token;
-    setImage( "norminet.jpeg"
-    );
+    setImage("norminet.jpeg");
     reload();
   };
 
@@ -47,38 +44,37 @@ export const LoginProvider = ({ children }: any) => {
 
   const fetchImage = async () => {
     const bearer = "Bearer " + token.access_token;
-    const res = await fetch("/user/avatar/" + user.avatar, {
-      method: "GET",
-      headers: { Authorization: bearer },
-    });
-    console.log("fetchImage on route /user/avatar/", user.avatar);
+    const res = await fetch(
+      `https://${process.env.REACT_APP_URL_MACHINE}:4000/user/avatar/` +
+        user.avatar,
+      {
+        method: "GET",
+        headers: { Authorization: bearer },
+      }
+    );
     const imageBlob = await res.blob();
     const imageObjectURL = URL.createObjectURL(imageBlob);
     setImage(imageObjectURL);
   };
 
   const reload = () => {
-    console.log("reloading...", token.login);
     if (token.login) {
       const bearer = "Bearer " + token.access_token;
       const fetchUser = async () => {
         console.log("bearer is", bearer);
-        const data = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/user/` + token.login, {
-          method: "GET",
-          headers: { Authorization: bearer },
-        });
-        const newUser = await data.json();
-        if (newUser.message) {
-          console.log("Bad Bad");
-        } else {
-          setUser(newUser);
-        }
+        fetch(
+          `https://${process.env.REACT_APP_URL_MACHINE}:4000/user/` +
+            token.login,
+          {
+            method: "GET",
+            headers: { Authorization: bearer },
+          }
+        )
+          .then((response) => response.json())
+          .then((data) => setUser(data))
+          .catch((error) => console.log(error));
       };
-      try {
-        fetchUser();
-      } catch (e) {
-        console.log(e);
-      }
+         fetchUser();
     }
   };
 
@@ -96,9 +92,7 @@ export const LoginProvider = ({ children }: any) => {
 
   //////////////////////////////// refresh //////////////////////////////////////
   useEffect(() => {
-    console.log("should I fetch", user.avatar);
-    if (user.avatar !== null && user.avatar !== "") {
-      console.log("fetching image", user.avatar);
+    if (user.avatar) {
       try {
         fetchImage().catch((e) => console.log("Failed to fetch the avatar"));
       } catch (e) {

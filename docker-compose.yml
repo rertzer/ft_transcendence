@@ -4,9 +4,13 @@ services:
 
   backend:
     restart: unless-stopped
+    env_file:
+      - .env
     build:
       context: ./backend/
       dockerfile: Dockerfile
+      args:
+        SSL_CREDENTIALS: ${SSL_CREDENTIALS}
     ports:
       - 4000:4000
     networks:

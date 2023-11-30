@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { Channel } from '../components/chat/ChatComponent';
 
-export const socket = io('http://' + process.env.REACT_APP_URL_MACHINE + ':4000/chat', {
+export const socket = io('https://' + process.env.REACT_APP_URL_MACHINE + ':4000/chat', {
 	// we need this socket to not connect until someone il log
 	transports: [ "websocket" ],
 	withCredentials: true,

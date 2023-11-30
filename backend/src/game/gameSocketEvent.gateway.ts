@@ -12,7 +12,7 @@ import { PrismaGameService } from "src/prisma/game/prisma.game.service";
 @WebSocketGateway({
 	namespace: '/game_socket',
 	cors: {
-		origin: 'http://' + process.env.REACT_APP_URL_MACHINE + ':4000/game_socket'
+		origin: 'https://' + process.env.REACT_APP_URL_MACHINE + ':4000/game_socket'
 	},
 	methods: ["GET", "POST"],
     credentials: true,

@@ -35,7 +35,7 @@ export const ChannelSettings = (props: {showSubMenu: string, setShowSubMenu: Fun
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ password: password, type: "protected by password", chatId: activeChannel.id, login: auth.user.login})
 		};
-		const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/changeType/`, requestOptions);
+		const response = await fetch(`https://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/changeType/`, requestOptions);
 		const data = await response.json();
         if (data) {
             toggleForm();
@@ -62,7 +62,7 @@ export const ChannelSettings = (props: {showSubMenu: string, setShowSubMenu: Fun
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ password: "", type: newType, chatId: activeChannel.id, login: auth.user.login})
 		};
-		const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/changeType/`, requestOptions);
+		const response = await fetch(`https://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/changeType/`, requestOptions);
 		const data = await response.json();
         if (data){
             toggleForm();
@@ -98,7 +98,7 @@ export const ChannelSettings = (props: {showSubMenu: string, setShowSubMenu: Fun
             body: JSON.stringify(data),
             };
 
-            let returnValue = await fetch('http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/urlPourInviterQqunSurUnChannel', requestOptions)
+            let returnValue = await fetch('https://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/urlPourInviterQqunSurUnChannel', requestOptions)
             (verifier la valeur de retour pour set le message d'erreur si necessaire, et si tout va bien on ferme le menu et on re-render)
         */
     }
