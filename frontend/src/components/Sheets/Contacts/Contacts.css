@@ -53,7 +53,7 @@
     display:block;
     text-align: center;
     font-weight: 600;
-    background-color: blue;
+    background-color: rgb(118, 118, 245);
     border: 1px solid rgb(150, 0, 0);
 	cursor: pointer;
 }

@@ -36,6 +36,39 @@ export class PrismaChatService {
 		}
 	}
 
+	async checkIfDmExist(idSender:number, idReceiver: number)
+	{
+		const exist =  await this.prismaService.chatChannels.findMany({
+			where:{
+				type: "DM",
+				OR : [
+					{
+						owner: idSender,
+					},
+					{
+						owner: idReceiver,
+					},
+				],
+			},
+			include: {
+				channelsUsers:true,
+			}
+		})
+		if (exist)
+		{
+			for (const element of exist)
+			{
+				if ( element.channelsUsers.find((elem:any) => elem.user_id === idSender && element.owner != elem.user_id) 
+					|| element.channelsUsers.find((elem:any) => elem.user_id === idReceiver && element.owner != elem.idReceiver))
+				{
+					return element.id;
+				}
+			}
+			return (-1);
+		}
+		return (-1);
+	}
+
 	async userAlreadyInChat(userId: number, chatId:number)
 	{
 		const inChat = await this.prismaService.chatChannelsUser.findFirst({

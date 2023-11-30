@@ -5,13 +5,18 @@ import { JoinChatService } from "../joinChat/joinChat.service";
 import { JwtGuard } from "src/auth/guard";
 import { getDate } from "../utils/utils.service";
 import { UseGuards, ParseIntPipe } from "@nestjs/common";
+import { PrivateConvService } from "../privateConv/privateConv.service";
 import { ChatLister } from "../chatLister/chatLister.service";
 import * as argon from 'argon2';
+import { CreateChatService } from "../createchat/createchat.service";
 
 @UseGuards(JwtGuard)
 @Controller('chatOption')
 export class ChatOptController {
-	constructor(private prismaChatService:PrismaChatService, private gateway: MyGateway, private joinChatservice : JoinChatService) {}
+	constructor(private prismaChatService:PrismaChatService,
+		private gateway: MyGateway, private joinChatservice : JoinChatService,
+		private privateConv: PrivateConvService,
+		private createChatService: CreateChatService ) {}
 
 	@Post('setAdmin')
 	async setUserAsAdmin(@Body() user:{login:string, chatId: number}){
@@ -28,6 +33,38 @@ export class ChatOptController {
 			return false;
 		}
 
+	}
+
+	@Post('newPrivateConv')
+	async onNewPrivateConv(@Body() data: {idSender: number, loginReceiver:string})
+	{
+		const idReceiver = await this.prismaChatService.getIdOfLogin(data.loginReceiver);
+		const connect = this.gateway.getSocketsArray().find((elem) => elem.idOfLogin === data.idSender);
+		if (connect && idReceiver)
+		{
+			const exist = await this.prismaChatService.checkIfDmExist(data.idSender, idReceiver)
+			if (exist == -1)
+			{
+				const receiverSocket = this.gateway.getSocketsArray().find((elem) => elem.idOfLogin === idReceiver);
+				if (receiverSocket)
+				{
+					const allGood = await this.privateConv.setDirectConv(connect.login, connect.idOfLogin, receiverSocket.login, connect.sock, receiverSocket.sock);
+					const chatlister = new ChatLister(this.prismaChatService);
+					chatlister.listChatOfUser(connect.idOfLogin, connect.sock);
+					return {id: allGood};
+				}
+				else
+				{
+					
+					const allGood = await this.privateConv.setDirectConv(connect.login, connect.idOfLogin, data.loginReceiver, connect.sock, null);
+					const chatlister = new ChatLister(this.prismaChatService);
+					chatlister.listChatOfUser(connect.idOfLogin, connect.sock);
+					return {id: allGood};
+				}
+			}
+			else
+				return {id: exist}
+		}
 	}
 	
 	@Post("updateDmName")
@@ -230,6 +267,19 @@ export class ChatOptController {
 		}
 		else
 			return ("Not Owner")
+	}
+
+	@Post('createChat')
+	async onCreateChat(@Body() messageData: {login: string, chatName: string, chatType: string, chatPassword: string}){ 
+		const targetSocket = this.gateway.getSocketsArray().find((socket) => socket.login === messageData.login);
+		if (targetSocket !== undefined)
+		{
+			const idCreated = await this.createChatService.createChat(messageData.login, targetSocket.idOfLogin ,messageData.chatPassword, messageData.chatName, messageData.chatType, targetSocket.sock);
+			if (idCreated)
+			{
+				return {id: idCreated};
+			}
+		}	
 	}
 
 	@Get("listOfBlockedUser/:login")

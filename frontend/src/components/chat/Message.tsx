@@ -2,7 +2,6 @@ import "./Message.scss"
 import { useContext, useEffect, useState, useRef } from "react";
 import ChatContext, { WebsocketContext } from "../../context/chatContext";
 import { Link } from "react-router-dom";
-import { Channel } from "./ChatComponent";
 import { useLogin } from "../../components/user/auth";
 import GameContext from "../../context/gameContext";
 import { PageContext } from "../../context/PageContext";
@@ -21,11 +20,12 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 	}
 	const { updateChat } = context;
 	const {roomId, setRoomId} = useContext(GameContext)
-	const {allChannels, setActiveChannel, setNeedToUpdate, setBlockedUsers } = useContext(ChatContext)
+	const {setActiveChannel, setNeedToUpdate, setBlockedUsers } = useContext(ChatContext)
     const [showUserActionsMenu, setShowUserActionsMenu] = useState(false);
 	const [userInfo, setUserInfo] = useState<uInfo>({userStatus: "user", friend: false})
 	const [errorMessage, setErrorMessage] = useState("");
     const socket = useContext(WebsocketContext);
+	const [image, setImage] = useState("");
 	let menuRef = useRef<HTMLInputElement>(null);
 	let messageType = "normal";
 
@@ -222,38 +222,28 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 		}
 	}
 
-	function checkIfDmExists() {
-		const index = allChannels.findIndex((element: Channel) => {
-			if (element.type !== "DM")
-				return false;
-			const name1 = element.channelName.substring(0, element.channelName.indexOf(" "));
-			const name2 = element.channelName.substring(element.channelName.indexOf(" ") + 1);
-			if (props.username === name1 || props.username === name2)
-				return true;
-			return false;
-		});
-		return (index);
-	}
-
 	async function startDmFromMessage() {
-
-		let existingConversation = checkIfDmExists();
-		if (existingConversation !== -1) {
-			setActiveChannel(allChannels[existingConversation]);
-			socket.emit('retrieveMessage', {chatId: allChannels[existingConversation].id, messageToDisplay: 15 })
-		} else {
-			const messageData = {
-				sender: auth.user.login,
-				receiver: props.login,
+		const requestOptions = {
+			method: 'post',
+			headers: { 'Content-Type': 'application/json',
+			Authorization: auth.getBearer()},
+			body: JSON.stringify({ idSender: auth.user.id, loginReceiver: props.login})
+		};
+		try {
+			const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/newPrivateConv`, requestOptions);
+			if (!response.ok) {
+				throw new Error("Request failed");
 			}
-			socket.emit('newPrivateConv', messageData);
-			setNeedToUpdate("newDM " + props.username);
+			const data = await response.json();
+			setNeedToUpdate("newDM " + data.id.toString());
 			toggleUserActionsMenu();
+		}
+		catch (error) {
+			console.error("Error while starting private conversation", error);
 		}
 	}
 
-	async function addToFriends()
-	{
+	async function addToFriends() {
 		const requestOptions = {
 			method: 'post',
 			headers: { 'Content-Type': 'application/json',
@@ -268,7 +258,6 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 			console.error("Error while adding friend", error);
 		}
 	}
-
 
 	async function blockUser() {
 		const requestOptions = {
@@ -298,6 +287,18 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 				setBlockedUsers(result);
 			}
 			toggleUserActionsMenu();
+			if (props.isDM)
+				setActiveChannel({
+					id: -1,
+					channelName: "PongOffice Chat",
+					chatPicture: "",
+					type: "",
+					status: "",
+					username: null,
+					dateSend: null,
+					msg: null,
+					userId: null,
+				})
 		}
 		catch (error) {
 			console.error("Error while blocking user", error);
@@ -342,16 +343,61 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 		updateChat("none");
 	}
 
+	async function fetchAvatar(avatar: string) {
+		const res = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/user/avatar/` + avatar, {
+		method: "GET",
+		headers: { Authorization: auth.getBearer() },
+		});
+		console.log("fetchImage on route /user/avatar/", avatar);
+		const imageBlob = await res.blob();
+		const imageObjectURL = URL.createObjectURL(imageBlob);
+		setImage(imageObjectURL);
+	}
+
+	async function fetchUserAvatar() {
+		const data = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/user/` + props.login, {
+			method: "GET",
+			headers: { Authorization: auth.getBearer() },
+			});
+			const newUser = await data.json();
+			if (newUser.avatar) {
+				try {
+					fetchAvatar(newUser.avatar).catch((e) => console.error("Failed to fetch avatar"));
+				} catch (e) {
+					console.error(e);
+				}
+			}
+	}
+
+	useEffect(() => {
+		if (messageType === "owner") {
+			if (auth.user.avatar) {
+				try {
+					fetchAvatar(auth.user.avatar).catch((e) => console.error("Failed to fetch avatar"));
+				} catch (e) {
+					console.error(e);
+				}
+			}
+		}
+		else {
+			try {
+				fetchUserAvatar().catch((e) => console.error("Failed to fetch avatar"));
+			} catch (e) {
+				console.error(e);
+			}
+		}
+	}, []);
+
 	if (messageType !== "service") {
 		return (
 			<div className={messageType === "owner" ? "messageItem owner" : "messageItem"}>
 				<div className='messageInfo'>
 					{messageType === "owner" ?
 						<div>
-							<img src="" alt="user Avatar"/>  {/*faudra mettre la photo de profil ici   */}
+							<img src={image} alt="user Avatar"/>
 						</div> :
 						<div className="userOptions" ref={menuRef}>
-							<img src="" alt="user Avatar" style={{cursor:"pointer"}} onClick={toggleUserActionsMenu}/>
+							<img src={image} alt="user Avatar" style={{cursor:"pointer"}} onClick={toggleUserActionsMenu}/>
 							<div className={showUserActionsMenu ? "userActions" : "userActions-hidden"}>
 								{props.isDM || userInfo.userStatus === "" ? <h4>{props.username}</h4> : <h4>{props.username + " (" + userInfo.userStatus + ")"}</h4>}
 								<hr></hr>

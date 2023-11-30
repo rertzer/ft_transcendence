@@ -11,8 +11,6 @@ export class CreateChatService {
 	constructor(private prismaService: PrismaChatService){
 	}
 
-	
-
 	async createChat(login: string, idLogin:number, chatPassword: string, chatName: string, chatType: string, targetSocket: Socket)
 	{
 		const idOfUser = await this.prismaService.getIdOfLogin(login);
@@ -27,6 +25,7 @@ export class CreateChatService {
 			targetSocket.join(chatId.toString());
 			const chatlister = new ChatLister(this.prismaService);
 			chatlister.listChatOfUser(idLogin, targetSocket);
+			return (chatId);
 		}
 	}
 

@@ -11,25 +11,26 @@ export class PrivateConvService {
 
 	async setDirectConv(creator:string, creatorId:number, receiver: string, sockSender:Socket, sockReceiver: Socket | null)
 	{
-			const ChatCreated = await this.createDirectConv(creator, creatorId, receiver);
-			if (ChatCreated)
+		const ChatCreated = await this.createDirectConv(creator, creatorId, receiver);
+		if (ChatCreated)
+		{
+			const added = await this.prismaService.addChanelUser(ChatCreated, creatorId, "user", getDate(), null)
+			if (added)
 			{
-				const added = await this.prismaService.addChanelUser(ChatCreated, creatorId, "user", getDate(), null)
-				if (added)
+				const IdReceiver = await this.prismaService.getIdOfLogin(receiver);
+				if (IdReceiver)
 				{
-					const IdReceiver = await this.prismaService.getIdOfLogin(receiver);
-					if (IdReceiver)
+					const added2 = await this.prismaService.addChanelUser(ChatCreated, IdReceiver, "user", getDate(), null)
+					if (added2)
 					{
-						const added2 = await this.prismaService.addChanelUser(ChatCreated, IdReceiver, "user", getDate(), null)
-						if (added2)
-						{
-							this.addSocketToRoom(ChatCreated, sockSender, sockReceiver)
-							return (true);
-						}
+						this.addSocketToRoom(ChatCreated, sockSender, sockReceiver)
+						return (ChatCreated);
 					}
+					return (ChatCreated);
 				}
 			}
-		return false;
+		}
+		return (ChatCreated); 
 	}
 
 	async addSocketToRoom(chat_id: number, senderSock: Socket, receiverSock: Socket | null) {

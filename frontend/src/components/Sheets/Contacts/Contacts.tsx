@@ -87,12 +87,30 @@ export function Contacts(props: { sx: number, sy: number, zoom: number, toolbar:
 	}
 	const { updateChat, chat } = context;
 
-	function sendDM(username: string, login: string) {
-		if (chat === "none")
-			updateChat("Chat New DM " + username + "/" + login);
-		else
-			updateChat("none");
+	async function sendDM(login: string) {
+		if (chat === "none") {
+		  const requestOptions = {
+			method: 'post',
+			headers: { 'Content-Type': 'application/json',
+			Authorization: auth.getBearer()},
+			body: JSON.stringify({ idSender: auth.user.id, loginReceiver: login})
+		  };
+		  try {
+			const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/newPrivateConv`, requestOptions);
+			if (!response.ok) {
+			  throw new Error("Request failed");
+			}
+			const data = await response.json();
+			updateChat("Chat New DM " + data.id.toString());
+		  }
+		  catch (error) {
+			console.error("Error while starting private conversation", error);
+		  }
+		} else {
+		  updateChat("none");
+		}
 	  }
+
 	  const getUser = async () => {
 		  try {
 			  const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/friend/listFriends/${auth.user.login}`, {
@@ -158,7 +176,7 @@ export function Contacts(props: { sx: number, sy: number, zoom: number, toolbar:
       console.log(friend);
       const variableToPass = 4 + index; // Commence à 4 et s'incrémente à chaque itération
       return (<div><AddLine scrollX={props.sx} scrollY={props.sy} toolbar={props.toolbar} zoom={props.zoom} name={friend.username} coordX={variableToPass} connected={friend.connected} avatar={friend.avatar} key={`${friend.id}`}/>
-	  	<div onClick={()=>{sendDM(friend.username, friend.login)}}><CreateStyledCell
+	  	<div onClick={()=>{sendDM(friend.login)}}><CreateStyledCell
 		  coordX={variableToPass} coordY={3} width={1} height={1} key={"3"}
 		  text={'send DM'} fontSize={12} className={"DM_contacts"} /></div>
   		<div key={"removeFriend"} onClick={() =>removeFriend(friend.id)}>

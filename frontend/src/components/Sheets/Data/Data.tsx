@@ -70,7 +70,7 @@ export function Data(props: {sx: number, sy: number, zoom: number}) {
 			}
 		}
 		getUsers();
-	}, [])
+	}, [auth])
 
   function convertSeconds(seconds: number) {
     const hours = Math.floor(seconds / 3600);
@@ -102,7 +102,7 @@ export function Data(props: {sx: number, sy: number, zoom: number}) {
               coordX={coordX} coordY={1} width={1} height={1}
               text={reverseBool === 1 ? key.toString() : reverseRank.toString()} fontSize={12} className={classname} />
             {classname === "dataItem" ? 
-              <div onClick={() =>{sendDM(user.userUsername, user.userLogin)}} style={{cursor: "pointer"}}><CreateStyledCell
+              <div onClick={() =>{sendDM(user.userLogin)}} style={{cursor: "pointer"}}><CreateStyledCell
                 coordX={coordX} coordY={2} width={1} height={1}
                 text={user.userUsername} fontSize={12} className={classname} /></div> : 
               <CreateStyledCell
@@ -184,16 +184,34 @@ function sortUsers(users: User[], by: string) {
   return (users);
 }
 
-function sendDM(username: string, login: string) {
-  if (chat === "none")
-    updateChat("Chat New DM " + username + "/" + login);
-  else
+async function sendDM(login: string) {
+  if (chat === "none") {
+    const requestOptions = {
+      method: 'post',
+      headers: { 'Content-Type': 'application/json',
+      Authorization: auth.getBearer()},
+      body: JSON.stringify({ idSender: auth.user.id, loginReceiver: login})
+    };
+    try {
+      const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/newPrivateConv`, requestOptions);
+      if (!response.ok) {
+        throw new Error("Request failed");
+      }
+      const data = await response.json();
+      updateChat("Chat New DM " + data.id.toString());
+    }
+    catch (error) {
+      console.error("Error while starting private conversation", error);
+    }
+  } else {
     updateChat("none");
+  }
 }
+
   return (
     <div key={"contact"}>
       {alternateLine(props.sx, props.sy, props.zoom, userList.length)}
-      <div onClick={() => sendDM(userList[0].userUsername, userList[0].userLogin)}><CreateStyledCell
+      <div><CreateStyledCell
       coordX={3} coordY={1} width={1} height={1}
       text={"Rank"} fontSize={12} className={"title_data"} /></div>
       <div  onClick={()=>{listBy === "Username" ? setReverse(-reverse) : setReverse(1);setListBy("Username")}}><CreateStyledCell

@@ -5,46 +5,40 @@ import { useEffect, useContext } from "react";
 import ChatContext from "../../context/chatContext";
 import { WebsocketContext } from "../../context/chatContext";
 import { useLogin } from "../../components/user/auth";
-import { usePrevious } from "@uidotdev/usehooks";
 
 const Sidebar = () => {
 
 	const socket = useContext(WebsocketContext);
     const auth = useLogin();
     const {activeChannel, allChannels, setActiveChannel, needToUpdate, setNeedToUpdate} = useContext(ChatContext);
-    const previousLen = usePrevious(allChannels.length);
 
 	useEffect(() => {
         const id = activeChannel.id;
         if (needToUpdate === "" && id !== -1 && allChannels.find(element => element.id === id) === undefined)
             setActiveChannel({id: -1, channelName: "PongOffice Chat", chatPicture: "", type: "", status: "", username: null, dateSend: null, msg: null, userId: null});
-        else if (needToUpdate === "addChat" && allChannels.length > 0 && previousLen === allChannels.length - 1) {
-            setActiveChannel(allChannels[allChannels.length - 1]);
-			socket.emit('retrieveMessage', {chatId: allChannels[allChannels.length - 1].id, messageToDisplay: 15 })
-            setNeedToUpdate("");
-        }
-        else if (needToUpdate.indexOf("newDM ") === 0) {
-            const name = needToUpdate.substring(6);
-            const newDM = allChannels.find((element) => {
-                if (element.type !== "DM")
-				return false;
-			const name1 = element.channelName.substring(0, element.channelName.indexOf(" "));
-			const name2 = element.channelName.substring(element.channelName.indexOf(" ") + 1);
-			if (name === name1 || name === name2)
-				return true;
-			return false;
-            });
-            if (newDM) {
-                setActiveChannel(newDM);
+        else if (needToUpdate.indexOf("addChat ") === 0 && allChannels.length > 0) {
+            const newChatId = parseInt(needToUpdate.substring(8));
+            const newChannel = allChannels.find(element => element.id === newChatId)
+            if (newChannel !== undefined) {
+                setActiveChannel(newChannel);
                 setNeedToUpdate("");
             }
+        }
+        else if (needToUpdate.indexOf("newDM ") === 0 && allChannels.length > 0) {
+            const DMid = parseInt(needToUpdate.substring(6));
+            const DMChannel = allChannels.find(element => element.id === DMid)
+            if (DMChannel !== undefined) {
+                setActiveChannel(DMChannel);
+                socket.emit('retrieveMessage', {chatId: DMid, messageToDisplay: 15 })
+                setNeedToUpdate("");
+            }  
         }
         else if (needToUpdate.indexOf("joinedChat ") === 0  && allChannels.length > 0) {
             const joinedId = parseInt(needToUpdate.substring(11));
             const channelJoined = allChannels.find(element => element.id === joinedId)
             if (channelJoined !== undefined) {
+                socket.emit('retrieveMessage', {chatId: joinedId, messageToDisplay: 15 })
                 setActiveChannel(channelJoined);
-                socket.emit('retrieveMessage', {chatId: channelJoined.id, messageToDisplay: 15 })
                 setNeedToUpdate("");
                 const messageData = {
                     username: auth.user.username,

@@ -1,17 +1,9 @@
 import { useState, useContext } from 'react';
-import { WebsocketContext } from '../../context/chatContext';
 import ChatContext from '../../context/chatContext';
 import AddIcon from '@mui/icons-material/Add';
 import { Tooltip } from  "@mui/material";
 import "./AddChat.scss";
 import { useLogin } from "../../components/user/auth";
-
-type CreateChatPayload = {
-	login: string;
-	chatName: string;
-	chatPassword: string | null;
-	chatType: string;
-}
 
 export const AddChat = (props: {showSubMenu: string, setShowSubMenu: Function}) => {
 	const auth = useLogin();
@@ -19,7 +11,6 @@ export const AddChat = (props: {showSubMenu: string, setShowSubMenu: Function}) 
 	const [chatName, setChatName] = useState('');
 	const [password, setPassword] = useState('');
 	const [errorMessage, setErrorMessage] = useState('');
-	const socket = useContext(WebsocketContext);
 	const [chatType, setChatType] = useState('public');
 
 	const toggleForm = () => {
@@ -31,9 +22,9 @@ export const AddChat = (props: {showSubMenu: string, setShowSubMenu: Function}) 
 		}
 	};
 
-	const onSubmit = () => {
+	const onSubmit = async () => {
 
-		let createChatData: CreateChatPayload;
+		let createChatData;
 		if (chatName === "") {
 			setErrorMessage("Channel Name cannot be left empty")
 			return ;
@@ -42,17 +33,14 @@ export const AddChat = (props: {showSubMenu: string, setShowSubMenu: Function}) 
 			setErrorMessage("Password needs to be specified")
 			return;
 		}
-		if (password === "")
-		{
+		if (password === "") {
 			createChatData = {
 				login: auth.user.login,
 				chatName: chatName,
 				chatType: chatType,
 				chatPassword: null,
 			}
-		}
-		else
-		{
+		} else {
 			createChatData = {
 				login: auth.user.login,
 				chatName: chatName,
@@ -60,11 +48,27 @@ export const AddChat = (props: {showSubMenu: string, setShowSubMenu: Function}) 
 				chatPassword: password,
 			}
 		}
-		socket.emit('createChat', createChatData);
-		setNeedToUpdate("addChat");
-		setChatName('');
-		setPassword('');
-		toggleForm();
+		const requestOptions = {
+			method: 'post',
+			headers: { 'Content-Type': 'application/json' ,
+			Authorization: auth.getBearer()},
+			body: JSON.stringify(createChatData),
+		};
+		try {
+			const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/createChat/`, requestOptions);
+			if (!response.ok) {
+			  throw new Error('Request failed');
+			}
+			const data = await response.json();
+			setPassword('');
+			setNeedToUpdate("addChat " + data.id.toString());
+			setChatName('');
+			setPassword('');
+			toggleForm();
+		} 
+		catch (error) {
+			console.error('Error while creating new channel', error);
+		}
 	}
 	return (
 		<div className='addchat'>

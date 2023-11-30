@@ -4,10 +4,10 @@ import { CreateChatService } from "./createchat.service";
 import { ChatModule } from "../chat.module";
 
 @Module({
-	imports: [ChatModule],
+	imports: [],
 	providers: [CreateChatService],
 	exports: [CreateChatService],
 })
 
-export class JoinChatModule{}
+export class CreateChatModule{}
 

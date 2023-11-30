@@ -31,9 +31,7 @@ function Desktop1() {
 	}, []);
 
 	useEffect(() => {
-	  console.log("rkeklkrer");
 	  socket.connect();
-	  
 	  return (()=>{
 		socket.disconnect();
 	  })
