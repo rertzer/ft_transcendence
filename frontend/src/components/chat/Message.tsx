@@ -316,15 +316,15 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 			const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/game/newRoom/`, requestOptions);
 			const data = await response.json();
 			sendServiceMessage(mode + " game invitation received to play in room " + data.roomId)
-			setRoomId(data.roomId);
-			updateChat("none");
+			// setRoomId(data.roomId);
+			// updateChat("none");
 		}
 		catch (error) {
 			console.error('Error creating game room', error);
 		}
 	}
 
-	async function joinGame() {
+	async function joinGame(answer: string) {
 		const indexOfId = props.msg.lastIndexOf(" ") + 1;
 		const idToJoin = parseInt(props.msg.substring(indexOfId));
 		try {
@@ -339,8 +339,24 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 		} catch (error) {
 			console.error('Error removing message:', error);
 		}
-		setRoomId(idToJoin);
-		updateChat("none");
+		if (answer === "ok") {
+			sendServiceMessage("Challenge accepted ! Game started in room " + idToJoin);
+			setRoomId(idToJoin);
+			updateChat("none");
+		}
+		else {
+			setActiveChannel({
+				id: -1,
+				channelName: "PongOffice Chat",
+				type: "",
+				status: "",
+				username: null,
+				dateSend: null,
+				msg: null,
+				userId: null,
+				userLogin: "",
+			})
+		}
 	}
 
 	async function fetchAvatar(avatar: string) {
@@ -368,8 +384,32 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 			}
 	}
 
+	async function deleteMessage() {
+		try {
+			const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/deleteMessage/${props.msgId}`, {
+				method: 'DELETE',
+				headers: { Authorization: auth.getBearer()},
+			});
+			if (!response.ok) {
+				console.error(`Error deleting invite: ${response.status}`);
+				return;
+			}
+		} catch (error) {
+			console.error('Error removing message:', error);
+		}
+	}
+
 	useEffect(() => {
-		if (messageType === "owner") {
+		if (messageType === "service") {
+			if (props.isDM && props.login !== auth.user.login && props.msg.search("Challenge accepted !") !== -1) {
+				deleteMessage();
+				const indexOfId = props.msg.lastIndexOf(" ") + 1;
+				const idToJoin = parseInt(props.msg.substring(indexOfId));
+				setRoomId(idToJoin);
+				updateChat("none");
+			}
+		}
+		else if (messageType === "owner") {
 			if (auth.user.avatar) {
 				try {
 					fetchAvatar(auth.user.avatar).catch((e) => console.error("Failed to fetch avatar"));
@@ -436,9 +476,9 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 	} else {
 		return (
 			<div className="service-message" >
-				{(props.isDM && props.login !== auth.user.login) &&
-					<div><p>{props.msg}</p><button onClick={joinGame}>Yes</button><button>No</button></div>}
-				{(props.isDM && props.login === auth.user.login) &&
+				{(props.isDM && props.login !== auth.user.login && props.msg.search("Challenge accepted !") === -1) &&
+					<div><p>{props.msg}</p><button onClick={() => joinGame("ok")}>Yes</button><button onClick={() => joinGame("nope")}>No</button></div>}
+				{(props.isDM && props.login === auth.user.login && props.msg.search("Challenge accepted !") === -1) &&
 					<div><p>Classic game invitation sent</p></div>}
 				{props.isDM === false && <p>{props.msg}</p>}
 			</div>
