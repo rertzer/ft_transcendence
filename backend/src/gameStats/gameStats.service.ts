@@ -1,4 +1,5 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
+import { asyncScheduler } from 'rxjs';
 import { GameStatus, PrismaGameService } from 'src/prisma/game/prisma.game.service';
 
 export interface statObject {
@@ -19,15 +20,16 @@ export interface statObject {
 	totalGameDurationAdvancedInSec: number,
 	games?: {
 		id: number;
- 		type: string;
-    	game_status: string | null;
-    	won: boolean;
-    	player_one_id: number;
-    	player_two_id: number;
-    	player_one_score: number | null;
-    	player_two_score: number | null;
-		date_begin: Date,
-    	durationInSec: number | undefined;
+		type: string;
+		game_status: string | null;
+		won: boolean;
+		opponentId: number;
+		opponentUserName: string | null;
+		opponentLogin: string;
+		myScore: number | null;
+		myOpponentScore: number | null;
+		date_begin: Date;
+		durationInSec: number | undefined;
 	}[]
 }
 
@@ -89,18 +91,22 @@ export class GameStatsService {
 					player_two_score: true, 
 					date_begin:true, 
 					date_end: true,
-				}
+					player_one: true, 
+					player_two: true
+				},
 			});
 			const gamesUserTimePlayed = gamesUser.map((game) => {
+				const opponent = game.player_one_id == param.user.id ? game.player_two : game.player_one;
 				return ({
 					id:game.id, 
 					type:game.type, 
 					game_status:game.game_status,
 					won: game.winner_id === param.user.id ? true : false, 
-					player_one_id: game.player_one_id, 
-					player_two_id: game.player_two_id, 
-					player_one_score: game.player_one_score, 
-					player_two_score: game.player_two_score, 
+					opponentId: opponent.id,
+					opponentUserName: opponent.username,
+					opponentLogin:opponent.login,
+					myScore: game.player_one_id == param.user.id ? game.player_one_score : game.player_two_score,
+					myOpponentScore: game.player_one_id == param.user.id ? game.player_two_score : game.player_one_score,
 					date_begin:game.date_begin,
 					durationInSec:game.date_end ? (game.date_end.getTime() - game.date_begin.getTime())/1000 : undefined,
 				})

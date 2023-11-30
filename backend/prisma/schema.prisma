@@ -19,9 +19,9 @@ model User {
   email                  String
   avatar                 String?
   role                   String
-  game_won               Int    @default(0)
-  game_lost              Int @default(0)
-  game_played            Int @default(0)
+  game_won               Int                  @default(0)
+  game_lost              Int                  @default(0)
+  game_played            Int                  @default(0)
   tfa_secret             String?
   tfa_activated          Boolean              @default(false)
   banned_chats           UsersBannedToChats[]
@@ -32,6 +32,8 @@ model User {
   usersBlockedBy         BlockedUser[]        @relation("BlockedByUser")
   chatChannelsUser       ChatChannelsUser[]   @relation("chatChanelUser")
   channelOwner           ChatChannels[]       @relation("ChatChannelsOwner")
+  GameLeft               Game[]               @relation("GameLeft")
+  GameRight              Game[]               @relation("GameRight")
 }
 
 model UsersBannedToChats {
@@ -102,7 +104,9 @@ model Friend {
 model Game {
   id               Int       @id @default(autoincrement())
   player_one_id    Int
+  player_one       User      @relation("GameLeft", fields: [player_one_id], references: [id])
   player_two_id    Int
+  player_two       User      @relation("GameRight", fields: [player_two_id], references: [id])
   type             String
   winner_id        Int?
   game_status      String?

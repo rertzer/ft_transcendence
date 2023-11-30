@@ -2,7 +2,7 @@ Arguments:
   /usr/bin/node /mnt/nfs/homes/mbocquel/.brew/Cellar/yarn/1.22.19/libexec/bin/yarn.js install
 
 PATH: 
-  /mnt/nfs/homes/mbocquel/.brew/bin:/mnt/nfs/homes/mbocquel/.brew/bin:/mnt/nfs/homes/mbocquel/.brew/bin:/mnt/nfs/homes/mbocquel/.brew/bin:/mnt/nfs/homes/mbocquel/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+  /mnt/nfs/homes/mbocquel/.local/bin:/mnt/nfs/homes/mbocquel/.brew/bin:/mnt/nfs/homes/mbocquel/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
 
 Yarn version: 
   1.22.19
@@ -14,7 +14,7 @@ Platform:
   linux x64
 
 Trace: 
-  Error: ENOENT: no such file or directory, open '/mnt/nfs/homes/mbocquel/.cache/yarn/v6/npm-@types-istanbul-lib-report-3.0.3-53047614ae72e19fc0401d872de3ae2b4ce350bf-integrity/node_modules/@types/istanbul-lib-report/.yarn-tarball.tgz'
+  Error: ENOENT: no such file or directory, lstat '/mnt/nfs/homes/mbocquel/.cache/yarn/v6/npm-eslint-8.53.0-14f2c8244298fcae1f46945459577413ba2697ce-integrity/node_modules/eslint/README.md'
 
 npm manifest: 
   {
