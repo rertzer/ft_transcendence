@@ -70,7 +70,7 @@ const Chats = () => {
 						{moveMostRecentUp(allChannels).map((channel) => {
                             if (channel.type === "DM" && blockedUsers.find((element) => channel.channelName.indexOf(element.username) !== -1) !== undefined)
                                 return (<div key={channel.id}></div>);
-                            else
+                            else {
                                 return (
                                 <div key={channel.id} onClick={() => {
                                         if (channel.id !== activeChannel.id) {
@@ -86,6 +86,7 @@ const Chats = () => {
                                         </div>
                                     </div>
                                 </div>)
+                            }
                         })}
 			  		</div>
 				)}
