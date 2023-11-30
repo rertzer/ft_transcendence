@@ -106,7 +106,7 @@ const ConversationBar = (props: {isOwner: boolean, isAdmin: boolean}) => {
                             </Tooltip>}
                         {activeChannel.id !== -1 &&
                             <Tooltip title="Close conversation" arrow>
-                                <CloseIcon onClick={() => {setActiveChannel({id: -1, channelName: "PongOffice Chat", chatPicture: "", type: "", status: "", username: null, dateSend: null, msg: null, userId: null})}}/>
+                                <CloseIcon onClick={() => {setActiveChannel({id: -1, channelName: "PongOffice Chat", type: "", status: "", username: null, dateSend: null, msg: null, userId: null, userLogin: ""})}}/>
                             </Tooltip>}
                     </div>
                 </div>

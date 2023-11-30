@@ -38,17 +38,16 @@ export class ChatLister{
 					message = lastMessage.message;
 					lastMessageUsername =  await this.prismaService.getLastMessagesUsername(chatUser.channel_id);
 				}
-				const avatarOfOwner = await this.prismaService.getOwnerOfChatAvatar(chatUser.channel_id);
 				const chatType = {
 					id: chatUser.channel.id,
 					channelName: chatUser.channel.name,
-					chatPicture: avatarOfOwner,// need to be change
 					username: lastMessageUsername?.username,
 					status: chatUser.user_role,
 					msg: message,
 					dateSend: date,
 					type: chatUser.channel.type,
 					userId: lastMessageUsername?.id,
+					userLogin: lastMessageUsername?.login,
 				}
 				chatList.push(chatType);
 			}

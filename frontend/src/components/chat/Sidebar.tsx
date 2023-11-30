@@ -15,7 +15,7 @@ const Sidebar = () => {
 	useEffect(() => {
         const id = activeChannel.id;
         if (needToUpdate === "" && id !== -1 && allChannels.find(element => element.id === id) === undefined)
-            setActiveChannel({id: -1, channelName: "PongOffice Chat", chatPicture: "", type: "", status: "", username: null, dateSend: null, msg: null, userId: null});
+            setActiveChannel({id: -1, channelName: "PongOffice Chat", type: "", status: "", username: null, dateSend: null, msg: null, userId: null, userLogin: ""});
         else if (needToUpdate.indexOf("addChat ") === 0 && allChannels.length > 0) {
             const newChatId = parseInt(needToUpdate.substring(8));
             const newChannel = allChannels.find(element => element.id === newChatId)

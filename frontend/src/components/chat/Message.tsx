@@ -291,13 +291,13 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 				setActiveChannel({
 					id: -1,
 					channelName: "PongOffice Chat",
-					chatPicture: "",
 					type: "",
 					status: "",
 					username: null,
 					dateSend: null,
 					msg: null,
 					userId: null,
+					userLogin: "",
 				})
 		}
 		catch (error) {
@@ -348,7 +348,6 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 		method: "GET",
 		headers: { Authorization: auth.getBearer() },
 		});
-		console.log("fetchImage on route /user/avatar/", avatar);
 		const imageBlob = await res.blob();
 		const imageObjectURL = URL.createObjectURL(imageBlob);
 		setImage(imageObjectURL);
@@ -388,6 +387,8 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 		}
 	}, []);
 
+	const profileUrl = "/profile/" + props.login;
+
 	if (messageType !== "service") {
 		return (
 			<div className={messageType === "owner" ? "messageItem owner" : "messageItem"}>
@@ -406,7 +407,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 									{props.isDM && roomId === 0 && <div onClick={() => {startGame("ADVANCED")}}>Invite to Advanced Game</div>}
 									{!userInfo.friend && <div onClick={addToFriends}>Add to friends</div>}
 									{props.isDM === false && <div onClick={startDmFromMessage}>Send DM</div>}
-									<Link to="/profile/1" style={{textDecoration:"none", color: "#ddddf7"}}>
+									<Link to={profileUrl} style={{textDecoration:"none", color: "#ddddf7"}}>
 										<div>Show profile</div>
 									</Link>
 									{((props.isAdmin || props.isOwner) && (userInfo.userStatus === "" || userInfo.userStatus === "admin")) &&

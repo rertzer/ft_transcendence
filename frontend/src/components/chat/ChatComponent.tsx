@@ -11,7 +11,6 @@ import { PageContext } from "../../context/PageContext";
 export type Channel = {
     id: number;
     channelName: string;
-    chatPicture: string;
     type : string;
     status: string;
     /*---------LastMessageReceive-------*/
@@ -19,6 +18,7 @@ export type Channel = {
     msg: string| null;
     dateSend: Date | null;
     userId: number | null;
+    userLogin: string;
 }
 
 const ChatComponent = (props: {newDM: string}) => {
@@ -37,13 +37,13 @@ const ChatComponent = (props: {newDM: string}) => {
     const [activeChannel, setActiveChannel] = useState<Channel>({
         id: -1,
         channelName: "PongOffice Chat",
-        chatPicture: "",
         type: "",
         status: "",
         username: null,
         dateSend: null,
         msg: null,
         userId: null,
+        userLogin: "",
     })
 
   const ChatValue: IChatContext = {

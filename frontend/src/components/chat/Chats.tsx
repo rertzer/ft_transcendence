@@ -1,6 +1,6 @@
 import "./Chats.scss";
 import { WebsocketContext } from "../../context/chatContext";
-import { useContext, useEffect, useRef } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import ChatContext from "../../context/chatContext";
 import { Channel } from './ChatComponent';
 import { useLogin } from "../../components/user/auth";
@@ -9,7 +9,7 @@ const Chats = () => {
 
     const socket = useContext(WebsocketContext);
     const auth = useLogin();
-	const {activeChannel, setActiveChannel, allChannels, setAllChannels, blockedUsers} = useContext(ChatContext);
+	const {allChannels, setAllChannels, blockedUsers} = useContext(ChatContext);
 
     useEffect(() => {
         socket.emit('chatListOfUser', auth.user.login);
@@ -53,13 +53,6 @@ const Chats = () => {
     return (chatsOfUser);
     }
 
-    function findReceiverName(names: string) {
-
-        let name = names.replace(auth.user.login, "");
-        name.trim()
-        return (name)
-    }
-
     return (
         <div className='chats'>
             {allChannels.length === 0 ? (
@@ -71,21 +64,7 @@ const Chats = () => {
                             if (channel.type === "DM" && blockedUsers.find((element) => channel.channelName.indexOf(element.username) !== -1) !== undefined)
                                 return (<div key={channel.id}></div>);
                             else {
-                                return (
-                                <div key={channel.id} onClick={() => {
-                                        if (channel.id !== activeChannel.id) {
-                                        setActiveChannel(channel);
-                                        socket.emit('retrieveMessage', {chatId: channel.id, messageToDisplay: 15 })
-                                        }}}>
-                                    <div className={activeChannel.id === channel.id ? "userChat active" : "userChat"}>
-                                        <img src={channel.type !== "DM" ? "img1.png" : "recuperer l'avatar"} alt="user avatar"/>
-                                        <div className='userChatInfo'>
-                                            <h1>{channel.type !== "DM" ? channel.channelName : findReceiverName(channel.channelName)}</h1>
-                                            {blockedUsers.find(element => element.idUser === channel.userId) && <p>blocked message</p>}
-                                            {blockedUsers.find(element => element.idUser === channel.userId) === undefined && <p>{channel.msg ? channel.msg : ""}</p>}
-                                        </div>
-                                    </div>
-                                </div>)
+                                return (<div key={channel.id}><ChannelItem channel={channel}/></div>)
                             }
                         })}
 			  		</div>
@@ -95,3 +74,71 @@ const Chats = () => {
 }
 
 export default Chats;
+
+const ChannelItem = (props: {channel: Channel}) => {
+
+    const socket = useContext(WebsocketContext);
+    const auth = useLogin();
+    const [image, setImage] = useState("");
+    const {activeChannel, setActiveChannel, allChannels, setAllChannels, blockedUsers} = useContext(ChatContext);
+
+    function findReceiverName(names: string) {
+
+        let name = names.replace(auth.user.username, "");
+        return (name.trim())
+    }
+
+    async function fetchAvatar(avatar: string) {
+		const res = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/user/avatar/` + avatar, {
+		method: "GET",
+		headers: { Authorization: auth.getBearer() },
+		});
+		const imageBlob = await res.blob();
+		const imageObjectURL = URL.createObjectURL(imageBlob);
+		setImage(imageObjectURL);
+	}
+
+	async function fetchUserAvatar(username: string) {
+		const data = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/user/` + username, {
+			method: "GET",
+			headers: { Authorization: auth.getBearer() },
+			});
+			const newUser = await data.json();
+			if (newUser.avatar) {
+				try {
+					fetchAvatar(newUser.avatar).catch((e) => console.error("Failed to fetch avatar"));
+				} catch (e) {
+					console.error(e);
+				}
+			}
+	}
+
+    useEffect(() => {
+		if (props.channel.type !== "DM") {
+			setImage("img1.png");
+		}
+		else {
+			try {
+				fetchUserAvatar(findReceiverName(props.channel.channelName)).catch((e) => console.error("Failed to fetch avatar"));
+			} catch (e) {
+				console.error(e);
+			}
+		}
+	}, [activeChannel, allChannels]);
+
+    return (
+        <div onClick={() => {
+            if (props.channel.id !== activeChannel.id) {
+            setActiveChannel(props.channel);
+            socket.emit('retrieveMessage', {chatId: props.channel.id, messageToDisplay: 15 })
+            }}}>
+        <div className={activeChannel.id === props.channel.id ? "userChat active" : "userChat"}>
+            <img src={image} alt="user avatar"/>
+            <div className='userChatInfo'>
+                <h1>{props.channel.type !== "DM" ? props.channel.channelName : findReceiverName(props.channel.channelName)}</h1>
+                {blockedUsers.find(element => element.idUser === props.channel.userId) && <p>blocked message</p>}
+                {blockedUsers.find(element => element.idUser === props.channel.userId) === undefined && <p>{props.channel.msg ? props.channel.msg : ""}</p>}
+            </div>
+        </div>
+    </div>)
+}
