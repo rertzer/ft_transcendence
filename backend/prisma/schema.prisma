@@ -12,16 +12,13 @@ datasource db {
 
 model User {
   id                     Int                  @id @default(autoincrement())
-  username               String?    @db.VarChar(10)
+  username               String?              @unique @db.VarChar(10)
   first_name             String?
   last_name              String?
   login                  String               @unique
   email                  String
   avatar                 String?
   role                   String
-  game_won               Int    @default(0)
-  game_lost              Int @default(0)
-  game_played            Int @default(0)
   tfa_secret             String?
   tfa_activated          Boolean              @default(false)
   banned_chats           UsersBannedToChats[]

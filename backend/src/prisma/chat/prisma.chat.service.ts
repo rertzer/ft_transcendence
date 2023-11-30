@@ -590,9 +590,6 @@ export class PrismaChatService {
 					last_name: 'Doe',
 					email: 'johndoe@example.com',
 					role: 'user',
-					game_won: 0,
-					game_lost: 0,
-					game_played: 0,
 				},
 			});
 			const newUser2 = await this.prismaService.user.create({
@@ -603,9 +600,6 @@ export class PrismaChatService {
 					login: 'coco',
 					email: 'johndoeff@example.com',
 					role: 'user',
-			  game_won: 0,
-			  game_lost: 0,
-			  game_played: 0,
 			  // Add other user fields as needed
 			},
 		});
