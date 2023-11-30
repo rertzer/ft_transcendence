@@ -157,13 +157,13 @@ function Footer() {
   }
   function getPagePlace() {
     switch(url_context?.page) {
-      case "game" :
+      case "Game" :
         return 1;
-      case "profile" :
+      case "Profile" :
         return 2;
-      case "data" :
+      case "Data" :
         return 3;
-      case "contacts" :
+      case "Contacts" :
         return 4
       default :
         return 0;
@@ -171,10 +171,10 @@ function Footer() {
   }
   return (
 	<footer className={dark ? styles.bottom : styles.bottomLight} >
-    <FirstPageIcon className={styles.arrow} onClick={() =>navigate("/game")}/>
-    <SkipPreviousIcon className={styles.arrow} onClick={() =>selectPrev()}/>
-    <SkipNextIcon className={styles.arrow} onClick={() =>selectNext()}/>
-    <LastPageIcon className={styles.arrow} onClick={() =>navigate("/contacts")}/>
+    <FirstPageIcon className={dark ? styles.arrow : styles.arrowLight} onClick={() =>navigate("/game")}/>
+    <SkipPreviousIcon className={dark ? styles.arrow : styles.arrowLight} onClick={() =>selectPrev()}/>
+    <SkipNextIcon className={dark ? styles.arrow : styles.arrowLight} onClick={() =>selectNext()}/>
+    <LastPageIcon className={dark ? styles.arrow : styles.arrowLight} onClick={() =>navigate("/contacts")}/>
     <div className={(url_context?.page === "Game") ? (dark ? styles.sheetPageSelected : styles.sheetPageSelectedLight) : (dark ? styles.sheetPage : styles.sheetPageLight)} style={{left:'100px', width:'50px'}} onClick={() =>navigate("/game")}>
       <div className={styles.text}>Game</div>
     </div>

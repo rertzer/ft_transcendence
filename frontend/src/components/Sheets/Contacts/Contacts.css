@@ -44,7 +44,7 @@
     text-align: center;
     font-weight: 600;
     background-color: lightsalmon;
-    border: 1px solid rgb(150, 0, 0);
+    border: 2px solid rgb(150, 0, 0);
 	cursor: pointer;
 }
 .delete_contacts:hover {
@@ -53,7 +53,7 @@
     text-align: center;
     font-weight: 600;
     background-color: lightcoral;
-    border: 1px solid rgb(150, 0, 0);
+    border: 2px solid rgb(150, 0, 0);
 	cursor: pointer;
 }
 .block_contacts {
@@ -74,8 +74,21 @@
     /* background-color: ; */
     border: 1px solid rgb(192, 192, 192);
 }
+.contacts_button {
+	color: rgb(0, 0, 0);
+    display:block;
+    text-align: center;
+    font-weight: 600;
+    /* background-color: ; */
+    border: 1px solid rgb(192, 192, 192);
+    cursor: pointer;
+}
+.contacts_button:hover {
+    background-color: rgba(9, 33, 66, 0.083);
+}
 .status_connected {
 	color: green;
+    cursor: default;
     display:block;
     text-align: center;
     font-weight: 600;
@@ -83,6 +96,7 @@
     border: 1px solid rgb(150, 240, 32);
     border-left: 2px solid rgb(150, 240, 32);
     border-right: 3px solid rgb(150, 240, 32);
+    border-bottom: 3px solid rgb(150, 240, 32);
 }
 .status_unconnected {
 	color: red;
@@ -93,6 +107,8 @@
     border: 1px solid red;
     border-left: 2px solid red;
     border-right:3px solid red;
+    border-bottom:3px solid red;
+    cursor: default;
 }
 .border {
     border: 2px solid black;

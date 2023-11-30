@@ -1,6 +1,7 @@
 import {useState, useEffect} from 'react';
 import { useLogin } from '../../user/auth';
 import { CreateStyledCell } from '../CreateStyledCell';
+import { useNavigate } from 'react-router-dom';
 
 type User = {
   userId: number,        
@@ -36,41 +37,42 @@ function alternateLine(sx: number, sy: number, zoom: number, size: number) {
 	return (<div key={"alternateLines"}>{lines}</div>);
 }
 
-function AddLine(sx: number, sy: number, zoom: number, key: number, coordX:number, username: string, numberGames: number, numberWon: number, numberLost: number, totalGameDuration: number) {
-
-  const classname= "dataItem";
-
-
-	return (<div key={key}>
-          <CreateStyledCell
-            coordX={coordX} coordY={1} width={1} height={1}
-            text={key.toString()} fontSize={12} className={classname} />
-          <CreateStyledCell
-            coordX={coordX} coordY={2} width={1} height={1}
-            text={username} fontSize={12} className={classname} />
-          <CreateStyledCell
-            coordX={coordX} coordY={3} width={1} height={1}
-            text={numberGames.toString()} fontSize={12} className={classname} />
-          <CreateStyledCell
-            coordX={coordX} coordY={4} width={1} height={1}
-            text={numberWon.toString()} fontSize={12} className={classname} />
-          <CreateStyledCell
-            coordX={coordX} coordY={5} width={1} height={1}
-            text={numberLost.toString()} fontSize={12} className={classname} />
-          <CreateStyledCell
-            coordX={coordX} coordY={6} width={1} height={1}
-            text={numberLost.toString()} fontSize={12} className={classname} />
-          <CreateStyledCell
-            coordX={coordX} coordY={7} width={1} height={1}
-            text={Math.floor(totalGameDuration).toString()+"s"} fontSize={12} className={classname} />
-        </div>)
-}
 
 export function Data(props: {sx: number, sy: number, zoom: number}) {
 
   const [userList, setUserList] = useState<User[]>([]);
   const [listBy, setListBy] = useState("Won");
   const auth = useLogin();
+  const navigate = useNavigate();
+
+  function AddLine(sx: number, sy: number, zoom: number, key: number, coordX:number, username: string, login: string, numberGames: number, numberWon: number, numberLost: number, totalGameDuration: number) {
+
+    const classname= "dataItem";
+  
+    return (<div key={key}>
+            <CreateStyledCell
+              coordX={coordX} coordY={1} width={1} height={1}
+              text={key.toString()} fontSize={12} className={classname} />
+            <CreateStyledCell
+              coordX={coordX} coordY={2} width={1} height={1}
+              text={username} fontSize={12} className={"dataItemButton"} onClick={() => navigate(`/profile/${login}`)}/>
+            <CreateStyledCell
+              coordX={coordX} coordY={3} width={1} height={1}
+              text={numberGames.toString()} fontSize={12} className={classname} />
+            <CreateStyledCell
+              coordX={coordX} coordY={4} width={1} height={1}
+              text={numberWon.toString()} fontSize={12} className={classname} />
+            <CreateStyledCell
+              coordX={coordX} coordY={5} width={1} height={1}
+              text={numberLost.toString()} fontSize={12} className={classname} />
+            <CreateStyledCell
+              coordX={coordX} coordY={6} width={1} height={1}
+              text={numberLost.toString()} fontSize={12} className={classname} />
+            <CreateStyledCell
+              coordX={coordX} coordY={7} width={1} height={1}
+              text={Math.floor(totalGameDuration).toString()+"s"} fontSize={12} className={classname} />
+          </div>)
+  }
 
   useEffect(() => {
 		const getUsers = async () => {
@@ -168,7 +170,7 @@ function sortUsers(users: User[], by: string) {
         text={"Play Time"} fontSize={12} className={"title_data"} /></div>
       {sortUsers(userList, listBy).map((user, index) => {
         const variableToPass = 4 + index;
-        return AddLine(props.sx, props.sy, props.zoom, index + 1, variableToPass, user.userUsername, user.numberGames, user.numberWon, user.numberLost, user.totalGameDurationInSec)
+        return AddLine(props.sx, props.sy, props.zoom, index + 1, variableToPass, user.userUsername, user.userLogin, user.numberGames, user.numberWon, user.numberLost, user.totalGameDurationInSec)
       })}
       <CreateStyledCell coordX={3} coordY={1} width={7} height={userList.length + 1} text={''} fontSize={0} className={'border'}/>
      </div>);

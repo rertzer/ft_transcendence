@@ -167,3 +167,12 @@
 .arrow:hover {
     color:white;
 }
+
+.arrowLight {
+    color:#919190;
+    position:relative;
+    top:3px;
+}
+.arrowLight:hover {
+    color:rgb(0, 0, 0);
+}

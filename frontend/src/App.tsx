@@ -25,12 +25,12 @@ function App() {
       <Route path="/game" element={<RequireAuth><PageUrlProvider page_url={"Game"}><Desktop1 /></PageUrlProvider></RequireAuth>} />
       <Route path="/profile" element={<RequireAuth><PageUrlProvider page_url={"Profile"}><Desktop1 /></PageUrlProvider></RequireAuth>} />
       <Route path="/profile/:login_url" element={<RequireAuth><PageUrlProvider page_url={"Profile"}><Desktop1 /></PageUrlProvider></RequireAuth>} />
+      <Route path="/profile/edit" element={<RequireAuth> <EditProfile /></RequireAuth>} />
       <Route path="/data" element={<RequireAuth><PageUrlProvider page_url={"Data"}><Desktop1 /></PageUrlProvider></RequireAuth>} />
       <Route path="/contacts" element={<RequireAuth><PageUrlProvider page_url={"Contacts"}><Desktop1 /></PageUrlProvider></RequireAuth>} />
       <Route path="/login" element={<Login />} />
       <Route path="/redirect" element={<Redirect />} /> 
       <Route path="/redirect/twofa" element={<RedirectTfa />} /> 
-      <Route path="/edit" element={<RequireAuth> <EditProfile /></RequireAuth>} />
       <Route path="/twofa" element={<RequireAuth> <Twofa /></RequireAuth>} />
       <Route path="*" element={<Welcome />} />
 	  </Route>
