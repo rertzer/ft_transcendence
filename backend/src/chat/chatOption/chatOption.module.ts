@@ -6,6 +6,7 @@ import { PrivateConvModule } from "../privateConv/privateConv.module";
 import { CreateChatService } from "../createchat/createchat.service";
 import { CreateChatModule } from "../createchat/createchat.module";
 
+
 @Module({
 	imports:[GatewayModule,PrivateConvModule, CreateChatModule],
 	controllers: [ChatOptController],

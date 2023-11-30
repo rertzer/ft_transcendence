@@ -9,6 +9,8 @@ import { PrivateConvService } from "../privateConv/privateConv.service";
 import { ChatLister } from "../chatLister/chatLister.service";
 import * as argon from 'argon2';
 import { CreateChatService } from "../createchat/createchat.service";
+import { PrismaFriendService } from "src/prisma/friend/prisma.friend.service";
+
 
 @UseGuards(JwtGuard)
 @Controller('chatOption')
@@ -16,7 +18,8 @@ export class ChatOptController {
 	constructor(private prismaChatService:PrismaChatService,
 		private gateway: MyGateway, private joinChatservice : JoinChatService,
 		private privateConv: PrivateConvService,
-		private createChatService: CreateChatService ) {}
+		private createChatService: CreateChatService, 
+		private  prismaFriendService: PrismaFriendService) {}
 
 	@Post('setAdmin')
 	async setUserAsAdmin(@Body() user:{login:string, chatId: number}){
@@ -32,7 +35,13 @@ export class ChatOptController {
 		{
 			return false;
 		}
+	}
 
+	@Get('userInGame/:login')
+	async getIfUserInGame(
+		@Param('login') login: string,
+	){
+		return this.prismaFriendService.getIfUserInGame(login);
 	}
 
 	@Post('newPrivateConv')

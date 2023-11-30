@@ -14,7 +14,7 @@ type ChatMessage = {
 	id: number;
 	chatId: number;
 	serviceMessage: boolean;
-	userId: number; // a ajouter !
+	userId: number;
 }
 
 const Messages = (props: {chatId: number, isOwner: boolean, setIsOwner: Function, isAdmin: boolean, setIsAdmin: Function, isDM: boolean}) => {
@@ -24,10 +24,13 @@ const Messages = (props: {chatId: number, isOwner: boolean, setIsOwner: Function
 	const { blockedUsers } = useContext(chatContext)
 	const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
 	const [chatMessages,setChatMessages] = useState<ChatMessage[]>([]);
+	const [invite, setInvite] = useState(false);
 	const previousLen = usePrevious(chatMessages.length);
 
 	useEffect(() => {
 			socket.on('chatMsgHistory', (chatHistoryReceive : ChatMessage[]) => {
+			if (chatHistoryReceive.find((element) => element.serviceMessage === true && props.isDM === true && element.msg.search("game invitation received") !== -1))
+				setInvite(true);
 			setChatHistory(chatHistoryReceive);
 			setRender(true);
 		});
@@ -35,6 +38,8 @@ const Messages = (props: {chatId: number, isOwner: boolean, setIsOwner: Function
 			let newDateString = chatHistoryReceive.date.toString();
 			newDateString = newDateString.slice(newDateString.indexOf("T") + 1, newDateString.indexOf("T") + 9);
 			const add : ChatMessage = {msg: chatHistoryReceive.msg, username: chatHistoryReceive.username, login: chatHistoryReceive.login, date: newDateString, id: chatHistoryReceive.id, chatId: chatHistoryReceive.idOfChat, serviceMessage: chatHistoryReceive.serviceMessage, userId: chatHistoryReceive.userId}
+			if (add.serviceMessage === true && props.isDM === true && add.msg.search("game invitation received") !== -1)
+				setInvite(true);
 			setChatMessages((prevMessages) => [...prevMessages, add]);
 			if (blockedUsers.find(element => element.idUser === chatHistoryReceive.userId) === undefined)
 				socket.emit("chatListOfUser",auth.user.login);
@@ -106,7 +111,7 @@ const Messages = (props: {chatId: number, isOwner: boolean, setIsOwner: Function
 										chatId={props.chatId}
 										service={message.serviceMessage}
 										isDM={props.isDM}
-										msgId={message.id}/>
+										msgId={message.id} setInvite={setInvite} invite={invite}/>
 								)}
 							</div>)
 							} else {

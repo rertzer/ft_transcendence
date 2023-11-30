@@ -2,6 +2,8 @@ import { Injectable } from "@nestjs/common";
 import { PrismaClient } from '@prisma/client'
 import { OnModuleInit } from "@nestjs/common";
 import { PrismaChatService } from "../chat/prisma.chat.service";
+import { NotFoundException } from "@nestjs/common";
+
 @Injectable()
 export class PrismaFriendService extends PrismaClient{
 
@@ -104,6 +106,38 @@ export class PrismaFriendService extends PrismaClient{
 					return true
 			}
 			return false
+	}
+
+	async getIfUserInGame(login: string) {
+		const idOfLogin = await this.getIdOfLogin(login);
+		if (idOfLogin)
+		{
+			const inGame = await this.game.findFirst({
+				where: {
+					game_status:"ONGOING",
+					OR: [
+						{
+							player_one_id: idOfLogin,
+						},
+						{
+							player_two_id:idOfLogin,
+						}
+					]
+				}
+			})
+			if (inGame)
+				return ({
+					login: login,
+					inGame: true
+				});
+			else {
+				return ({
+					login: login,
+					inGame: false
+				});
+			}
+		}
+		else throw new NotFoundException('User not Found, try something else...');
 	}
 
 	async checkInGame(id: number) {

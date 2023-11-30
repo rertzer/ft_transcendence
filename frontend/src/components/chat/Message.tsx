@@ -9,9 +9,10 @@ import { PageContext } from "../../context/PageContext";
 type uInfo = {
 	userStatus: string, // "owner", "admin", "user", "banned", "out" (if kicked or left)
 	friend: boolean
+	ingame: boolean
 }
 
-const  Message = (props: {username: string, login: string, date: string, msg: string, isOwner: boolean, isAdmin: boolean, chatId: number, service: boolean, isDM: boolean, msgId: number}) => {
+const  Message = (props: {username: string, login: string, date: string, msg: string, isOwner: boolean, isAdmin: boolean, chatId: number, service: boolean, isDM: boolean, msgId: number, invite: boolean, setInvite: Function}) => {
 
     const auth = useLogin();
 	const context = useContext(PageContext);
@@ -19,10 +20,10 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 		throw new Error('useContext must be used within a MyProvider');
 	}
 	const { updateChat } = context;
-	const {roomId, setRoomId} = useContext(GameContext)
+	const {roomId, setRoomId, setGameStatus} = useContext(GameContext)
 	const {setActiveChannel, setNeedToUpdate, setBlockedUsers } = useContext(ChatContext)
     const [showUserActionsMenu, setShowUserActionsMenu] = useState(false);
-	const [userInfo, setUserInfo] = useState<uInfo>({userStatus: "user", friend: false})
+	const [userInfo, setUserInfo] = useState<uInfo>({userStatus: "user", friend: false, ingame: false})
 	const [errorMessage, setErrorMessage] = useState("");
     const socket = useContext(WebsocketContext);
 	const [image, setImage] = useState("");
@@ -127,11 +128,31 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 		}
 	}
 
+	async function checkIfPlaying() {
+		try {
+			const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/userInGame/${props.login}`, {
+				method: "GET",
+				headers: { Authorization: auth.getBearer()},
+			  });
+			if (!response.ok) {
+				throw new Error("Request failed");
+			}
+			const data = await response.json();
+			if (data) {
+				return data.inGame;
+			}
+		}
+		catch(error) {
+			console.error("Error while checking user info", error);
+		}
+	}
+
     async function toggleUserActionsMenu() {
-		const info: uInfo = {userStatus: "", friend: false};
+		const info: uInfo = {userStatus: "", friend: false, ingame: false};
 		if (showUserActionsMenu === false) {
 			info.userStatus =  await getUserInfo();
 			info.friend = await checkIfAlreadyFriend();
+			info.ingame = await checkIfPlaying();
 			setUserInfo(info);
 		}
         setShowUserActionsMenu(!showUserActionsMenu);
@@ -316,8 +337,6 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 			const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/game/newRoom/`, requestOptions);
 			const data = await response.json();
 			sendServiceMessage(mode + " game invitation received to play in room " + data.roomId)
-			// setRoomId(data.roomId);
-			// updateChat("none");
 		}
 		catch (error) {
 			console.error('Error creating game room', error);
@@ -341,7 +360,9 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 		}
 		if (answer === "ok") {
 			sendServiceMessage("Challenge accepted ! Game started in room " + idToJoin);
+			props.setInvite(false);
 			setRoomId(idToJoin);
+			setGameStatus('NOT_IN_GAME')
 			updateChat("none");
 		}
 		else {
@@ -405,6 +426,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 				deleteMessage();
 				const indexOfId = props.msg.lastIndexOf(" ") + 1;
 				const idToJoin = parseInt(props.msg.substring(indexOfId));
+				props.setInvite(false);
 				setRoomId(idToJoin);
 				updateChat("none");
 			}
@@ -443,8 +465,8 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 								{props.isDM || userInfo.userStatus === "" ? <h4>{props.username}</h4> : <h4>{props.username + " (" + userInfo.userStatus + ")"}</h4>}
 								<hr></hr>
 								<div className="menuItems">
-									{props.isDM && roomId === 0 && <div onClick={() => {startGame("BASIC")}}>Invite to Classic Game</div>}
-									{props.isDM && roomId === 0 && <div onClick={() => {startGame("ADVANCED")}}>Invite to Advanced Game</div>}
+									{props.isDM && props.invite === false && roomId === 0 && userInfo.ingame === false && <div onClick={() => {startGame("BASIC")}}>Invite to Classic Game</div>}
+									{props.isDM && props.invite === false && roomId === 0 && userInfo.ingame === false && <div onClick={() => {startGame("ADVANCED")}}>Invite to Advanced Game</div>}
 									{!userInfo.friend && <div onClick={addToFriends}>Add to friends</div>}
 									{props.isDM === false && <div onClick={startDmFromMessage}>Send DM</div>}
 									<Link to={profileUrl} style={{textDecoration:"none", color: "#ddddf7"}}>
