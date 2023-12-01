@@ -1,17 +1,18 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import * as fs from 'fs';
 import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 import { PrismaChatService } from './prisma/chat/prisma.chat.service';
 import { ValidationPipe } from '@nestjs/common';
 
 
 async function bootstrap() {
+
+  // const httpsOptions = {
+  //   key: fs.readFileSync('/etc/ssl/pong-selfsigned.key'),
+  //   cert: fs.readFileSync('/etc/ssl/pong-selfsigned.crt'),
+  // };
   const app = await NestFactory.create(AppModule);
-
-  const prismaUser = new PrismaChatService;//toDelete
-
-  prismaUser.createUser();//toDelete
-
 
   // Define your CORS options here
  /*  const corsOptions: CorsOptions = {
@@ -20,6 +21,7 @@ async function bootstrap() {
     credentials: true, // If you need to handle cookies or authentication
   }; */
   // Enable CORS using the provided options
+
   app.enableCors();
   app.useGlobalPipes(new ValidationPipe(
     {whitelist: true,}

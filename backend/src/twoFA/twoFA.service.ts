@@ -9,9 +9,7 @@ export class TwoFAService {
 
   async setup(login: string) {
     console.log("TFA setup, login is", login);
-    const secret = speakeasy.generateSecret();
-  
-
+    const secret = speakeasy.generateSecret({ name: `PongOffice ${login}` });
     const user = await this.prisma.setTfaSecret({
       login,
       secret: secret.ascii,
@@ -23,12 +21,11 @@ export class TwoFAService {
       return { qrcode_url };
     }
   }
+
   async validate(login: string, token: string) {
     let verified = false;
-    console.log("Validation", login, token);
     let user = await this.prisma.getUserByLogin(login);
     if (user && user.tfa_secret) {
-      console.log("verif in progress...");
       verified = speakeasy.totp.verify({
         secret: user.tfa_secret,
         encoding: "ascii",
@@ -36,14 +33,13 @@ export class TwoFAService {
       });
       console.log("verification is", verified);
     }
-      user = await this.prisma.setTfaActivated({login, verified});
+    user = await this.prisma.setTfaActivated({ login, verified });
 
     return user;
   }
 
   async authenticate(login: string, token: string) {
     let verified = false;
-    console.log("Validation", login, token);
     let user = await this.prisma.getUserByLogin(login);
     if (user && user.tfa_secret) {
       verified = speakeasy.totp.verify({
@@ -51,9 +47,18 @@ export class TwoFAService {
         encoding: "ascii",
         token,
       });
-      console.log("verification is", verified);
     }
-     
     return verified;
   }
+
+
+async cancel(login: string) {
+
+  const verified = false;
+  let user = await this.prisma.getUserByLogin(login);
+  if (user)
+  user = await this.prisma.setTfaActivated({ login, verified });
+
+  return user;
+}
 }

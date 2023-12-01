@@ -20,7 +20,7 @@ function RedirectTfa() {
 
   const getToken = async () => {
     console.log("asking for", JSON.stringify({ key, tfaToken }));
-    const data = await fetch("/ft_auth/tfatoken", {
+    const data = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/ft_auth/tfatoken`, {
       mode: "cors",
       method: "POST",
       headers: { "Content-Type": "application/json; charset=utf-8" },

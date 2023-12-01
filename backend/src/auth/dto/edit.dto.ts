@@ -2,7 +2,8 @@ import {
     IsEmail,
     IsNotEmpty,
     IsOptional,
-    IsString,  
+    IsString,
+    Matches,  
   } from 'class-validator';
   
   export class EditDto {
@@ -11,6 +12,7 @@ import {
     login: string;
     
     @IsString()
+    @Matches(/^\w{3,10}$/g)
     @IsOptional()
     username?: string;
   

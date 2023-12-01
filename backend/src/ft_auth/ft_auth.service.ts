@@ -2,6 +2,7 @@ import {
   ForbiddenException,
   ImATeapotException,
   Injectable,
+  InternalServerErrorException,
 } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
@@ -32,8 +33,8 @@ export class FtAuthService {
     console.log("tfa status", user.tfa_activated);
     const randKey = this.setTemporaryKey(user.login, user.tfa_activated);
     if (user.tfa_activated)
-      res.redirect(`http://localhost:3000/redirect/twofa?key=${randKey}`);
-    else res.redirect(`http://localhost:3000/redirect?key=${randKey}`);
+      res.redirect(this.config.get('PONG_FRONT_CALLBACK') + `/twofa?key=${randKey}`);
+    else res.redirect(this.config.get('PONG_FRONT_CALLBACK') + `?key=${randKey}`);
 
     return {
       success: "true",
@@ -46,7 +47,7 @@ export class FtAuthService {
       user = await this.prismaUser.createUser(dto);
     }
     if (!user) {
-      throw new ImATeapotException("For real: I'm a Teapot");
+      throw new InternalServerErrorException("Can't create the user");
     }
     return user;
   }
@@ -99,15 +100,12 @@ export class FtAuthService {
   }
 
   async provideTokenByKeyAndTfa({ key, tfa_token }: TfaToken) {
-    console.log("provideTokenByKeyAndTfa ", key, tfa_token);
     const stored_key = this.getStoredKeyByKey(key);
     let validate = false;
     if (stored_key && stored_key.login) {
-    console.log("checking...");
       validate = await this.twoFAService.authenticate(stored_key.login, tfa_token);
       if (validate) return this.signToken(stored_key.login);
     }
-    console.log("validation is", validate);
     throw new ForbiddenException("2fa, we have a problem");
   }
 
@@ -118,15 +116,13 @@ export class FtAuthService {
     const httpService = new HttpService();
     try {
       const { data } = await firstValueFrom(
-        httpService.get("https://api.intra.42.fr/v2/me", {
+        httpService.get("http://api.intra.42.fr/v2/me", {
           headers: headersRequest,
         })
       );
       const user: FtUser = {
         login: data.login,
-        first_name: data.first_name,
-        last_name: data.last_name,
-        username: data.usual_full_name,
+        username: data.first_name,
         email: data.email,
       };
       const pong_user = await this.validateUser(user);

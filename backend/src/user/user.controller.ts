@@ -2,7 +2,6 @@ import {
   BadRequestException,
   Body,
   Controller,
-  ForbiddenException,
   Get,
   Param,
   Post,
@@ -22,17 +21,14 @@ import { GetUser } from '../auth/decorator';
 
 @UseGuards(JwtGuard)
 @Controller('user')
-//@ApiTags('user')
 export class UserController {
   constructor(private userService: UserService) {}
 
   @Get(':login')
   fetchByLogin(
-    @GetUser('login') user_login: string,
     @Param('login') login: string,
   ) {
-    return this.userService.fetchByLogin(login);
-    throw new ForbiddenException('Who are you?');
+      return this.userService.fetchByLogin(login);
   }
 
   @Get('avatar/:avatar')
@@ -59,7 +55,6 @@ export class UserController {
         `attachment; filename=${avatar}`,
       );
       fileStream.then((fs) => fs.pipe(response));
-      //response.send(file);
     }
   }
 

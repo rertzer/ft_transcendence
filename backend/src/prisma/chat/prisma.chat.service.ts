@@ -849,54 +849,6 @@ export class PrismaChatService {
 			return null;
 	}
 
-	//to Delete <------------
-	async createUser() {
-		try {
-			// Check if a user with the same email exists
-		const existingUser = await this.prismaService.user.findFirst({
-			where: {
-			email: 'johndoe@example.com', // Replace with the email you want to check
-		},
-		});
-		if (existingUser) {
-
-		// } else {
-		// 	// User doesn't exist, create a new user
-		// 	const newUser = await this.prismaService.user.create({
-		// 		data: {
-		// 			username: 'toto',
-		// 			first_name: 'John',
-		// 			login: 'toto',
-		// 			last_name: 'Doe',
-		// 			email: 'johndoe@example.com',
-		// 			role: 'user',
-		// 			game_won: 0,
-		// 			game_lost: 0,
-		// 			game_played: 0,
-		// 		},
-		// 	});
-		// 	const newUser2 = await this.prismaService.user.create({
-		// 		data: {
-		// 			username: 'coco',
-		// 			first_name: 'jay',
-		// 			last_name: ';avf',
-		// 			login: 'coco',
-		// 			email: 'johndoeff@example.com',
-		// 			role: 'user',
-		// 	  game_won: 0,
-		// 	  game_lost: 0,
-		// 	  game_played: 0,
-		// 	  // Add other user fields as needed
-		// 	},
-		// });
-
-		}
-		} catch (error) {
-			console.error('Error creating user:', error);
-		} finally {
-			await this.prismaService.$disconnect(); // Disconnect from the database when done
-		}
-	}
 
 	async checkChatId(idSearched: number) {
 		const chat = await this.prismaService.chatChannels.findFirst({

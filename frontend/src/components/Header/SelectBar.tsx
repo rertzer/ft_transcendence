@@ -57,7 +57,7 @@
 // 			setModeGame('ADVANCED');
 // 			gameSocket.emit('match_me', {playerName:playerName, typeGame:'ADVANCED'});
 // 		}
-		
+
 // 		const leaveRoom = () => {
 // 			gameSocket.emit("i_am_leaving", {roomId});
 // 			setGameStatus('NOT_IN_GAME');
@@ -65,7 +65,7 @@
 // 			setModeGame('');
 // 			updatePageMenuChat("Game", 'none', chat);
 // 		};
-		
+
 
 // 		const newGamePossible = (status:GameStatus) :boolean => {
 // 			const statusOk = ['NOT_IN_GAME', 'FINISHED', 'FINISH_BY_FORFAIT'];
@@ -244,7 +244,7 @@
 // 				url = 'http://' + process.env.REACT_APP_URL_MACHINE + ':3000/';
 // 			window.open(url, '_blank');
 // 		}
-		
+
 // 		function closeTab() {
 // 			window.close();
 // 		}
@@ -262,7 +262,7 @@
 // 			</List>
 // 		);
 // 	}
-	
+
 // 	function  Help() {
 // 		return (
 // 			<List dense onMouseLeave={() => handleClick("none")} sx={{color: dark ? 'white' : '#111111',}} style={{position: 'fixed', top:'64px', left:'255px', width:200, paddingTop: "0px", paddingBottom: "0px", backgroundColor: dark ? '#2f2f2f': 'white', border: dark ? '1px solid black' : '1px solid grey'}} >
@@ -310,9 +310,9 @@
 // 	if (!context) {
 // 		throw new Error('useContext must be used within a MyProvider');
 // 	}
-	
+
 // 	const { page, chat, dark, updatePageMenuChat, updateMenu, updateGame } = context;
-	
+
 // 	function handleClick(str : string) {
 // 		updateMenu(str);
 // 	}
@@ -420,7 +420,7 @@ import { useContext, useEffect, useState } from 'react';
 import styles from "./Header.module.css";
 import style from "./SelectBar.module.css"
 import { PageContext } from '../../context/PageContext';
-import GameContext from '../../context/gameContext';
+import GameContext, { GameStatus } from '../../context/gameContext';
 
 import Divider from '@mui/material/Divider';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
@@ -465,12 +465,14 @@ function BasicMenu() {
       window.close();
     }
     function newBasicGame() {
+      leaveRoom();
       handlePage("Game");
       setModeGame('BASIC');
       gameSocket.emit('match_me', { playerName: playerName, typeGame: 'BASIC' });
     }
 
     function newAdvancedGame() {
+      leaveRoom();
       handlePage("Game");
       setModeGame('ADVANCED');
       gameSocket.emit('match_me', { playerName: playerName, typeGame: 'ADVANCED' });
@@ -490,36 +492,45 @@ function BasicMenu() {
     };
     const { gameStatus } = useContext(GameContext);
 
+    const newGamePossible = (status: GameStatus): boolean => {
+      const statusOk = ['NOT_IN_GAME', 'FINISHED', 'FINISH_BY_FORFAIT'];
+      if (statusOk.indexOf(status) !== -1) return (true);
+      else return (false);
+    };
+
+    const leaveRoomPossible = (status: GameStatus): boolean => {
+      return (status !== 'NOT_IN_GAME');
+    };
     return (
       <List dense onMouseLeave={() => handleClick("none")} sx={{ color: dark ? 'white' : '#111111', }} style={{ position: 'fixed', top: '64px', width: 200, paddingTop: "0px", paddingBottom: "0px", backgroundColor: dark ? '#2f2f2f' : 'white', border: dark ? '1px solid black' : '1px solid grey' }} >
-        {gameStatus === 'NOT_IN_GAME' && <ListItem button>
-          <ListItemText onClick={() => newBasicGame()}>New Basic Game</ListItemText>
-        </ListItem>}
-        {gameStatus === 'NOT_IN_GAME' && <ListItem button>
-          <ListItemText onClick={() => newAdvancedGame()}>New Advanced Game</ListItemText>
-        </ListItem>}
-        {gameStatus === 'NOT_IN_GAME' && <ListItem sx={{ color: 'grey' }} style={{ cursor: 'default' }}>
-          <ListItemText>Leave room</ListItemText>
-        </ListItem>}
-        {gameStatus !== 'NOT_IN_GAME' && <ListItem sx={{ color: 'grey' }} style={{ cursor: 'default' }}>
-          <ListItemText>New Basic Game</ListItemText>
-        </ListItem>}
-        {gameStatus !== 'NOT_IN_GAME' && <ListItem sx={{ color: 'grey' }} style={{ cursor: 'default' }}>
-          <ListItemText>New Advanced Game</ListItemText>
-        </ListItem>}
-        {gameStatus !== 'NOT_IN_GAME' && <ListItem button>
-          <ListItemText onClick={() => leaveRoom()}>Leave Room</ListItemText>
-        </ListItem>}
+        {newGamePossible(gameStatus) && <ListItemButton>
+// 					<ListItemText onClick={() => newBasicGame()}>New Basic Game</ListItemText>
+// 				</ListItemButton>}
+// 				{newGamePossible(gameStatus) && <ListItemButton>
+// 					<ListItemText onClick={() => newAdvancedGame()}>New Advanced Game</ListItemText>
+// 				</ListItemButton>}
+// 				{!leaveRoomPossible(gameStatus) && <ListItem sx={{ color: 'grey' }} style={{ cursor: 'default' }}>
+// 					<ListItemText>Leave room</ListItemText>
+// 				</ListItem>}
+// 				{!newGamePossible(gameStatus) && <ListItem sx={{ color: 'grey' }} style={{ cursor: 'default' }}>
+// 					<ListItemText>New Basic Game</ListItemText>
+// 				</ListItem>}
+// 				{!newGamePossible(gameStatus) && <ListItem sx={{ color: 'grey' }} style={{ cursor: 'default' }}>
+// 					<ListItemText>New Advanced Game</ListItemText>
+// 				</ListItem>}
+// 				{leaveRoomPossible(gameStatus) && <ListItemButton>
+// 					<ListItemText onClick={() => leaveRoom()}>Leave Room</ListItemText>
+// 				</ListItemButton>}
         <Divider />
-        <ListItem button onClick={() => handlePage("Profile")}><ListItemText>Profile </ListItemText></ListItem>
-        <ListItem button onClick={() => handlePage("Data")}><ListItemText>Data </ListItemText></ListItem>
-        <ListItem button onClick={() => handlePage("Contacts")}><ListItemText>Contacts </ListItemText></ListItem>
+        <ListItemButton onClick={() => handlePage("Profile")}><ListItemText>Profile </ListItemText></ListItemButton>
+        <ListItemButton onClick={() => handlePage("Data")}><ListItemText>Data </ListItemText></ListItemButton>
+        <ListItemButton onClick={() => handlePage("Contacts")}><ListItemText>Contacts </ListItemText></ListItemButton>
         <Divider />
-        <ListItem button onClick={() => handleChat("Chat")}>{chat === "Chat" ? <CheckBoxOutlinedIcon fontSize="small" /> : <CheckBoxOutlineBlankIcon fontSize="small" />} <ListItemText style={{ position: 'relative', left: '10px' }}>Chat </ListItemText></ListItem>
+        <ListItemButton onClick={() => handleChat("Chat")}>{chat === "Chat" ? <CheckBoxOutlinedIcon fontSize="small" /> : <CheckBoxOutlineBlankIcon fontSize="small" />} <ListItemText style={{ position: 'relative', left: '10px' }}>Chat </ListItemText></ListItemButton>
         <Divider />
-        <ListItem button onClick={print}><ListItemText>Print </ListItemText></ListItem>
-        <ListItem button onClick={auth.logout}><ListItemText>Logout </ListItemText></ListItem>
-        {window.opener !== null ? <ListItem button onClick={closeTab}><ListItemText>Exit PongOffice </ListItemText></ListItem>
+        <ListItemButton onClick={print}><ListItemText>Print </ListItemText></ListItemButton>
+        <ListItemButton onClick={auth.logout}><ListItemText>Logout </ListItemText></ListItemButton>
+        {window.opener !== null ? <ListItemButton onClick={closeTab}><ListItemText>Exit PongOffice </ListItemText></ListItemButton>
           : <ListItem ><ListItemText sx={{ color: 'grey' }} style={{ cursor: 'default' }}>Exit PongOffice </ListItemText></ListItem>}
       </List>
     );
@@ -539,19 +550,19 @@ function BasicMenu() {
           <Typography fontSize="12px" color="text.disabled">Ctrl+C</Typography>
         </ListItem>
         <ListItem >
-          <ContentCut sx={{ color: 'grey' }} fontSize="small"  />
+          <ContentCut sx={{ color: 'grey' }} fontSize="small" />
           <ListItemText sx={{ color: 'grey' }} style={{ position: 'relative', left: '10px' }}>Cut</ListItemText>
           <Typography fontSize="12px" color="text.disabled">Ctrl+X</Typography>
         </ListItem>
         <ListItem >
-          <ContentPaste fontSize="small" sx={{ color: 'grey' }}/>
+          <ContentPaste fontSize="small" sx={{ color: 'grey' }} />
           <ListItemText sx={{ color: 'grey' }} style={{ position: 'relative', left: '10px' }}>Paste</ListItemText>
           <Typography fontSize="12px" color="text.disabled">Ctrl+V</Typography>
         </ListItem>
         <Divider />
-        <ListItem button onClick={() => updateCoordsMenu({ coordX: -1, coordY: coordY }, 'none')}><ListItemText>Select Row </ListItemText></ListItem>
-        <ListItem button onClick={() => updateCoordsMenu({ coordX: coordX, coordY: -1 }, 'none')}><ListItemText>Select Column </ListItemText></ListItem>
-        <ListItem button onClick={() => updateCoordsMenu({ coordX: -1, coordY: -1 }, 'none')}><ListItemText>Select All </ListItemText></ListItem>
+        <ListItemButton onClick={() => updateCoordsMenu({ coordX: -1, coordY: coordY }, 'none')}><ListItemText>Select Row </ListItemText></ListItemButton>
+        <ListItemButton onClick={() => updateCoordsMenu({ coordX: coordX, coordY: -1 }, 'none')}><ListItemText>Select Column </ListItemText></ListItemButton>
+        <ListItemButton onClick={() => updateCoordsMenu({ coordX: -1, coordY: -1 }, 'none')}><ListItemText>Select All </ListItemText></ListItemButton>
       </List>
     );
   }
@@ -581,10 +592,10 @@ function BasicMenu() {
     }
     return (
       <List dense onMouseLeave={() => handleClick("none")} sx={{ color: dark ? 'white' : '#111111', }} style={{ position: 'fixed', top: '64px', left: '90px', width: 200, paddingTop: "0px", paddingBottom: "0px", backgroundColor: dark ? '#2f2f2f' : 'white', border: dark ? '1px solid black' : '1px solid grey' }} >
-        <ListItem button onClick={toggleToolbar}>{toolbar ? <CheckBoxOutlineBlankIcon fontSize="small" /> : <CheckBoxOutlinedIcon fontSize="small" />} <ListItemText style={{ position: 'relative', left: '10px' }}>Toolbar </ListItemText></ListItem>
+        <ListItemButton onClick={toggleToolbar}>{toolbar ? <CheckBoxOutlineBlankIcon fontSize="small" /> : <CheckBoxOutlinedIcon fontSize="small" />} <ListItemText style={{ position: 'relative', left: '10px' }}>Toolbar </ListItemText></ListItemButton>
         <Divider />
-        <ListItem button onClick={add_zoom}><ZoomInIcon /><ListItemText style={{ position: 'relative', left: '10px' }}>Zoom In </ListItemText></ListItem>
-        <ListItem button onClick={reduce_zoom}><ZoomOutIcon /><ListItemText style={{ position: 'relative', left: '10px' }}>Zoom Out </ListItemText></ListItem>
+        <ListItemButton onClick={add_zoom}><ZoomInIcon /><ListItemText style={{ position: 'relative', left: '10px' }}>Zoom In </ListItemText></ListItemButton>
+        <ListItemButton onClick={reduce_zoom}><ZoomOutIcon /><ListItemText style={{ position: 'relative', left: '10px' }}>Zoom Out </ListItemText></ListItemButton>
       </List>
     );
   }
@@ -598,14 +609,14 @@ function BasicMenu() {
     }
     return (
       <List dense onMouseLeave={() => handleClick("none")} sx={{ color: dark ? 'white' : '#111111', }} style={{ position: 'fixed', top: '64px', left: '135px', width: 200, paddingTop: "0px", paddingBottom: "0px", backgroundColor: dark ? '#2f2f2f' : 'white', border: dark ? '1px solid black' : '1px solid grey' }} >
-        <ListItem button onClick={() => lightMode(false)}>
+        <ListItemButton onClick={() => lightMode(false)}>
           {dark ? <RadioButtonUncheckedIcon style={{ height: '15px' }} /> : <RadioButtonCheckedIcon style={{ height: '15px' }} />}
           <ListItemText style={{ position: 'relative', left: '10px' }}>Light </ListItemText>
-        </ListItem>
-        <ListItem button onClick={() => lightMode(true)}>
+        </ListItemButton>
+        <ListItemButton onClick={() => lightMode(true)}>
           {dark ? <RadioButtonCheckedIcon style={{ height: '15px' }} /> : <RadioButtonUncheckedIcon style={{ height: '15px' }} />}
           <ListItemText style={{ position: 'relative', left: '10px' }}>Dark </ListItemText>
-        </ListItem>
+        </ListItemButton>
       </List>
     );
   }
@@ -624,8 +635,8 @@ function BasicMenu() {
     }
     return (
       <List dense onMouseLeave={() => handleClick("none")} sx={{ color: dark ? 'white' : '#111111', }} style={{ position: 'fixed', top: '64px', left: '190px', width: 200, paddingTop: "0px", paddingBottom: "0px", backgroundColor: dark ? '#2f2f2f' : 'white', border: dark ? '1px solid black' : '1px solid grey' }} >
-        <ListItem button onClick={openNewTab}><ListItemText>New Window </ListItemText></ListItem>
-        {window.opener !== null ? <ListItem button onClick={closeTab}><ListItemText>Close Window </ListItemText></ListItem>
+        <ListItemButton onClick={openNewTab}><ListItemText>New Window </ListItemText></ListItemButton>
+        {window.opener !== null ? <ListItemButton onClick={closeTab}><ListItemText>Close Window </ListItemText></ListItemButton>
           : <ListItem ><ListItemText sx={{ color: 'grey' }} style={{ cursor: 'default' }}>Close Window </ListItemText></ListItem>}
       </List>
     );
@@ -633,10 +644,10 @@ function BasicMenu() {
   function Help() {
     return (
       <List dense onMouseLeave={() => handleClick("none")} sx={{ color: dark ? 'white' : '#111111', }} style={{ position: 'fixed', top: '64px', left: '255px', width: 200, paddingTop: "0px", paddingBottom: "0px", backgroundColor: dark ? '#2f2f2f' : 'white', border: dark ? '1px solid black' : '1px solid grey' }} >
-        <ListItem button><PsychologyAltIcon fontSize="small" /><ListItemText style={{ position: 'relative', left: '10px' }}>What's this ? </ListItemText></ListItem>
-        <ListItem button><KeyboardIcon fontSize="small" /><ListItemText style={{ position: 'relative', left: '10px' }}>Controls </ListItemText></ListItem>
+        <ListItemButton><PsychologyAltIcon fontSize="small" /><ListItemText style={{ position: 'relative', left: '10px' }}>What's this ? </ListItemText></ListItemButton>
+        <ListItemButton><KeyboardIcon fontSize="small" /><ListItemText style={{ position: 'relative', left: '10px' }}>Controls </ListItemText></ListItemButton>
         <Divider />
-        <ListItem button><InfoIcon fontSize="small" /><ListItemText style={{ position: 'relative', left: '10px' }}>About us </ListItemText ></ListItem>
+        <ListItemButton><InfoIcon fontSize="small" /><ListItemText style={{ position: 'relative', left: '10px' }}>About us </ListItemText ></ListItemButton>
       </List>
     );
   }
@@ -644,8 +655,8 @@ function BasicMenu() {
     const context = useContext(PageContext);
     if (!context) { throw new Error('useContext must be used within a MyProvider'); }
     const { div, updateDivMenu } = context;
-    function changeFont(newFont :string) {
-      updateDivMenu({font: newFont, bold: div.bold, italic: div.italic, underLined: div.underLined, align: div.align}, "none");
+    function changeFont(newFont: string) {
+      updateDivMenu({ font: newFont, bold: div.bold, italic: div.italic, underLined: div.underLined, align: div.align }, "none");
     }
     return (
       <List dense sx={{ color: dark ? 'white' : '#111111', }} style={{ position: 'fixed', top: '100px', left: '135px', width: 200, paddingTop: "0px", paddingBottom: "0px", backgroundColor: dark ? '#2f2f2f' : 'white', border: dark ? '1px solid black' : '1px solid grey' }} >

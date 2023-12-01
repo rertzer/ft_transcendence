@@ -1,19 +1,17 @@
-import { MouseEvent, useContext, useEffect, useState } from "react";
+import { MouseEvent, useEffect, useState } from "react";
 import { useLogin } from "./auth";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-function TwoFAToken(props: {}) {
+function TwoFAToken() {
   const auth = useLogin();
   const navigate = useNavigate();
-  const location = useLocation();
-  const redirectPath = location.state?.path || "/";
   const [token, setToken] = useState("");
   const [tokenOk, setTokenOk] = useState();
 
   const handleToken = async (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     if (token) {
-      const fileData = await fetch("/twofa/validate", {
+      const fileData = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/twofa/validate`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json; charset=utf-8",

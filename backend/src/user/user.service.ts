@@ -1,15 +1,17 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import * as fs from 'fs';
-import { PrismaService } from '../prisma/prisma.service';
 import { EditDto } from 'src/auth/dto';
 import {PrismaUserService} from 'src/prisma/user/prisma.user.service';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class UserService {
   constructor(private prisma: PrismaUserService) {}
 
-  returnIfExist(data: any) {
+  returnIfExist(data: User|null) {
     if (data) {
+      data.tfa_secret = 'nope';
+      data.tfa_activated = false;
       return data;
     } else {
       throw new BadRequestException('Bad request');

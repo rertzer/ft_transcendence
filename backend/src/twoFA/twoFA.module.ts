@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-
 import { TwoFAController } from './twoFA.controller';
 import { TwoFAService } from './twoFA.service';
 import { PrismaModule } from 'src/prisma/prisma.module';

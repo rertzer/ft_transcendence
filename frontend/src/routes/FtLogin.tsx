@@ -15,7 +15,7 @@ function Login() {
 
   const handleSubmit = async (event: MouseEvent<HTMLButtonElement>) => {
     //event.preventDefault();
-    window.open("http://localhost:4000/ft_auth/login", "_self");
+    window.open(`http://${process.env.REACT_APP_URL_MACHINE}:4000/ft_auth/login`, "_self");
     
 
     // try {

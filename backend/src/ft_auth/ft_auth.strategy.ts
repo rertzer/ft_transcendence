@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import { Strategy, VerifyCallback } from 'passport-oauth2';
+import { Strategy } from 'passport-oauth2';
 import { ConfigService } from '@nestjs/config';
 import { FtAuthService } from './ft_auth.service';
 
