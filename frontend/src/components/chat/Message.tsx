@@ -358,7 +358,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 									{props.isDM && roomId === 0 && <div onClick={() => {startGame("ADVANCED")}}>Invite to Advanced Game</div>}
 									{!userInfo.friend && <div onClick={addToFriends}>Add to friends</div>}
 									{props.isDM === false && <div onClick={startDM}>Send DM</div>}
-									<Link to="/profile/1" style={{textDecoration:"none", color: "#ddddf7"}}>
+									<Link to={`/profile/${props.login}`} style={{textDecoration:"none", color: "white"}}>
 										<div>Show profile</div>
 									</Link>
 									{((props.isAdmin || props.isOwner) && (userInfo.userStatus === "" || userInfo.userStatus === "admin")) &&

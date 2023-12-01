@@ -43,6 +43,15 @@ function Header({}) {
   }
   const {gameStatus} = useContext(gameContext);
   const navigate = useNavigate();
+  const [inputValue, setInputValue] = useState('');
+  const handleKeyDown = (event:any) => {
+    if (event.key === 'Enter') {
+      navigate(`/profile/${inputValue}`);
+    }
+  };
+  const handleChange = (event:any) => {
+    setInputValue(event.target.value);
+  };
   useEffect(() => {
     if (auth.user.avatar) {
       try {
@@ -56,8 +65,7 @@ function Header({}) {
   return <header className={styles.headerFrame} style={{ height: toolbar ? '65px' : '142px' }}>
         <div className={dark ? styles.headerBackground : styles.headerBackgroundLight} style={{ height: toolbar ? '65px' : '142px' }}/>
         <div className={styles.line3}>
-        {(printGameMenu()) ? <GameBar /> : <input className={dark ? styles.bar : styles.barLight} /> }
-          <img className={styles.buttonsIcon} alt="" src="/buttons.svg" />
+        {(printGameMenu()) ? <GameBar /> : <input className={dark ? styles.bar : styles.barLight} value={inputValue} onChange={handleChange} onKeyDown={handleKeyDown} /> }
           <div className={styles.menu}>
             <div className={dark ? styles.menuBackground : styles.menuBackgroundLight} />
             <div className={styles.buttpn}>
@@ -89,8 +97,8 @@ function Header({}) {
           <div className={styles.user} onClick={() => navigate("/profile")}>
             <img className={styles.userChild} alt="" src={image} style={{cursor:"pointer"}}/>
             <span className={dark ?  styles.user1 :  styles.user1Light}>{auth.user.username}</span>
-            <Tooltip onClick={auth.logout} className={dark ? styles.crossButton : styles.crossButtonLight}title="Log out" arrow>
-              <CloseIcon style={{fontSize:"18px", cursor:"pointer"}}/>
+            <Tooltip className={dark ? styles.crossButton : styles.crossButtonLight}title="Log out" arrow>
+              <CloseIcon onClick={auth.logout} style={{fontSize:"18px", cursor:"pointer"}}/>
               {/* <img className={styles.crossIcon} alt="" src="/cross.svg" style={{cursor:"pointer", right: "8px"}}/> */}
             </Tooltip>
           </div>

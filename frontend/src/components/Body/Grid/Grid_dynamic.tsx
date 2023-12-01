@@ -7,6 +7,8 @@ import { Data } from '../../Sheets/Data/Data';
 import { Contacts } from '../../Sheets/Contacts/Contacts';
 import gameContext from '../../../context/gameContext';
 import { PageUrlContext } from '../../../context/PageUrlContext';
+import { SmartCell } from './SmartCell';
+
 
 function PageSwitch() {
   //GET SCROLL VALUE
@@ -25,7 +27,7 @@ function PageSwitch() {
 
   return (
     <div key={'switch'}>
-      {url_context?.page === "Profile" && <Profile />}
+      {url_context?.page === "Profile" && <Profile key={"profile"}/>}
       {url_context?.page === "Data" && <Data key={"data1"} sx={sx} sy={sy} zoom={zoom} />}
       {url_context?.page === "Contacts" && <Contacts key={"contacts1"} sx={sx} sy={sy} zoom={zoom} toolbar={toolbar} />}
     </div>
@@ -38,7 +40,7 @@ function Grid() {
   const context = useContext(PageContext);
   if (!context) { throw new Error('useContext must be used within a MyProvider'); }
   
-  const { div, zoom, coords, scroll, toolbar, updateCoords } = context;
+  const { zoom, coords, scroll, toolbar, updateCoords } = context;
 
   const { scrollX, scrollY } = scroll;
   const [sx, setNewScrollX] = useState(scrollX);
@@ -48,19 +50,18 @@ function Grid() {
   const [x, setNewCoordX] = useState(coordX);
   const [y, setNewCoordY] = useState(coordY);
 
-  const { font, bold, italic, underLined, align } = div;
-
   const { modeGame, gameStatus } = useContext(gameContext);
 
+  //HANDLE WINDOW RESIZE
+  const windowHeightRef = useRef(window.innerHeight);
+  const windowWidthRef = useRef(window.innerWidth);
+
+  const forceUpdate = useForceUpdate();
 
   useEffect(() => {
     setNewScrollX(scrollX);
     setNewScrollY(scrollY);
   }, [scrollX, scrollY]);
-
-  //HANDLE WINDOW RESIZE
-  const windowHeightRef = useRef(window.innerHeight);
-  const windowWidthRef = useRef(window.innerWidth);
 
   useEffect(() => {
     const handleResize = () => {
@@ -69,22 +70,11 @@ function Grid() {
       // Trigger a re-render of the component when window.innerWidth changes
       forceUpdate();
     };
-
     window.addEventListener('resize', handleResize);
-
     return () => {
       window.removeEventListener('resize', handleResize);
     };
   }, []);
-
-  const forceUpdate = useForceUpdate();
-
-
-  const handleUpdateCoords = (a: number, b: number) => {
-    setNewCoordX(a);
-    setNewCoordY(b);
-    updateCoords({ coordX: a, coordY: b });
-  };
 
   useEffect(() => {
     setNewCoordX(coordX);
@@ -94,29 +84,8 @@ function Grid() {
   const components = [];
   for (let i: number = sy; (i - sy) * (80 + ((zoom - 100)) / 2) < windowWidthRef.current; i++) {
     for (let j: number = sx; (j - sx) * (20 + ((zoom - 100)) / 8) < windowHeightRef.current; j++) {
-      const dynamicLeft = `${(i - sy) * (80 + ((zoom - 100)) / 2)}px`;
-      const dynamicTop = `${(j - sx) * (20 + ((zoom - 100)) / 8)}px`;
       components.push(
-        <input key={`x:${i} y:${j}`} size={1} onMouseDown={() => handleUpdateCoords(i, j)} style={{
-          position: 'absolute',
-          top: dynamicTop,
-          left: dynamicLeft,
-          width: `${80 + ((zoom - 100)) / 2}px`,
-          height: `${20 + ((zoom - 100)) / 8}px`,
-          boxSizing: 'border-box',
-          border: '0.5px solid #C0C0C0',
-          fontSize: `${11 + ((zoom - 100) / 16)}px`,
-          textIndent: '3px',
-          textAlign: align as 'left' | 'right' | 'center' | 'justify',
-          fontWeight: context?.div.bold ? 'bold': 'normal',
-          fontStyle: context?.div.italic ? 'italic': '',
-          textDecoration: context?.div.underLined ? 'underline': '',
-          fontFamily: context?.div.font,
-        }}
-          onFocus={(e) => {
-            e.target.style.outline = 'none';
-          }}>
-        </input>)
+        <SmartCell i={i} j={j} key={`${i} ${j}`}/>)
     }
   }
   let x_square = x - sy;

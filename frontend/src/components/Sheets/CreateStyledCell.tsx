@@ -25,7 +25,7 @@ export function CreateStyledCell({
   const { scroll, zoom } = context;
   return (
     <div
-      key={`x:${coordX} y:${coordY}${text}${className}`}
+      key={`x:${coordX} y:${coordY}${height}${width}${text}${className}`}
       style={{
         position: 'absolute',
         top: `${(20 + (zoom - 100) / 8) * (coordX - scroll.scrollX)}px`,
