@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef, CSSProperties } from 'react';
 import { useContext } from 'react';
 import { PageContext } from '../../../context/PageContext';
+
+import GameGrid from '../../Sheets/GameGrid/GameGrid';
 import Profile from '../../Sheets/Profile/Profile';
 import EditProfile from '../../../routes/EditProfile';
 import { Data } from '../../Sheets/Data/Data';
@@ -27,6 +29,7 @@ function PageSwitch() {
 
   return (
     <div key={'switch'}>
+	  {url_context?.page === "Game" && <GameGrid key={"game"}/>}
       {url_context?.page === "Profile" && <Profile key={"profile"}/>}
       {url_context?.page === "Data" && <Data key={"data1"} sx={sx} sy={sy} zoom={zoom} />}
       {url_context?.page === "Contacts" && <Contacts key={"contacts1"} sx={sx} sy={sy} zoom={zoom} toolbar={toolbar} />}

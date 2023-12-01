@@ -2,33 +2,27 @@ import React, { useContext, useEffect, useState } from 'react';
 import gameContext from '../../../../context/gameContext';
 import { gameSocket } from '../../services/gameSocketService';
 import { GameStatus } from '../../../../context/gameContext';
+import { PageContext } from '../../../../context/PageContext';
 
 interface IJoinRoomProps {
 };
 
 export function JoinRoom(props:IJoinRoomProps) {
-	const {setRoomId, setGameStatus, matchMe, setMatchMe, modeGame, playerName} = useContext(gameContext);
+	const {setRoomId, setGameStatus, modeGame, playerName, setModeGame} = useContext(gameContext);
 	const [RecievedRoomID, setRecievedRoomID] = useState(0);
-	
+
 	useEffect(()=>{
-		if (matchMe) {
-			console.log("SEND SOMETHING ! ")
-			gameSocket.emit('match_me', {playerName: playerName, typeGame: modeGame});
-			setMatchMe(false);
-		}
+		
 		function processNewEmptyRoom(data:{roomId:number}) {
 			setRecievedRoomID(data.roomId);
-			console.log(data.roomId)
 		}
 		function processWaitingRoomJoined() {
-			console.log('coucou la waiting room')
 			setGameStatus('IN_WAITING_ROOM');
 		}
 
 		function processRoomJoined(data:{roomId:number, gameStatus: GameStatus}) {
 			setGameStatus(data.gameStatus);
 			setRoomId(data.roomId);
-			console.log('I joined room number ' + data.roomId.toString() + ' to play');
 		}
 
 		function processErrorJoin(data:{roomId:number, errorMsg:string}) {
