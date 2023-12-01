@@ -74,14 +74,14 @@
                 cursor: pointer;
                 padding-left: 10px;
                 &:hover {
-                    background-color: #ddddf7;
+                    background-color: #f1f1f1;
                     color: black;
                 }
             }
         }
         .errorMessage {
             padding-top: 10px;
-            color: #ddddf7;
+            color: #f3f3f3;
             font-size: 10px;
             background-color: #5d5b8d;
             padding: 5px;

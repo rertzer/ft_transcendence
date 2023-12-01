@@ -8,14 +8,31 @@ import { GameBar } from './GameBar';
 import gameContext from "../../context/gameContext";
 import CloseIcon from '@mui/icons-material/Close';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import { useNavigate } from 'react-router-dom';
+import { DivSelector } from './DivSelector';
+import { convertToLetters } from '../Body/Letters/Letters_dynamic';
+import { useState, useEffect } from 'react';
 
 function Header({}) {
+  const auth = useLogin();
+  const [image, setImage] = useState("https://img.lamontagne.fr/c6BQg2OSHIeQEv4GJfr_br_8h5DGcOy84ruH2ZResWQ/fit/657/438/sm/0/bG9jYWw6Ly8vMDAvMDAvMDMvMTYvNDYvMjAwMDAwMzE2NDYxMQ.jpg");
+
+  const fetchImage = async () => {
+    const bearer = auth.getBearer();
+    const res = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/user/avatar/` + auth.user.avatar, {
+      method: "GET",
+      headers: { Authorization: bearer },
+    });
+    const imageBlob = await res.blob();
+    const imageObjectURL = URL.createObjectURL(imageBlob);
+    setImage(imageObjectURL);
+  };
+
   const context = useContext(PageContext);
   if (!context) {
     throw new Error('useContext must be used within a MyProvider');
   }
-  const { dark, updateMenu, updatePage } = context;
-  const { toolbar } = context;
+  const { dark, toolbar, menu , coords, updateMenu } = context;
   function handleClick(str : string) {
     updateMenu(str);
   }
@@ -24,13 +41,31 @@ function Header({}) {
       return (false);
     return (true);
   }
-  const auth = useLogin();
-  const {gameStatus} =useContext(gameContext);
+  const {gameStatus} = useContext(gameContext);
+  const navigate = useNavigate();
+  const [inputValue, setInputValue] = useState('');
+  const handleKeyDown = (event:any) => {
+    if (event.key === 'Enter') {
+      navigate(`/profile/${inputValue}`);
+    }
+  };
+  const handleChange = (event:any) => {
+    setInputValue(event.target.value);
+  };
+  useEffect(() => {
+    if (auth.user.avatar) {
+      try {
+        fetchImage().catch((e) => console.log("Failed to fetch the avatar"));
+      } catch (e) {
+        console.log(e);
+      }
+    }  
+  }, [auth]);
+  
   return <header className={styles.headerFrame} style={{ height: toolbar ? '65px' : '142px' }}>
         <div className={dark ? styles.headerBackground : styles.headerBackgroundLight} style={{ height: toolbar ? '65px' : '142px' }}/>
         <div className={styles.line3}>
-        {(printGameMenu()) ? <GameBar /> : <input className={dark ? styles.bar : styles.barLight} /> }
-          <img className={styles.buttonsIcon} alt="" src="/buttons.svg" />
+        {(printGameMenu()) ? <GameBar /> : <input className={dark ? styles.bar : styles.barLight} value={inputValue} onChange={handleChange} onKeyDown={handleKeyDown} /> }
           <div className={styles.menu}>
             <div className={dark ? styles.menuBackground : styles.menuBackgroundLight} />
             <div className={styles.buttpn}>
@@ -38,7 +73,7 @@ function Header({}) {
               <ArrowDropDownIcon  sx={{fontSize:'22px'}} className={dark ? styles.buttonChild : styles.buttonChildLight} />
             </div>
             <div className={styles.frameText}>
-              <div className={dark ? styles.basicSansCs : styles.basicSansCsLight}>User2</div>
+              <div className={dark ? styles.basicSansCs : styles.basicSansCsLight}>{convertToLetters(coords.coordX)}{coords.coordY+1 !== 0 ? coords.coordY+1 : ""}</div>
             </div>
           </div>
         </div>
@@ -46,23 +81,24 @@ function Header({}) {
           <div className={styles.menu2}>
             <div className={dark ? styles.menuBackground : styles.menuBackgroundLight} />
             <div className={styles.buttpn}>
-              <div className={dark ? styles.buttonBackground : styles.buttonBackgroundLight} />
+              <div onClick={() => (menu == "Font" ? updateMenu("none") : updateMenu("Font"))} className={dark ? styles.buttonBackground : styles.buttonBackgroundLight} />
               <ArrowDropDownIcon sx={{fontSize:'22px'}} className={dark ? styles.buttonChild : styles.buttonChildLight} />
             </div>
             <div className={styles.frameText}>
-              <div className={dark ? styles.basicSansCs : styles.basicSansCsLight}>Basic Sans Cs</div>
+              <div className={dark ? styles.basicSansCs : styles.basicSansCsLight}>{context?.div.font}</div>
             </div>
           </div>
+          <DivSelector/>
         </div>
         <SelectBar     />
         <div className={styles.titleBar} onMouseEnter={() => handleClick("none")}>
           <div className={dark ? styles.titleBarBackground : styles.titleBarBackgroundLight} />
           <div className={dark ? styles.untitled1 : styles.untitled1Light}>Untitled 1 - PongOffice Calc</div>
-          <div className={styles.user} onClick={() => updatePage("Profile")}>
-            <img className={styles.userChild} alt="" src={auth.image} style={{cursor:"pointer"}}/>
+          <div className={styles.user} onClick={() => navigate("/profile")}>
+            <img className={styles.userChild} alt="" src={image} style={{cursor:"pointer"}}/>
             <span className={dark ?  styles.user1 :  styles.user1Light}>{auth.user.username}</span>
-            <Tooltip onClick={auth.logout} className={dark ? styles.crossButton : styles.crossButtonLight}title="Log out" arrow>
-              <CloseIcon style={{fontSize:"18px", cursor:"pointer"}}/>
+            <Tooltip className={dark ? styles.crossButton : styles.crossButtonLight}title="Log out" arrow>
+              <CloseIcon onClick={auth.logout} style={{fontSize:"18px", cursor:"pointer"}}/>
               {/* <img className={styles.crossIcon} alt="" src="/cross.svg" style={{cursor:"pointer", right: "8px"}}/> */}
             </Tooltip>
           </div>

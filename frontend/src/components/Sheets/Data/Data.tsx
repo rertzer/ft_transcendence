@@ -2,6 +2,7 @@ import {useState, useEffect, useContext} from 'react';
 import { useLogin } from '../../user/auth';
 import { PageContext } from "../../../context/PageContext";
 import { CreateStyledCell } from '../CreateStyledCell';
+import { useNavigate } from 'react-router-dom';
 
 type User = {
   userId: number,        
@@ -236,5 +237,6 @@ async function sendDM(login: string) {
         const variableToPass = 4 + index;
         return AddLine(index + 1, variableToPass, user , auth.user.login, userList.length - index, reverse)
       })}
+      <CreateStyledCell coordX={3} coordY={1} width={7} height={userList.length + 1} text={''} fontSize={0} className={'border'}/>
      </div>);
 }

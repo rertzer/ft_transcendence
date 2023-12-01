@@ -16,9 +16,7 @@ const ConversationBar = (props: {isOwner: boolean, isAdmin: boolean}) => {
 	const auth = useLogin();
     const {activeChannel, setActiveChannel} = useContext(ChatContext);
     const context = useContext(PageContext);
-    if (!context) {
-      throw new Error('useContext must be used within a MyProvider');
-    }
+    if (!context) { throw new Error('useContext must be used within a MyProvider'); }
     const { updateChat } = context;
     const [showSubMenu, setShowSubMenu] = useState("none");
     let menuRef = useRef<HTMLInputElement>(null);

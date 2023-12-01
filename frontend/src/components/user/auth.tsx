@@ -85,6 +85,7 @@ export const LoginProvider = ({ children }: any) => {
   const edit = (user: any) => {
     setUser(user);
   };
+  
   const getLogin = () => {
     return token.login;
   };
@@ -96,7 +97,7 @@ export const LoginProvider = ({ children }: any) => {
   //////////////////////////////// refresh //////////////////////////////////////
   useEffect(() => {
     console.log("should I fetch", user.avatar);
-    if (user.avatar !== null && user.avatar !== "") {
+    if (user.avatar ) {
       console.log("fetching image", user.avatar);
       try {
         fetchImage().catch((e) => console.log("Failed to fetch the avatar"));

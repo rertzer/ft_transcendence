@@ -16,9 +16,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 
     const auth = useLogin();
 	const context = useContext(PageContext);
-	if (!context) {
-		throw new Error('useContext must be used within a MyProvider');
-	}
+	if (!context) { throw new Error('useContext must be used within a MyProvider'); }
 	const { updateChat } = context;
 	const {roomId, setRoomId, setGameStatus} = useContext(GameContext)
 	const {setActiveChannel, setNeedToUpdate, setBlockedUsers } = useContext(ChatContext)

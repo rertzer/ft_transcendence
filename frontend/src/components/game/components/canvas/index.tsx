@@ -8,9 +8,7 @@ export function Canvas(props:any) {
 	const canvasRef = useRef<HTMLInputElement>(null);
 	const {setGameHeight, setGameWidth } = useContext(gameContext);
 	const context = useContext(PageContext);
-	if (!context) {
-		throw new Error('useContext must be used within a MyProvider');
-	}
+	if (!context) { throw new Error('useContext must be used within a MyProvider'); }
 
 	useEffect(()=> {
 		const canvas = canvasRef.current;

@@ -1,14 +1,10 @@
 import styles from "./GameBar.module.css";
 import { useContext } from "react";
 import { PageContext } from "../../context/PageContext";
-import gameContext from "../../context/gameContext";
 
 export function GameBar () {
 	const context = useContext(PageContext);
-    const {gameStatus} =useContext(gameContext);
-	if (!context) {
-	throw new Error('useContext must be used within a MyProvider');
-	}
+	if (!context) { throw new Error('useContext must be used within a MyProvider'); }
 	const { game, dark } = context;
     return (
     <div className={dark ? styles.bar : styles.barLight}>

@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import { CreateStyledCell } from '../CreateStyledCell';
 import { useLogin } from '../../user/auth';
 import { PageContext } from '../../../context/PageContext';
+import { useNavigate } from 'react-router-dom';
 
 function alternateLine(size: number) {
 	const lines = [];
@@ -19,8 +20,12 @@ function alternateLine(size: number) {
 	return (<div key={'alternateLines' + size}>{lines}</div>);
 }
 
-export function AddLine(props: {scrollX: number, scrollY: number, toolbar: boolean, zoom: number, name: string, coordX:number, connected: string, avatar: string, key:string}) {
+export function AddLine(props: {scrollX: number, scrollY: number, toolbar: boolean, zoom: number, name: string, login:string, id: number, coordX:number, connected: string, avatar: string, key:string}) {
 
+	const navigate = useNavigate();
+	const [image, setImage] = useState(
+		"https://img.lamontagne.fr/c6BQg2OSHIeQEv4GJfr_br_8h5DGcOy84ruH2ZResWQ/fit/657/438/sm/0/bG9jYWw6Ly8vMDAvMDAvMDMvMTYvNDYvMjAwMDAwMzE2NDYxMQ.jpg"
+	  );
 	const auth = useLogin();
 		let add;
 		let classname;
@@ -39,27 +44,62 @@ export function AddLine(props: {scrollX: number, scrollY: number, toolbar: boole
 		classname= "status_unconnected"
 	}
 
+	async function removeFriend() {
+		try {
+			const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/friend/deleteFriend/${props.id}/${auth.user.id}`, {
+				method: 'DELETE',
+				headers: { Authorization: auth.getBearer()},
+			});
+			if (!response.ok) {
+				console.error(`Error fetching friends: ${response.status}`);
+				return ;
+			}
+			const data = await response.json();
+			console.log("data receive = ", data);
+			if (!data) {
+				console.log('No list of friends');
+			} else {
+				console.log("hey all good");
+			}
+		} catch (error) {
+			console.error('Error removinf friends:', error);
+		}
+	}
 	
-
-		//creer un bouton on click qui te redirige vers le user ?
+	const fetchImage = async () => {
+		const bearer = auth.getBearer();
+		const res = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/user/avatar/` + props.avatar, {
+		  method: "GET",
+		  headers: { Authorization: bearer },
+		});
+		console.log("fetchImage on route /user/avatar/", props.avatar);
+		const imageBlob = await res.blob();
+		const imageObjectURL = URL.createObjectURL(imageBlob);
+		setImage(imageObjectURL);
+	  };
+	if (props.avatar)
+		fetchImage();
 	return (
 		<div key={props.name}>
 			<div key={"img"} style={{ position:'fixed',
                 	color:'black',
                 	backgroundColor:'red',
                 	top: props.toolbar ? '89px' : '166px' }}>
-      			<img src={"https://img.lamontagne.fr/c6BQg2OSHIeQEv4GJfr_br_8h5DGcOy84ruH2ZResWQ/fit/657/438/sm/0/bG9jYWw6Ly8vMDAvMDAvMDMvMTYvNDYvMjAwMDAwMzE2NDYxMQ.jpg"} 
+      			<img src={image} 
             		alt="" className="profilePic" 
             		style={{  width:`${(20 + (props.zoom - 100) / 8) * 1}px`,
                     	height:`${(20 + (props.zoom - 100) / 8) * 1}px`,
                     	objectFit: 'cover',
                     	position: 'absolute',
+						borderLeft: '1px solid black',
+						borderTop: '1px solid black',
+						borderBottom: '1px solid black',
                     	top: `${(20 + (props.zoom - 100) / 8) * (props.coordX - props.scrollX)}px`,
                     	left: `${-(20 + (props.zoom - 100) / 8) * 1 + (80 + (props.zoom - 100) / 2) * (1 - props.scrollY)}px`, }} />
 			</div>
 			<div key={"1"}><CreateStyledCell
 				coordX={props.coordX} coordY={1} width={1} height={1} 
-				text={props.name} fontSize={12} className={classname} />
+				text={props.name} fontSize={12} className={"contacts_button"} onClick={() => navigate(`/profile/${props.login}`)}/>
 			</div>
 			<div key={"2"}><CreateStyledCell
 				coordX={props.coordX} coordY={2} width={1} height={1}
@@ -74,7 +114,7 @@ type listOfFriend = {
 	username: string,
 	connected: string,
 	id: number,
-	login:string,
+	login: string,
 }
 
 export function Contacts(props: { sx: number, sy: number, zoom: number, toolbar: boolean }) {
@@ -155,7 +195,7 @@ export function Contacts(props: { sx: number, sy: number, zoom: number, toolbar:
 		const intervalId = setInterval(getUser, 5000);
 
 		return () => clearInterval(intervalId);
-	}, [])
+	}, [auth])
 
 	useEffect(() => {
 		setSizeOfList(listOfFriend.length);
@@ -175,17 +215,16 @@ export function Contacts(props: { sx: number, sy: number, zoom: number, toolbar:
 			{listOfFriend.map((friend, index) => {
       console.log(friend);
       const variableToPass = 4 + index; // Commence à 4 et s'incrémente à chaque itération
-      return (<div><AddLine scrollX={props.sx} scrollY={props.sy} toolbar={props.toolbar} zoom={props.zoom} name={friend.username} coordX={variableToPass} connected={friend.connected} avatar={friend.avatar} key={`${friend.id}`}/>
-	  	<div onClick={()=>{sendDM(friend.login)}}><CreateStyledCell
+      return (<div><AddLine scrollX={props.sx} scrollY={props.sy} toolbar={props.toolbar} zoom={props.zoom} name={friend.username} login={friend.login} id={friend.id} coordX={variableToPass} connected={friend.connected} avatar={friend.avatar} key={`${friend.id}`}/>
+		<div onClick={()=>{sendDM(friend.login)}}><CreateStyledCell
 		  coordX={variableToPass} coordY={3} width={1} height={1} key={"3"}
 		  text={'send DM'} fontSize={12} className={"DM_contacts"} /></div>
-  		<div key={"removeFriend"} onClick={() =>removeFriend(friend.id)}>
+		<div key={"removeFriend"} onClick={() =>removeFriend(friend.id)}>
 		<CreateStyledCell
 			coordX={variableToPass} coordY={4} width={1} height={1} key={"3"}
 			text={'unfriend'} fontSize={12} className={"delete_contacts"} />
 		</div>
-		</div>)
-    })}
-			<CreateStyledCell coordX={3} coordY={1} width={2} height={sizeOfList === 0 ? 2 : sizeOfList + 1} text={''} fontSize={0} className={"border"} key={"border"}/>
-		</div>);
+		</div>)}
+	)};
+	</div>)
 }
