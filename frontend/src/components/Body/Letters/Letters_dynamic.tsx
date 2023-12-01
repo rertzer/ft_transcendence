@@ -2,6 +2,22 @@ import React, { useContext, useState, useEffect, useRef } from 'react';
 import { PageContext } from '../../../context/PageContext';
 import styles from "./Letters.module.css";
 
+export function convertToLetters(n : number) : string {
+
+  let string = "";
+  if (n === 0 || n === 26)
+    string = "A";
+  let j = n;
+  if (j >= 26)
+    j = j - 26;
+  for (; j > 0; j = Math.floor(j / 26)) {
+    string = String.fromCharCode((j%26)+65) + string;
+  }
+  if (n >= 26 && n < 52)
+    string = "A" + string;
+  return (string);
+}
+
 function RepeatingLetters() {
   const windowWidthRef = useRef(window.innerWidth);
 
@@ -22,9 +38,7 @@ function RepeatingLetters() {
   const forceUpdate = useForceUpdate();
 
   const context = useContext(PageContext);
-  if (!context) {
-    throw new Error('useContext must be used within a MyProvider');
-  }
+  if (!context) { throw new Error('useContext must be used within a MyProvider');}
 
   const { coords, updateCoords } = context;
   const { coordX, coordY } = coords;
@@ -55,7 +69,7 @@ function RepeatingLetters() {
     setNewScrollX(scrollX);
     setNewScrollY(scrollY);
   }, [scrollX, scrollY]);
-  
+
   for (let i = 0; i * (80 + (zoom - 100)/2) < windowWidthRef.current; i++) {
     const n = i + sy;
     const dynamicLeft = `${(i) * (80 + (zoom - 100)/2)}px`;

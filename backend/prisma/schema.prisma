@@ -27,6 +27,8 @@ model User {
   usersBlockedBy         BlockedUser[]        @relation("BlockedByUser")
   chatChannelsUser       ChatChannelsUser[]   @relation("chatChanelUser")
   channelOwner           ChatChannels[]       @relation("ChatChannelsOwner")
+  GameLeft               Game[]               @relation("GameLeft")
+  GameRight              Game[]               @relation("GameRight")
 }
 
 model UsersBannedToChats {
@@ -47,8 +49,8 @@ model ChatChannelsUser {
   date_left        DateTime?
   kicked           Boolean
   banned           Boolean
-  chatChannelsUser User             @relation("chatChanelUser", fields: [user_id], references: [id], map: "chat_channels_user")
-  channel          ChatChannels     @relation("ChatChannelsUser", fields: [channel_id], references: [id])
+  chatChannelsUser User             @relation("chatChanelUser", fields: [user_id], references: [id], map: "chat_channels_user", onDelete: Cascade)
+  channel          ChatChannels     @relation("ChatChannelsUser", fields: [channel_id], references: [id], onDelete: Cascade)
   messagesSent     ChatMsgHistory[] @relation("ChatMessagesSender")
 }
 
@@ -60,7 +62,7 @@ model ChatChannels {
   password String?
 
   chatMessages       ChatMsgHistory[]     @relation("ChatMessages")
-  channelOwner       User                 @relation("ChatChannelsOwner", fields: [owner], references: [id])
+  channelOwner       User                 @relation("ChatChannelsOwner", fields: [owner], references: [id], onDelete: Cascade)
   channelsUsers      ChatChannelsUser[]   @relation("ChatChannelsUser")
   // Add other fields...
   UsersBannedToChats UsersBannedToChats[]
@@ -73,8 +75,8 @@ model ChatMsgHistory {
   message               String
   serviceMessage        Boolean
   date_sent             DateTime
-  channel               ChatChannels     @relation("ChatMessages", fields: [chat_channels_id], references: [id])
-  sender                ChatChannelsUser @relation("ChatMessagesSender", fields: [chat_channels_user_id], references: [id])
+  channel               ChatChannels     @relation("ChatMessages", fields: [chat_channels_id], references: [id], onDelete: Cascade)
+  sender                ChatChannelsUser @relation("ChatMessagesSender", fields: [chat_channels_user_id], references: [id], onDelete: Cascade)
 }
 
 model DirectMsg {
@@ -97,7 +99,9 @@ model Friend {
 model Game {
   id               Int       @id @default(autoincrement())
   player_one_id    Int
+  player_one       User      @relation("GameLeft", fields: [player_one_id], references: [id])
   player_two_id    Int
+  player_two       User      @relation("GameRight", fields: [player_two_id], references: [id])
   type             String
   winner_id        Int?
   game_status      String?

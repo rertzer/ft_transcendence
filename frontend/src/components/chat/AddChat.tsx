@@ -1,6 +1,5 @@
-import { useState, useContext, useEffect } from 'react';
+import { useState, useContext } from 'react';
 import { WebsocketContext } from '../../context/chatContext';
-import  ConnectionContext from "../../context/authContext"
 import ChatContext from '../../context/chatContext';
 import AddIcon from '@mui/icons-material/Add';
 import { Tooltip } from  "@mui/material";

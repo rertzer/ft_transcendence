@@ -3,11 +3,9 @@ import Sidebar from './Sidebar';
 import Chat from './Chat'
 import { WebsocketContext } from "../../context/chatContext";
 import { useState, useEffect, useContext } from 'react';
-import  ConnectionContext from "../../context/authContext"
 import ChatContext, {IChatContext} from "../../context/chatContext";
 import { useLogin } from "../../components/user/auth";
-import GameContext from "../../context/gameContext";
-import ChatIcon from '@mui/icons-material/Chat';
+import ConversationBar from "./ConversationBar";
 
 export type Channel = {
     id: number;
@@ -17,17 +15,15 @@ export type Channel = {
     status: string;
     /*---------LastMessageReceive-------*/
     username: string | null; // bien differencier username et uid unique en cas de changement de username
-	// login: string ;
     msg: string| null;
     dateSend: Date | null;
+    userId: number | null;
 }
 
 const ChatComponent = () => {
-
     const auth = useLogin();
-    const {roomId, setRoomId} = useContext(GameContext);
     const [allChannels, setAllChannels] = useState<Channel[]>([])
-    const [blockedUsers, setBlockedUsers] = useState<number[]>([]);
+    const [blockedUsers, setBlockedUsers] = useState<{idUser: number, username: string, login: string}[]>([]);
     const [needToUpdate, setNeedToUpdate] = useState("");
     const [activeChannel, setActiveChannel] = useState<Channel>({
         id: -1,
@@ -37,7 +33,8 @@ const ChatComponent = () => {
         status: "",
         username: null,
         dateSend: null,
-        msg: null
+        msg: null,
+        userId: null,
     })
 
   const ChatValue: IChatContext = {
@@ -51,36 +48,37 @@ const ChatComponent = () => {
     setBlockedUsers,
   }
 
-//   useEffect(() => {
-//     const fetchBlocked = async () => {
-//         const result = await getBlockedUsers();
-//         if (result)
-//             setBlockedUsers(result)
-//     }
-//     fetchBlocked();
-//     console.log(blockedUsers);
-//   }, []);
-
-// async function getBlockedUsers() {
-//     let blocked: number[] = [];
-//     try {
-//         const response = await fetch(`://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/listOfBlockedUser/${auth.user.login}`);
-//         if (!response.ok) {
-//             throw new Error("Request failed");
-//         }
-//         const data = await response.json();
-//         if (data) {
-//             return (data);
-//         }
-//     }
-//     catch(error) {
-//         console.error("Error while getting blocked users", error);
-//     }
-// }
 useEffect(() => {
-    console.log("New room Id", roomId);
-  }, [roomId])
-
+    async function getBlockedUsers() {
+        try {
+            const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/listOfBlockedUser/${auth.user.login}`, {
+                method: "GET",
+                headers: { Authorization: auth.getBearer()},
+              });
+            if (!response.ok) {
+                throw new Error("Request failed");
+            }
+            const data = await response.json();
+            let result: {idUser: number, username: string, login: string}[] = [];
+            if (data) {
+                data.map((element: any) => {
+                    result.push(element)
+                    return 0;
+                })
+                return (result);
+            }
+        }
+        catch(error) {
+            console.error("Error while getting blocked users", error);
+        }
+    }
+    const fetchBlocked = async () => {
+        const result = await getBlockedUsers();
+        if (result)
+            setBlockedUsers(result)
+    }
+    fetchBlocked();
+  }, [auth]);
 
     return (
         <div className="chatcomponent">
@@ -101,17 +99,21 @@ const NoChat = (props: {message: string}) => {
 
     const auth = useLogin();
     const socket = useContext(WebsocketContext);
+    const {blockedUsers} = useContext(ChatContext);
 
     useEffect(() => {
 
-    socket.on('newMessage', (chatHistoryReceive :{msg: string, username: string, date: Date, id: number, idOfChat:number, serviceMessage: boolean}) => {
-
-        socket.emit("chatListOfUser",auth.user.login);
+    socket.on('newMessage', (chatHistoryReceive :{msg: string, username: string, login: string, date: Date, id: number, idOfChat:number, serviceMessage: boolean, userId: number}) => {
+        if (blockedUsers.find(element => element.idUser === chatHistoryReceive.userId) === undefined)
+            socket.emit("chatListOfUser",auth.user.login);
     });
     return () => {
         socket.off('newMessage');
     }
-}, [])
+}, [auth.user.login, blockedUsers, socket])
 
-    return (<div className='noChat'><ChatIcon style={{fontSize:'100px'}}/></div>);
+    return (<div>
+                <ConversationBar isOwner={false} isAdmin={false}/>
+                <div className='noChat'></div>
+            </div>);
 }

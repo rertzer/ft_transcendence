@@ -1,7 +1,6 @@
 import React, { createContext, useState, ReactNode } from 'react';
 
 type SharedData = {
-  page: string;
   menu: string;
   chat: string;
   zoom: number;
@@ -9,18 +8,20 @@ type SharedData = {
   dark: boolean;
   coords: { coordX: number; coordY: number };
   scroll: { scrollX: number; scrollY: number };
-  game: { player1: string; player2: string; points1: number; points2: number};
-  updatePage: (page: string) => void;
+  game: { player1: string; player2: string; points1: number; points2: number };
+  div: { font: string; bold: boolean; italic: boolean; underLined: boolean; align: string};
   updateMenu: (menu: string) => void;
   updateChat: (chat: string) => void;
   updateZoom: (zoom: number) => void;
   updateToolbar: (newTool: boolean) => void;
   updateDark: (newDark: boolean) => void;
-  updatePageMenuChat: (page:string, menu: string, chat: string) => void;
+  updateMenuChat: (menu: string, chat: string) => void;
   updateCoords: (newCoords: { coordX: number; coordY: number }) => void;
   updateCoordsMenu: (newCoords: { coordX: number; coordY: number }, newMenu: string) => void;
   updateScroll: (newScroll: { scrollX: number; scrollY: number }) => void;
-  updateGame: (newGame: { player1: string; player2: string; points1: number; points2: number}) => void;
+  updateGame: (newGame: { player1: string; player2: string; points1: number; points2: number }) => void;
+  updateDiv: (newDiv: { font: string; bold: boolean; italic: boolean; underLined: boolean; align: string }) => void;
+  updateDivMenu: (newDiv: { font: string; bold: boolean; italic: boolean; underLined: boolean; align: string }, menu: string) => void;
 };
 
 const PageContext = createContext<SharedData | undefined>(undefined);
@@ -29,9 +30,8 @@ type MyProviderProps = {
   children: ReactNode;
 };
 
-function MyProvider({ children }: MyProviderProps) {
+function PageProvider({ children }: MyProviderProps) {
   const [sharedData, setSharedData] = useState({
-    page:'Profile',
     menu:'none',
     chat:'none',
     zoom:125,
@@ -40,11 +40,9 @@ function MyProvider({ children }: MyProviderProps) {
     coords: { coordX: 0, coordY: 0 },
     scroll: { scrollX: 0, scrollY: 0 },
     game: {player1: "player1", player2: "player2", points1: 0, points2: 0},
+    div: {font: "Arial, sans-serif", bold: false, italic: false, underLined: false, align: "left"},
   });
 
-  const updatePage = (newData: string) => {
-    setSharedData({ ...sharedData, page: newData });
-  };
   const updateMenu = (newData: string) => {
     setSharedData({ ...sharedData, menu: newData });
   };
@@ -60,8 +58,8 @@ function MyProvider({ children }: MyProviderProps) {
   const updateDark = (newDark: boolean) => {
     setSharedData({ ...sharedData, dark: newDark });
   };
-  const updatePageMenuChat = (newPage: string, newMenu: string, newChat: string) => {
-    setSharedData({ ...sharedData, page: newPage, menu: newMenu, chat: newChat});
+  const updateMenuChat = (newMenu: string, newChat: string) => {
+    setSharedData({ ...sharedData, menu: newMenu, chat: newChat});
   };
   const updateCoords = (newCoords: { coordX: number; coordY: number }) => {
     setSharedData({ ...sharedData, coords: { ...newCoords } });
@@ -75,13 +73,19 @@ function MyProvider({ children }: MyProviderProps) {
   const updateGame = (newGame: { player1: string; player2: string; points1: number; points2: number}) => {
     setSharedData({ ...sharedData, game: { ...newGame } });
   };
+  const updateDiv = (newDiv: { font: string; bold: boolean; italic: boolean; underLined: boolean; align: string}) => {
+    setSharedData({ ...sharedData, div: { ...newDiv } }); 
+  };
+  const updateDivMenu = (newDiv: { font: string; bold: boolean; italic: boolean; underLined: boolean; align: string}, newMenu: string) => {
+    setSharedData({ ...sharedData, menu: newMenu, div: { ...newDiv },  }); 
+  };
   
 
   return (
-    <PageContext.Provider value={{ ...sharedData, updatePage, updateMenu, updateChat, updateZoom, updateToolbar, updateDark, updatePageMenuChat, updateCoords, updateCoordsMenu, updateScroll, updateGame}}>
+    <PageContext.Provider value={{ ...sharedData, updateMenu, updateChat, updateZoom, updateToolbar, updateDark, updateMenuChat, updateCoords, updateCoordsMenu, updateScroll, updateGame, updateDiv, updateDivMenu}}>
       {children}
     </PageContext.Provider>
   );
 }
 
-export { MyProvider, PageContext };
+export { PageProvider, PageContext };

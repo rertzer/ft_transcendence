@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { Channel } from "./ChatComponent";
 import { useLogin } from "../../components/user/auth";
 import GameContext from "../../context/gameContext";
-import { Navigate } from "react-router-dom";
+import { PageContext } from "../../context/PageContext";
 
 type uInfo = {
 	userStatus: string, // "owner", "admin", "user", "banned", "out" (if kicked or left)
@@ -15,8 +15,11 @@ type uInfo = {
 const  Message = (props: {username: string, login: string, date: string, msg: string, isOwner: boolean, isAdmin: boolean, chatId: number, service: boolean, isDM: boolean, msgId: number}) => {
 
     const auth = useLogin();
+	const context = useContext(PageContext);
+	if (!context) { throw new Error('useContext must be used within a MyProvider'); }
+	const { updateChat } = context;
 	const {roomId, setRoomId} = useContext(GameContext)
-	const {allChannels, activeChannel, setActiveChannel, setNeedToUpdate} = useContext(ChatContext)
+	const {allChannels, setActiveChannel, setNeedToUpdate, setBlockedUsers } = useContext(ChatContext)
     const [showUserActionsMenu, setShowUserActionsMenu] = useState(false);
 	const [userInfo, setUserInfo] = useState<uInfo>({userStatus: "user", friend: false})
 	const [errorMessage, setErrorMessage] = useState("");
@@ -39,20 +42,24 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 	useEffect(() => {
 		socket.on("userIsMute", (userIsMute:boolean) => {
 
-			if(!userIsMute) // il faudra afficher un truc dans ca cas la
+			if(!userIsMute) 
 				console.log("print something")
 			else
-				console.log(" i am mute");
+				console.log(" i am muted");
 		})
         return () => {
 			socket.off("userIsMute");
 		}
-    }, [])
+    }, [socket])
 
 	async function checkIfUserIsBanned() {
 
 		try {
-			const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/${props.login}/banned/${props.chatId}`);
+			const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/${props.login}/banned/${props.chatId}`, {
+				method: "GET",
+				headers: { Authorization: auth.getBearer()},
+			  }
+			);
 			if (!response.ok) {
 				throw new Error("Request failed");
 			}
@@ -77,7 +84,10 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 
 	async function checkIfAlreadyFriend() {
 		try {
-			const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/friend/${auth.user.login}/${props.login}/isMyFriend`);
+			const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/friend/${auth.user.login}/${props.login}/isMyFriend`, {
+				method: "GET",
+				headers: { Authorization: auth.getBearer()},
+			  });
 			if (!response.ok) {
 				throw new Error("Request failed");
 			}
@@ -92,7 +102,10 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 
 	async function getUserInfo() {
 		try {
-			const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/${props.login}/info/${props.chatId}`);
+			const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/${props.login}/info/${props.chatId}`, {
+				method: "GET",
+				headers: { Authorization: auth.getBearer()},
+			  });
 			if (!response.ok) {
 				throw new Error("Request failed");
 			}
@@ -138,17 +151,18 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 
 		const requestOptions = {
 			method: 'post',
-			headers: { 'Content-Type': 'application/json' },
+			headers: { 'Content-Type': 'application/json' ,
+			Authorization: auth.getBearer()},
 			body: JSON.stringify({ login: props.login, chatId: props.chatId})
 		};
-		const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/setAdmin/`, requestOptions)
-		.catch((error) => {
-			console.error('Error checking user status:', error);
-		  });
-		console.log("RESPONSE: ", response)
-		toggleUserActionsMenu();
-		sendServiceMessage(props.username + " is now an administrator of this channel");
-
+		try {
+			await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/setAdmin/`, requestOptions)
+			toggleUserActionsMenu();
+			sendServiceMessage(props.username + " is now an administrator of this channel");
+		}
+		catch (error) {
+			console.error("Error while setting new admin", error);
+		}
 	}
 
 	function muteUser() {
@@ -160,37 +174,49 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 	async function banUser() {
 		const requestOptions = {
 			method: 'post',
-			headers: { 'Content-Type': 'application/json' },
+			headers: { 'Content-Type': 'application/json',
+			Authorization: auth.getBearer()},
 			body: JSON.stringify({ login: props.login, chatId: props.chatId})
 		};
-		let banned = await checkIfUserIsBanned();
-		if (banned) {
-			setErrorMessage(props.username + " is already banned");
-		} else {
-			const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/banUser/`, requestOptions);
-			const data = await response.json();
-			if (data.isOwner)
-				setErrorMessage(props.username + " cannot be banned since he or she owns this channel")
-			else {
-			toggleUserActionsMenu();
-			sendServiceMessage(props.username + " has been banned from this channel");
+		try {
+			let banned = await checkIfUserIsBanned();
+			if (banned) {
+				setErrorMessage(props.username + " is already banned");
+			} else {
+				const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/banUser/`, requestOptions);
+				const data = await response.json();
+				if (data.isOwner)
+					setErrorMessage(props.username + " cannot be banned since he or she owns this channel")
+				else {
+				toggleUserActionsMenu();
+				sendServiceMessage(props.username + " has been banned from this channel");
+				}
 			}
+		}
+		catch (error) {
+			console.error("Error while banning user", error);
 		}
 	}
 
 	async function kickUser() {
 		const requestOptions = {
 			method: 'post',
-			headers: { 'Content-Type': 'application/json' },
+			headers: { 'Content-Type': 'application/json',
+			Authorization: auth.getBearer()},
 			body: JSON.stringify({ login: props.login, chatId: props.chatId})
 		};
-		const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/kickUser/`, requestOptions);
-		const data = await response.json();
-		if (data.isOwner)
-			setErrorMessage(props.username + " cannot be kicked since he or she owns this channel")
-		else {
-			toggleUserActionsMenu();
-			sendServiceMessage(props.username + " has been kicked from this channel");
+		try {
+			const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/kickUser/`, requestOptions);
+			const data = await response.json();
+			if (data.isOwner)
+				setErrorMessage(props.username + " cannot be kicked since he or she owns this channel")
+			else {
+				toggleUserActionsMenu();
+				sendServiceMessage(props.username + " has been kicked from this channel");
+			}
+		}
+		catch (error) {
+			console.error("Error while kicking user", error);
 		}
 	}
 
@@ -218,7 +244,6 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 				sender: auth.user.login,
 				receiver: props.login,
 			}
-			console.log(messageData)
 			socket.emit('newPrivateConv', messageData);
 			setNeedToUpdate("newDM " + props.username);
 			toggleUserActionsMenu();
@@ -229,48 +254,90 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 	{
 		const requestOptions = {
 			method: 'post',
-			headers: { 'Content-Type': 'application/json' },
+			headers: { 'Content-Type': 'application/json',
+			Authorization: auth.getBearer()},
 			body: JSON.stringify({ login: auth.user.login, friendToAdd: props.login})
 		};
-		toggleUserActionsMenu();
-		await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/friend/addFriend/`, requestOptions)
-
+		try {
+			await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/friend/addFriend/`, requestOptions)
+			toggleUserActionsMenu();
+		}
+		catch (error) {
+			console.error("Error while adding friend", error);
+		}
 	}
 
 
 	async function blockUser() {
 		const requestOptions = {
 			method: 'post',
-			headers: { 'Content-Type': 'application/json' },
+			headers: { 'Content-Type': 'application/json',
+			Authorization: auth.getBearer()},
 			body: JSON.stringify({blockedLogin: props.login, login: auth.user.login})
 		};
-		const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/blockUser/`, requestOptions);
-		const data = await response.json();
-		console.log(data);
+		try {
+			const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/blockUser/`, requestOptions);
+			if (!response.ok) {
+				throw new Error("Request failed");
+			}
+			const response2 = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/listOfBlockedUser/${auth.user.login}`, {
+				method: "GET",
+				headers: { Authorization: auth.getBearer()},
+			  });
+			if (!response2.ok) {
+				throw new Error("Request failed");
+			}
+			const data = await response2.json();
+			let result: {idUser: number, username: string, login: string}[] = [];
+			if (data) {
+				data.map((element: any) => {
+					return result.push(element)
+				})
+				setBlockedUsers(result);
+			}
+			toggleUserActionsMenu();
+		}
+		catch (error) {
+			console.error("Error while blocking user", error);
+		}
 	}
 
-	async function startGame() {
+	async function startGame(mode: string) {
 		const requestOptions = {
 			method: 'post',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({typeGame: "BASIC"})
+			headers: { 'Content-Type': 'application/json' ,
+			Authorization: auth.getBearer()},
+			body: JSON.stringify({typeGame: mode})
 		};
-		const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/game/newRoom/`, requestOptions);
-		const data = await response.json();
-		sendServiceMessage("Classic game invitation received to play in room " + data.roomId)
-		setRoomId(data.roomId);
+		try {
+			const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/game/newRoom/`, requestOptions);
+			const data = await response.json();
+			sendServiceMessage(mode + " game invitation received to play in room " + data.roomId)
+			setRoomId(data.roomId);
+			updateChat("none");
+		}
+		catch (error) {
+			console.error('Error creating game room', error);
+		}
 	}
 
 	async function joinGame() {
 		const indexOfId = props.msg.lastIndexOf(" ") + 1;
 		const idToJoin = parseInt(props.msg.substring(indexOfId));
-		// const requestOptions = {
-		// 	method: 'delete',
-		// 	headers: { 'Content-Type': 'application/json' },
-		// 	body: JSON.stringify({chatId: props.chatId, msgId: props.msgId})
-		// };
-		// await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/`, requestOptions)
+		try {
+			const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/deleteMessage/${props.msgId}`, {
+				method: 'DELETE',
+				headers: { Authorization: auth.getBearer()},
+			});
+			if (!response.ok) {
+				console.error(`Error deleting invite: ${response.status}`);
+				return;
+			}
+		} catch (error) {
+			console.error('Error removing message:', error);
+		}
 		setRoomId(idToJoin);
+		updateChat("none");
 	}
 
 	if (messageType !== "service") {
@@ -279,18 +346,19 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 				<div className='messageInfo'>
 					{messageType === "owner" ?
 						<div>
-							<img src="" />  {/*faudra mettre la photo de profil ici   */}
+							<img src="" alt="user Avatar"/>  {/*faudra mettre la photo de profil ici   */}
 						</div> :
 						<div className="userOptions" ref={menuRef}>
-							<img src="" style={{cursor:"pointer"}} onClick={toggleUserActionsMenu}/>
+							<img src="" alt="user Avatar" style={{cursor:"pointer"}} onClick={toggleUserActionsMenu}/>
 							<div className={showUserActionsMenu ? "userActions" : "userActions-hidden"}>
 								{props.isDM || userInfo.userStatus === "" ? <h4>{props.username}</h4> : <h4>{props.username + " (" + userInfo.userStatus + ")"}</h4>}
 								<hr></hr>
 								<div className="menuItems">
-									{props.isDM && roomId === 0 && <div onClick={startGame}>Invite to play</div>}
-									{userInfo.friend ? <div>Unfriend</div> : <div onClick={addToFriends}>Add to friends</div>}
+									{props.isDM && roomId === 0 && <div onClick={() => {startGame("BASIC")}}>Invite to Classic Game</div>}
+									{props.isDM && roomId === 0 && <div onClick={() => {startGame("ADVANCED")}}>Invite to Advanced Game</div>}
+									{!userInfo.friend && <div onClick={addToFriends}>Add to friends</div>}
 									{props.isDM === false && <div onClick={startDM}>Send DM</div>}
-									<Link to="/profile/1" style={{textDecoration:"none", color: "#ddddf7"}}>
+									<Link to={`/profile/${props.login}`} style={{textDecoration:"none", color: "white"}}>
 										<div>Show profile</div>
 									</Link>
 									{((props.isAdmin || props.isOwner) && (userInfo.userStatus === "" || userInfo.userStatus === "admin")) &&

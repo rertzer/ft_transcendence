@@ -4,19 +4,26 @@ import { PrismaChatService} from "src/prisma/chat/prisma.chat.service";
 import { getDate } from "../utils/utils.service";
 import { Socket } from "socket.io";
 import { ChatLister } from "../chatLister/chatLister.service";
-
+import * as argon from 'argon2';
 
 @Injectable()
 export class CreateChatService {
 	constructor(private prismaService: PrismaChatService){
 	}
 
+	
+
 	async createChat(login: string, idLogin:number, chatPassword: string, chatName: string, chatType: string, targetSocket: Socket)
 	{
 		const idOfUser = await this.prismaService.getIdOfLogin(login);
 		if (idOfUser !== undefined)
 		{
-			const chatId = (await this.emitAndCreateRoom(login, chatPassword, chatName, chatType, targetSocket, idOfUser)).toString();
+			let hashed_password;
+			if (chatPassword)
+				hashed_password = await argon.hash(chatPassword,);
+			else
+				hashed_password = chatPassword;
+			const chatId = (await this.emitAndCreateRoom(login, hashed_password, chatName, chatType, targetSocket, idOfUser)).toString();
 			targetSocket.join(chatId.toString());
 			const chatlister = new ChatLister(this.prismaService);
 			chatlister.listChatOfUser(idLogin, targetSocket);

@@ -9,12 +9,10 @@ import { useContext, useEffect, useState } from "react";
 const Chat = () => {
 
     const {activeChannel} = useContext(ChatContext);
-    let isOwner = false;
     let isDM = false;
     const [isAdmin, setIsAdmin] = useState(false);
-    if (activeChannel.status === "owner") {
-        isOwner = true;   
-    } else if (activeChannel.type === "DM") {
+    const [isOwner, setIsOwner] = useState(false); 
+    if (activeChannel.type === "DM") {
         isDM = true;
     }
     useEffect(() => {
@@ -22,12 +20,16 @@ const Chat = () => {
             setIsAdmin(true);
         else
             setIsAdmin(false);
+        if (activeChannel.status === "owner")
+            setIsOwner(true);
+        else
+            setIsOwner(false);
     }, [activeChannel]);
 
     return (
         <div className='chat'>
             <ConversationBar isOwner={isOwner} isAdmin={isAdmin}/>
-            <Messages chatId={activeChannel.id} isOwner={isOwner} isAdmin={isAdmin} setIsAdmin={setIsAdmin} isDM={isDM}/>
+            <Messages chatId={activeChannel.id} isOwner={isOwner} setIsOwner={setIsOwner} isAdmin={isAdmin} setIsAdmin={setIsAdmin} isDM={isDM}/>
             <MessageInput chatId={activeChannel.id}/>
         </div>
     )

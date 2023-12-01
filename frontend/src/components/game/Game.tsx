@@ -1,12 +1,10 @@
-import React, {useEffect, useState, useContext} from 'react';
+import {useEffect, useContext} from 'react';
 import { JoinRoom } from './components/joinRoom';
-import GameContext, { IGameContextProps } from '../../context/gameContext';
+import GameContext from '../../context/gameContext';
 import GameArea from './components/gameArea';
-import { useLogin } from '../user/auth';
 import { GameStatus } from '../../context/gameContext';
 import { WaitingRoom } from './components/waitingRoom';
 import { gameSocket } from './services/gameSocketService';
-import { PageContext } from '../../context/PageContext';
 
 function Game() {
 	const {gameStatus, roomId, setGameStatus, playerName, setRoomId} = useContext(GameContext);
@@ -32,10 +30,10 @@ function Game() {
 	}, [setGameStatus, setRoomId]);
 
 	useEffect(()=> {
-		if (roomId != 0 && gameStatus === 'NOT_IN_GAME') {
+		if (roomId !== 0 && gameStatus === 'NOT_IN_GAME') {
 			gameSocket.emit("join_room", {roomId:roomId, playerName});
 		}
-	}, [roomId])
+	}, [roomId, gameStatus, playerName])
 	
 	return (
 		<>

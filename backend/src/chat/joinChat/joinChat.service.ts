@@ -2,7 +2,9 @@ import { Injectable } from "@nestjs/common";
 import { PrismaChatService } from "src/prisma/chat/prisma.chat.service";
 import { getDate } from "../utils/utils.service";
 import { Socket } from "socket.io";
+import * as argon from 'argon2';
 import { ChatType } from "src/prisma/chat/prisma.chat.service";
+import { LoginDto } from "src/auth/dto";
 
 
 
@@ -22,6 +24,7 @@ export class JoinChatService{
 		}
 		if (!await this.prismaService.checkIfUserIsBanned(chat_id, loginId))
 		{
+
 			const added = await this.addUserToChat(loginId, chat_id, user_role, password);
 			if (!added)
 			{
@@ -57,14 +60,32 @@ export class JoinChatService{
 
 	async addUserToChat(loginId: number, chat_id:number, user_role:string, password:string)
 	{
-			const getPasswordOfChat = await this.prismaService.getPasswordOfChat(chat_id)
-			if (password == "" ||  getPasswordOfChat === password)
-			{
-				await this.prismaService.userHasbeenKickedInChat(loginId, chat_id) == true //user updated to removed kicked value
-				const chatId = await this.prismaService.addChanelUser(chat_id, loginId, user_role, getDate(), null);
-				if (chatId !== undefined)
-					return (chatId.toString());
-			}
-			return (undefined)
+		const getPasswordOfChat = await this.prismaService.getPasswordOfChat(chat_id);
+		let pwMatches = false;
+
+		// let hashed_password
+		if (password !== null && getPasswordOfChat != undefined)
+		{
+			// hashed_password = await argon.hash(password,);
+
+
+			pwMatches = await argon.verify(
+				getPasswordOfChat,
+				password,
+			)
+
 		}
+		else {
+			// hashed_password = password;
+		}
+
+		if (password == null ||  pwMatches)
+		{
+			await this.prismaService.userHasbeenKickedInChat(loginId, chat_id) == true //user updated to removed kicked value
+			const chatId = await this.prismaService.addChanelUser(chat_id, loginId, user_role, getDate(), null);
+			if (chatId !== undefined)
+				return (chatId.toString());
+		}
+		return (undefined)
 	}
+}

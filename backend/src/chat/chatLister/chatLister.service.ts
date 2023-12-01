@@ -43,11 +43,12 @@ export class ChatLister{
 					id: chatUser.channel.id,
 					channelName: chatUser.channel.name,
 					chatPicture: avatarOfOwner,// need to be change
-					username: lastMessageUsername,
+					username: lastMessageUsername?.username,
 					status: chatUser.user_role,
 					msg: message,
 					dateSend: date,
 					type: chatUser.channel.type,
+					userId: lastMessageUsername?.id,
 				}
 				chatList.push(chatType);
 			}

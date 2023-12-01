@@ -81,12 +81,12 @@ export const LoginProvider = ({ children }: any) => {
   const edit = (user: any) => {
     setUser(user);
   };
+  
   const getLogin = () => {
     return token.login;
   };
 
   const getBearer = () => {
-    reload();
     return "Bearer " + token.access_token;
   };
 

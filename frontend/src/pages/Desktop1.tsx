@@ -4,13 +4,15 @@ import { Body } from '../components/Body/Body';
 import { useEffect, useRef } from "react";
 import styles from "./Desktop1.module.css";
 import { useContext, useState } from 'react';
-import { PageContext, MyProvider } from '../context/PageContext';
+import { PageContext } from '../context/PageContext';
 import ChatComponent from '../components/chat/ChatComponent';
 import { WebsocketContext } from "../context/chatContext";
 import { useLogin } from "../components/user/auth";
 import { gameSocket } from '../components/game/services/gameSocketService';
 import { GameStatus } from '../context/gameContext';
 import GameContext, { IGameContextProps } from '../context/gameContext';
+import { useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 function Desktop1() {
 
@@ -21,6 +23,7 @@ function Desktop1() {
 	const [gameHeight, setGameHeight] = useState(0);
 	const [modeGame, setModeGame] = useState('');
 	const [gameStatus, setGameStatus] = useState<GameStatus>('NOT_IN_GAME');
+	const { login_url } = useParams();
 
 	useEffect(() => {
 		gameSocket.connect();
@@ -29,6 +32,22 @@ function Desktop1() {
 			gameSocket.disconnect();
 		})
 	}, []);
+
+	useEffect(() => {
+	  console.log("rkeklkrer");
+	  socket.connect();
+	  
+	  return (()=>{
+		socket.disconnect();
+	  })
+	}, []);
+
+	useEffect(() => {
+		if (auth.user.login) {
+			setPlayerName(auth.user.login);
+			socket.emit("newChatConnection", auth.user.login);
+		}
+	},[auth.user.login])
 
 	const gameContextValue :IGameContextProps = {
 		roomId,
@@ -64,29 +83,28 @@ function Desktop1() {
     };
 }, []);
 
-//   useEffect(() => {
-	// 	console.log("user send = ", user.login);
-	// 	console.log("rkeklkrer");
-	// 	socket.connect();
-	//     }, []);
 
-	useEffect(() => {
-		console.log("C", auth.user);
-		if (auth.user.login) {
-			setPlayerName(auth.user.login);
-			socket.emit("newChatConnection", auth.user.login);
-		}
-		console.log("yo send something pls : " , socket.id);
-	},[auth.user]);
+	// useEffect(() => {
+	// 	console.log("C", auth.user);
+	// 	console.log("yo send something pls : " , socket.id);
+	// },[auth.user.login]);
 
   const forceUpdate = useForceUpdate();
 
   function DisplayChat() {
     const context = useContext(PageContext);
     if (!context) {
-      throw new Error('useContext must be used within a MyProvider');
+		throw new Error('useContext must be used within a MyProvider');
     }
     const { chat } = context;
+	// const navigate = useNavigate();
+	// const { roomId } = useContext(GameContext);
+
+	// useEffect(() => {
+	// 	if (roomId !== 0)
+	// 		navigate("/game");
+	// }, [roomId]);
+	
     switch (chat) {
       case "Chat":
         return (<ChatComponent />);
@@ -97,14 +115,12 @@ function Desktop1() {
   const [Chat] = useState("none");
   return (
     <div className={styles.desktop1} style={{height: windowHeighthRef.current}}>
-      <MyProvider>
-	  	<GameContext.Provider value={gameContextValue}>
-        	<Body />
-        	<Header />
-        	<Footer/>
-        	<DisplayChat />
+		<GameContext.Provider value={gameContextValue}>
+			<Body />
+			<Header />
+			<Footer/>
+			<DisplayChat />
 		</GameContext.Provider>
-      </MyProvider>
     </div>
   );
 }

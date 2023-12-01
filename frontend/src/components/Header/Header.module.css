@@ -47,15 +47,15 @@
   width: 150px;
   height: 35px;
   left: 12px;
-  width: 231px;
+  width: 277px;
   text-align: center;
 }
 .bar {
   position: absolute;
-  width: calc(100% - 186px);
+  width: calc(100% - 150px);
   right: 0;
   bottom: 2px;
-  left: 186px;
+  left: 150px;
   background-color: #2d2d2d;
   border: 1px solid var(--color-gray-200);
   box-sizing: border-box;
@@ -70,10 +70,10 @@
 
 .barLight {
   position: absolute;
-  width: calc(100% - 186px);
+  width: calc(100% - 150px);
   right: 0;
   bottom: 2px;
-  left: 186px;
+  left: 150px;
   background-color: #efefef;
   border: 1px solid rgb(228, 228, 228);
   box-sizing: border-box;
@@ -141,6 +141,9 @@
   background-color: var(--color-darkslategray-100);
   width: 27px;
 }
+.buttonBackground:hover {
+  background-color: rgb(35, 35, 35);
+}
 .buttonBackgroundLight {
   position: absolute;
   right: 0;
@@ -152,11 +155,15 @@
   background-color: white;
   width: 27px;
 }
+.buttonBackgroundLight:hover {
+  background-color: rgb(212, 212, 212);
+}
 .buttonChild {
   position: absolute;
   right: 3px;
   bottom: 3px;
   border-radius: var(--br-12xs);
+  pointer-events: none;
 }
 .buttonChildLight {
   position: absolute;
@@ -164,6 +171,7 @@
   bottom: 3px;
   border-radius: var(--br-12xs);
   color: rgb(28, 28, 28);
+  pointer-events: none;
 }
 .frameText {
   position: absolute;
@@ -182,6 +190,9 @@
   align-items: center;
   height: 16px;
   font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow:ellipsis;
 }
 .basicSansCsLight {
   position: absolute;
@@ -193,6 +204,9 @@
   height: 16px;
   font-size: 12px;
   color: black;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow:ellipsis;
 }
 .menu2 {
   position: absolute;
@@ -268,11 +282,16 @@
 .untitled1 {
     position: absolute;
     top: 8px;
-    left: calc(50% - 83.23px);
+    left: calc(50% - 15%);
     font-weight: 600;
     font-size: 14px;
     mix-blend-mode: normal;
     cursor: default;
+    width:30%;
+    height: 27px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .untitled1Light {
   position: absolute;
@@ -311,15 +330,27 @@
   }
 .user1 {
   position: relative;
-  top: 6px;
+  top: 7px;
+  font-weight: 600;
   right: 70px;
   text-align: right;
   text-emphasis-color: #e2e2e2;
 }
 .user1:hover {
-  color: white;
+  color: #3580dc;
   cursor: pointer;
+}.user1Light {
+  position: relative;
+  top: 7px;
   font-weight: 600;
+  right: 70px;
+  text-align: right;
+  text-emphasis-color: #e2e2e2;
+  color:#282828;
+}
+.user1Light:hover {
+  color: #15539e;
+  cursor: pointer;
 }
 .crossIcon{
   position: absolute;

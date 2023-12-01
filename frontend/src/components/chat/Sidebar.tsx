@@ -5,20 +5,18 @@ import { useEffect, useContext } from "react";
 import ChatContext from "../../context/chatContext";
 import { WebsocketContext } from "../../context/chatContext";
 import { useLogin } from "../../components/user/auth";
-import GameContext from "../../context/gameContext";
 
 const Sidebar = () => {
 
 	const socket = useContext(WebsocketContext);
     const auth = useLogin();
-    const {roomId, setRoomId} = useContext(GameContext);
     const {activeChannel, allChannels, setActiveChannel, needToUpdate, setNeedToUpdate} = useContext(ChatContext);
 
 	useEffect(() => {
         const id = activeChannel.id;
         if (needToUpdate === "" && id !== -1 && allChannels.find(element => element.id === id) === undefined)
-            setActiveChannel({id: -1, channelName: "PongOffice Chat", chatPicture: "", type: "", status: "", username: null, dateSend: null, msg: null});
-        else if (needToUpdate === "addChat") {
+            setActiveChannel({id: -1, channelName: "PongOffice Chat", chatPicture: "", type: "", status: "", username: null, dateSend: null, msg: null, userId: null});
+        else if (needToUpdate === "addChat" && allChannels.length > 0) {
             setActiveChannel(allChannels[allChannels.length - 1]);
 			socket.emit('retrieveMessage', {chatId: allChannels[allChannels.length - 1].id, messageToDisplay: 15 })
             setNeedToUpdate("");
@@ -56,7 +54,7 @@ const Sidebar = () => {
                 socket.emit('newMessage', messageData);
             }
         }
-    }, [allChannels.length])
+    }, [allChannels.length, activeChannel, allChannels, auth.user.login, auth.user.username, needToUpdate, setActiveChannel, setNeedToUpdate, socket])
 
     return (
         <div className='sidebar'>

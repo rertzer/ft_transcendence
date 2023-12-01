@@ -1,5 +1,5 @@
 import { Game, PrismaClient } from '@prisma/client'
-import { Injectable, OnModuleInit } from "@nestjs/common";
+import { Injectable, OnModuleInit, NotFoundException} from "@nestjs/common";
 import { Room, TypeGame } from 'src/game/Interface/room.interface';
 import { IPlayer } from 'src/game/Interface/player.interface';
 
@@ -61,13 +61,60 @@ export class PrismaGameService extends PrismaClient implements OnModuleInit {
 	}
 	
 	async getIdOfLogin(login: string) : Promise<number>{
-
 		const user = await this.user.findFirst({
-			where: {
-				username: login,
-			}
-		})
+				where: {
+					login: login,
+				}
+			});
 		if (user) return user.id;
-		else return (-1);
+		else throw new NotFoundException('User not Found, try something else...');
+	}
+
+	async getUserFromLogin(login: string) : Promise<{id: number, username:string |null, login:string}>{
+		const user = await this.user.findFirst({
+				where: {
+					login: login,
+				}
+			});
+		if (user) {
+			return ({
+				id: user.id,
+				username:user.username,
+				login:user.login,
+			})
+		}
+		else throw new NotFoundException('User not Found, try something else...');
+	}
+
+	async getUserFromUsername(username: string) : Promise<{id: number, username:string |null, login:string}>{
+		const user = await this.user.findFirst({
+				where: {
+					username: username,
+				}
+			});
+		if (user) {
+			return ({
+				id: user.id,
+				username:user.username,
+				login:user.login,
+			})
+		}
+		else throw new NotFoundException('User not Found, try something else...');
+	}
+
+	async getUserFromId(id: number) : Promise<{id: number, username:string |null, login:string}>{
+		const user = await this.user.findFirst({
+				where: {
+					id: id,
+				}
+			});
+		if (user) {
+			return ({
+				id: user.id,
+				username:user.username,
+				login:user.login,
+			})
+		}
+		else throw new NotFoundException('User not Found, try something else...');
 	}
 }

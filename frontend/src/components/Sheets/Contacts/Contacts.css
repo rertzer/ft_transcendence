@@ -1,7 +1,7 @@
 .title_contacts {
     background-color: rgb(24, 65, 151);
     color: white;
-    border: 2px solid black;
+    border: 1px solid black;
     font-weight: 500;
     text-align: center;
 }
@@ -11,6 +11,11 @@
 .linePair_contacts {
     border: 1px solid lightgrey;
     background-color: rgb(249, 254, 255);
+}
+.no_friends {
+    border: 1px solid lightgrey;
+    color: black;
+    text-align: center;
 }
 .lineUnpair_contacts {
     border: 1px solid lightgrey;
@@ -38,10 +43,8 @@
     display:block;
     text-align: center;
     font-weight: 600;
-    background-color: lightgreen;
-    border: 1px solid green;
-    border-right: 2px solid green;
-    border-left: 2px solid green;
+    background-color: lightsalmon;
+    border: 2px solid rgb(150, 0, 0);
 	cursor: pointer;
 }
 .delete_contacts:hover {
@@ -49,10 +52,8 @@
     display:block;
     text-align: center;
     font-weight: 600;
-    background-color: rgb(218, 255, 218);
-    border: 1px solid darkgreen;
-    border-right: 2px solid darkgreen;
-    border-left: 2px solid darkgreen;
+    background-color: lightcoral;
+    border: 2px solid rgb(150, 0, 0);
 	cursor: pointer;
 }
 .block_contacts {
@@ -65,18 +66,38 @@
     border-right: 4px solid red;
     border-left: 2px solid red;
 }
-
+.contacts {
+	color: rgb(0, 0, 0);
+    display:block;
+    text-align: center;
+    font-weight: 600;
+    /* background-color: ; */
+    border: 1px solid rgb(192, 192, 192);
+}
+.contacts_button {
+	color: rgb(0, 0, 0);
+    display:block;
+    text-align: center;
+    font-weight: 600;
+    /* background-color: ; */
+    border: 1px solid rgb(192, 192, 192);
+    cursor: pointer;
+}
+.contacts_button:hover {
+    background-color: rgba(9, 33, 66, 0.083);
+}
 .status_connected {
 	color: green;
+    cursor: default;
     display:block;
     text-align: center;
     font-weight: 600;
     /* background-color: ; */
     border: 1px solid rgb(150, 240, 32);
-    border-right: 4px solid rgb(150, 240, 32);
     border-left: 2px solid rgb(150, 240, 32);
+    border-right: 3px solid rgb(150, 240, 32);
+    border-bottom: 3px solid rgb(150, 240, 32);
 }
-
 .status_unconnected {
 	color: red;
     display:block;
@@ -84,6 +105,11 @@
     font-weight: 600;
     /* background-color: ; */
     border: 1px solid red;
-    border-right: 4px solid red;
     border-left: 2px solid red;
+    border-right:3px solid red;
+    border-bottom:3px solid red;
+    cursor: default;
+}
+.border {
+    border: 2px solid black;
 }

@@ -15,6 +15,8 @@ import { createTheme } from '@mui/material/styles';
 import { ThemeProvider } from '@emotion/react';
 import { PageContext } from '../../context/PageContext';
 import { useContext } from 'react';
+import { PageUrlContext } from '../../context/PageUrlContext';
+import { useNavigate } from 'react-router-dom';
 
 const theme = createTheme({
   palette: {
@@ -114,45 +116,47 @@ function ContinuousSlider() {
 
 function Footer() {
   const context = useContext(PageContext);
+  const url_context = useContext(PageUrlContext);
+  const navigate = useNavigate();
   if (!context) {
     throw new Error('useContext must be used within a MyProvider');
   }
-  const { chat, page, dark, updatePage, updateChat } = context;
+  const { chat, dark, updateChat } = context;
   const handleChat = (str : string) => {
     updateChat(str);
   }
   function selectNext() {
-    switch(page) {
+    switch(url_context?.page) {
       case "Game" :
-        updatePage("Profile");
+        navigate("/profile");
         break;
       case "Profile" :
-        updatePage("Data");
+        navigate("/data");
         break;
       case "Data" :
-        updatePage("Contacts");
+        navigate("/contacts");
         break;
       default :
         return;
     }
   }
   function selectPrev() {
-    switch(page) {
+    switch(url_context?.page) {
       case "Profile" :
-        updatePage("Game");
+        navigate("/game");
         break;
       case "Data" :
-        updatePage("Profile");
+        navigate("/profile");
         break;
       case "Contacts" :
-        updatePage("Data");
+        navigate("/data");
         break;
       default :
         return;
     }
   }
   function getPagePlace() {
-    switch(page) {
+    switch(url_context?.page) {
       case "Game" :
         return 1;
       case "Profile" :
@@ -167,20 +171,20 @@ function Footer() {
   }
   return (
 	<footer className={dark ? styles.bottom : styles.bottomLight} >
-    <FirstPageIcon className={styles.arrow} onClick={() =>updatePage("Game")}/>
-    <SkipPreviousIcon className={styles.arrow} onClick={() =>selectPrev()}/>
-    <SkipNextIcon className={styles.arrow} onClick={() =>selectNext()}/>
-    <LastPageIcon className={styles.arrow} onClick={() =>updatePage("Game")}/>
-    <div className={(page === "Game") ? (dark ? styles.sheetPageSelected : styles.sheetPageSelectedLight) : (dark ? styles.sheetPage : styles.sheetPageLight)} style={{left:'100px', width:'50px'}} onClick={() =>updatePage("Game")}>
+    <FirstPageIcon className={dark ? styles.arrow : styles.arrowLight} onClick={() =>navigate("/game")}/>
+    <SkipPreviousIcon className={dark ? styles.arrow : styles.arrowLight} onClick={() =>selectPrev()}/>
+    <SkipNextIcon className={dark ? styles.arrow : styles.arrowLight} onClick={() =>selectNext()}/>
+    <LastPageIcon className={dark ? styles.arrow : styles.arrowLight} onClick={() =>navigate("/contacts")}/>
+    <div className={(url_context?.page === "Game") ? (dark ? styles.sheetPageSelected : styles.sheetPageSelectedLight) : (dark ? styles.sheetPage : styles.sheetPageLight)} style={{left:'100px', width:'50px'}} onClick={() =>navigate("/game")}>
       <div className={styles.text}>Game</div>
     </div>
-    <div className={page === "Profile" ? (dark ? styles.sheetPageSelected : styles.sheetPageSelectedLight) : (dark ? styles.sheetPage : styles.sheetPageLight)} style={{left:'150px', width:'50px'}} onClick={() =>updatePage("Profile")}>
+    <div className={url_context?.page === "Profile" ? (dark ? styles.sheetPageSelected : styles.sheetPageSelectedLight) : (dark ? styles.sheetPage : styles.sheetPageLight)} style={{left:'150px', width:'50px'}} onClick={() =>navigate("/profile")}>
      <div className={styles.text}>Profile</div>
     </div>
-    <div className={page === "Data" ? (dark ? styles.sheetPageSelected : styles.sheetPageSelectedLight) : (dark ? styles.sheetPage : styles.sheetPageLight)} style={{left:'200px', width:'50px'}} onClick={() =>updatePage("Data")}>
+    <div className={url_context?.page === "Data" ? (dark ? styles.sheetPageSelected : styles.sheetPageSelectedLight) : (dark ? styles.sheetPage : styles.sheetPageLight)} style={{left:'200px', width:'50px'}} onClick={() =>navigate("/data")}>
      <div className={styles.text}>Data</div>
     </div>
-    <div className={page === "Contacts" ? (dark ? styles.sheetPageSelected : styles.sheetPageSelectedLight) : (dark ? styles.sheetPage : styles.sheetPageLight)} style={{left:'250px', width:'70px'}} onClick={() =>updatePage("Contacts")}>
+    <div className={url_context?.page === "Contacts" ? (dark ? styles.sheetPageSelected : styles.sheetPageSelectedLight) : (dark ? styles.sheetPage : styles.sheetPageLight)} style={{left:'250px', width:'70px'}} onClick={() =>navigate("/contacts")}>
       <div className={styles.text}>Contacts</div>
     </div>
 	  <div className={dark ? styles.sep : styles.sepLight} />

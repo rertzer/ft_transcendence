@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { Channel } from '../components/chat/ChatComponent';
 
@@ -20,8 +20,8 @@ export interface IChatContext {
 	setActiveChannel: (activeChannel: Channel) => void;
 	needToUpdate: string,
 	setNeedToUpdate: (str: string) => void;
-	blockedUsers: number[];
-	setBlockedUsers: (blocked: number[]) => void;
+	blockedUsers: {idUser: number, username: string, login: string}[];
+	setBlockedUsers: (blocked: {idUser: number, username: string, login: string}[]) => void;
 };
 
 const defaultState:IChatContext = {
@@ -35,7 +35,8 @@ const defaultState:IChatContext = {
 		status: "",
 		username: null,
 		dateSend: null,
-		msg: null
+		msg: null,
+		userId: null,
 	},
 	setActiveChannel: () => {},
 	needToUpdate: "",

@@ -45,8 +45,9 @@ export class MyGateway {
   server: Server;
 
 	handleConnection(client:Socket){
+
 		client.on('disconnect', () => {
-			console.log("client disconect : ", client.id)
+
 			this.socketsLogin = this.socketsLogin.filter((s) => {return s.sock !== client;});
 		})
 	}
@@ -58,7 +59,7 @@ export class MyGateway {
 	@SubscribeMessage('newChatConnection')
 	async newChatConnection(@MessageBody() login:string, @ConnectedSocket() client:Socket)
 	{
-		console.log("new connection login = ", login);
+
 		if (!this.socketsLogin.find((item) => item.login === login && item.sock === client))
 		{
 			const idOfLogin = await this.prismaChatService.getIdOfLogin(login);
@@ -84,7 +85,8 @@ export class MyGateway {
 					date: getDate(),
 					id: lastMessageId,
 					idOfChat: messageData.idOfChat,
-					serviceMessage: messageData.serviceMessage
+					serviceMessage: messageData.serviceMessage,
+					userId:targetSocket.idOfLogin,
 				}
 				await this.prismaChatService.addChatMessage(messageData.idOfChat, targetSocket.idOfLogin, messageData.content, getDate(), messageData.serviceMessage);
 				this.server.to(messageData.idOfChat.toString()).emit('newMessage', message);
@@ -135,6 +137,7 @@ export class MyGateway {
 		const targetSocket = this.socketsLogin.find((socket) => socket.sock === client);
 		if (targetSocket !== undefined)
 		{
+
 			const CreateRoom = new CreateChatService(this.prismaChatService);
 			CreateRoom.createChat(messageData.login, targetSocket.idOfLogin ,messageData.chatPassword, messageData.chatName, messageData.chatType, targetSocket.sock);
 		}

@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: pjay <pjay@student.42.fr>                  +#+  +:+       +#+         #
+#    By: mbocquel <mbocquel@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/08/01 17:12:15 by mbocquel          #+#    #+#              #
-#    Updated: 2023/11/22 14:48:48 by pjay             ###   ########.fr        #
+#    Updated: 2023/11/22 15:41:12 by mbocquel         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,10 +14,10 @@ SOURCES = 	docker-compose.yml
 
 CACHE_FILE = "/mnt/nfs/homes/$(USER)/.cache/yarn"
 
-all: 	$(SOURCES) env_front 
+all: 	$(SOURCES) env_front
 		docker-compose -f ./docker-compose.yml up
 
-down:	$(SOURCES) env_front
+down:	$(SOURCES) env_front env_back
 		docker-compose -f ./docker-compose.yml down
 
 clean:	$(SOURCES)
