@@ -27,6 +27,7 @@ function EditProfile() {
   const [newEmail, setNewEmail] = useState(auth.user.email);
   const [newAvatar, setNewAvatar] = useState<File>();
   const [avatarName, setAvatarName] = useState("");
+  const [returnPath, setReturnPath] = useState("/");
 
   const handleAvatar = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { files } = event.target;
@@ -36,44 +37,58 @@ function EditProfile() {
       setNewAvatar(avatar);
       setAvatarName(avatar.name);
     }
+    else{
+      setNewAvatar(undefined);
+      setAvatarName("");
+    }
   };
 
   const handleUser = async (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     console.log("Editing the user");
 
-   
     console.log("Token in EditProfile is", auth.getBearer());
-    
+
     if (newAvatar) {
-      console.log("new Avatar");
+      try{
+      console.log("new Avatar", newAvatar);
       let formData = new FormData();
       formData.append("file", newAvatar, newAvatar.name);
-      console.log(formData);
+      console.log("newAvatar", formData.keys, newAvatar.name);
 
-      const fileData = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/user/editAvatar`, {
-        method: "POST",
-        headers: { Authorization: auth.getBearer() },
-        body: formData,
-      });
+      const fileData = await fetch(
+        `http://${process.env.REACT_APP_URL_MACHINE}:4000/user/editAvatar`,
+        {
+          method: "POST",
+          headers: { Authorization: auth.getBearer() },
+          body: formData,
+        }
+      );
       const answer = await fileData.json();
       console.log("Answer", JSON.stringify(answer));
       setUserOk(true);
+      }
+        catch(e) {console.log(e);}
     }
 
     let tosend: IToSend = { login: auth.user.login };
     if (newUsername) tosend.username = newUsername;
     if (newEmail) tosend.email = newEmail;
 
+    if (tosend.username || tosend.email){
+    try{
     console.log("fetching", tosend);
-    const data = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/user/edit`, {
-      method: "POST",
-      headers: {
-        Authorization: auth.getBearer(),
-        "Content-Type": "application/json; charset=utf-8",
-      },
-      body: JSON.stringify(tosend),
-    });
+    const data = await fetch(
+      `http://${process.env.REACT_APP_URL_MACHINE}:4000/user/edit`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: auth.getBearer(),
+          "Content-Type": "application/json; charset=utf-8",
+        },
+        body: JSON.stringify(tosend),
+      }
+    );
     const newUser = await data.json();
     console.log("nouveau", newUser);
 
@@ -83,11 +98,14 @@ function EditProfile() {
 
         setUserOk(false);
       } else {
+        if (auth.user.newbie) setReturnPath("/twofa");
         auth.edit(newUser);
         setUserOk(true);
         console.log("Edited!!!", userOk);
       }
     }
+  }
+  catch(e) {console.log(e);}}
   };
 
   useEffect(() => {
@@ -105,6 +123,12 @@ function EditProfile() {
         <div className="right">
           <h1>Edit profile</h1>
           <h2>{auth.user.login}</h2>
+          {auth.user.newbie && (
+            <div>
+              <h3> Welcome to PongOffice</h3>
+              <h3>please setup your profile</h3>
+            </div>
+          )}
           <form>
             <StringField
               placeholder="username"
@@ -118,7 +142,8 @@ function EditProfile() {
                 handleAvatar(e);
               }}
             />
-            {userOk && <Navigate to="/"></Navigate>}
+
+            {userOk && <Navigate to={returnPath}></Navigate>}
             <button onClick={handleUser}>Edit</button>
           </form>
         </div>

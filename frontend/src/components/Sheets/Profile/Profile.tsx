@@ -134,15 +134,18 @@ function Profile() {
   const [redirect, setRedirect] = useState(false);
 
   const fetchImage = async () => {
-    const bearer = auth.getBearer();
-    const res = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/user/avatar/` + user.avatar, {
-      method: "GET",
-      headers: { Authorization: bearer },
-    });
-    console.log("fetchImage on route /user/avatar/", user.avatar);
-    const imageBlob = await res.blob();
-    const imageObjectURL = URL.createObjectURL(imageBlob);
-    setImage(imageObjectURL);
+    try {
+      const bearer = auth.getBearer();
+      const res = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/user/avatar/` + user.avatar, {
+        method: "GET",
+        headers: { Authorization: bearer },
+      });
+      console.log("fetchImage on route /user/avatar/", user.avatar);
+      const imageBlob = await res.blob();
+      const imageObjectURL = URL.createObjectURL(imageBlob);
+      setImage(imageObjectURL);
+    }
+    catch(e){console.log(e);}
   };
 
   const fetchGameUser = async () => {
@@ -160,23 +163,26 @@ function Profile() {
         setGameUser(newUser);
       }
     }
-    catch(e) {}
+    catch(e) {console.log(e);}
   }
 
   const fetchUser = async (login: string) => {
-    const bearer = auth.getBearer();
-    console.log("bearer is", bearer);
-    const data = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/user/` + login, {
-      method: "GET",
-      headers: { Authorization: bearer },
-    });
-    const newUser = await data.json();
-    if (newUser.message) {
-      setRedirect(true);
+    try {
+      const bearer = auth.getBearer();
+      console.log("bearer is", bearer);
+      const data = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/user/` + login, {
+        method: "GET",
+        headers: { Authorization: bearer },
+      });
+      const newUser = await data.json();
+      if (newUser.message) {
+        setRedirect(true);
+      }
+      else {
+        setUser(newUser);
+      }
     }
-    else {
-      setUser(newUser);
-    }
+    catch(e) {console.log(e);}
   };
 
   //RESIZE WINDOW

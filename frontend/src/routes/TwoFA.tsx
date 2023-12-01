@@ -2,9 +2,11 @@ import "./EditProfile.scss";
 import { useEffect, useState, MouseEvent } from "react";
 import { useLogin } from "../components/user/auth";
 import TwoFAToken from "../components/user/TwoFAToken";
+import { useNavigate } from "react-router-dom";
 
 function Twofa() {
   const auth = useLogin();
+  const navigate = useNavigate();
 
 
   let tmp = auth.user.username;
@@ -36,6 +38,10 @@ function Twofa() {
     setQrcode(qr_url.qrcode_url);
   };
 
+  const handleSkip = async ()=>{
+    navigate('/', { replace: true });
+  }
+
   useEffect(() => {
     const stored_login: string | null = sessionStorage.getItem("Login");
     if (stored_login != null) setLogin(stored_login);
@@ -54,9 +60,9 @@ function Twofa() {
           <form>
             <button onClick={handleTfa}>setup</button>
           </form>
+          <button onClick={handleSkip}>skip</button>
           {qrcode && <img src={qrcode} alt="QR" />}
           {qrcode && <TwoFAToken />}
-          {!qrcode && <p>No QR now</p>}
         </div>
       </div>
     </div>

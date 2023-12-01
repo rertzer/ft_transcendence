@@ -18,6 +18,7 @@ import { EditDto } from 'src/auth/dto';
 import { UserService } from './user.service';
 import { JwtGuard } from '../auth/guard';
 import { GetUser } from '../auth/decorator';
+import * as fs from "fs";
 
 @UseGuards(JwtGuard)
 @Controller('user')
@@ -45,16 +46,24 @@ export class UserController {
       } else {
         throw new BadRequestException('No valid file');
       }
-      const fileStream = this.userService.fetchAvatar(avatar);
-      response.setHeader(
-        'Content-Type',
-        `image/${fileExtension}`,
-      );
-      response.setHeader(
-        'Content-Disposition',
-        `attachment; filename=${avatar}`,
-      );
-      fileStream.then((fs) => fs.pipe(response));
+      console.log("a");
+      if (fs.existsSync("/var/avatar/" + avatar))
+       {
+        const fileStream = this.userService.fetchAvatar(avatar);
+
+        console.log("b", response.statusCode);
+
+       response.setHeader(
+          'Content-Type',
+          `image/${fileExtension}`,
+        );
+        response.setHeader(
+          'Content-Disposition',
+          `attachment; filename=${avatar}`,
+       );
+       fileStream.then((fs) => fs.pipe(response));
+      }
+      else {throw new BadRequestException('No valid file');} 
     }
   }
 
