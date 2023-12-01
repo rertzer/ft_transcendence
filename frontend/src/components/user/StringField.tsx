@@ -1,6 +1,7 @@
 function StringField(props: {
   placeholder: string;
   value: string;
+  maxLength: number;
   onChange: Function;
 }) {
   return (
@@ -8,6 +9,7 @@ function StringField(props: {
       type="text"
       placeholder={props.placeholder}
       value={props.value}
+      maxLength={props.maxLength}
       onChange={(e) => props.onChange(e.target.value)}
     />
   );

@@ -7,6 +7,7 @@ import StringField from "../components/user/StringField";
 import PassField from "../components/user/PassField";
 import { Email } from "@mui/icons-material";
 import EmailField from "../components/user/EmailField";
+import { error } from "console";
 
 interface IToSend {
   login: string;
@@ -83,6 +84,27 @@ function EditProfile() {
 
         setUserOk(false);
       } else {
+        if (newUsername)
+        {
+          try{
+            const toSend2 = {
+              OldUsername : auth.user.username,
+              newUsername : newUsername,
+            }
+            const data = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/updateDmName`, {
+            method: "POST",
+            headers: {
+              Authorization: auth.getBearer(),
+              "Content-Type": "application/json; charset=utf-8",
+            },
+            body: JSON.stringify(toSend2),
+            });
+          }
+          catch(error)
+          {
+            console.error(error);
+          }
+        }
         auth.edit(newUser);
         setUserOk(true);
         console.log("Edited!!!", userOk);
@@ -110,6 +132,7 @@ function EditProfile() {
               placeholder="username"
               value={newUsername}
               onChange={setNewUsername}
+              maxLength={10}
             />
             <EmailField value={newEmail} handleValid={setNewEmail} />
             <input

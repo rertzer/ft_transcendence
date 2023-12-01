@@ -73,9 +73,8 @@ const ConversationBar = (props: {isOwner: boolean, isAdmin: boolean}) => {
 
     function findReceiverName(names: string) {
 
-        let name = names.replace(auth.user.login, "");
-        name.trim()
-        return (name)
+        let name = names.replace(auth.user.username, "");
+        return (name.trim());
     }
         return (
             <div>

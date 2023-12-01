@@ -26,7 +26,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 	const [userInfo, setUserInfo] = useState<uInfo>({userStatus: "user", friend: false, ingame: false})
 	const [errorMessage, setErrorMessage] = useState("");
     const socket = useContext(WebsocketContext);
-	const [image, setImage] = useState("");
+	const [userAvatar, setUserAvatar] = useState("");
 	let menuRef = useRef<HTMLInputElement>(null);
 	let messageType = "normal";
 
@@ -382,47 +382,46 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 		}
 	}
 
-	async function fetchAvatar(avatar: string) {
-		const res = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/user/avatar/` + avatar, {
-		method: "GET",
-		headers: { Authorization: auth.getBearer() },
-		});
-		const imageBlob = await res.blob();
-		const imageObjectURL = URL.createObjectURL(imageBlob);
-		setImage(imageObjectURL);
-	}
-
-	async function fetchUserAvatar() {
-		const data = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/user/` + props.login, {
+	useEffect(() => {
+		async function fetchAvatar(avatar: string) {
+			const res = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/user/avatar/` + avatar, {
 			method: "GET",
 			headers: { Authorization: auth.getBearer() },
 			});
-			const newUser = await data.json();
-			if (newUser.avatar) {
-				try {
-					fetchAvatar(newUser.avatar).catch((e) => console.error("Failed to fetch avatar"));
+			const imageBlob = await res.blob();
+			const imageObjectURL = URL.createObjectURL(imageBlob);
+			setUserAvatar(imageObjectURL);
+		}
+	
+		async function deleteMessage() {
+			try {
+				const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/deleteMessage/${props.msgId}`, {
+					method: 'DELETE',
+					headers: { Authorization: auth.getBearer()},
+				});
+				if (!response.ok) {
+					console.error(`Error deleting invite: ${response.status}`);
+					return;
+				}
+			} catch (error) {
+				console.error('Error removing message:', error);
+			}
+		}
+
+		async function fetchUserAvatar() {
+			try {
+				const data = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/user/` + props.login, {
+				method: "GET",
+				headers: { Authorization: auth.getBearer() },
+				});
+				const newUser = await data.json();
+				if (newUser.avatar) {
+						fetchAvatar(newUser.avatar);
+				}
 				} catch (e) {
 					console.error(e);
 				}
 			}
-	}
-
-	async function deleteMessage() {
-		try {
-			const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/deleteMessage/${props.msgId}`, {
-				method: 'DELETE',
-				headers: { Authorization: auth.getBearer()},
-			});
-			if (!response.ok) {
-				console.error(`Error deleting invite: ${response.status}`);
-				return;
-			}
-		} catch (error) {
-			console.error('Error removing message:', error);
-		}
-	}
-
-	useEffect(() => {
 		if (messageType === "service") {
 			if (props.isDM && props.login !== auth.user.login && props.msg.search("Challenge accepted !") !== -1) {
 				deleteMessage();
@@ -437,7 +436,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 		else if (messageType === "owner") {
 			if (auth.user.avatar) {
 				try {
-					fetchAvatar(auth.user.avatar).catch((e) => console.error("Failed to fetch avatar"));
+					fetchAvatar(auth.user.avatar);
 				} catch (e) {
 					console.error(e);
 				}
@@ -445,12 +444,12 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 		}
 		else {
 			try {
-				fetchUserAvatar().catch((e) => console.error("Failed to fetch avatar"));
+				fetchUserAvatar();
 			} catch (e) {
 				console.error(e);
 			}
 		}
-	}, []);
+	}, [auth, messageType, navigate, props, setRoomId, updateChat]);
 
 	const profileUrl = "/profile/" + props.login;
 
@@ -460,10 +459,10 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 				<div className='messageInfo'>
 					{messageType === "owner" ?
 						<div>
-							<img src={image} alt="user Avatar"/>
+							{userAvatar !== "" ? <img src={userAvatar} alt="user Avatar"/> : <img src="norminet.jpeg" alt="user Avatar"/>}
 						</div> :
 						<div className="userOptions" ref={menuRef}>
-							<img src={image} alt="user Avatar" style={{cursor:"pointer"}} onClick={toggleUserActionsMenu}/>
+							{userAvatar !== "" ? <img src={userAvatar} alt="user Avatar" style={{cursor:"pointer"}} onClick={toggleUserActionsMenu}/> : <img src="norminet.jpeg" alt="user Avatar" style={{cursor:"pointer"}} onClick={toggleUserActionsMenu}/>}
 							<div className={showUserActionsMenu ? "userActions" : "userActions-hidden"}>
 								{props.isDM === false && userInfo.userStatus === "" && <h4>{props.username}</h4>}
 								{props.isDM === false && userInfo.userStatus !== "" && <h4>{props.username + " (" + userInfo.userStatus + ")"}</h4>}

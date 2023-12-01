@@ -18,6 +18,12 @@ export class UserService {
     }
   }
 
+  async fetchByUsername(username: string) {
+    console.log("username = ", username);
+    const user = await this.prisma.getUserByUsername(username);
+    return this.returnIfExist(user);
+  }
+
   async fetchByLogin(login: string) {
     const user = await this.prisma.getUserByLogin(login);
     return this.returnIfExist(user);

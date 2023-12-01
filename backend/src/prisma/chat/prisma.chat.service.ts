@@ -703,8 +703,15 @@ export class PrismaChatService {
 		}
 	}
 
-	async getIdWithUsername(username: String)
+	async getUsernameWithLogin(loginUser: string)
 	{
+		const user = await this.prismaService.user.findFirst({
+			where: {
+				login: loginUser,
+			},
+		})
+		if (user)
+			return (user.username);
 
 	}
 
@@ -876,7 +883,7 @@ export class PrismaChatService {
 
 		const user = await this.prismaService.user.findFirst({
 			where: {
-				username: login,
+				login: login,
 			},
 		})
 		if (user) {

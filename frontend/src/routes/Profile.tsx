@@ -29,7 +29,7 @@ function Profile() {
     game_played: 0,
   };
   const [image, setImage] = useState(
-    "https://img.lamontagne.fr/c6BQg2OSHIeQEv4GJfr_br_8h5DGcOy84ruH2ZResWQ/fit/657/438/sm/0/bG9jYWw6Ly8vMDAvMDAvMDMvMTYvNDYvMjAwMDAwMzE2NDYxMQ.jpg"
+    "norminet"
   );
   const auth = useLogin();
   const [user, setUser] = useState(empty_user);

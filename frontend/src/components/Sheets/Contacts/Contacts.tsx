@@ -24,7 +24,7 @@ export function AddLine(props: {scrollX: number, scrollY: number, toolbar: boole
 
 	const navigate = useNavigate();
 	const [image, setImage] = useState(
-		"https://img.lamontagne.fr/c6BQg2OSHIeQEv4GJfr_br_8h5DGcOy84ruH2ZResWQ/fit/657/438/sm/0/bG9jYWw6Ly8vMDAvMDAvMDMvMTYvNDYvMjAwMDAwMzE2NDYxMQ.jpg"
+		"norminet.jpeg"
 	  );
 	const auth = useLogin();
 		let add;

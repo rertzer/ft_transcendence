@@ -57,18 +57,27 @@ export class ChatOptController {
 				const receiverSocket = this.gateway.getSocketsArray().find((elem) => elem.idOfLogin === idReceiver);
 				if (receiverSocket)
 				{
-					const allGood = await this.privateConv.setDirectConv(connect.login, connect.idOfLogin, receiverSocket.login, connect.sock, receiverSocket.sock);
-					const chatlister = new ChatLister(this.prismaChatService);
-					chatlister.listChatOfUser(connect.idOfLogin, connect.sock);
-					return {id: allGood};
+					const usernameSender = await this.prismaChatService.getUsernameWithLogin(connect.login);
+					const usernameReceiver = await this.prismaChatService.getUsernameWithLogin(receiverSocket.login);
+					if (usernameReceiver && usernameSender)
+					{
+						const allGood = await this.privateConv.setDirectConv(usernameSender, connect.idOfLogin, usernameReceiver, connect.sock, receiverSocket.sock);
+						const chatlister = new ChatLister(this.prismaChatService);
+						chatlister.listChatOfUser(connect.idOfLogin, connect.sock);
+						return {id: allGood};
+					}
 				}
 				else
 				{
-					
-					const allGood = await this.privateConv.setDirectConv(connect.login, connect.idOfLogin, data.loginReceiver, connect.sock, null);
-					const chatlister = new ChatLister(this.prismaChatService);
-					chatlister.listChatOfUser(connect.idOfLogin, connect.sock);
-					return {id: allGood};
+					const usernameSender = await this.prismaChatService.getUsernameWithLogin(connect.login);
+					const usernameReceiver = await this.prismaChatService.getUsernameWithLogin(data.loginReceiver);
+					if (usernameReceiver && usernameSender)
+					{
+						const allGood = await this.privateConv.setDirectConv(connect.login, connect.idOfLogin, data.loginReceiver, connect.sock, null);
+						const chatlister = new ChatLister(this.prismaChatService);
+						chatlister.listChatOfUser(connect.idOfLogin, connect.sock);
+						return {id: allGood};
+					}
 				}
 			}
 			else
