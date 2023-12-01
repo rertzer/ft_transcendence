@@ -2,7 +2,7 @@ import {useState, useEffect, useContext} from 'react';
 import { useLogin } from '../../user/auth';
 import { PageContext } from "../../../context/PageContext";
 import { CreateStyledCell } from '../CreateStyledCell';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 type User = {
   userId: number,        
@@ -102,13 +102,11 @@ export function Data(props: {sx: number, sy: number, zoom: number}) {
             <CreateStyledCell
               coordX={coordX} coordY={1} width={1} height={1}
               text={reverseBool === 1 ? key.toString() : reverseRank.toString()} fontSize={12} className={classname} />
-            {classname === "dataItem" ? 
-              <div onClick={() =>{sendDM(user.userLogin)}} style={{cursor: "pointer"}}><CreateStyledCell
+            <Link to={"/profile/" + user.userLogin} style={{textDecoration:"none", color: "#ddddf7"}}>
+            <CreateStyledCell
                 coordX={coordX} coordY={2} width={1} height={1}
-                text={user.userUsername} fontSize={12} className={classname} /></div> : 
-              <CreateStyledCell
-                coordX={coordX} coordY={2} width={1} height={1}
-                text={user.userUsername} fontSize={12} className={classname} />}
+                text={user.userUsername} fontSize={12} className={classname} />
+						</Link>
             <CreateStyledCell
               coordX={coordX} coordY={3} width={1} height={1}
               text={user.numberGames.toString()} fontSize={12} className={classname} />
@@ -185,29 +183,29 @@ function sortUsers(users: User[], by: string) {
   return (users);
 }
 
-async function sendDM(login: string) {
-  if (chat === "none") {
-    const requestOptions = {
-      method: 'post',
-      headers: { 'Content-Type': 'application/json',
-      Authorization: auth.getBearer()},
-      body: JSON.stringify({ idSender: auth.user.id, loginReceiver: login})
-    };
-    try {
-      const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/newPrivateConv`, requestOptions);
-      if (!response.ok) {
-        throw new Error("Request failed");
-      }
-      const data = await response.json();
-      updateChat("Chat New DM " + data.id.toString());
-    }
-    catch (error) {
-      console.error("Error while starting private conversation", error);
-    }
-  } else {
-    updateChat("none");
-  }
-}
+// async function sendDM(login: string) {
+//   if (chat === "none") {
+//     const requestOptions = {
+//       method: 'post',
+//       headers: { 'Content-Type': 'application/json',
+//       Authorization: auth.getBearer()},
+//       body: JSON.stringify({ idSender: auth.user.id, loginReceiver: login})
+//     };
+//     try {
+//       const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/newPrivateConv`, requestOptions);
+//       if (!response.ok) {
+//         throw new Error("Request failed");
+//       }
+//       const data = await response.json();
+//       updateChat("Chat New DM " + data.id.toString());
+//     }
+//     catch (error) {
+//       console.error("Error while starting private conversation", error);
+//     }
+//   } else {
+//     updateChat("none");
+//   }
+// }
 
   return (
     <div key={"contact"}>
