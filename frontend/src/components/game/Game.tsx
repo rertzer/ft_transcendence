@@ -38,6 +38,7 @@ function Game() {
 
 
 	
+	
 	return (
 		<>
 			{ gameStatus === 'NOT_IN_GAME' && <JoinRoom />}
