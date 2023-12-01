@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { useLogin } from "../../components/user/auth";
 import GameContext from "../../context/gameContext";
 import { PageContext } from "../../context/PageContext";
+import { useNavigate } from 'react-router-dom';
 
 type uInfo = {
 	userStatus: string, // "owner", "admin", "user", "banned", "out" (if kicked or left)
@@ -15,6 +16,7 @@ type uInfo = {
 const  Message = (props: {username: string, login: string, date: string, msg: string, isOwner: boolean, isAdmin: boolean, chatId: number, service: boolean, isDM: boolean, msgId: number, invite: boolean, setInvite: Function}) => {
 
     const auth = useLogin();
+	const navigate = useNavigate();
 	const context = useContext(PageContext);
 	if (!context) { throw new Error('useContext must be used within a MyProvider'); }
 	const { updateChat } = context;
@@ -359,6 +361,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 		}
 		if (answer === "ok") {
 			sendServiceMessage("Challenge accepted ! Game started in room " + idToJoin);
+			navigate("/game");
 			props.setInvite(false);
 			setRoomId(idToJoin);
 			setGameStatus('NOT_IN_GAME')
@@ -425,6 +428,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 				deleteMessage();
 				const indexOfId = props.msg.lastIndexOf(" ") + 1;
 				const idToJoin = parseInt(props.msg.substring(indexOfId));
+				navigate("/game");
 				props.setInvite(false);
 				setRoomId(idToJoin);
 				updateChat("none");
