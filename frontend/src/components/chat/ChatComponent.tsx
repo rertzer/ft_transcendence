@@ -96,6 +96,7 @@ useEffect(() => {
     }
   }, [allChannels, DM, props.newDM, updateChat])
 
+  console.log("Active", activeChannel);
     return (
         <div className="chatcomponent">
             <div className='container'>

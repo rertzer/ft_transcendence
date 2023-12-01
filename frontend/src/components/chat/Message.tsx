@@ -256,6 +256,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 				throw new Error("Request failed");
 			}
 			const data = await response.json();
+			console.log("DATA,", data)
 			setNeedToUpdate("newDM " + data.id.toString());
 			toggleUserActionsMenu();
 		}
@@ -462,7 +463,10 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 						<div className="userOptions" ref={menuRef}>
 							<img src={image} alt="user Avatar" style={{cursor:"pointer"}} onClick={toggleUserActionsMenu}/>
 							<div className={showUserActionsMenu ? "userActions" : "userActions-hidden"}>
-								{props.isDM || userInfo.userStatus === "" ? <h4>{props.username}</h4> : <h4>{props.username + " (" + userInfo.userStatus + ")"}</h4>}
+								{props.isDM === false && userInfo.userStatus === "" && <h4>{props.username}</h4>}
+								{props.isDM === false && userInfo.userStatus !== "" && <h4>{props.username + " (" + userInfo.userStatus + ")"}</h4>}
+								{props.isDM && userInfo.ingame === false && <h4>{props.username}</h4>}
+								{props.isDM && userInfo.ingame && <h4>{props.username + " (playing)"}</h4>}
 								<hr></hr>
 								<div className="menuItems">
 									{props.isDM && props.invite === false && roomId === 0 && userInfo.ingame === false && <div onClick={() => {startGame("BASIC")}}>Invite to Classic Game</div>}

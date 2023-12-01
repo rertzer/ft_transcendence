@@ -56,11 +56,15 @@ export class PrismaChatService {
 		})
 		if (exist)
 		{
+			console.log(exist);
 			for (const element of exist)
 			{
-				if ( element.channelsUsers.find((elem:any) => elem.user_id === idSender && element.owner != elem.user_id) 
-					|| element.channelsUsers.find((elem:any) => elem.user_id === idReceiver && element.owner != elem.idReceiver))
+				console.log("id sender = ", idSender, "id receiver= ", idReceiver);
+				console.log("channels users", element.channelsUsers);
+				if (element.channelsUsers.find((elem:any) => elem.user_id === idSender && element.owner !== elem.user_id) 
+					|| element.channelsUsers.find((elem:any) => elem.user_id === idReceiver && element.owner !== elem.user_id))
 				{
+					console.log("element id = ", element.id);
 					return element.id;
 				}
 			}
