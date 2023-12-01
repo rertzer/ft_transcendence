@@ -1,9 +1,6 @@
 import { ConfigService } from "@nestjs/config";
 import { EditDto } from "src/auth/dto";
-import {
-  BadRequestException,
-  Injectable,
-} from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { PrismaClient } from "@prisma/client";
 import { twoFASecretDto } from "src/twoFA/dto/twoFASecret.dto";
 import { twoFAActivatedDto } from "src/twoFA/dto/twoFAActivated.dto";
@@ -57,12 +54,14 @@ export class PrismaUserService extends PrismaClient {
   }
 
   async updateUser(dto: EditDto) {
+    const userData: any = dto;
+    userData.newbie = false;
     try {
       const user = await this.user.update({
         where: {
           login: dto.login,
         },
-        data: dto,
+        data: userData,
       });
       return user;
     } catch (error) {
@@ -102,11 +101,8 @@ export class PrismaUserService extends PrismaClient {
       const user = await this.user.create({
         data: {
           login: dto.login,
-          username: dto.first_name,
-          first_name: dto.first_name.slice(0,10),
-          last_name: dto.last_name,
+          username: dto.username.slice(0, 10),
           email: dto.email,
-          role: "player",
         },
       });
       return user;

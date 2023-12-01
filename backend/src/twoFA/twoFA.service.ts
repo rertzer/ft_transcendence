@@ -21,6 +21,7 @@ export class TwoFAService {
       return { qrcode_url };
     }
   }
+
   async validate(login: string, token: string) {
     let verified = false;
     let user = await this.prisma.getUserByLogin(login);
@@ -49,4 +50,15 @@ export class TwoFAService {
     }
     return verified;
   }
+
+
+async cancel(login: string) {
+
+  const verified = false;
+  let user = await this.prisma.getUserByLogin(login);
+  if (user)
+  user = await this.prisma.setTfaActivated({ login, verified });
+
+  return user;
+}
 }

@@ -8,13 +8,11 @@ import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
 
-  const httpsOptions = {
-    key: fs.readFileSync('/etc/ssl/pong-selfsigned.key'),
-    cert: fs.readFileSync('/etc/ssl/pong-selfsigned.crt'),
-  };
-  const app = await NestFactory.create(AppModule, {
-    httpsOptions,
-  });
+  // const httpsOptions = {
+  //   key: fs.readFileSync('/etc/ssl/pong-selfsigned.key'),
+  //   cert: fs.readFileSync('/etc/ssl/pong-selfsigned.crt'),
+  // };
+  const app = await NestFactory.create(AppModule);
 
   const prismaUser = new PrismaChatService;//toDelete
 
@@ -23,7 +21,7 @@ async function bootstrap() {
 
   // Define your CORS options here
  /*  const corsOptions: CorsOptions = {
-    origin: 'https://${process.env.REACT_APP_URL_MACHINE}:3000', // Replace with your React app's URL
+    origin: 'http://${process.env.REACT_APP_URL_MACHINE}:3000', // Replace with your React app's URL
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true, // If you need to handle cookies or authentication
   }; */

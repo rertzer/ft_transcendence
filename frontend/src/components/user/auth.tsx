@@ -45,7 +45,7 @@ export const LoginProvider = ({ children }: any) => {
   const fetchImage = async () => {
     const bearer = "Bearer " + token.access_token;
     const res = await fetch(
-      `https://${process.env.REACT_APP_URL_MACHINE}:4000/user/avatar/` +
+      `http://${process.env.REACT_APP_URL_MACHINE}:4000/user/avatar/` +
         user.avatar,
       {
         method: "GET",
@@ -63,7 +63,7 @@ export const LoginProvider = ({ children }: any) => {
       const fetchUser = async () => {
         console.log("bearer is", bearer);
         fetch(
-          `https://${process.env.REACT_APP_URL_MACHINE}:4000/user/` +
+          `http://${process.env.REACT_APP_URL_MACHINE}:4000/user/` +
             token.login,
           {
             method: "GET",

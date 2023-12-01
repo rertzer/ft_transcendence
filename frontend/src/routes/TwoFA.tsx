@@ -24,8 +24,7 @@ function Twofa() {
     const bearer = "Bearer " + token.access_token;
 
     let tosend: any = { login: auth.user.login };
-
-    const data = await fetch("/twofa/setup", {
+    const data = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/twofa/setup`, {
       mode: 'cors',
       method: "GET",
       headers: {

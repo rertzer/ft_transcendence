@@ -8,14 +8,6 @@ import {
     @IsString()
     @IsNotEmpty()
     login: string;
-
-    @IsString()
-    @IsNotEmpty()
-    first_name: string;
-
-    @IsString()
-    @IsNotEmpty()
-    last_name: string;
     
     @IsString()
     @IsNotEmpty()

@@ -12,15 +12,13 @@ datasource db {
 
 model User {
   id                     Int                  @id @default(autoincrement())
-  username               String?              @unique @db.VarChar(10)
-  first_name             String?
-  last_name              String?
+  username               String               @unique @db.VarChar(10)
   login                  String               @unique
   email                  String
   avatar                 String?
-  role                   String
   tfa_secret             String?
   tfa_activated          Boolean              @default(false)
+  newbie                 Boolean              @default(true)
   banned_chats           UsersBannedToChats[]
   friends                Friend[]             @relation("UserToFriends")
   sentDirectMessages     DirectMsg[]          @relation("SenderMessages")

@@ -201,9 +201,9 @@ function BasicMenu() {
       const isLocalhost = window.location.hostname === 'localhost';
       let url;
       if (isLocalhost)
-        url = 'https://localhost:3000/';
+        url = 'http://localhost:3000/';
       else 
-        url = 'https://' + process.env.REACT_APP_URL_MACHINE + ':3000/';
+        url = 'http://' + process.env.REACT_APP_URL_MACHINE + ':3000/';
       window.open(url, '_blank');
     }
     function closeTab() {

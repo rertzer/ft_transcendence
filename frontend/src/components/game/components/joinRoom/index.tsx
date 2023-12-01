@@ -52,7 +52,7 @@ export function JoinRoom(props:IJoinRoomProps) {
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({typeGame: TmpModeGameNewRoom})
 		};
-		const response = await fetch(`https://${process.env.REACT_APP_URL_MACHINE}:4000/game/newRoom/`, requestOptions);
+		const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/game/newRoom/`, requestOptions);
 		const data = await response.json();
 		setRoomId(data.roomId)
 	};

@@ -100,15 +100,12 @@ export class FtAuthService {
   }
 
   async provideTokenByKeyAndTfa({ key, tfa_token }: TfaToken) {
-    console.log("provideTokenByKeyAndTfa ", key, tfa_token);
     const stored_key = this.getStoredKeyByKey(key);
     let validate = false;
     if (stored_key && stored_key.login) {
-    console.log("checking...");
       validate = await this.twoFAService.authenticate(stored_key.login, tfa_token);
       if (validate) return this.signToken(stored_key.login);
     }
-    console.log("validation is", validate);
     throw new ForbiddenException("2fa, we have a problem");
   }
 
@@ -119,15 +116,13 @@ export class FtAuthService {
     const httpService = new HttpService();
     try {
       const { data } = await firstValueFrom(
-        httpService.get("https://api.intra.42.fr/v2/me", {
+        httpService.get("http://api.intra.42.fr/v2/me", {
           headers: headersRequest,
         })
       );
       const user: FtUser = {
         login: data.login,
-        first_name: data.first_name,
-        last_name: data.last_name,
-        username: data.usual_full_name,
+        username: data.first_name,
         email: data.email,
       };
       const pong_user = await this.validateUser(user);

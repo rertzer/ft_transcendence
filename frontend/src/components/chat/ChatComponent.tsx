@@ -64,7 +64,7 @@ const ChatComponent = () => {
 // async function getBlockedUsers() {
 //     let blocked: number[] = [];
 //     try {
-//         const response = await fetch(`https://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/listOfBlockedUser/${auth.user.login}`);
+//         const response = await fetch(`://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/listOfBlockedUser/${auth.user.login}`);
 //         if (!response.ok) {
 //             throw new Error("Request failed");
 //         }

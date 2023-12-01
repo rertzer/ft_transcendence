@@ -585,21 +585,15 @@ export class PrismaChatService {
 			const newUser = await this.prismaService.user.create({
 				data: {
 					username: 'toto',
-					first_name: 'John',
 					login: 'toto',
-					last_name: 'Doe',
 					email: 'johndoe@example.com',
-					role: 'user',
 				},
 			});
 			const newUser2 = await this.prismaService.user.create({
 				data: {
 					username: 'coco',
-					first_name: 'jay',
-					last_name: ';avf',
 					login: 'coco',
 					email: 'johndoeff@example.com',
-					role: 'user',
 			  // Add other user fields as needed
 			},
 		});

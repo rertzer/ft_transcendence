@@ -26,7 +26,7 @@ let lastMessageId = 0;
 @WebSocketGateway({
   namespace: "/chat",
   cors: {
-    origin: "https://" + process.env.REACT_APP_URL_MACHINE + ":4000/chat",
+    origin: "http://" + process.env.REACT_APP_URL_MACHINE + ":4000/chat",
   },
   methods: ["GET", "POST"],
   credentials: true,
