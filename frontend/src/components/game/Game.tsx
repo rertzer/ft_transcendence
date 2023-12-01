@@ -7,7 +7,7 @@ import { WaitingRoom } from './components/waitingRoom';
 import { gameSocket } from './services/gameSocketService';
 
 function Game() {
-	const {gameStatus, roomId, setGameStatus, playerName, setRoomId} = useContext(GameContext);
+	const {gameStatus, roomId, setGameStatus, playerName, setRoomId, matchMe, setMatchMe, modeGame} = useContext(GameContext);
 
 	useEffect(()=>{
 		function processRoomJoined(data:{roomId:number, gameStatus: GameStatus}) {
@@ -33,7 +33,10 @@ function Game() {
 		if (roomId !== 0 && gameStatus === 'NOT_IN_GAME') {
 			gameSocket.emit("join_room", {roomId:roomId, playerName});
 		}
+		
 	}, [roomId, gameStatus, playerName])
+
+
 	
 	return (
 		<>

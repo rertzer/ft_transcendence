@@ -23,6 +23,7 @@ function Desktop1() {
 	const [gameHeight, setGameHeight] = useState(0);
 	const [modeGame, setModeGame] = useState('');
 	const [gameStatus, setGameStatus] = useState<GameStatus>('NOT_IN_GAME');
+	const [matchMe, setMatchMe] = useState(false);
 	const { login_url } = useParams();
 
 	useEffect(() => {
@@ -59,7 +60,9 @@ function Desktop1() {
 		modeGame,
 		setModeGame, 
 		gameStatus,
-		setGameStatus
+		setGameStatus,
+		matchMe,
+		setMatchMe
 	};
 
   //GET HEIGHT

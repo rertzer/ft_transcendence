@@ -132,7 +132,6 @@ export class RoomsService  implements OnModuleInit{
 
 	removeRoom(room: Room) {
 		this.rooms = this.rooms.filter((r) => {return r !== room;});
-		console.log('Remove room');
 	};
 
 	getAllRoom(): Room[] {
@@ -196,7 +195,7 @@ export class RoomsService  implements OnModuleInit{
 			room.gameStatus = 'WAITING_TO_START';
 			await this.addNewBddGame(room);
 		}
-		console.log('Player ', player.socket.id, ' added to Room ', room.id);
+		//console.log('Player ', player.socket.id, ' added to Room ', room.id);
 		player.socket.emit('room_joined', {roomId: room.id});
 	};
 

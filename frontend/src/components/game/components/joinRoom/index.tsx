@@ -7,11 +7,15 @@ interface IJoinRoomProps {
 };
 
 export function JoinRoom(props:IJoinRoomProps) {
-	const {setRoomId, setGameStatus} = useContext(gameContext);
+	const {setRoomId, setGameStatus, matchMe, setMatchMe, modeGame, playerName} = useContext(gameContext);
 	const [RecievedRoomID, setRecievedRoomID] = useState(0);
 	
 	useEffect(()=>{
-
+		if (matchMe) {
+			console.log("SEND SOMETHING ! ")
+			gameSocket.emit('match_me', {playerName: playerName, typeGame: modeGame});
+			setMatchMe(false);
+		}
 		function processNewEmptyRoom(data:{roomId:number}) {
 			setRecievedRoomID(data.roomId);
 			console.log(data.roomId)

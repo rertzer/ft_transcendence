@@ -453,6 +453,7 @@ function BasicMenu() {
   const navigate = useNavigate();
   function File() {
     const context = useContext(PageContext);
+	const { roomId, playerName, setGameStatus, setRoomId, setModeGame, modeGame, gameStatus, setMatchMe } = useContext(gameContext);
     if (!context) { throw new Error('useContext must be used within a MyProvider'); }
     const { updateMenu } = context;
     const auth = useLogin();
@@ -466,18 +467,20 @@ function BasicMenu() {
     }
     function newBasicGame() {
       leaveRoom();
-      handlePage("Game");
       setModeGame('BASIC');
-      gameSocket.emit('match_me', { playerName: playerName, typeGame: 'BASIC' });
+	  setMatchMe(true);
+      //gameSocket.emit('match_me', { playerName: playerName, typeGame: 'BASIC' });
+	  handlePage("Game");
     }
 
     function newAdvancedGame() {
       leaveRoom();
-      handlePage("Game");
-      setModeGame('ADVANCED');
-      gameSocket.emit('match_me', { playerName: playerName, typeGame: 'ADVANCED' });
+	  setModeGame('ADVANCED');
+	  setMatchMe(true);
+      //gameSocket.emit('match_me', { playerName: playerName, typeGame: 'ADVANCED' });
+	  handlePage("Game");
     }
-    const { roomId, playerName, setGameStatus, setRoomId, setModeGame, modeGame } = useContext(gameContext);
+    
     const leaveRoom = () => {
       const dataToSend = {
         waitingRoom: (gameStatus === 'IN_WAITING_ROOM'),
@@ -490,7 +493,6 @@ function BasicMenu() {
       setModeGame('');
       updateMenuChat('none', chat);
     };
-    const { gameStatus } = useContext(GameContext);
 
     const newGamePossible = (status: GameStatus): boolean => {
       const statusOk = ['NOT_IN_GAME', 'FINISHED', 'FINISH_BY_FORFAIT'];
@@ -504,23 +506,23 @@ function BasicMenu() {
     return (
       <List dense onMouseLeave={() => handleClick("none")} sx={{ color: dark ? 'white' : '#111111', }} style={{ position: 'fixed', top: '64px', width: 200, paddingTop: "0px", paddingBottom: "0px", backgroundColor: dark ? '#2f2f2f' : 'white', border: dark ? '1px solid black' : '1px solid grey' }} >
         {newGamePossible(gameStatus) && <ListItemButton>
-// 					<ListItemText onClick={() => newBasicGame()}>New Basic Game</ListItemText>
-// 				</ListItemButton>}
-// 				{newGamePossible(gameStatus) && <ListItemButton>
-// 					<ListItemText onClick={() => newAdvancedGame()}>New Advanced Game</ListItemText>
-// 				</ListItemButton>}
-// 				{!leaveRoomPossible(gameStatus) && <ListItem sx={{ color: 'grey' }} style={{ cursor: 'default' }}>
-// 					<ListItemText>Leave room</ListItemText>
-// 				</ListItem>}
-// 				{!newGamePossible(gameStatus) && <ListItem sx={{ color: 'grey' }} style={{ cursor: 'default' }}>
-// 					<ListItemText>New Basic Game</ListItemText>
-// 				</ListItem>}
-// 				{!newGamePossible(gameStatus) && <ListItem sx={{ color: 'grey' }} style={{ cursor: 'default' }}>
-// 					<ListItemText>New Advanced Game</ListItemText>
-// 				</ListItem>}
-// 				{leaveRoomPossible(gameStatus) && <ListItemButton>
-// 					<ListItemText onClick={() => leaveRoom()}>Leave Room</ListItemText>
-// 				</ListItemButton>}
+ 				<ListItemText onClick={() => newBasicGame()}>New Basic Game</ListItemText>
+ 		</ListItemButton>}
+ 		{newGamePossible(gameStatus) && <ListItemButton>
+ 			<ListItemText onClick={() => newAdvancedGame()}>New Advanced Game</ListItemText>
+ 		</ListItemButton>}
+ 		{!leaveRoomPossible(gameStatus) && <ListItem sx={{ color: 'grey' }} style={{ cursor: 'default' }}>
+ 			<ListItemText>Leave room</ListItemText>
+ 		</ListItem>}
+ 		{!newGamePossible(gameStatus) && <ListItem sx={{ color: 'grey' }} style={{ cursor: 'default' }}>
+ 			<ListItemText>New Basic Game</ListItemText>
+ 		</ListItem>}
+ 		{!newGamePossible(gameStatus) && <ListItem sx={{ color: 'grey' }} style={{ cursor: 'default' }}>
+ 			<ListItemText>New Advanced Game</ListItemText>
+ 		</ListItem>}
+ 		{leaveRoomPossible(gameStatus) && <ListItemButton>
+ 			<ListItemText onClick={() => leaveRoom()}>Leave Room</ListItemText>
+ 		</ListItemButton>}
         <Divider />
         <ListItemButton onClick={() => handlePage("Profile")}><ListItemText>Profile </ListItemText></ListItemButton>
         <ListItemButton onClick={() => handlePage("Data")}><ListItemText>Data </ListItemText></ListItemButton>

@@ -21,6 +21,7 @@ import { PrismaGameService } from "src/prisma/game/prisma.game.service";
 export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect{
 	
 	private readonly logger = new Logger(GameSocketEvents.name);
+	private printEventRecieved:boolean = false;
 
 	@Inject(PlayersService)
 	private readonly playersService: PlayersService;
@@ -39,7 +40,7 @@ export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, On
 
 	//Connexion 
 	handleConnection(client:Socket){
-		console.log(`GameSocket Client connected: ${client.id}`);
+		if (this.printEventRecieved) console.log(`GameSocket Client connected: ${client.id}`);
 		this.playersService.create({
 			name:'',
 			roomState:[],
@@ -47,9 +48,9 @@ export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, On
 			idBdd:-1
 		});
     }
-	//Deconnexion A REVOIR
+
 	handleDisconnect(client: Socket) {
-		console.log(`GameSocket Client disconnected ${client.id}`);
+		if (this.printEventRecieved) console.log(`GameSocket Client disconnected ${client.id}`);
 		const player = this.playersService.findOne(client);
 		if (player) {
 			const rooms_player = this.roomsService.findRoomsOfPlayer(player);
@@ -64,6 +65,7 @@ export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, On
     //Recevoir un event 
 	@SubscribeMessage('give_me_a_room')
 	async handleGiveMeARoom(@MessageBody() data:{typeGame:TypeGame}, @ConnectedSocket() client:Socket){
+		if (this.printEventRecieved) console.log('give_me_a_room');
 		const newRoomId = await this.roomsService.createEmptyRoom(data.typeGame);
 		const responseData = {
 			roomId:newRoomId?.id
@@ -73,6 +75,7 @@ export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, On
 
 	@SubscribeMessage('match_me')
 	async handleJoinWaitingRoom(@MessageBody() data:{playerName:string, typeGame:TypeGame}, @ConnectedSocket() client:Socket){
+		if (this.printEventRecieved) console.log('match_me');
 		const player = this.playersService.findOne(client);
 		if (player) {
 			player.name = data.playerName;
@@ -83,6 +86,7 @@ export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, On
 
 	@SubscribeMessage('join_room')
 	async handleJoinGame(@MessageBody() data:{roomId:number, playerName:string}, @ConnectedSocket() client:Socket){
+		if (this.printEventRecieved) console.log('join_room');
 		const player = this.playersService.findOne(client);
 		if (player) {
 			player.name = data.playerName;
@@ -93,17 +97,20 @@ export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, On
 
 	@SubscribeMessage('give_me_room_status')
 	handleGiveMeRoomStatus(@MessageBody() data:{roomId:number}, @ConnectedSocket() client:Socket){
+		if (this.printEventRecieved) console.log('give_me_room_status');
 		const room = this.roomsService.findRoomById(data.roomId);
 		if (room) this.roomsService.sendRoomStatus(room);
 	}
 
 	@SubscribeMessage('keyevent')
 	handlePlayerKeyEvent(@MessageBody() data:{roomId:number, key:string, idPlayerMove:number}, @ConnectedSocket() client:Socket){
+		if (this.printEventRecieved) console.log('keyevent');
 		this.roomsService.handlePlayerKeyEvent({roomId: data.roomId, key:data.key, idPlayerMove:data.idPlayerMove, client});
 	}
 
 	@SubscribeMessage('i_am_leaving')
 	handleLeaving(@MessageBody() data:{waitingRoom:boolean, modeGame:TypeGame,  roomId:number}, @ConnectedSocket() client:Socket){
+		if (this.printEventRecieved) console.log('i_am_leaving');
 		const player = this.playersService.findOne(client);
 		if (player && data.waitingRoom){
 			if (data.modeGame === 'ADVANCED') {
@@ -130,5 +137,3 @@ export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, On
 		this.logger.log('Game Socket Gateway initialised')
 	}
 }
-
-/* Besoin d'envoyer au front les parametres du jeu quand il se connecte pour la premiere fois */

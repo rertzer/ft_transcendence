@@ -15,6 +15,8 @@ export interface IGameContextProps {
 	setModeGame: (modeGame:string) => void;
 	gameStatus: GameStatus;
 	setGameStatus:  (gameStatus: GameStatus) => void;
+	matchMe: boolean;
+	setMatchMe: (matchMe: boolean) => void;
 };
 
 const defaultState:IGameContextProps = {
@@ -29,7 +31,9 @@ const defaultState:IGameContextProps = {
 	modeGame: '',
 	setModeGame: () => {}, 
 	gameStatus: 'NOT_IN_GAME',
-	setGameStatus:  () => {}
+	setGameStatus:  () => {},
+	matchMe: false,
+	setMatchMe: () => {}
 }; 
 
 export default React.createContext(defaultState);
