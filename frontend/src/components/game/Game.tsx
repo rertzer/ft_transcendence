@@ -5,6 +5,7 @@ import GameArea from './components/gameArea';
 import { GameStatus } from '../../context/gameContext';
 import { WaitingRoom } from './components/waitingRoom';
 import { gameSocket } from './services/gameSocketService';
+import { CreateStyledCell } from '../Sheets/CreateStyledCell';
 
 function Game() {
 	const {gameStatus, roomId, setGameStatus, playerName, setRoomId, matchMe, setMatchMe, modeGame} = useContext(GameContext);
@@ -35,8 +36,6 @@ function Game() {
 		}
 		
 	}, [roomId, gameStatus, playerName])
-
-
 	
 	return (
 		<>

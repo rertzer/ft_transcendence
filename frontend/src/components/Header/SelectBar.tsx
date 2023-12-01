@@ -446,6 +446,7 @@ import { useLogin } from '../user/auth';
 import { gameSocket } from '../game/services/gameSocketService';
 import gameContext from '../../context/gameContext';
 import { useNavigate } from 'react-router-dom';
+import { PageUrlContext } from '../../context/PageUrlContext';
 
 
 
@@ -455,8 +456,11 @@ function BasicMenu() {
     const context = useContext(PageContext);
 	const { roomId, playerName, setGameStatus, setRoomId, setModeGame, modeGame, gameStatus, setMatchMe } = useContext(gameContext);
     if (!context) { throw new Error('useContext must be used within a MyProvider'); }
-    const { updateMenu } = context;
+	const pageUrlContext = useContext(PageUrlContext)
+	if (!pageUrlContext) { throw new Error('useContext must be used within a MyProvider'); }
+    const { updateMenu, updateMatchMe } = context;
     const auth = useLogin();
+	const {page} = pageUrlContext;
 
     function print() {
       updateMenu('none');
@@ -465,21 +469,18 @@ function BasicMenu() {
     function closeTab() {
       window.close();
     }
-    function newBasicGame() {
-      leaveRoom();
-      setModeGame('BASIC');
-	  setMatchMe(true);
-      //gameSocket.emit('match_me', { playerName: playerName, typeGame: 'BASIC' });
-	  handlePage("Game");
-    }
+    
+	function newBasicGame (){
+		leaveRoom();
+		setModeGame('BASIC');
+		gameSocket.emit('match_me', {playerName:playerName, typeGame:'BASIC'});
+	}
 
-    function newAdvancedGame() {
-      leaveRoom();
-	  setModeGame('ADVANCED');
-	  setMatchMe(true);
-      //gameSocket.emit('match_me', { playerName: playerName, typeGame: 'ADVANCED' });
-	  handlePage("Game");
-    }
+	function newAdvancedGame() {
+		leaveRoom();
+		setModeGame('ADVANCED');
+		gameSocket.emit('match_me', {playerName:playerName, typeGame:'ADVANCED'});
+	}
     
     const leaveRoom = () => {
       const dataToSend = {
@@ -505,28 +506,33 @@ function BasicMenu() {
     };
     return (
       <List dense onMouseLeave={() => handleClick("none")} sx={{ color: dark ? 'white' : '#111111', }} style={{ position: 'fixed', top: '64px', width: 200, paddingTop: "0px", paddingBottom: "0px", backgroundColor: dark ? '#2f2f2f' : 'white', border: dark ? '1px solid black' : '1px solid grey' }} >
-        {newGamePossible(gameStatus) && <ListItemButton>
+        {page === "Game" && newGamePossible(gameStatus) && <ListItemButton>
  				<ListItemText onClick={() => newBasicGame()}>New Basic Game</ListItemText>
  		</ListItemButton>}
- 		{newGamePossible(gameStatus) && <ListItemButton>
+ 		{page === "Game" && newGamePossible(gameStatus) && <ListItemButton>
  			<ListItemText onClick={() => newAdvancedGame()}>New Advanced Game</ListItemText>
  		</ListItemButton>}
- 		{!leaveRoomPossible(gameStatus) && <ListItem sx={{ color: 'grey' }} style={{ cursor: 'default' }}>
+ 		{page === "Game" && !leaveRoomPossible(gameStatus) && <ListItem sx={{ color: 'grey' }} style={{ cursor: 'default' }}>
  			<ListItemText>Leave room</ListItemText>
  		</ListItem>}
- 		{!newGamePossible(gameStatus) && <ListItem sx={{ color: 'grey' }} style={{ cursor: 'default' }}>
+ 		{page === "Game" && !newGamePossible(gameStatus) && <ListItem sx={{ color: 'grey' }} style={{ cursor: 'default' }}>
  			<ListItemText>New Basic Game</ListItemText>
  		</ListItem>}
- 		{!newGamePossible(gameStatus) && <ListItem sx={{ color: 'grey' }} style={{ cursor: 'default' }}>
+ 		{page === "Game" && !newGamePossible(gameStatus) && <ListItem sx={{ color: 'grey' }} style={{ cursor: 'default' }}>
  			<ListItemText>New Advanced Game</ListItemText>
  		</ListItem>}
- 		{leaveRoomPossible(gameStatus) && <ListItemButton>
+ 		{page === "Game" && leaveRoomPossible(gameStatus) && <ListItemButton>
  			<ListItemText onClick={() => leaveRoom()}>Leave Room</ListItemText>
  		</ListItemButton>}
-        <Divider />
-        <ListItemButton onClick={() => handlePage("Profile")}><ListItemText>Profile </ListItemText></ListItemButton>
-        <ListItemButton onClick={() => handlePage("Data")}><ListItemText>Data </ListItemText></ListItemButton>
-        <ListItemButton onClick={() => handlePage("Contacts")}><ListItemText>Contacts </ListItemText></ListItemButton>
+		{page === "Game" && <Divider />}
+		{page === "Game" && <ListItem sx={{ color: 'grey' }} style={{ cursor: 'default' }}><ListItemText>Game</ListItemText></ListItem>}
+		{page !== "Game" && <ListItemButton onClick={() => handlePage("Game")}><ListItemText>Game </ListItemText></ListItemButton>}
+		{page === "Profile" && <ListItem sx={{ color: 'grey' }} style={{ cursor: 'default' }}><ListItemText>Profile</ListItemText></ListItem>}
+        {page !== "Profile" && <ListItemButton onClick={() => handlePage("Profile")}><ListItemText>Profile </ListItemText></ListItemButton>}
+		{page === "Data" && <ListItem sx={{ color: 'grey' }} style={{ cursor: 'default' }}><ListItemText>Data</ListItemText></ListItem>}
+        {page !== "Data" && <ListItemButton onClick={() => handlePage("Data")}><ListItemText>Data </ListItemText></ListItemButton>}
+		{page === "Contacts" && <ListItem sx={{ color: 'grey' }} style={{ cursor: 'default' }}><ListItemText>Contacts</ListItemText></ListItem>}
+        {page !== "Contacts" && <ListItemButton onClick={() => handlePage("Contacts")}><ListItemText>Contacts </ListItemText></ListItemButton>}
         <Divider />
         <ListItemButton onClick={() => handleChat("Chat")}>{chat === "Chat" ? <CheckBoxOutlinedIcon fontSize="small" /> : <CheckBoxOutlineBlankIcon fontSize="small" />} <ListItemText style={{ position: 'relative', left: '10px' }}>Chat </ListItemText></ListItemButton>
         <Divider />

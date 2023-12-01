@@ -2,6 +2,7 @@ import "./Cells.css";
 import "./Contacts/Contacts.css";
 import "./Data/Data.css";
 import "./Profile/Profile.css";
+import "./GameGrid/GameGrid.css"
 import { PageContext } from '../../context/PageContext';
 import { useContext } from 'react';
 

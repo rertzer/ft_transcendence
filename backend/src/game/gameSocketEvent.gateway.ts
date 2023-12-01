@@ -21,7 +21,7 @@ import { PrismaGameService } from "src/prisma/game/prisma.game.service";
 export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect{
 	
 	private readonly logger = new Logger(GameSocketEvents.name);
-	private printEventRecieved:boolean = false;
+	private printEventRecieved:boolean = true;
 
 	@Inject(PlayersService)
 	private readonly playersService: PlayersService;

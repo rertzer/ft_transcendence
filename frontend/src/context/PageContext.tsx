@@ -10,6 +10,7 @@ type SharedData = {
   scroll: { scrollX: number; scrollY: number };
   game: { player1: string; player2: string; points1: number; points2: number };
   div: { font: string; bold: boolean; italic: boolean; underLined: boolean; align: string};
+  matchMe : {matchMe:boolean, gameMode:string};
   updateMenu: (menu: string) => void;
   updateChat: (chat: string) => void;
   updateZoom: (zoom: number) => void;
@@ -22,6 +23,7 @@ type SharedData = {
   updateGame: (newGame: { player1: string; player2: string; points1: number; points2: number }) => void;
   updateDiv: (newDiv: { font: string; bold: boolean; italic: boolean; underLined: boolean; align: string }) => void;
   updateDivMenu: (newDiv: { font: string; bold: boolean; italic: boolean; underLined: boolean; align: string }, menu: string) => void;
+  updateMatchMe: (matchMe : {matchMe:boolean, gameMode:string}) => void;
 };
 
 const PageContext = createContext<SharedData | undefined>(undefined);
@@ -41,6 +43,7 @@ function PageProvider({ children }: MyProviderProps) {
     scroll: { scrollX: 0, scrollY: 0 },
     game: {player1: "player1", player2: "player2", points1: 0, points2: 0},
     div: {font: "Arial, sans-serif", bold: false, italic: false, underLined: false, align: "left"},
+	matchMe : {matchMe:false, gameMode:'BASIC'},
   });
 
   const updateMenu = (newData: string) => {
@@ -79,10 +82,12 @@ function PageProvider({ children }: MyProviderProps) {
   const updateDivMenu = (newDiv: { font: string; bold: boolean; italic: boolean; underLined: boolean; align: string}, newMenu: string) => {
     setSharedData({ ...sharedData, menu: newMenu, div: { ...newDiv },  }); 
   };
-  
+  const updateMatchMe = (newMatchMe: {matchMe:boolean, gameMode:string}) => {
+    setSharedData({ ...sharedData, matchMe: newMatchMe });
+  };
 
   return (
-    <PageContext.Provider value={{ ...sharedData, updateMenu, updateChat, updateZoom, updateToolbar, updateDark, updateMenuChat, updateCoords, updateCoordsMenu, updateScroll, updateGame, updateDiv, updateDivMenu}}>
+    <PageContext.Provider value={{ ...sharedData, updateMenu, updateChat, updateZoom, updateToolbar, updateDark, updateMenuChat, updateCoords, updateCoordsMenu, updateScroll, updateGame, updateDiv, updateDivMenu, updateMatchMe}}>
       {children}
     </PageContext.Provider>
   );
