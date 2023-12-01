@@ -43,6 +43,7 @@ export const LoginProvider = ({ children }: any) => {
   };
 
   const fetchImage = async () => {
+    try{
     const bearer = "Bearer " + token.access_token;
     const res = await fetch(
       `http://${process.env.REACT_APP_URL_MACHINE}:4000/user/avatar/` +
@@ -54,7 +55,7 @@ export const LoginProvider = ({ children }: any) => {
     );
     const imageBlob = await res.blob();
     const imageObjectURL = URL.createObjectURL(imageBlob);
-    setImage(imageObjectURL);
+    setImage(imageObjectURL);}catch(e){console.log(e);}
   };
 
   const reload = () => {
@@ -94,7 +95,7 @@ export const LoginProvider = ({ children }: any) => {
   useEffect(() => {
     if (user.avatar) {
       try {
-        fetchImage().catch((e) => console.log("Failed to fetch the avatar"));
+        fetchImage();
       } catch (e) {
         console.log(e);
       }
