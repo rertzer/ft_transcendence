@@ -12,7 +12,6 @@ function Twofa() {
   let tmp = auth.user.username;
   if (tmp == null) tmp = "";
 
-  const [login, setLogin] = useState("");
   const [qrcode, setQrcode] = useState();
 
   const handleTfa = async (event: MouseEvent<HTMLButtonElement>) => {
@@ -25,7 +24,6 @@ function Twofa() {
     console.log("Token in EditProfile is", token);
     const bearer = "Bearer " + token.access_token;
 
-    let tosend: any = { login: auth.user.login };
     const data = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/twofa/setup`, {
       mode: 'cors',
       method: "GET",
@@ -42,10 +40,6 @@ function Twofa() {
     navigate('/', { replace: true });
   }
 
-  useEffect(() => {
-    const stored_login: string | null = sessionStorage.getItem("Login");
-    if (stored_login != null) setLogin(stored_login);
-  }, []);
 
   useEffect(() => {
     console.log("QRCODE IS", qrcode);
@@ -57,9 +51,9 @@ function Twofa() {
         <div className="right">
           <h1>Two Factors Authentication</h1>
           <h2>{auth.user.login}</h2>
-          <form>
+          {!qrcode &&  <form>
             <button onClick={handleTfa}>setup</button>
-          </form>
+          </form>}
           <button onClick={handleSkip}>skip</button>
           {qrcode && <img src={qrcode} alt="QR" />}
           {qrcode && <TwoFAToken />}

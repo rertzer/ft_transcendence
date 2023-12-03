@@ -1,11 +1,9 @@
 import "./EditProfile.scss";
-import { Link, Navigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { useLogin } from "../components/user/auth";
-import { useContext, useEffect, useState, MouseEvent } from "react";
+import { useEffect, useState, MouseEvent } from "react";
 
 import StringField from "../components/user/StringField";
-import PassField from "../components/user/PassField";
-import { Email } from "@mui/icons-material";
 import EmailField from "../components/user/EmailField";
 
 interface IToSend {
@@ -21,12 +19,10 @@ function EditProfile() {
   let tmp = auth.user.username;
   if (tmp == null) tmp = "";
 
-  const [login, setLogin] = useState("");
   const [userOk, setUserOk] = useState(false);
   const [newUsername, setNewUsername] = useState(tmp);
   const [newEmail, setNewEmail] = useState(auth.user.email);
   const [newAvatar, setNewAvatar] = useState<File>();
-  const [avatarName, setAvatarName] = useState("");
   const [returnPath, setReturnPath] = useState("/");
 
   const handleAvatar = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -35,11 +31,9 @@ function EditProfile() {
     const avatar = selectedFiles?.[0];
     if (avatar) {
       setNewAvatar(avatar);
-      setAvatarName(avatar.name);
     }
     else{
       setNewAvatar(undefined);
-      setAvatarName("");
     }
   };
 
@@ -108,10 +102,23 @@ function EditProfile() {
   catch(e) {console.log(e);}}
   };
 
-  useEffect(() => {
-    let stored_login: string | null = sessionStorage.getItem("Login");
-    if (stored_login != null) setLogin(stored_login);
-  }, []);
+  const handleTeapot = async (event: MouseEvent<HTMLButtonElement>)=>{
+    event.preventDefault();
+    console.log("handle teapot");
+    const data =  await fetch(
+      `http://${process.env.REACT_APP_URL_MACHINE}:4000/user/teapot`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: auth.getBearer(),
+         
+        },
+        
+      }
+    );
+    const resp = await data.json();
+    console.log(resp);
+  }
 
   useEffect(() => {
     if (!newUsername && auth.user.username) setNewUsername(auth.user.username);
@@ -145,6 +152,7 @@ function EditProfile() {
 
             {userOk && <Navigate to={returnPath}></Navigate>}
             <button onClick={handleUser}>Edit</button>
+            <button onClick={handleTeapot}>teapot</button>
           </form>
         </div>
       </div>

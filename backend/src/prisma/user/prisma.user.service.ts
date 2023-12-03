@@ -1,6 +1,10 @@
 import { ConfigService } from "@nestjs/config";
 import { EditDto } from "src/auth/dto";
-import { BadRequestException, Injectable } from "@nestjs/common";
+import {
+  BadRequestException,
+  ImATeapotException,
+  Injectable,
+} from "@nestjs/common";
 import { PrismaClient } from "@prisma/client";
 import { twoFASecretDto } from "src/twoFA/dto/twoFASecret.dto";
 import { twoFAActivatedDto } from "src/twoFA/dto/twoFAActivated.dto";
@@ -109,5 +113,12 @@ export class PrismaUserService extends PrismaClient {
     } catch (error) {
       throw new BadRequestException("Bad request");
     }
+  }
+
+  async test() {
+    console.log("teaPot prisma test");
+    throw new ImATeapotException("Hello from the tea pot");
+    const ceci = "cela";
+    return { ceci };
   }
 }

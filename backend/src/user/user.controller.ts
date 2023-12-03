@@ -9,75 +9,62 @@ import {
   UploadedFile,
   UseGuards,
   UseInterceptors,
-} from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { Response } from 'express';
-import { extname } from 'path';
-import { diskStorage } from 'multer';
-import { EditDto } from 'src/auth/dto';
-import { UserService } from './user.service';
-import { JwtGuard } from '../auth/guard';
-import { GetUser } from '../auth/decorator';
+} from "@nestjs/common";
+import { FileInterceptor } from "@nestjs/platform-express";
+import { Response } from "express";
+import { extname } from "path";
+import { diskStorage } from "multer";
+import { EditDto } from "src/auth/dto";
+import { UserService } from "./user.service";
+import { JwtGuard } from "../auth/guard";
+import { GetUser } from "../auth/decorator";
 import * as fs from "fs";
 
 @UseGuards(JwtGuard)
-@Controller('user')
+@Controller("user")
 export class UserController {
   constructor(private userService: UserService) {}
 
-  @Get(':login')
-  fetchByLogin(
-    @Param('login') login: string,
-  ) {
-      return this.userService.fetchByLogin(login);
+  @Get("teapot")
+  teapot() {
+    console.log("teaPot controller");
+    return this.userService.teaPot();
   }
 
-  @Get('avatar/:avatar')
-  fetchAvatar(
-    @Param('avatar') avatar: string,
-    @Res() response: Response,
-  ) {
-    console.log('getting file', avatar);
+  @Get(":login")
+  fetchByLogin(@Param("login") login: string) {
+    return this.userService.fetchByLogin(login);
+  }
+
+  @Get("avatar/:avatar")
+  fetchAvatar(@Param("avatar") avatar: string, @Res() response: Response) {
+    console.log("getting file", avatar);
     if (avatar != null) {
-      let fileExtension = '';
-      const lastDotIndex = avatar.lastIndexOf('.');
-      if (lastDotIndex !== -1) {
-        fileExtension = avatar.substring(lastDotIndex + 1);
-      } else {
-        throw new BadRequestException('No valid file');
+
+      const fileExtension = this.userService.getFileExtension({name: avatar});
+      if (!fileExtension) {
+        throw new BadRequestException("No valid file");
       }
-      console.log("a");
-      if (fs.existsSync("/var/avatar/" + avatar))
-       {
+      if (fs.existsSync("/var/avatar/" + avatar)) {
         const fileStream = this.userService.fetchAvatar(avatar);
-
-        console.log("b", response.statusCode);
-
-       response.setHeader(
-          'Content-Type',
-          `image/${fileExtension}`,
-        );
+        response.setHeader("Content-Type", `image/${fileExtension}`);
         response.setHeader(
-          'Content-Disposition',
-          `attachment; filename=${avatar}`,
-       );
-       fileStream.then((fs) => fs.pipe(response));
+          "Content-Disposition",
+          `attachment; filename=${avatar}`
+        );
+        fileStream.then((fs) => fs.pipe(response));
+      } else {
+        throw new BadRequestException("No valid file");
       }
-      else {throw new BadRequestException('No valid file');} 
     }
   }
 
-  @Post('editAvatar')
+  @Post("editAvatar")
   @UseInterceptors(
-    FileInterceptor('file', {
+    FileInterceptor("file", {
       limits: { fileSize: 2 * 1024 * 1024 },
       fileFilter: (req, file, cb) => {
-        const allowedFileExtensions = [
-          '.jpg',
-          '.png',
-          '.jpeg',
-          '.xcf',
-        ];
+        const allowedFileExtensions = [".jpg", ".png", ".jpeg", ".xcf"];
         enum FileValidationErrors {
           UNSUPPORTED_FILE_TYPE,
         }
@@ -85,30 +72,31 @@ export class UserController {
         if (allowedFileExtensions.includes(extension)) {
           cb(null, true);
         } else {
-          req.fileValidationError =
-            FileValidationErrors.UNSUPPORTED_FILE_TYPE;
+          req.fileValidationError = FileValidationErrors.UNSUPPORTED_FILE_TYPE;
           cb(null, false);
         }
       },
       storage: diskStorage({
-        destination: '/var/avatar',
+        destination: "/var/avatar",
 
         filename: (req, file, cb) => {
           cb(null, `${Date.now()}${extname(file.originalname)}`);
         },
       }),
-    }),
+    })
   )
   editAvatar(
-    @GetUser('login') user_login: string,
+    @GetUser("login") user_login: string,
     @UploadedFile()
-    file: Express.Multer.File,
+    file: Express.Multer.File
   ) {
     return this.userService.editAvatar(file, user_login);
   }
 
-  @Post('edit')
+  @Post("edit")
   edit(@Body() dto: EditDto) {
     return this.userService.edit(dto);
   }
+
+
 }

@@ -54,7 +54,7 @@ function RedirectTfa() {
     } else if (tokenOk === false) {
       navigate("/login", { replace: true });
     }
-  }, [tokenOk]);
+  }, [tokenOk, navigate]);
 
   return (
     <div className="login">

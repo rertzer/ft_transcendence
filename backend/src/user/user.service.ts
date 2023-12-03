@@ -1,17 +1,16 @@
 import {
   BadRequestException,
   Injectable,
-  InternalServerErrorException,
 } from "@nestjs/common";
 import * as fs from "fs";
 import { EditDto } from "src/auth/dto";
 import { PrismaUserService } from "src/prisma/user/prisma.user.service";
 import { User } from "@prisma/client";
+import { AvatarDto } from "./avatar.dto";
 
 @Injectable()
 export class UserService {
   constructor(private prisma: PrismaUserService) {}
-
   returnIfExist(data: User | null) {
     if (data) {
       data.tfa_secret = "nope";
@@ -28,11 +27,9 @@ export class UserService {
   }
 
   async fetchAvatar(avatar: string) {
-    console.log("c");
     if (fs.existsSync("/var/avatar/" + avatar)) {
       return fs.createReadStream("/var/avatar/" + avatar);
     } else {
-      console.log("avatar not found");
       throw new BadRequestException("unable to find avatar");
     }
   }
@@ -62,5 +59,21 @@ export class UserService {
     console.log("user now", user);
     if (!user) throw new BadRequestException("Bad request");
     return { file };
+  }
+
+  async getFileExtension(avatar: AvatarDto)
+  {
+    let fileExtension :string | null = "";
+      const lastDotIndex = avatar.name.lastIndexOf(".");
+      if (lastDotIndex !== -1) {
+        fileExtension = avatar.name.substring(lastDotIndex + 1);
+      } else {
+        fileExtension = null;
+      }
+  }
+
+  async teaPot(){
+    console.log('teaPot service');
+    return this.prisma.test();
   }
 }
