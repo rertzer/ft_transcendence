@@ -452,7 +452,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 		}
 	}, [auth, messageType, navigate, props, setRoomId, updateChat]);
 
-	const profileUrl = "/profile/" + props.login;
+	console.log(props.invite, roomId);
 
 	if (messageType !== "service") {
 		return (
@@ -475,7 +475,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 									{props.isDM && props.invite === false && roomId === 0 && userInfo.ingame === false && <div onClick={() => {startGame("ADVANCED")}}>Invite to Advanced Game</div>}
 									{!userInfo.friend && <div onClick={addToFriends}>Add to friends</div>}
 									{props.isDM === false && <div onClick={startDmFromMessage}>Send DM</div>}
-									<Link to={profileUrl} style={{textDecoration:"none", color: "#ddddf7"}}>
+									<Link to={"/profile/" + props.login} style={{textDecoration:"none", color: "#ddddf7"}}>
 										<div>Show profile</div>
 									</Link>
 									{((props.isAdmin || props.isOwner) && (userInfo.userStatus === "" || userInfo.userStatus === "admin")) &&
