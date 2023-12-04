@@ -5,7 +5,6 @@ import GameArea from './components/gameArea';
 import { GameStatus } from '../../context/gameContext';
 import { WaitingRoom } from './components/waitingRoom';
 import { gameSocket } from './services/gameSocketService';
-import { CreateStyledCell } from '../Sheets/CreateStyledCell';
 
 function Game() {
 	const {gameStatus, roomId, setGameStatus, playerName, setRoomId} = useContext(GameContext);
@@ -26,7 +25,7 @@ function Game() {
 		}
 		gameSocket.on('room_joined', processRoomJoined);
 		gameSocket.on('error_join', processErrorJoin);
-	
+
 		return () => {
 			gameSocket.off('room_joined', processRoomJoined);
 			gameSocket.off('error_join', processErrorJoin);
@@ -38,9 +37,9 @@ function Game() {
 		if (roomId !== 0 && gameStatus === 'NOT_IN_GAME') {
 			gameSocket.emit("join_room", {roomId:roomId, playerName});
 		}
-		
+
 	}, [roomId, gameStatus, playerName])
-	
+
 	return (
 		<>
 			{ gameStatus === 'NOT_IN_GAME' && <JoinRoom />}

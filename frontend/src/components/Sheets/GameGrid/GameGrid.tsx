@@ -1,4 +1,4 @@
-import {useState, useContext} from 'react';
+import {useContext} from 'react';
 import { CreateStyledCell } from '../CreateStyledCell';
 import gameContext from '../../../context/gameContext';
 import { gameSocket } from '../../game/services/gameSocketService';

@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from 'react';
 import gameContext from '../../../../context/gameContext';
 import { gameSocket } from '../../services/gameSocketService';
 import { GameStatus } from '../../../../context/gameContext';
-import { PageContext } from '../../../../context/PageContext';
 
 interface IJoinRoomProps {
 };

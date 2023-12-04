@@ -183,7 +183,7 @@ export function Contacts(props: { sx: number, sy: number, zoom: number, toolbar:
 			}
 		}
 		getUser2();
-		const intervalId = setInterval(getUser, 5000);
+		const intervalId = setInterval(getUser2, 5000);
 
 		return () => clearInterval(intervalId);
 	}, [auth])

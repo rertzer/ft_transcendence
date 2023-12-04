@@ -100,7 +100,7 @@ export const LoginProvider = ({ children }: any) => {
         console.error(e);
       }
     }
-  }, [user]);
+  }, [user,token.access_token]);
 
   if (!user.login) reload();
 
