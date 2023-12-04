@@ -6,7 +6,7 @@
 #    By: mbocquel <mbocquel@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/08/01 17:12:15 by mbocquel          #+#    #+#              #
-#    Updated: 2023/12/01 14:14:00 by mbocquel         ###   ########.fr        #
+#    Updated: 2023/12/04 13:44:50 by mbocquel         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@ SOURCES = 	docker-compose.yml
 
 CACHE_FILE = "/mnt/nfs/homes/$(USER)/.cache/yarn"
 
-all: 	$(SOURCES) env_front
+all: 	$(SOURCES) env_front env_back
 		docker-compose -f ./docker-compose.yml up
 
 down:	$(SOURCES) env_front env_back

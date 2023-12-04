@@ -26,7 +26,12 @@ export function JoinRoom(props:IJoinRoomProps) {
 		}
 
 		function processErrorJoin(data:{roomId:number, errorMsg:string}) {
-			window.alert('Error for room ' + data.roomId.toString() + ': ' + data.errorMsg);
+			if (data.errorMsg !== 'The room does not exist') {
+				window.alert('Error for room ' + data.roomId.toString() + ': ' + data.errorMsg);
+			}
+			else {
+				setGameStatus("OPPONENT_LEFT_ROOM");
+			}
 		}
 		
 		gameSocket.on('new_empty_room', processNewEmptyRoom);
