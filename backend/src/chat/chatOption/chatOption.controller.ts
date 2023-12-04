@@ -25,7 +25,7 @@ export class ChatOptController {
 	async setUserAsAdmin(@Body() user:{login:string, chatId: number}){
 		const id = await this.prismaChatService.getIdOfLogin(user.login);
 
-		if (id && (await this.prismaChatService.isAdmin(id, user.chatId)) == false)
+		if (id && (await this.prismaChatService.isAdmin(id, user.chatId)) === false)
 		{
 
 			await this.prismaChatService.changeChatUserRole(user.chatId, id, "admin");
@@ -52,7 +52,7 @@ export class ChatOptController {
 		if (connect && idReceiver)
 		{
 			const exist = await this.prismaChatService.checkIfDmExist(data.idSender, idReceiver)
-			if (exist == -1)
+			if (exist === -1)
 			{
 				const receiverSocket = this.gateway.getSocketsArray().find((elem) => elem.idOfLogin === idReceiver);
 				if (receiverSocket)

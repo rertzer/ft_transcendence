@@ -19,7 +19,7 @@ function EditProfile() {
   const auth = useLogin();
 
   let tmp = auth.user.username;
-  if (tmp == null) tmp = "";
+  if (tmp === null) tmp = "";
 
   const [login, setLogin] = useState("");
   const [userOk, setUserOk] = useState(false);

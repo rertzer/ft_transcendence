@@ -13,7 +13,7 @@ import { DivSelector } from './DivSelector';
 import { convertToLetters } from '../Body/Letters/Letters_dynamic';
 import { useState, useEffect } from 'react';
 
-function Header({}) {
+function Header() {
   const auth = useLogin();
   const [image, setImage] = useState("https://img.lamontagne.fr/c6BQg2OSHIeQEv4GJfr_br_8h5DGcOy84ruH2ZResWQ/fit/657/438/sm/0/bG9jYWw6Ly8vMDAvMDAvMDMvMTYvNDYvMjAwMDAwMzE2NDYxMQ.jpg");
 
@@ -81,7 +81,7 @@ function Header({}) {
           <div className={styles.menu2}>
             <div className={dark ? styles.menuBackground : styles.menuBackgroundLight} />
             <div className={styles.buttpn}>
-              <div onClick={() => (menu == "Font" ? updateMenu("none") : updateMenu("Font"))} className={dark ? styles.buttonBackground : styles.buttonBackgroundLight} />
+              <div onClick={() => (menu === "Font" ? updateMenu("none") : updateMenu("Font"))} className={dark ? styles.buttonBackground : styles.buttonBackgroundLight} />
               <ArrowDropDownIcon sx={{fontSize:'22px'}} className={dark ? styles.buttonChild : styles.buttonChildLight} />
             </div>
             <div className={styles.frameText}>

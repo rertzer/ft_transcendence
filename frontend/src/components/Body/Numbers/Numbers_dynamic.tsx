@@ -1,10 +1,13 @@
-import React, { useContext, useState, useEffect, useRef } from 'react';
+import { useContext, useState, useEffect, useRef } from 'react';
 import { PageContext } from '../../../context/PageContext';
 import styles from "./Numbers.module.css";
 
 function RepeatingNumbers() {
   const windowHeightRef = useRef(window.innerHeight);
 
+
+  const forceUpdate = useForceUpdate();
+  
   useEffect(() => {
     const handleResize = () => {
       windowHeightRef.current = window.innerHeight;
@@ -17,9 +20,7 @@ function RepeatingNumbers() {
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, []);
-
-  const forceUpdate = useForceUpdate();
+  }, [forceUpdate]);
 
   const context = useContext(PageContext);
   if (!context) { throw new Error('useContext must be used within a MyProvider'); }
@@ -27,31 +28,24 @@ function RepeatingNumbers() {
   const { coords, updateCoords } = context;
   const { coordX, coordY } = coords;
 
-  const [localCoordX, setLocalCoordX] = useState(coordX);
   const [localCoordY, setLocalCoordY] = useState(coordY);
   
   const handleUpdateCoords = (a: number, b: number) => {
-    setLocalCoordX(a);
     setLocalCoordY(b);
     updateCoords({ coordX: a, coordY: b });
   };
 
   useEffect(() => {
-    setLocalCoordX(coordX);
     setLocalCoordY(coordY);
   }, [coordX, coordY]);
 
-  const { scroll, updateScroll } = context;
+  const { zoom, scroll } = context;
   const { scrollX, scrollY } = scroll;
-  const { zoom, updateZoom } = context;
-  const { toolbar } = context;
 
   const [sx, setNewScrollX] = useState(scrollX);
-  const [sy, setNewScrollY] = useState(scrollY);
     
   useEffect(() => {
     setNewScrollX(scrollX);
-    setNewScrollY(scrollY);
   }, [scrollX, scrollY]);
 
   const components = [];

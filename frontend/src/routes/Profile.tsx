@@ -1,16 +1,9 @@
 import "./Profile.scss";
-import VictoryIcon from "@mui/icons-material/EmojiEventsOutlined";
-import LoseIcon from "@mui/icons-material/SentimentVeryDissatisfiedOutlined";
-import ChatIcon from "@mui/icons-material/ChatBubbleOutlineOutlined";
-import BlockIcon from "@mui/icons-material/BlockOutlined";
-import { Navigate } from "react-router-dom";
 import { useState } from "react";
 import { useLogin } from "../components/user/auth";
 import { PageContext } from "../context/PageContext";
 import { useContext, useRef, useEffect } from "react";
 import { CreateStyledCell } from "../components/Sheets/CreateStyledCell";
-import { Create } from "@mui/icons-material";
-import styles from "./Profile.module.css";
 
 function Profile() {
   

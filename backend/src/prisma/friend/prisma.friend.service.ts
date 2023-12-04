@@ -23,7 +23,7 @@ export class PrismaFriendService extends PrismaClient{
 
 			const idFriend = await this.getIdOfLogin(newFriend);
 
-			if (idFriend && await this.alreadyFriend(idLogin, idFriend) == false)
+			if (idFriend && await this.alreadyFriend(idLogin, idFriend) === false)
 			{
 
 				const created = await this.friend.create ({

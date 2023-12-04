@@ -95,7 +95,7 @@ export class GameStatsService {
                 }
 			});
 			const gamesUserTimePlayed = gamesUser.map((game) => {
-                const opponent = game.player_one_id == param.user.id ? game.player_two : game.player_one;
+                const opponent = game.player_one_id === param.user.id ? game.player_two : game.player_one;
                 return ({
                     id:game.id, 
                     type:game.type, 
@@ -104,8 +104,8 @@ export class GameStatsService {
                     opponentId: opponent.id,
                     opponentUserName: opponent.username,
                     opponentLogin:opponent.login,
-                    myScore: game.player_one_id == param.user.id ? game.player_one_score : game.player_two_score,
-                    myOpponentScore: game.player_one_id == param.user.id ? game.player_two_score : game.player_one_score,
+                    myScore: game.player_one_id === param.user.id ? game.player_one_score : game.player_two_score,
+                    myOpponentScore: game.player_one_id === param.user.id ? game.player_two_score : game.player_one_score,
                     date_begin:game.date_begin,
                     durationInSec:game.date_end ? (game.date_end.getTime() - game.date_begin.getTime())/1000 : undefined,
                 })

@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useRef, CSSProperties } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useContext } from 'react';
 import { PageContext } from '../../../context/PageContext';
 import Profile from '../../Sheets/Profile/Profile';
-import EditProfile from '../../../routes/EditProfile';
 import { Data } from '../../Sheets/Data/Data';
 import { Contacts } from '../../Sheets/Contacts/Contacts';
 import gameContext from '../../../context/gameContext';
@@ -40,7 +39,7 @@ function Grid() {
   const context = useContext(PageContext);
   if (!context) { throw new Error('useContext must be used within a MyProvider'); }
   
-  const { zoom, coords, scroll, toolbar, updateCoords } = context;
+  const { zoom, coords, scroll, toolbar } = context;
 
   const { scrollX, scrollY } = scroll;
   const [sx, setNewScrollX] = useState(scrollX);
@@ -74,7 +73,7 @@ function Grid() {
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, []);
+  }, [forceUpdate]);
 
   useEffect(() => {
     setNewCoordX(coordX);
@@ -144,7 +143,7 @@ function Grid() {
 
   components.push(
     <div key={'waiting room'} style={{ position: 'fixed', top: toolbar ? '89px' : '166px', left: 'calc(1% + 31px)', color: '#000000' }}>
-      {(gameStatus === 'IN_WAITING_ROOM') && url_context?.page == "Game" && modeGame === 'BASIC' &&
+      {(gameStatus === 'IN_WAITING_ROOM') && url_context?.page === "Game" && modeGame === 'BASIC' &&
         <div
           key={`basic waiting room`}
           style={{
@@ -160,7 +159,7 @@ function Grid() {
           }}>
           You are in the waiting room to join a <b>basic</b> game!
         </div>}
-      {(gameStatus === 'IN_WAITING_ROOM') && url_context?.page == "Game" && modeGame === 'ADVANCED' && <div
+      {(gameStatus === 'IN_WAITING_ROOM') && url_context?.page === "Game" && modeGame === 'ADVANCED' && <div
         key={`advanced waiting room`}
         style={{
           position: 'absolute',

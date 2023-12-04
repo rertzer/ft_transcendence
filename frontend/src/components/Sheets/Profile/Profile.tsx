@@ -6,7 +6,6 @@ import { useContext, useRef, useEffect } from "react";
 import { CreateStyledCell } from "../CreateStyledCell";
 import { useParams } from "react-router-dom";
 import { useLocation } from 'react-router-dom';
-import chatContext from "../../../context/chatContext";
 
 function alternateLine(size: number) {
 	const lines = [];
@@ -355,8 +354,8 @@ function Profile() {
         const variableToPass = 15 + index;
         return (<AddLine game={game} index={variableToPass} key={index}/>);
       })}
-      {sizeOfList == 0 && <CreateStyledCell coordX={15} coordY={1} width={8} height={1} text={"No game"} fontSize={12} className={"dataItem"}/>}
-      <CreateStyledCell coordX={14} coordY={1} width={8} height={sizeOfList == 0 ? 2 : sizeOfList + 1} text={""} className={"border"} fontSize={12} />
+      {sizeOfList === 0 && <CreateStyledCell coordX={15} coordY={1} width={8} height={1} text={"No game"} fontSize={12} className={"dataItem"}/>}
+      <CreateStyledCell coordX={14} coordY={1} width={8} height={sizeOfList === 0 ? 2 : sizeOfList + 1} text={""} className={"border"} fontSize={12} />
       {isAuth() && <CreateStyledCell coordX={1} coordY={calculate_edit_Y()} width={1} height={1} text={"Edit Profile"} className={"edit_profile"} fontSize={12} onClick={() => setEdit(true)} />}
       {edit && <Navigate to="/profile/edit"/>}
       {redirect && <Navigate to ="/profile"/>}

@@ -2,13 +2,9 @@ import { useContext, useEffect } from 'react';
 import gameContext from '../../../../context/gameContext';
 import { gameSocket } from '../../services/gameSocketService';
 import { GameStatus } from '../../../../context/gameContext';
-import { PageContext } from '../../../../context/PageContext';
 
 export function WaitingRoom(props:any) {
 	const {setGameStatus, setRoomId} = useContext(gameContext);
-	const context = useContext(PageContext);
-	if (!context) { throw new Error('useContext must be used within a MyProvider'); }
-	const { scroll, toolbar, zoom } = context;
 
 	useEffect(()=> {
 		function processRoomJoined(data:{roomId:number, gameStatus: GameStatus}) {

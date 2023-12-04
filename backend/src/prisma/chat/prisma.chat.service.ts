@@ -274,7 +274,7 @@ export class PrismaChatService {
 
 		if (listUsersOfChat)
 		{
-			if (listUsersOfChat.length == 1)
+			if (listUsersOfChat.length === 1)
 			{
 				const deleted = await this.prismaService.chatChannels.deleteMany({
 					where: {

@@ -11,7 +11,7 @@ import { PrismaChatService } from '../../prisma/chat/prisma.chat.service';
 // 	const prismaService = new PrismaChatService
 // 	const passwordHashed = encodePassword(password);
 // 	const passwordSaved = await prismaService.getPasswordOfChat(idOfChat);
-// 	if (passwordHashed == passwordSaved) {
+// 	if (passwordHashed === passwordSaved) {
 // 		return 'true';
 // 	} else {
 // 		return 'false';

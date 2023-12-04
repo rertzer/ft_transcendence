@@ -11,8 +11,6 @@ import { useLogin } from "../components/user/auth";
 import { gameSocket } from '../components/game/services/gameSocketService';
 import { GameStatus } from '../context/gameContext';
 import GameContext, { IGameContextProps } from '../context/gameContext';
-import { useNavigate } from 'react-router-dom';
-import { useParams } from 'react-router-dom';
 
 function Desktop1() {
 
@@ -23,7 +21,6 @@ function Desktop1() {
 	const [gameHeight, setGameHeight] = useState(0);
 	const [modeGame, setModeGame] = useState('');
 	const [gameStatus, setGameStatus] = useState<GameStatus>('NOT_IN_GAME');
-	const { login_url } = useParams();
 
 	useEffect(() => {
 		gameSocket.connect();
@@ -87,7 +84,6 @@ function Desktop1() {
 	// 	console.log("yo send something pls : " , socket.id);
 	// },[auth.user.login]);
 
-  const forceUpdate = useForceUpdate();
 
   function DisplayChat() {
     const context = useContext(PageContext);
@@ -109,7 +105,6 @@ function Desktop1() {
 		return (<div/>);
   }
 
-  const [Chat] = useState("none");
   return (
     <div className={styles.desktop1} style={{height: windowHeighthRef.current}}>
 		<GameContext.Provider value={gameContextValue}>
@@ -123,11 +118,3 @@ function Desktop1() {
 }
 
 export default Desktop1;
-
-function useForceUpdate() {
-  const [, setTick] = useState(0);
-  const forceUpdate = () => {
-    setTick((tick) => tick + 1);
-  };
-  return forceUpdate;
-}

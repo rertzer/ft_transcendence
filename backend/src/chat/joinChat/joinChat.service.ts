@@ -49,7 +49,7 @@ export class JoinChatService{
 
 	async checkChatExist(chat_id: number) {
 		const chatExist = await this.prismaService.checkChatId(chat_id);
-		if (chatExist == ChatType.NotExisting) {
+		if (chatExist === ChatType.NotExisting) {
 			return -1;
 		} else {
 		  return chat_id; // Convert chat_id to a string
@@ -79,9 +79,9 @@ export class JoinChatService{
 			// hashed_password = password;
 		}
 
-		if (password == null ||  pwMatches)
+		if (password === null ||  pwMatches)
 		{
-			await this.prismaService.userHasbeenKickedInChat(loginId, chat_id) == true //user updated to removed kicked value
+			await this.prismaService.userHasbeenKickedInChat(loginId, chat_id) === true //user updated to removed kicked value
 			const chatId = await this.prismaService.addChanelUser(chat_id, loginId, user_role, getDate(), null);
 			if (chatId !== undefined)
 				return (chatId.toString());
