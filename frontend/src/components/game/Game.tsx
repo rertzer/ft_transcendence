@@ -8,17 +8,21 @@ import { gameSocket } from './services/gameSocketService';
 import { CreateStyledCell } from '../Sheets/CreateStyledCell';
 
 function Game() {
-	const {gameStatus, roomId, setGameStatus, playerName, setRoomId, matchMe, setMatchMe, modeGame} = useContext(GameContext);
+	const {gameStatus, roomId, setGameStatus, playerName, setRoomId} = useContext(GameContext);
 
 	useEffect(()=>{
 		function processRoomJoined(data:{roomId:number, gameStatus: GameStatus}) {
 			setGameStatus(data.gameStatus);
 			setRoomId(data.roomId);
-			console.log('I joined room number ' + data.roomId.toString() + ' to play');
 		}
 
 		function processErrorJoin(data:{roomId:number, errorMsg:string}) {
-			window.alert('Error for room ' + data.roomId.toString() + ': ' + data.errorMsg);
+			if (data.errorMsg !== 'The room does not exist') {
+				window.alert('Error for room ' + data.roomId.toString() + ': ' + data.errorMsg);
+			}
+			else {
+				setGameStatus("OPPONENT_LEFT_ROOM");
+			}
 		}
 		gameSocket.on('room_joined', processRoomJoined);
 		gameSocket.on('error_join', processErrorJoin);

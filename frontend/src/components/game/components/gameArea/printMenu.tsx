@@ -37,6 +37,10 @@ function printMenu(param:{pong:IGameParam, gameStatus: GameStatus, context:Canva
 			line1 = 'THE GAME IS FINISHED BY FORFAIT';
 			line2 = '';
 			break;
+		case 'OPPONENT_LEFT_ROOM' :
+			line1 = 'YOUR OPPONENT HAS LEFT THE ROOM';
+			line2 = 'Please start a new game';
+			break;
 		default:
 			return; 
 	}
