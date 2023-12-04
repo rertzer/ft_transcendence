@@ -1,4 +1,5 @@
 import { Navigate, useNavigate } from "react-router-dom";
+import { useLocation } from 'react-router-dom';
 import { useState } from "react";
 import { useLogin } from "../../user/auth";
 import { PageContext } from "../../../context/PageContext";
@@ -109,7 +110,7 @@ function Profile() {
     totalGameDurationAdvancedInSec: 0,
     games: [],
   }
-
+  const location = useLocation();
   const [image, setImage] = useState("");
   const [friend, setFriend] = useState(false);
   const auth = useLogin();
@@ -122,12 +123,13 @@ function Profile() {
 
   //RESIZE WINDOW
   const [edit, setEdit] = useState(false);
+  const [render, setRender] = useState(false);
 
   const context = useContext(PageContext);
-  if (!context) { throw new Error('useContext must be used within a MyProvider'); }
-  const { scroll, toolbar, zoom, updateChat, chat } = context;
-  const windowWidthRef = useRef(window.innerWidth);
-  const forceUpdate = useForceUpdate();
+    if (!context) { throw new Error('useContext must be used within a MyProvider'); }
+	const { scroll, toolbar, zoom, updateChat, chat } = context;
+	const windowWidthRef = useRef(window.innerWidth);
+	  const forceUpdate = useForceUpdate();
 
 
   function calculate_edit_Y() {
@@ -163,11 +165,15 @@ function Profile() {
     }
     if (user.id !== 0)
       checkIfAlreadyFriend();
-  },[user, auth]);
+  },[user, auth, location.pathname]);
 
   useEffect(() => {
     setSizeOfList(gameUser?.games?.length || 0);
   }, [gameUser])
+
+  useEffect(() => {
+    setRender(!render);
+  },[location.pathname]);
 
   useEffect(() => {
     const fetchUser = async (login: string) => {
@@ -184,14 +190,19 @@ function Profile() {
         setUser(newUser);
       }
     };
-    try {
-      if (!(user.login) && myuser) {
-        fetchUser(myuser);
-      }
-    } catch (e) {
-      console.error(e);
-    }
-  }, [auth, login_url, myuser, user.login]);
+	try {
+		if (!login_url)
+		{
+			myuser = auth.user.login
+		}
+		if (/*!(user.login) &&*/ myuser !== "") {
+			console.log("before the fectj", myuser);
+			fetchUser(myuser);
+		}
+  	} catch (e) {
+	console.error(e);
+  	}
+  }, [auth, login_url, myuser, user.login, location.pathname]);
 
   useEffect(() => {
 
@@ -229,12 +240,12 @@ function Profile() {
       }
     }
     try {
-      if (user.login)
+      if (user.login && login_url)
         fetchGameUser();
     } catch (e) {
       console.error(e);
     }
-  }, [user, login_url, auth]);
+  }, [user, login_url, auth, location.pathname]);
 
   useEffect(() => {
     const handleResize = () => {
