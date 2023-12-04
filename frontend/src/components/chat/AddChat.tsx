@@ -48,6 +48,7 @@ export const AddChat = (props: {showSubMenu: string, setShowSubMenu: Function}) 
 				chatPassword: password,
 			}
 		}
+		console.log(createChatData);
 		const requestOptions = {
 			method: 'post',
 			headers: { 'Content-Type': 'application/json' ,
@@ -56,16 +57,20 @@ export const AddChat = (props: {showSubMenu: string, setShowSubMenu: Function}) 
 		};
 		try {
 			const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/createChat/`, requestOptions);
+			console.log(response);
 			if (!response.ok) {
 			  throw new Error('Request failed');
 			}
 			const data = await response.json();
-			setPassword('');
-			setNeedToUpdate("addChat " + data.id.toString());
-			setChatName('');
-			setPassword('');
-			toggleForm();
-		} 
+			console.log(data);
+			if (data) {
+				setPassword('');
+				setNeedToUpdate("addChat " + data.id.toString());
+				setChatName('');
+				setPassword('');
+				toggleForm();
+			}
+		}
 		catch (error) {
 			console.error('Error while creating new channel', error);
 		}

@@ -13,16 +13,14 @@ export class addFriendController {
 	{}
 
 	@Post('addFriend')
-	async addFriend(@Body() data:{login:string, friendToAdd:string})
+	async addFriend(@Body() dto:{login:string, friendToAdd:string})
 	{
 
 		const SockArray = this.gateway.getSocketsArray()
-		const targetSocket = SockArray.find((socket) => socket.login === data.login);
+		const targetSocket = SockArray.find((socket) => socket.login === dto.login);
 		if (targetSocket)
 		{
-
-			const done = await this.prismaFriendService.addFriend(targetSocket.idOfLogin, data.friendToAdd)
-
+			await this.prismaFriendService.addFriend(targetSocket.idOfLogin, dto.friendToAdd);
 		}
 	}
 

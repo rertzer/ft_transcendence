@@ -11,11 +11,12 @@ export class CreateChatService {
 	constructor(private prismaService: PrismaChatService){
 	}
 
-	async createChat(login: string, idLogin:number, chatPassword: string, chatName: string, chatType: string, targetSocket: Socket)
+	async createChat(login: string, idLogin:number, chatPassword: string | null, chatName: string, chatType: string, targetSocket: Socket)
 	{
 		const idOfUser = await this.prismaService.getIdOfLogin(login);
 		if (idOfUser !== undefined)
 		{
+			console.log('idOfUser', idOfUser);
 			let hashed_password;
 			if (chatPassword)
 				hashed_password = await argon.hash(chatPassword,);
@@ -25,6 +26,8 @@ export class CreateChatService {
 			targetSocket.join(chatId.toString());
 			const chatlister = new ChatLister(this.prismaService);
 			chatlister.listChatOfUser(idLogin, targetSocket);
+			console.log('chatId', chatId);
+
 			return (chatId);
 		}
 	}

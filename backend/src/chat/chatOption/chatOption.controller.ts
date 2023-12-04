@@ -10,6 +10,7 @@ import { ChatLister } from "../chatLister/chatLister.service";
 import * as argon from 'argon2';
 import { CreateChatService } from "../createchat/createchat.service";
 import { PrismaFriendService } from "src/prisma/friend/prisma.friend.service";
+import { BanKickLeaveDto, BlockUserDto, ChangeChatTypeDto, ChatListOfUserDto, CreateChatDto, InviteUserDto, IsBlockedUserDto, JoinChatDto, PrivateConvDto, SetAdminDto, UnblockUserDto, UpdateDmNameDto } from "src/auth/dto/chat.dto";
 
 
 @UseGuards(JwtGuard)
@@ -18,17 +19,17 @@ export class ChatOptController {
 	constructor(private prismaChatService:PrismaChatService,
 		private gateway: MyGateway, private joinChatservice : JoinChatService,
 		private privateConv: PrivateConvService,
-		private createChatService: CreateChatService, 
+		private createChatService: CreateChatService,
 		private  prismaFriendService: PrismaFriendService) {}
 
 	@Post('setAdmin')
-	async setUserAsAdmin(@Body() user:{login:string, chatId: number}){
-		const id = await this.prismaChatService.getIdOfLogin(user.login);
+	async setUserAsAdmin(@Body() dto: SetAdminDto){
+		const id = await this.prismaChatService.getIdOfLogin(dto.login);
 
-		if (id && (await this.prismaChatService.isAdmin(id, user.chatId)) === false)
+		if (id && (await this.prismaChatService.isAdmin(id, dto.chatId)) === false)
 		{
 
-			await this.prismaChatService.changeChatUserRole(user.chatId, id, "admin");
+			await this.prismaChatService.changeChatUserRole(dto.chatId, id, "admin");
 			return true;
 		}
 		else
@@ -45,14 +46,14 @@ export class ChatOptController {
 	}
 
 	@Post('newPrivateConv')
-	async onNewPrivateConv(@Body() data: {idSender: number, loginReceiver:string})
+	async onNewPrivateConv(@Body() dto: PrivateConvDto)
 	{
-		const idReceiver = await this.prismaChatService.getIdOfLogin(data.loginReceiver);
-		const connect = this.gateway.getSocketsArray().find((elem) => elem.idOfLogin === data.idSender);
+		const idReceiver = await this.prismaChatService.getIdOfLogin(dto.loginReceiver);
+		const connect = this.gateway.getSocketsArray().find((elem) => elem.idOfLogin === dto.idSender);
 		if (connect && idReceiver)
 		{
-			const exist = await this.prismaChatService.checkIfDmExist(data.idSender, idReceiver)
-			if (exist === -1)
+			const exist = await this.prismaChatService.checkIfDmExist(dto.idSender, idReceiver)
+			if (exist == -1)
 			{
 				const receiverSocket = this.gateway.getSocketsArray().find((elem) => elem.idOfLogin === idReceiver);
 				if (receiverSocket)
@@ -70,10 +71,10 @@ export class ChatOptController {
 				else
 				{
 					const usernameSender = await this.prismaChatService.getUsernameWithLogin(connect.login);
-					const usernameReceiver = await this.prismaChatService.getUsernameWithLogin(data.loginReceiver);
+					const usernameReceiver = await this.prismaChatService.getUsernameWithLogin(dto.loginReceiver);
 					if (usernameReceiver && usernameSender)
 					{
-						const allGood = await this.privateConv.setDirectConv(connect.login, connect.idOfLogin, data.loginReceiver, connect.sock, null);
+						const allGood = await this.privateConv.setDirectConv(connect.login, connect.idOfLogin, dto.loginReceiver, connect.sock, null);
 						const chatlister = new ChatLister(this.prismaChatService);
 						chatlister.listChatOfUser(connect.idOfLogin, connect.sock);
 						return {id: allGood};
@@ -84,99 +85,98 @@ export class ChatOptController {
 				return {id: exist}
 		}
 	}
-	
+
 	@Post("updateDmName")
     async updateDmName(
-        @Body() data: {
-            OldUsername:string, newUsername:string}
+        @Body() dto:UpdateDmNameDto
     )
     {
-        console.log("old username and new", data.OldUsername, data.newUsername);
-        const arrayOfDm = await this.prismaChatService.getAllDm(data.OldUsername);
+        console.log("old username and new", dto.OldUsername, dto.newUsername);
+        const arrayOfDm = await this.prismaChatService.getAllDm(dto.OldUsername);
         if (arrayOfDm)
         {
-            await this.prismaChatService.updateNewUsernameOnDm(arrayOfDm, data.OldUsername, data.newUsername)
+            await this.prismaChatService.updateNewUsernameOnDm(arrayOfDm, dto.OldUsername, dto.newUsername)
         }
     }
 
 	@Post('inviteUser')
-	async inviteUser(@Body() data:{ownerLogin:string, username:string, chat_id:number})
+	async inviteUser(@Body() dto:InviteUserDto)
 	{
-		if (await this.prismaChatService.isOwner(data.ownerLogin, data.chat_id))
+		if (await this.prismaChatService.isOwner(dto.ownerLogin, dto.chat_id))
 		{
-			const id = await this.prismaChatService.getIdOfUsername(data.username)
+			const id = await this.prismaChatService.getIdOfUsername(dto.username)
 			if ( id > 0)
 			{
-				const worked = await this.prismaChatService.userAlreadyInChat(id, data.chat_id)
+				const worked = await this.prismaChatService.userAlreadyInChat(id, dto.chat_id)
 				console.log("worked =", worked)
 				if (worked === 0)
 				{
-					if (await this.prismaChatService.addChanelUser(data.chat_id, id, "user", getDate(), null))
+					if (await this.prismaChatService.addChanelUser(dto.chat_id, id, "user", getDate(), null))
 					{
 						const connect = this.gateway.getSocketsArray().find((elem) => elem.idOfLogin === id);
 						if (connect)
-							connect.sock.join(data.chat_id.toString());
+							connect.sock.join(dto.chat_id.toString());
 						return ({message: "ok"});
 					}
 					return ({message: "issue while adding new user"})
 				}
 				else if ( worked == 1)
-					return ({message: `User ${data.username} is already in this channel`});
+					return ({message: `User ${dto.username} is already in this channel`});
 				else if ( worked == 3)
-					return ({message: `User ${data.username} has been banned from this channel`});
+					return ({message: `User ${dto.username} has been banned from this channel`});
 				else
 				{
 					const connect = this.gateway.getSocketsArray().find((elem) => elem.idOfLogin === id);
 					if (connect)
-						connect.sock.join(data.chat_id.toString());
+						connect.sock.join(dto.chat_id.toString());
 					return ({message: "ok"});
 				}
 			}
 			else
-				return ({message: `User ${data.username} doesn't exist`})
+				return ({message: `User ${dto.username} doesn't exist`})
 		}
 		else
 			return({message: "You cannot invite anyone if you don't own the channel"})
 	}
 
 	@Post('blockUser')
-	async blockUser(@Body() data: {blockedLogin:string, login:string})
+	async blockUser(@Body() dto: BlockUserDto)
 	{
-		return await this.prismaChatService.blockUser(data.login, data.blockedLogin, getDate());
+		return await this.prismaChatService.blockUser(dto.login, dto.blockedLogin, getDate());
 	}
 
 	@Post('unblockUser')
-	async unblockUser(@Body() data: {blockedLogin:string, login:string})
+	async unblockUser(@Body() dto: UnblockUserDto)
 	{
-		return await this.prismaChatService.unblockUser(data.login, data.blockedLogin);
+		return await this.prismaChatService.unblockUser(dto.login, dto.blockedLogin);
 	}
 
 	@Post('isBlocked')
-	async isBlockUser(@Body() data: {blockedLogin:string, login:string})
+	async isBlockUser(@Body() dto: IsBlockedUserDto)
 	{
-		return await this.prismaChatService.userIsblocked(data.login, data.blockedLogin);
+		return await this.prismaChatService.userIsblocked(dto.login, dto.blockedLogin);
 	}
 
 	@Post('banUser')
-	async banUser(@Body() user:{login:string, chatId: number}){
+	async banUser(@Body() dto:BanKickLeaveDto){
 
-		const idLogin = await this.prismaChatService.getIdOfLogin(user.login);
+		const idLogin = await this.prismaChatService.getIdOfLogin(dto.login);
 		if (idLogin)
 		{
-			const isOwner = await this.prismaChatService.isOwner(user.login, user.chatId);
+			const isOwner = await this.prismaChatService.isOwner(dto.login, dto.chatId);
 			if (!isOwner)
 			{
 
-				const banWorks = await this.prismaChatService.banUserPrism(idLogin, user.chatId);
+				const banWorks = await this.prismaChatService.banUserPrism(idLogin, dto.chatId);
 				if (banWorks)
 				{
 					const SockArray = this.gateway.getSocketsArray()
-					const targetSocket = SockArray.find((socket) => socket.login === user.login);
+					const targetSocket = SockArray.find((socket) => socket.login === dto.login);
 					if (targetSocket)
 					{
 
 						await this.gateway.onChatListOfUser(targetSocket.login, targetSocket.sock);
-						targetSocket.sock.leave(user.chatId.toString())
+						targetSocket.sock.leave(dto.chatId.toString())
 						return true
 					}
 				}
@@ -205,22 +205,22 @@ export class ChatOptController {
 	}
 
 	@Post('kickUser')
-	async kickUser(@Body() user:{login:string, chatId: number}) {
+	async kickUser(@Body() dto:BanKickLeaveDto) {
 
 		const SockArray = this.gateway.getSocketsArray()
-		const targetSocket = SockArray.find((socket) => socket.login === user.login);
+		const targetSocket = SockArray.find((socket) => socket.login === dto.login);
 		if (targetSocket)
 		{
-			const isOwner = await this.prismaChatService.isOwner(user.login, user.chatId);
+			const isOwner = await this.prismaChatService.isOwner(dto.login, dto.chatId);
 			if (!isOwner)
 			{
 
-				const kicked = await this.prismaChatService.kickUserFromChat(targetSocket.idOfLogin, user.chatId);
+				const kicked = await this.prismaChatService.kickUserFromChat(targetSocket.idOfLogin, dto.chatId);
 				if (kicked)
 				{
 
-					await this.gateway.onChatListOfUser(user.login, targetSocket.sock);
-					targetSocket.sock.leave(user.chatId.toString())
+					await this.gateway.onChatListOfUser(dto.login, targetSocket.sock);
+					targetSocket.sock.leave(dto.chatId.toString())
 					return true
 				}
 				return false;
@@ -230,13 +230,13 @@ export class ChatOptController {
 		}
 		else
 		{
-			const idLogin = await this.prismaChatService.getIdOfLogin(user.login);
+			const idLogin = await this.prismaChatService.getIdOfLogin(dto.login);
 			if (idLogin)
 			{
-				const isOwner = await this.prismaChatService.isOwner(user.login, user.chatId);
+				const isOwner = await this.prismaChatService.isOwner(dto.login, dto.chatId);
 				if (!isOwner)
 				{
-						const kicked = await this.prismaChatService.kickUserFromChat(idLogin, user.chatId);
+						const kicked = await this.prismaChatService.kickUserFromChat(idLogin, dto.chatId);
 						if (kicked)
 						{
 							return true
@@ -251,21 +251,21 @@ export class ChatOptController {
 	}
 
 	@Post('leaveChat')
-	async onLeaveChat(@Body() data:{login:string, chatId: number})
+	async onLeaveChat(@Body() dto:BanKickLeaveDto)
 	{
-		const id = await this.prismaChatService.getIdOfLogin(data.login);
+		const id = await this.prismaChatService.getIdOfLogin(dto.login);
 		if (id)
 		{
-			if (!await this.prismaChatService.isOwner(data.login, data.chatId))
+			if (!await this.prismaChatService.isOwner(dto.login, dto.chatId))
 			{
 
-				const succeed = await this.prismaChatService.kickUserFromChat(id, data.chatId);
+				const succeed = await this.prismaChatService.kickUserFromChat(id, dto.chatId);
 				if (succeed)
 					return (true);
 			}
 			else
 			{
-				const newOwner = await this.prismaChatService.leaveAsOwner(id,data.chatId);	 
+				const newOwner = await this.prismaChatService.leaveAsOwner(id,dto.chatId);
 				console.log("new owner username = ", newOwner);
 				return {username: newOwner};
 			}
@@ -273,20 +273,20 @@ export class ChatOptController {
 	}
 
 	@Post('changeType')
-	async changeChatType(@Body() chatType:{password:string, type: string, chatId: number, login: string})
+	async changeChatType(@Body() dto:ChangeChatTypeDto)
 	{
 		let worked;
-		const isOwner = await this.prismaChatService.isOwner(chatType.login, chatType.chatId);
+		const isOwner = await this.prismaChatService.isOwner(dto.login, dto.chatId);
 		if (isOwner)
 		{
-			if (chatType.password.length > 0)
+			if (dto.password.length > 0)
 			{
-				const hashed_password = await argon.hash(chatType.password,);
-				worked = await this.prismaChatService.updateChatWithPassword(hashed_password, chatType.type, chatType.chatId);
+				const hashed_password = await argon.hash(dto.password,);
+				worked = await this.prismaChatService.updateChatWithPassword(hashed_password, dto.type, dto.chatId);
 			}
 			else
 			{
-				worked = await this.prismaChatService.updateChatTypeNoPass(chatType.chatId, chatType.type);
+				worked = await this.prismaChatService.updateChatTypeNoPass(dto.chatId, dto.type);
 			}
 			return( worked);
 		}
@@ -295,16 +295,22 @@ export class ChatOptController {
 	}
 
 	@Post('createChat')
-	async onCreateChat(@Body() messageData: {login: string, chatName: string, chatType: string, chatPassword: string}){ 
-		const targetSocket = this.gateway.getSocketsArray().find((socket) => socket.login === messageData.login);
+	async onCreateChat(@Body() dto: CreateChatDto)
+	{
+		console.log("on create chat, dto = ", dto);
+		console.log("this.gateway.getSocketsArray() = ", this.gateway.getSocketsArray());
+		const targetSocket = this.gateway.getSocketsArray().find((socket) => socket.login === dto.login);
 		if (targetSocket !== undefined)
 		{
-			const idCreated = await this.createChatService.createChat(messageData.login, targetSocket.idOfLogin ,messageData.chatPassword, messageData.chatName, messageData.chatType, targetSocket.sock);
+			const idCreated = await this.createChatService.createChat(dto.login, targetSocket.idOfLogin , dto.chatPassword, dto.chatName, dto.chatType, targetSocket.sock);
 			if (idCreated)
 			{
 				return {id: idCreated};
 			}
-		}	
+			else
+				return {id: -1};
+		}
+		return {id: -1};
 	}
 
 	@Get("listOfBlockedUser/:login")
@@ -332,13 +338,13 @@ export class ChatOptController {
 
 
 	@Post('joinChat')
-	async joinChat(@Body() user: {login:string, chat_id: number, password:string})
+	async joinChat(@Body() dto: JoinChatDto)
 	{
 		const SockArray = this.gateway.getSocketsArray();
-		const targetSocket = SockArray.find((socket) => socket.login === user.login);
+		const targetSocket = SockArray.find((socket) => socket.login === dto.login);
 		if (targetSocket !== undefined)
 		{
-			const value =  await this.joinChatservice.joinChat(targetSocket.idOfLogin, user.chat_id, "user", user.password, targetSocket.sock);
+			const value =  await this.joinChatservice.joinChat(targetSocket.idOfLogin, dto.chat_id, "user", dto.password, targetSocket.sock);
 			const chatlister = new ChatLister(this.prismaChatService);
 			chatlister.listChatOfUser(targetSocket.idOfLogin, targetSocket.sock);
 			return value;
