@@ -20,7 +20,7 @@ import { Socket } from "socket.io";
 import { CreateChatService } from "../createchat/createchat.service";
 import { MutedUserService } from "../mutedUser/mutedUser.service";
 import { PrivateConvService } from "../privateConv/privateConv.service";
-import { MutedUserDto, NewChatConnectionDto, NewMessageDto, RetrieveMessageDto, SendMessageDto } from "src/auth/dto/chat.dto";
+import { MutedUserDto, NewChatConnectionDto, NewMessageDto, RetrieveMessageDto, SendMessageDto } from "src/user/dto/chat.dto";
 
 let lastMessageId = 0;
 

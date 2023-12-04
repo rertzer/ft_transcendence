@@ -10,7 +10,12 @@ import { ChatLister } from "../chatLister/chatLister.service";
 import * as argon from 'argon2';
 import { CreateChatService } from "../createchat/createchat.service";
 import { PrismaFriendService } from "src/prisma/friend/prisma.friend.service";
-import { BanKickLeaveDto, BlockUserDto, ChangeChatTypeDto, ChatListOfUserDto, CreateChatDto, InviteUserDto, IsBlockedUserDto, JoinChatDto, PrivateConvDto, SetAdminDto, UnblockUserDto, UpdateDmNameDto } from "src/auth/dto/chat.dto";
+import { BanKickLeaveDto,
+	BlockUserDto,
+	ChangeChatTypeDto,
+	ChatListOfUserDto,
+	CreateChatDto,
+	InviteUserDto, IsBlockedUserDto, JoinChatDto, PrivateConvDto, SetAdminDto, UnblockUserDto, UpdateDmNameDto } from "../../user/dto/chat.dto";
 
 
 @UseGuards(JwtGuard)

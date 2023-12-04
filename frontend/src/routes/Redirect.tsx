@@ -1,6 +1,6 @@
 import "./Login.scss";
 import { useNavigate, useLocation } from "react-router-dom";
-import React, { MouseEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useLogin } from "../components/user/auth";
 
 function Redirect() {
@@ -58,7 +58,7 @@ function Redirect() {
     } else if (tokenOk === false) {
       navigate("/login", { replace: true });
     }
-  }, [tokenOk]);
+  }, [tokenOk, navigate]);
 
   return (
     <div className="login">

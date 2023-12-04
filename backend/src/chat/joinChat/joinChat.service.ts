@@ -4,7 +4,6 @@ import { getDate } from "../utils/utils.service";
 import { Socket } from "socket.io";
 import * as argon from 'argon2';
 import { ChatType } from "src/prisma/chat/prisma.chat.service";
-import { LoginDto } from "src/auth/dto";
 
 
 

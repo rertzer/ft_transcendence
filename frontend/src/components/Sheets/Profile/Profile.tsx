@@ -136,7 +136,7 @@ function Profile() {
   }
 
   let myuser = auth.user.login;
-  if (login_url) { 
+  if (login_url) {
     console.log(login_url);
     myuser = login_url; }
 
@@ -400,7 +400,7 @@ function Profile() {
       {isAuth() && <CreateStyledCell coordX={1} coordY={calculate_edit_Y()} width={1} height={1} text={"Edit Profile"} className={"edit_profile"} fontSize={12} onClick={() => setEdit(true)} />}
       {edit && <Navigate to="/profile/edit"/>}
       {redirect && <Navigate to ={"/profile/" + auth.user.login}/>}
-      {!isAuth() && 
+      {!isAuth() &&
       <div>
         <CreateStyledCell coordX={1} coordY={calculate_edit_Y()} width={1} height={1} text={"Send DM"} className={"edit_profile"} fontSize={12} onClick={() => sendDM(user.login)} />
         {friend === false && <CreateStyledCell coordX={2} coordY={calculate_edit_Y()} width={1} height={1} text={"Add friend"} className={"edit_profile"} fontSize={12} onClick={() => addToFriends(user.login)} />}

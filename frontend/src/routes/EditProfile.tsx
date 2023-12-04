@@ -1,11 +1,9 @@
 import "./EditProfile.scss";
-import { Link, Navigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { useLogin } from "../components/user/auth";
-import { useContext, useEffect, useState, MouseEvent } from "react";
+import { useEffect, useState, MouseEvent } from "react";
 
 import StringField from "../components/user/StringField";
-import PassField from "../components/user/PassField";
-import { Email } from "@mui/icons-material";
 import EmailField from "../components/user/EmailField";
 import { error } from "console";
 
@@ -22,12 +20,10 @@ function EditProfile() {
   let tmp = auth.user.username;
   if (tmp === null) tmp = "";
 
-  const [login, setLogin] = useState("");
   const [userOk, setUserOk] = useState(false);
   const [newUsername, setNewUsername] = useState(tmp);
   const [newEmail, setNewEmail] = useState(auth.user.email);
   const [newAvatar, setNewAvatar] = useState<File>();
-  const [avatarName, setAvatarName] = useState("");
   const [returnPath, setReturnPath] = useState("/");
 
   const handleAvatar = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,11 +32,9 @@ function EditProfile() {
     const avatar = selectedFiles?.[0];
     if (avatar) {
       setNewAvatar(avatar);
-      setAvatarName(avatar.name);
     }
     else{
       setNewAvatar(undefined);
-      setAvatarName("");
     }
   };
 
@@ -65,6 +59,7 @@ function EditProfile() {
           body: formData,
         }
       );
+      console.log("EditProfile: handleUser status", )
       const answer = await fileData.json();
       console.log("Answer", JSON.stringify(answer));
       setUserOk(true);
@@ -130,11 +125,6 @@ function EditProfile() {
   }
   catch(e) {console.log(e);}}
   };
-
-  useEffect(() => {
-    let stored_login: string | null = sessionStorage.getItem("Login");
-    if (stored_login != null) setLogin(stored_login);
-  }, []);
 
   useEffect(() => {
     if (!newUsername && auth.user.username) setNewUsername(auth.user.username);

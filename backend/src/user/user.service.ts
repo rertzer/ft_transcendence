@@ -1,24 +1,21 @@
-import {
-  BadRequestException,
-  Injectable,
-  InternalServerErrorException,
-} from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import * as fs from "fs";
-import { EditDto } from "src/auth/dto";
+import { EditDto } from "src/user/dto";
 import { PrismaUserService } from "src/prisma/user/prisma.user.service";
 import { User } from "@prisma/client";
+import { AvatarDto } from "./dto/avatar.dto";
 
 @Injectable()
 export class UserService {
   constructor(private prisma: PrismaUserService) {}
-
   returnIfExist(data: User | null) {
+    console.log("return if exist");
     if (data) {
       data.tfa_secret = "nope";
       data.tfa_activated = false;
       return data;
     } else {
-      throw new BadRequestException("Bad request");
+      throw new BadRequestException("Sorry, bad request");
     }
   }
 
@@ -34,11 +31,11 @@ export class UserService {
   }
 
   async fetchAvatar(avatar: string) {
-    console.log("c");
+    console.log("fetchAvatar");
     if (fs.existsSync("/var/avatar/" + avatar)) {
       return fs.createReadStream("/var/avatar/" + avatar);
     } else {
-      console.log("avatar not found");
+      console.log("fetchAvatar, bad request");
       throw new BadRequestException("unable to find avatar");
     }
   }
@@ -66,7 +63,27 @@ export class UserService {
       avatar: file.filename,
     });
     console.log("user now", user);
-    if (!user) throw new BadRequestException("Bad request");
+    if (!user) throw new BadRequestException("Bad request, can't do that");
     return { file };
   }
+
+  async getFileExtension(avatar: string) {
+    console.log("getFileExtension");
+    const pattern = /^\d{13}\.\w{3,4}$/g;
+    if (! pattern.exec(avatar))
+    {
+      console.log("getFileExtension, bad pattern");
+      return null;
+    }
+    console.log("getFileExtension, pattern ok");
+    let fileExtension: string | null = "";
+    const lastDotIndex = avatar.lastIndexOf(".");
+    if (lastDotIndex !== -1) {
+      fileExtension = avatar.substring(lastDotIndex + 1);
+    } else {
+      fileExtension = null;
+    }
+    return fileExtension;
+  }
+
 }

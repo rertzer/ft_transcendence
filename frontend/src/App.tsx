@@ -3,7 +3,6 @@ import { createBrowserRouter, createRoutesFromElements,RouterProvider, Route } f
 import Login from './routes/FtLogin';
 // import Login from './routes/Login';
 import Desktop1 from './pages/Desktop1';
-import Welcome from "./routes/Welcome";
 import { LoginProvider } from "./components/user/auth";
 import { RequireAuth } from "./components/user/requireAuth";
 import EditProfile from "./routes/EditProfile";
@@ -12,6 +11,7 @@ import Redirect from './routes/Redirect';
 import RedirectTfa from './routes/RedirectTfa';
 import { PageUrlProvider } from './context/PageUrlContext';
 import { PageProvider } from './context/PageContext';
+import Error404 from './routes/Error404';
 
 function App() {
  
@@ -28,7 +28,7 @@ function App() {
       <Route path="/redirect" element={<Redirect />} /> 
       <Route path="/redirect/twofa" element={<RedirectTfa />} /> 
       <Route path="/twofa" element={<RequireAuth> <Twofa /></RequireAuth>} />
-      <Route path="*" element={<Welcome />} />
+      <Route path="*" element={<Error404 />} />
 	  </Route>
     )
   );

@@ -31,7 +31,7 @@ function TwoFAToken() {
     } else if (tokenOk === false) {
       navigate("/login", { replace: true });
     }
-  }, [tokenOk]);
+  }, [tokenOk, navigate]);
 
   return (
     <form>

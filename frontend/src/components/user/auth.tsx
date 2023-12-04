@@ -43,19 +43,22 @@ export const LoginProvider = ({ children }: any) => {
   };
 
   const fetchImage = async () => {
-    try{
-    const bearer = "Bearer " + token.access_token;
-    const res = await fetch(
-      `http://${process.env.REACT_APP_URL_MACHINE}:4000/user/avatar/` +
-        user.avatar,
-      {
-        method: "GET",
-        headers: { Authorization: bearer },
-      }
-    );
-    const imageBlob = await res.blob();
-    const imageObjectURL = URL.createObjectURL(imageBlob);
-    setImage(imageObjectURL);}catch(e){console.log(e);}
+    try {
+      const bearer = "Bearer " + token.access_token;
+      const res = await fetch(
+        `http://${process.env.REACT_APP_URL_MACHINE}:4000/user/avatar/` +
+          user.avatar,
+        {
+          method: "GET",
+          headers: { Authorization: bearer },
+        }
+      );
+      const imageBlob = await res.blob();
+      const imageObjectURL = URL.createObjectURL(imageBlob);
+      setImage(imageObjectURL);
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   const reload = () => {
@@ -64,8 +67,7 @@ export const LoginProvider = ({ children }: any) => {
       const fetchUser = async () => {
         console.log("bearer is", bearer);
         fetch(
-          `http://${process.env.REACT_APP_URL_MACHINE}:4000/user/` +
-            token.login,
+          `http://${process.env.REACT_APP_URL_MACHINE}:4000/user/${token.login}`,
           {
             method: "GET",
             headers: { Authorization: bearer },
@@ -75,14 +77,14 @@ export const LoginProvider = ({ children }: any) => {
           .then((data) => setUser(data))
           .catch((error) => console.log(error));
       };
-         fetchUser();
+      fetchUser();
     }
   };
 
   const edit = (user: any) => {
     setUser(user);
   };
-  
+
   const getLogin = () => {
     return token.login;
   };
