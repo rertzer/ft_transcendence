@@ -20,6 +20,7 @@ import { Socket } from "socket.io";
 import { CreateChatService } from "../createchat/createchat.service";
 import { MutedUserService } from "../mutedUser/mutedUser.service";
 import { PrivateConvService } from "../privateConv/privateConv.service";
+import { MutedUserDto, NewChatConnectionDto, NewMessageDto, RetrieveMessageDto, SendMessageDto } from "src/auth/dto/chat.dto";
 
 let lastMessageId = 0;
 
@@ -57,21 +58,24 @@ export class MyGateway {
   }
 
 	@SubscribeMessage('newChatConnection')
-	async newChatConnection(@MessageBody() login:string, @ConnectedSocket() client:Socket)
+	async newChatConnection(@MessageBody() login: string, @ConnectedSocket() client:Socket)
 	{
-
+		if (login === undefined || login === null)
+			return;
+		console.log('newChatConnection', login);
 		if (!this.socketsLogin.find((item) => item.login === login && item.sock === client))
 		{
 			const idOfLogin = await this.prismaChatService.getIdOfLogin(login);
 			if (idOfLogin)
 			{
+				console.log("succeed");
 				this.socketsLogin.push({login : login , sock: client, idOfLogin: idOfLogin})
 			}
 		}
 	}
 
 	@SubscribeMessage('newMessage')
-	async onNewMessage(@MessageBody() messageData: {username:string, login: string, serviceMessage:boolean ,content: string, idOfChat: number}, @ConnectedSocket() client:Socket) {
+	async onNewMessage(@MessageBody() messageData: NewMessageDto, @ConnectedSocket() client:Socket) {
 		if (!this.mutedUserService.IsMutedUser(messageData.login, messageData.idOfChat))
 		{
 			const targetSocket = this.socketsLogin.find((socket) => socket.sock === client);
@@ -96,7 +100,7 @@ export class MyGateway {
 	}
 
 	@SubscribeMessage('SendPrivateMessage')
-	async onSendMessage(@MessageBody() messageData: {msg: string, loginToSend: string, idOfUser: string}, @ConnectedSocket() client:Socket) {
+	async onSendMessage(@MessageBody() messageData: SendMessageDto, @ConnectedSocket() client:Socket) {
 		const targetSocket = this.socketsLogin.find((socket) => socket.sock === client);
 		if (targetSocket !== undefined)
 		{
@@ -118,7 +122,7 @@ export class MyGateway {
 
   @SubscribeMessage("retrieveMessage")
   async onRetrieveMessage(
-    @MessageBody() messageData: { numberMsgToDisplay: number; chatId: number },
+    @MessageBody() messageData: RetrieveMessageDto,
     @ConnectedSocket() client: Socket
   ) {
     const targetSocket = this.socketsLogin.find(
@@ -138,7 +142,7 @@ export class MyGateway {
 
   @SubscribeMessage("mutedUser")
   mutedUser(
-    @MessageBody() user: { login: string; chatId: number; time: number },
+    @MessageBody() user: MutedUserDto,
     @ConnectedSocket() client: Socket
   ) {
     const userIsMute = this.mutedUserService.addMutedUser({
@@ -157,9 +161,12 @@ export class MyGateway {
     @MessageBody() login: string,
     @ConnectedSocket() client: Socket
   ) {
+	if (login === undefined || login === null)
+		return;
     const targetSocket = this.socketsLogin.find(
       (socket) => socket.sock === client
     );
+
     if (targetSocket !== undefined) {
       const chatLister = new ChatLister(this.prismaChatService);
       await chatLister.listChatOfUser(

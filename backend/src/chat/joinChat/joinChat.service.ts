@@ -13,7 +13,7 @@ export class JoinChatService{
 	constructor(private prismaService:PrismaChatService ){
 	}
 
-	async joinChat(loginId:number, chat_id:number, user_role:string, password:string, sock : Socket)
+	async joinChat(loginId:number, chat_id:number, user_role:string, password:string | null, sock : Socket)
 	{
 		const value = await this.checkChatExist(chat_id);
 		if (value < 0)
@@ -24,7 +24,6 @@ export class JoinChatService{
 		}
 		if (!await this.prismaService.checkIfUserIsBanned(chat_id, loginId))
 		{
-
 			const added = await this.addUserToChat(loginId, chat_id, user_role, password);
 			if (!added)
 			{
@@ -34,9 +33,8 @@ export class JoinChatService{
 			return value;
 		}
 		else
-			return(-2) //pour indiquer au front que le user est ban du chat qu'il essaie de rejoindre
+			return(-2)
 	}
-	//async addUserToChat(username: string, chat_id:string, user_role:string, passeword:string)
 
 	checkNumber(chat_id: string) : Number
 	{
@@ -58,7 +56,7 @@ export class JoinChatService{
 
 
 
-	async addUserToChat(loginId: number, chat_id:number, user_role:string, password:string)
+	async addUserToChat(loginId: number, chat_id:number, user_role:string, password:string | null)
 	{
 		const getPasswordOfChat = await this.prismaService.getPasswordOfChat(chat_id);
 		let pwMatches = false;
