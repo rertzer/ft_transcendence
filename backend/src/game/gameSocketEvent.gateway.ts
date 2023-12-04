@@ -5,9 +5,9 @@ import { Inject } from "@nestjs/common";
 import { RoomsService } from "./rooms/rooms.service";
 import { Interval } from "@nestjs/schedule";
 import { Logger } from "@nestjs/common";
-import { TypeGame } from "./Interface/room.interface";
 import { GameLogicService } from "./gameLogic/gameLogic.service";
 import { PrismaGameService } from "src/prisma/game/prisma.game.service";
+import { giveMeARoomDto, JoinGameDto, JoinWaitingRoomDto, GiveMeRoomStatusDto, PlayerKeyEventDto, LeavingDto } from "./dto/game.dto";
 
 @WebSocketGateway({
 	namespace: '/game_socket',
@@ -64,7 +64,7 @@ export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, On
 
     //Recevoir un event 
 	@SubscribeMessage('give_me_a_room')
-	async handleGiveMeARoom(@MessageBody() data:{typeGame:TypeGame}, @ConnectedSocket() client:Socket){
+	async handleGiveMeARoom(@MessageBody() data:giveMeARoomDto, @ConnectedSocket() client:Socket){
 		if (this.printEventRecieved) console.log('give_me_a_room');
 		const newRoomId = await this.roomsService.createEmptyRoom(data.typeGame);
 		const responseData = {
@@ -74,7 +74,7 @@ export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, On
 	}
 
 	@SubscribeMessage('match_me')
-	async handleJoinWaitingRoom(@MessageBody() data:{playerName:string, typeGame:TypeGame}, @ConnectedSocket() client:Socket){
+	async handleJoinWaitingRoom(@MessageBody() data:JoinWaitingRoomDto, @ConnectedSocket() client:Socket){
 		if (this.printEventRecieved) console.log('match_me');
 		const player = this.playersService.findOne(client);
 		if (player) {
@@ -85,7 +85,7 @@ export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, On
 	}
 
 	@SubscribeMessage('join_room')
-	async handleJoinGame(@MessageBody() data:{roomId:number, playerName:string}, @ConnectedSocket() client:Socket){
+	async handleJoinGame(@MessageBody() data:JoinGameDto, @ConnectedSocket() client:Socket){
 		if (this.printEventRecieved) console.log('join_room');
 		const player = this.playersService.findOne(client);
 		if (player) {
@@ -96,20 +96,20 @@ export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, On
 	}
 
 	@SubscribeMessage('give_me_room_status')
-	handleGiveMeRoomStatus(@MessageBody() data:{roomId:number}, @ConnectedSocket() client:Socket){
+	handleGiveMeRoomStatus(@MessageBody() data:GiveMeRoomStatusDto){
 		if (this.printEventRecieved) console.log('give_me_room_status');
 		const room = this.roomsService.findRoomById(data.roomId);
 		if (room) this.roomsService.sendRoomStatus(room);
 	}
 
 	@SubscribeMessage('keyevent')
-	handlePlayerKeyEvent(@MessageBody() data:{roomId:number, key:string, idPlayerMove:number}, @ConnectedSocket() client:Socket){
+	handlePlayerKeyEvent(@MessageBody() data:PlayerKeyEventDto, @ConnectedSocket() client:Socket){
 		if (this.printEventRecieved) console.log('keyevent');
 		this.roomsService.handlePlayerKeyEvent({roomId: data.roomId, key:data.key, idPlayerMove:data.idPlayerMove, client});
 	}
 
 	@SubscribeMessage('i_am_leaving')
-	handleLeaving(@MessageBody() data:{waitingRoom:boolean, modeGame:TypeGame,  roomId:number}, @ConnectedSocket() client:Socket){
+	handleLeaving(@MessageBody() data:LeavingDto, @ConnectedSocket() client:Socket){
 		if (this.printEventRecieved) console.log('i_am_leaving');
 		const player = this.playersService.findOne(client);
 		if (player && data.waitingRoom){

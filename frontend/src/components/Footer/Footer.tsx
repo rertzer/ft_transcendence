@@ -18,6 +18,8 @@ import { useContext } from 'react';
 import { PageUrlContext } from '../../context/PageUrlContext';
 import { useNavigate } from 'react-router-dom';
 import { useLogin } from "../../components/user/auth";
+import gameContext from '../../context/gameContext';
+import { gameSocket } from '../game/services/gameSocketService';
 
 const theme = createTheme({
   palette: {
@@ -124,19 +126,20 @@ function Footer() {
     throw new Error('useContext must be used within a MyProvider');
   }
   const { chat, dark, updateChat } = context;
+  const { roomId, playerName, setGameStatus, setRoomId, setModeGame, modeGame, gameStatus, setMatchMe } = useContext(gameContext);
   const handleChat = (str : string) => {
     updateChat(str);
   }
   function selectNext() {
     switch(url_context?.page) {
       case "Game" :
-        navigate("/profile/" + auth.user.login);
+        ft_navigate("/profile/" + auth.user.login);
         break;
       case "Profile" :
-        navigate("/data");
+        ft_navigate("/data");
         break;
       case "Data" :
-        navigate("/contacts");
+        ft_navigate("/contacts");
         break;
       default :
         return;
@@ -145,13 +148,13 @@ function Footer() {
   function selectPrev() {
     switch(url_context?.page) {
       case "Profile" :
-        navigate("/game");
+        ft_navigate("/game");
         break;
       case "Data" :
-        navigate("/profile/" + auth.user.login);
+        ft_navigate("/profile/" + auth.user.login);
         break;
       case "Contacts" :
-        navigate("/data");
+        ft_navigate("/data");
         break;
       default :
         return;
@@ -171,22 +174,41 @@ function Footer() {
         return 0;
     }
   }
+  function leaveRoom() {
+	const dataToSend = {
+	  waitingRoom: (gameStatus === 'IN_WAITING_ROOM'),
+	  modeGame: modeGame,
+	  roomId: roomId
+	};
+	gameSocket.emit("i_am_leaving", dataToSend);
+	setGameStatus('NOT_IN_GAME');
+	setRoomId(0);
+	setModeGame('');
+  };
+
+  function ft_navigate(dest:string) {
+	if(url_context?.page === "Game" && dest !== '/game') {
+		leaveRoom();
+	}
+	navigate(dest);
+  }
+
   return (
 	<footer className={dark ? styles.bottom : styles.bottomLight} >
-    <FirstPageIcon className={dark ? styles.arrow : styles.arrowLight} onClick={() =>navigate("/game")}/>
+    <FirstPageIcon className={dark ? styles.arrow : styles.arrowLight} onClick={() =>ft_navigate("/game")}/>
     <SkipPreviousIcon className={dark ? styles.arrow : styles.arrowLight} onClick={() =>selectPrev()}/>
     <SkipNextIcon className={dark ? styles.arrow : styles.arrowLight} onClick={() =>selectNext()}/>
-    <LastPageIcon className={dark ? styles.arrow : styles.arrowLight} onClick={() =>navigate("/contacts")}/>
-    <div className={(url_context?.page === "Game") ? (dark ? styles.sheetPageSelected : styles.sheetPageSelectedLight) : (dark ? styles.sheetPage : styles.sheetPageLight)} style={{left:'100px', width:'50px'}} onClick={() =>navigate("/game")}>
+    <LastPageIcon className={dark ? styles.arrow : styles.arrowLight} onClick={() =>ft_navigate("/contacts")}/>
+    <div className={(url_context?.page === "Game") ? (dark ? styles.sheetPageSelected : styles.sheetPageSelectedLight) : (dark ? styles.sheetPage : styles.sheetPageLight)} style={{left:'100px', width:'50px'}} onClick={() =>ft_navigate("/game")}>
       <div className={styles.text}>Game</div>
     </div>
-    <div className={url_context?.page === "Profile" ? (dark ? styles.sheetPageSelected : styles.sheetPageSelectedLight) : (dark ? styles.sheetPage : styles.sheetPageLight)} style={{left:'150px', width:'50px'}} onClick={() =>navigate("/profile/" + auth.user.login)}>
+    <div className={url_context?.page === "Profile" ? (dark ? styles.sheetPageSelected : styles.sheetPageSelectedLight) : (dark ? styles.sheetPage : styles.sheetPageLight)} style={{left:'150px', width:'50px'}} onClick={() =>ft_navigate("/profile/" + auth.user.login)}>
      <div className={styles.text}>Profile</div>
     </div>
-    <div className={url_context?.page === "Data" ? (dark ? styles.sheetPageSelected : styles.sheetPageSelectedLight) : (dark ? styles.sheetPage : styles.sheetPageLight)} style={{left:'200px', width:'50px'}} onClick={() =>navigate("/data")}>
+    <div className={url_context?.page === "Data" ? (dark ? styles.sheetPageSelected : styles.sheetPageSelectedLight) : (dark ? styles.sheetPage : styles.sheetPageLight)} style={{left:'200px', width:'50px'}} onClick={() =>ft_navigate("/data")}>
      <div className={styles.text}>Data</div>
     </div>
-    <div className={url_context?.page === "Contacts" ? (dark ? styles.sheetPageSelected : styles.sheetPageSelectedLight) : (dark ? styles.sheetPage : styles.sheetPageLight)} style={{left:'250px', width:'70px'}} onClick={() =>navigate("/contacts")}>
+    <div className={url_context?.page === "Contacts" ? (dark ? styles.sheetPageSelected : styles.sheetPageSelectedLight) : (dark ? styles.sheetPage : styles.sheetPageLight)} style={{left:'250px', width:'70px'}} onClick={() =>ft_navigate("/contacts")}>
       <div className={styles.text}>Contacts</div>
     </div>
 	  <div className={dark ? styles.sep : styles.sepLight} />
