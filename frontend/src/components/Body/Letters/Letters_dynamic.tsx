@@ -21,6 +21,8 @@ export function convertToLetters(n : number) : string {
 function RepeatingLetters() {
   const windowWidthRef = useRef(window.innerWidth);
 
+  const forceUpdate = useForceUpdate();
+
   useEffect(() => {
     const handleResize = () => {
       windowWidthRef.current = window.innerWidth;
@@ -33,9 +35,7 @@ function RepeatingLetters() {
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, []);
-
-  const forceUpdate = useForceUpdate();
+  }, [forceUpdate]);
 
   const context = useContext(PageContext);
   if (!context) { throw new Error('useContext must be used within a MyProvider');}
@@ -44,29 +44,24 @@ function RepeatingLetters() {
   const { coordX, coordY } = coords;
 
   const [localCoordX, setLocalCoordX] = useState(coordX);
-  const [localCoordY, setLocalCoordY] = useState(coordY);
 
   const handleUpdateCoords = (a: number, b: number) => {
     setLocalCoordX(a);
-    setLocalCoordY(b);
     updateCoords({ coordX: a, coordY: b });
   };
 
   useEffect(() => {
     setLocalCoordX(coordX);
-    setLocalCoordY(coordY);
   }, [coordX, coordY]);
 
   const components = [];
 
   const { scroll, dark } = context;
   const { scrollX, scrollY } = scroll;
-  const [sx, setNewScrollX] = useState(scrollX);
   const [sy, setNewScrollY] = useState(scrollY);
   const { zoom } = context;
     
   useEffect(() => {
-    setNewScrollX(scrollX);
     setNewScrollY(scrollY);
   }, [scrollX, scrollY]);
 

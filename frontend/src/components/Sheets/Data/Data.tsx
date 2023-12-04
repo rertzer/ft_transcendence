@@ -1,6 +1,5 @@
-import {useState, useEffect, useContext} from 'react';
+import {useState, useEffect } from 'react';
 import { useLogin } from '../../user/auth';
-import { PageContext } from "../../../context/PageContext";
 import { CreateStyledCell } from '../CreateStyledCell';
 import { Link } from 'react-router-dom';
 
@@ -44,11 +43,6 @@ export function Data(props: {sx: number, sy: number, zoom: number}) {
   const [listBy, setListBy] = useState("Won");
   const [reverse, setReverse] = useState(1);
   const auth = useLogin();
-  const context = useContext(PageContext);
-	if (!context) {
-		throw new Error('useContext must be used within a MyProvider');
-	}
-	const { updateChat, chat } = context;
 
   useEffect(() => {
 		const getUsers = async () => {

@@ -8,24 +8,17 @@ export function SmartCell(props:{i:number, j:number}) {
   
     if (!context) { throw new Error('useContext must be used within a MyProvider'); }
     
-    const { div, zoom, coords, scroll, toolbar, updateCoords } = context;
-    const { font, bold, italic, underLined, align } = div;
+    const { div, zoom, scroll, updateCoords } = context;
+    const { align } = div;
   
     const { scrollX, scrollY } = scroll;
     const [sx, setNewScrollX] = useState(scrollX);
     const [sy, setNewScrollY] = useState(scrollY);
   
-    const { coordX, coordY } = coords;
-    const [x, setNewCoordX] = useState(coordX);
-    const [y, setNewCoordY] = useState(coordY);
-  
-  
     const dynamicLeft = `${(props.i - sy) * (80 + ((zoom - 100)) / 2)}px`;
     const dynamicTop = `${(props.j - sx) * (20 + ((zoom - 100)) / 8)}px`;
   
     const handleUpdateCoords = (a: number, b: number) => {
-      setNewCoordX(a);
-      setNewCoordY(b);
       updateCoords({ coordX: a, coordY: b });
     };
   
@@ -45,12 +38,12 @@ export function SmartCell(props:{i:number, j:number}) {
         const calculatedResult = evaluateExpression(input);
         setInput(calculatedResult.toString());
       } catch (error) {
-        setInput('error');
-        console.error('Invalid expression:', error);
+        setInput(error + '');
+        //console.error('Invalid expression:', error);
       }
     };
     const evaluateExpression = (expression: string): number => {
-      const sanitizedExpression = expression.replace(/[^0-9()+\-*\/.]/g, ''); // Sanitize input
+      const sanitizedExpression = expression.replace(/[^0-9()+\-*/.]/g, ''); // Sanitize input
   
       return evalInBrackets(sanitizedExpression);
     };
@@ -75,7 +68,7 @@ export function SmartCell(props:{i:number, j:number}) {
   
     const evaluate = (expression: string): number => {
       const operators = ['*', '/', '+', '-'];
-      const tokens = expression.split(/([\+\-\*\/])/).map((token) => token.trim());
+      const tokens = expression.split(/([+\-*/])/).map((token) => token.trim());
   
       let result = parseFloat(tokens[0]);
   

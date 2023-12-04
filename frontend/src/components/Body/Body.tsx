@@ -4,37 +4,26 @@ import Numbers from "./Numbers/Numbers_dynamic";
 import Letters from "./Letters/Letters_dynamic";
 import Grid from "./Grid/Grid_dynamic";
 import { PageContext } from "../../context/PageContext";
-import React, { useContext, useState, useEffect } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import Game from "../game/Game";
 import { PageUrlContext } from "../../context/PageUrlContext";
 
 
 
-export function Body({}) {
+export function Body() {
   const context = useContext(PageContext);
   const url_context = useContext(PageUrlContext);
   if (!context) { throw new Error('useContext must be used within a MyProvider'); }
 
-  const { scroll, dark, coords, toolbar, updateCoords, updateScroll } = context;
-
-  const { coordX, coordY } = coords;
-  const [x, setNewCoordX] = useState(coordX);
-  const [y, setNewCoordY] = useState(coordY);
+  const { scroll, dark, toolbar, updateCoords, updateScroll } = context;
 
   const { scrollX, scrollY } = scroll;
   const [sx, setNewScrollX] = useState(scrollX);
   const [sy, setNewScrollY] = useState(scrollY);
 
   const handleUpdateCoords = (a: number, b: number) => {
-    setNewCoordX(a);
-    setNewCoordY(b);
     updateCoords({ coordX: a, coordY: b });
   };
-
-  useEffect(() => {
-    setNewCoordX(coordX);
-    setNewCoordY(coordY);
-  }, [coordX, coordY]);
 
   const handleUpdateScroll = (event: any) => {
     let i = 0;

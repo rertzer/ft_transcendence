@@ -1,6 +1,5 @@
 import "./Login.scss";
-import { useNavigate, Navigate, NavLink } from "react-router-dom";
-import { MouseEvent, useEffect, useState } from "react";
+import { useNavigate, NavLink } from "react-router-dom";
 import { useLogin } from "../components/user/auth";
 
 function Welcome() {
