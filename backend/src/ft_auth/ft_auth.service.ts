@@ -83,7 +83,7 @@ export class FtAuthService {
       sub: login,
     };
     const access_token = await this.jwt.signAsync(payload, {
-      expiresIn: "59m",
+      expiresIn: "120m",
       secret: this.config.get("JWT_SECRET"),
     });
     return { login, access_token };

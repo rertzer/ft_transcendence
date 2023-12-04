@@ -32,6 +32,14 @@ export class UserController {
       return this.userService.fetchByLogin(login);
   }
 
+  @Get('username/:username')
+  fetchByUsername(
+    @Param('username') username: string,
+  ) {
+    console.log("eekkkkkkkkkkkk");
+    return this.userService.fetchByUsername(username);
+  }
+
   @Get('avatar/:avatar')
   fetchAvatar(
     @Param('avatar') avatar: string,

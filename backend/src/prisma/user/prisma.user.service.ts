@@ -12,6 +12,23 @@ export class PrismaUserService extends PrismaClient {
     super();
   }
 
+  async getUserByUsername(username: string) {
+    try {
+      let user = await this.user.findUnique({
+        where: {
+          username: username,
+        },
+      });
+      if (user) {
+        return user;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      throw new BadRequestException("Bad request");
+    }
+  }
+
   async getUserByLogin(login: string) {
     try {
       let user = await this.user.findUnique({

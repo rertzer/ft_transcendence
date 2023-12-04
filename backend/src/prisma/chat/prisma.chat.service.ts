@@ -82,8 +82,27 @@ export class PrismaChatService {
 			}
 		})
 		if (inChat)
-			return (true);
-		return false;
+		{
+			console.log("found in chat")
+			if (inChat.kicked == true)
+			{
+				console.log("found in chat 3")
+				const worked = await this.prismaService.chatChannelsUser.update({
+					where: {
+						id : inChat.id,
+					},
+					data : {
+						kicked : false
+					}
+				})
+				if (worked)
+					return (2);
+			}
+			if (inChat.banned == true)
+				return (3);
+			return (1);
+		}
+		return 0;
 	}
 
 	async getIdOfUsername(username: string){
@@ -703,8 +722,15 @@ export class PrismaChatService {
 		}
 	}
 
-	async getIdWithUsername(username: String)
+	async getUsernameWithLogin(loginUser: string)
 	{
+		const user = await this.prismaService.user.findFirst({
+			where: {
+				login: loginUser,
+			},
+		})
+		if (user)
+			return (user.username);
 
 	}
 
@@ -876,7 +902,7 @@ export class PrismaChatService {
 
 		const user = await this.prismaService.user.findFirst({
 			where: {
-				username: login,
+				login: login,
 			},
 		})
 		if (user) {

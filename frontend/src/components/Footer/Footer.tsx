@@ -17,6 +17,7 @@ import { PageContext } from '../../context/PageContext';
 import { useContext } from 'react';
 import { PageUrlContext } from '../../context/PageUrlContext';
 import { useNavigate } from 'react-router-dom';
+import { useLogin } from "../../components/user/auth";
 
 const theme = createTheme({
   palette: {
@@ -116,6 +117,7 @@ function ContinuousSlider() {
 
 function Footer() {
   const context = useContext(PageContext);
+  const auth = useLogin();
   const url_context = useContext(PageUrlContext);
   const navigate = useNavigate();
   if (!context) {
@@ -128,7 +130,7 @@ function Footer() {
   function selectNext() {
     switch(url_context?.page) {
       case "Game" :
-        navigate("/profile");
+        navigate("/profile/" + auth.user.login);
         break;
       case "Profile" :
         navigate("/data");
@@ -146,7 +148,7 @@ function Footer() {
         navigate("/game");
         break;
       case "Data" :
-        navigate("/profile");
+        navigate("/profile/" + auth.user.login);
         break;
       case "Contacts" :
         navigate("/data");
@@ -178,7 +180,7 @@ function Footer() {
     <div className={(url_context?.page === "Game") ? (dark ? styles.sheetPageSelected : styles.sheetPageSelectedLight) : (dark ? styles.sheetPage : styles.sheetPageLight)} style={{left:'100px', width:'50px'}} onClick={() =>navigate("/game")}>
       <div className={styles.text}>Game</div>
     </div>
-    <div className={url_context?.page === "Profile" ? (dark ? styles.sheetPageSelected : styles.sheetPageSelectedLight) : (dark ? styles.sheetPage : styles.sheetPageLight)} style={{left:'150px', width:'50px'}} onClick={() =>navigate("/profile")}>
+    <div className={url_context?.page === "Profile" ? (dark ? styles.sheetPageSelected : styles.sheetPageSelectedLight) : (dark ? styles.sheetPage : styles.sheetPageLight)} style={{left:'150px', width:'50px'}} onClick={() =>navigate("/profile/" + auth.user.login)}>
      <div className={styles.text}>Profile</div>
     </div>
     <div className={url_context?.page === "Data" ? (dark ? styles.sheetPageSelected : styles.sheetPageSelectedLight) : (dark ? styles.sheetPage : styles.sheetPageLight)} style={{left:'200px', width:'50px'}} onClick={() =>navigate("/data")}>

@@ -80,7 +80,7 @@ const ChannelItem = (props: {channel: Channel}) => {
     const socket = useContext(WebsocketContext);
     const auth = useLogin();
     const [image, setImage] = useState("");
-    const {activeChannel, setActiveChannel, allChannels, setAllChannels, blockedUsers} = useContext(ChatContext);
+    const {activeChannel, setActiveChannel, allChannels, blockedUsers} = useContext(ChatContext);
 
     function findReceiverName(names: string) {
 
@@ -88,43 +88,44 @@ const ChannelItem = (props: {channel: Channel}) => {
         return (name.trim())
     }
 
-    async function fetchAvatar(avatar: string) {
-		const res = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/user/avatar/` + avatar, {
-		method: "GET",
-		headers: { Authorization: auth.getBearer() },
-		});
-		const imageBlob = await res.blob();
-		const imageObjectURL = URL.createObjectURL(imageBlob);
-		setImage(imageObjectURL);
-	}
-
-	async function fetchUserAvatar(username: string) {
-		const data = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/user/` + username, {
-			method: "GET",
-			headers: { Authorization: auth.getBearer() },
-			});
-			const newUser = await data.json();
-			if (newUser.avatar) {
-				try {
-					fetchAvatar(newUser.avatar).catch((e) => console.error("Failed to fetch avatar"));
-				} catch (e) {
-					console.error(e);
-				}
-			}
-	}
-
     useEffect(() => {
-		if (props.channel.type !== "DM") {
-			setImage("img1.png");
-		}
-		else {
+        function findReceiverName2(names: string) {
+
+            let name = names.replace(auth.user.username, "");
+            return (name.trim())
+        }
+        async function fetchAvatar(avatar: string) {
+            const res = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/user/avatar/` + avatar, {
+            method: "GET",
+            headers: { Authorization: auth.getBearer() },
+            });
+            const imageBlob = await res.blob();
+            const imageObjectURL = URL.createObjectURL(imageBlob);
+            setImage(imageObjectURL);
+        }
+    
+        async function fetchUserAvatarByUsername(username: string) {
+            const data = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/user/username/` + username, {
+                method: "GET",
+                headers: { Authorization: auth.getBearer() },
+                });
+                const newUser = await data.json();
+                if (newUser.avatar) {
+                    try {
+                        fetchAvatar(newUser.avatar).catch((e) => console.error("Failed to fetch avatar"));
+                    } catch (e) {
+                        console.error(e);
+                    }
+                }
+        }
+		if (props.channel.type === "DM") {
 			try {
-				fetchUserAvatar(findReceiverName(props.channel.channelName)).catch((e) => console.error("Failed to fetch avatar"));
+				fetchUserAvatarByUsername(findReceiverName2(props.channel.channelName));
 			} catch (e) {
 				console.error(e);
 			}
 		}
-	}, [activeChannel, allChannels]);
+	}, [activeChannel, allChannels, auth, props.channel.type, props.channel.channelName]);
 
     return (
         <div onClick={() => {
@@ -133,7 +134,9 @@ const ChannelItem = (props: {channel: Channel}) => {
             socket.emit('retrieveMessage', {chatId: props.channel.id, messageToDisplay: 15 })
             }}}>
         <div className={activeChannel.id === props.channel.id ? "userChat active" : "userChat"}>
-            <img src={image} alt="user avatar"/>
+            {image === "" && props.channel.type === "DM" && <img src={require("../../assets/norminet.jpeg")}  alt="user avatar"/>}
+            {image === "" && props.channel.type !== "DM" && <img src={require("../../assets/img1.png")}  alt="user avatar"/>}
+            {image !== "" && <img src={image}  alt="user avatar"/>}
             <div className='userChatInfo'>
                 <h1>{props.channel.type !== "DM" ? props.channel.channelName : findReceiverName(props.channel.channelName)}</h1>
                 {blockedUsers.find(element => element.idUser === props.channel.userId) && <p>blocked message</p>}

@@ -9,15 +9,15 @@ export class PrivateConvService {
 	constructor(private prismaService:PrismaChatService){
 	}
 
-	async setDirectConv(creator:string, creatorId:number, receiver: string, sockSender:Socket, sockReceiver: Socket | null)
+	async setDirectConv(creatorUsername:string, creatorId:number, creatorReceiver: string, sockSender:Socket, sockReceiver: Socket | null)
 	{
-		const ChatCreated = await this.createDirectConv(creator, creatorId, receiver);
+		const ChatCreated = await this.createDirectConv(creatorUsername, creatorId, creatorReceiver);
 		if (ChatCreated)
 		{
 			const added = await this.prismaService.addChanelUser(ChatCreated, creatorId, "user", getDate(), null)
 			if (added)
 			{
-				const IdReceiver = await this.prismaService.getIdOfLogin(receiver);
+				const IdReceiver = await this.prismaService.getIdOfUsername(creatorReceiver)
 				if (IdReceiver)
 				{
 					const added2 = await this.prismaService.addChanelUser(ChatCreated, IdReceiver, "user", getDate(), null)
