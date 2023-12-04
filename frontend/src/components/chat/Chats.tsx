@@ -118,10 +118,7 @@ const ChannelItem = (props: {channel: Channel}) => {
                     }
                 }
         }
-		if (props.channel.type !== "DM") {
-			setImage("img1.png");
-		}
-		else {
+		if (props.channel.type === "DM") {
 			try {
 				fetchUserAvatarByUsername(findReceiverName2(props.channel.channelName));
 			} catch (e) {
@@ -137,7 +134,9 @@ const ChannelItem = (props: {channel: Channel}) => {
             socket.emit('retrieveMessage', {chatId: props.channel.id, messageToDisplay: 15 })
             }}}>
         <div className={activeChannel.id === props.channel.id ? "userChat active" : "userChat"}>
-            {image !== "" ? <img src={image} alt="user avatar"/> : <img src="norminet.jpeg" alt="user avatar"/>}
+            {image === "" && props.channel.type === "DM" && <img src={require("../../assets/norminet.jpeg")}  alt="user avatar"/>}
+            {image === "" && props.channel.type !== "DM" && <img src={require("../../assets/img1.png")}  alt="user avatar"/>}
+            {image !== "" && <img src={image}  alt="user avatar"/>}
             <div className='userChatInfo'>
                 <h1>{props.channel.type !== "DM" ? props.channel.channelName : findReceiverName(props.channel.channelName)}</h1>
                 {blockedUsers.find(element => element.idUser === props.channel.userId) && <p>blocked message</p>}

@@ -364,10 +364,11 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 			navigate("/game");
 			props.setInvite(false);
 			setRoomId(idToJoin);
-			setGameStatus('NOT_IN_GAME')
+			setGameStatus('NOT_IN_GAME');
 			updateChat("none");
 		}
 		else {
+			setGameStatus('NOT_IN_GAME');
 			setActiveChannel({
 				id: -1,
 				channelName: "PongOffice Chat",
@@ -459,10 +460,10 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 				<div className='messageInfo'>
 					{messageType === "owner" ?
 						<div>
-							{userAvatar !== "" ? <img src={userAvatar} alt="user Avatar"/> : <img src="norminet.jpeg" alt="user Avatar"/>}
+							{userAvatar !== "" ? <img src={userAvatar} alt="user Avatar"/> : <img src={require("../../assets/norminet.jpeg")} alt="user Avatar"/>}
 						</div> :
 						<div className="userOptions" ref={menuRef}>
-							{userAvatar !== "" ? <img src={userAvatar} alt="user Avatar" style={{cursor:"pointer"}} onClick={toggleUserActionsMenu}/> : <img src="norminet.jpeg" alt="user Avatar" style={{cursor:"pointer"}} onClick={toggleUserActionsMenu}/>}
+							{userAvatar !== "" ? <img src={userAvatar} alt="user Avatar" style={{cursor:"pointer"}} onClick={toggleUserActionsMenu}/> : <img src={require("../../assets/norminet.jpeg")} alt="user Avatar" style={{cursor:"pointer"}} onClick={toggleUserActionsMenu}/>}
 							<div className={showUserActionsMenu ? "userActions" : "userActions-hidden"}>
 								{props.isDM === false && userInfo.userStatus === "" && <h4>{props.username}</h4>}
 								{props.isDM === false && userInfo.userStatus !== "" && <h4>{props.username + " (" + userInfo.userStatus + ")"}</h4>}

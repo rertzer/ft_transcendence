@@ -29,7 +29,7 @@ function Profile() {
     game_played: 0,
   };
   const [image, setImage] = useState(
-    "norminet"
+    "norminet.jpeg"
   );
   const auth = useLogin();
   const [user, setUser] = useState(empty_user);

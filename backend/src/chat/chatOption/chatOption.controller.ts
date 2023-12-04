@@ -107,7 +107,9 @@ export class ChatOptController {
 			const id = await this.prismaChatService.getIdOfUsername(data.username)
 			if ( id > 0)
 			{
-				if (!await this.prismaChatService.userAlreadyInChat(id, data.chat_id))
+				const worked = await this.prismaChatService.userAlreadyInChat(id, data.chat_id)
+				console.log("worked =", worked)
+				if (worked === 0)
 				{
 					if (await this.prismaChatService.addChanelUser(data.chat_id, id, "user", getDate(), null))
 					{
@@ -118,18 +120,23 @@ export class ChatOptController {
 					}
 					return ({message: "issue while adding new user"})
 				}
-				return ({message: `User ${data.username} is already in this channel`})
+				else if ( worked == 1)
+					return ({message: `User ${data.username} is already in this channel`});
+				else if ( worked == 3)
+					return ({message: `User ${data.username} has been banned from this channel`});
+				else
+				{
+					const connect = this.gateway.getSocketsArray().find((elem) => elem.idOfLogin === id);
+					if (connect)
+						connect.sock.join(data.chat_id.toString());
+					return ({message: "ok"});
+				}
 			}
 			else
-			{
 				return ({message: `User ${data.username} doesn't exist`})
-			}
 		}
 		else
-		{
 			return({message: "You cannot invite anyone if you don't own the channel"})
-		}
-
 	}
 
 	@Post('blockUser')

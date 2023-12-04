@@ -124,9 +124,8 @@ function Profile() {
     ],
   }
 
-  const [image, setImage] = useState(
-    "norminet.jpg"
-  );
+  const [image, setImage] = useState("");
+  const [friend, setFriend] = useState(false);
   const auth = useLogin();
   const [user, setUser] = useState(empty_user);
   const [gameUser, setGameUser] = useState(empty_gameUser);
@@ -205,6 +204,11 @@ function Profile() {
     return (user.login === auth.user.login || (!login_url));
   }
 
+  useEffect(() => {
+    if (user.id !== 0)
+      checkIfAlreadyFriend();
+  },[user]);
+
 	useEffect(() => {
 		setSizeOfList(gameUser?.games?.length || 0);
 	}, [gameUser])
@@ -232,8 +236,6 @@ function Profile() {
         console.log(e);
       }
     }
-    else
-      setImage("norminet.jpg")
     try{
       if (user.login && login_url)
         fetchGameUser();
@@ -267,8 +269,10 @@ function Profile() {
 			body: JSON.stringify({ login: auth.user.login, friendToAdd: login})
 		};
 		try {
-			await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/friend/addFriend/`, requestOptions)
-		}
+			const test = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/friend/addFriend/`, requestOptions)
+      if (test)
+        await fetchUser(login);
+    }
 		catch (error) {
 			console.error("Error while adding friend", error);
 		}
@@ -298,6 +302,28 @@ function Profile() {
 		}
 	  }
 
+    async function checkIfAlreadyFriend() {
+      console.log("TRIGGERED")
+      try {
+        const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/friend/${auth.user.login}/${user.login}/isMyFriend`, {
+          method: "GET",
+          headers: { Authorization: auth.getBearer()},
+          });
+        if (!response.ok) {
+          throw new Error("Request failed");
+        }
+        const data = await response.json();
+        console.log(data);
+        if (data)
+          setFriend(data);
+      }
+      catch(error) {
+        console.error("Error while checking if user is friend", error);
+      }
+    }
+
+    const profileUrl = "/profile/" + auth.user.login;
+
   return (
     <div key={"profile"} style={{
       position: 'fixed',
@@ -305,7 +331,7 @@ function Profile() {
       backgroundColor: 'red',
       top: toolbar ? '89px' : '166px'
     }}>
-      <img src={image}
+      <img src={image === "" ? require("../../../assets/norminet.jpeg") : image}
         alt="" className="profilePic"
         key={"image"}
         style={{
@@ -363,11 +389,11 @@ function Profile() {
       <CreateStyledCell coordX={14} coordY={1} width={8} height={sizeOfList == 0 ? 2 : sizeOfList + 1} text={""} className={"border"} fontSize={12} />
       {isAuth() && <CreateStyledCell coordX={1} coordY={calculate_edit_Y()} width={1} height={1} text={"Edit Profile"} className={"edit_profile"} fontSize={12} onClick={() => setEdit(true)} />}
       {edit && <Navigate to="/profile/edit"/>}
-      {redirect && <Navigate to ="/profile"/>}
+      {redirect && <Navigate to ={profileUrl}/>}
       {!isAuth() && 
       <div>
         <CreateStyledCell coordX={1} coordY={calculate_edit_Y()} width={1} height={1} text={"Send DM"} className={"edit_profile"} fontSize={12} onClick={() => sendDM(user.login)} />
-        <CreateStyledCell coordX={2} coordY={calculate_edit_Y()} width={1} height={1} text={"Add friend"} className={"edit_profile"} fontSize={12} onClick={() => addToFriends(user.login)} />
+        {friend === false && <CreateStyledCell coordX={2} coordY={calculate_edit_Y()} width={1} height={1} text={"Add friend"} className={"edit_profile"} fontSize={12} onClick={() => addToFriends(user.login)} />}
       </div>}
     </div>
   );

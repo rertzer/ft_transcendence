@@ -43,28 +43,6 @@ export function AddLine(props: {scrollX: number, scrollY: number, toolbar: boole
 		add = "offline"
 		classname= "status_unconnected"
 	}
-
-	async function removeFriend() {
-		try {
-			const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/friend/deleteFriend/${props.id}/${auth.user.id}`, {
-				method: 'DELETE',
-				headers: { Authorization: auth.getBearer()},
-			});
-			if (!response.ok) {
-				console.error(`Error fetching friends: ${response.status}`);
-				return ;
-			}
-			const data = await response.json();
-			console.log("data receive = ", data);
-			if (!data) {
-				console.log('No list of friends');
-			} else {
-				console.log("hey all good");
-			}
-		} catch (error) {
-			console.error('Error removinf friends:', error);
-		}
-	}
 	
 	const fetchImage = async () => {
 		const bearer = auth.getBearer();
@@ -215,7 +193,7 @@ export function Contacts(props: { sx: number, sy: number, zoom: number, toolbar:
 			{listOfFriend.map((friend, index) => {
       console.log(friend);
       const variableToPass = 4 + index; // Commence à 4 et s'incrémente à chaque itération
-      return (<div><AddLine scrollX={props.sx} scrollY={props.sy} toolbar={props.toolbar} zoom={props.zoom} name={friend.username} login={friend.login} id={friend.id} coordX={variableToPass} connected={friend.connected} avatar={friend.avatar} key={`${friend.id}`}/>
+      return (<div key={friend.id}><AddLine scrollX={props.sx} scrollY={props.sy} toolbar={props.toolbar} zoom={props.zoom} name={friend.username} login={friend.login} id={friend.id} coordX={variableToPass} connected={friend.connected} avatar={friend.avatar} key={`${friend.id}`}/>
 		<div onClick={()=>{sendDM(friend.login)}}><CreateStyledCell
 		  coordX={variableToPass} coordY={3} width={1} height={1} key={"3"}
 		  text={'send DM'} fontSize={12} className={"DM_contacts"} /></div>

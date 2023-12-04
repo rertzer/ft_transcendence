@@ -15,7 +15,7 @@ import { useState, useEffect } from 'react';
 
 function Header({}) {
   const auth = useLogin();
-  const [image, setImage] = useState("norminet.jpeg");
+  const [image, setImage] = useState("");
 
   const fetchImage = async () => {
     const bearer = auth.getBearer();
@@ -94,8 +94,8 @@ function Header({}) {
         <div className={styles.titleBar} onMouseEnter={() => handleClick("none")}>
           <div className={dark ? styles.titleBarBackground : styles.titleBarBackgroundLight} />
           <div className={dark ? styles.untitled1 : styles.untitled1Light}>Untitled 1 - PongOffice Calc</div>
-          <div className={styles.user} onClick={() => navigate("/profile")}>
-            <img className={styles.userChild} alt="" src={image} style={{cursor:"pointer"}}/>
+          <div className={styles.user} onClick={() => navigate("/profile/" + auth.user.login)}>
+            <img className={styles.userChild} alt="" src={image === "" ? require("../../assets/norminet.jpeg") : image} style={{cursor:"pointer"}}/>
             <span className={dark ?  styles.user1 :  styles.user1Light}>{auth.user.username}</span>
             <Tooltip className={dark ? styles.crossButton : styles.crossButtonLight}title="Log out" arrow>
               <CloseIcon onClick={auth.logout} style={{fontSize:"18px", cursor:"pointer"}}/>
