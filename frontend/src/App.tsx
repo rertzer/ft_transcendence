@@ -1,7 +1,7 @@
 import './styles.scss';
 import { createBrowserRouter, createRoutesFromElements,RouterProvider, Route } from 'react-router-dom';
-import Login from './routes/FtLogin';
-// import Login from './routes/Login';
+// import Login from './routes/FtLogin';
+import Login from './routes/Login';
 import Desktop1 from './pages/Desktop1';
 import Welcome from "./routes/Welcome";
 import { LoginProvider } from "./components/user/auth";
@@ -20,7 +20,6 @@ function App() {
     <Route>
 	    <Route path="/" element={<RequireAuth><PageUrlProvider page_url={"Profile"}><Desktop1 /></PageUrlProvider></RequireAuth>} />
       <Route path="/game" element={<RequireAuth><PageUrlProvider page_url={"Game"}><Desktop1 /></PageUrlProvider></RequireAuth>} />
-      {/* <Route path="/profile" element={<RequireAuth><PageUrlProvider page_url={"Profile"}><Desktop1 /></PageUrlProvider></RequireAuth>} /> */}
       <Route path="/profile/:login_url" element={<RequireAuth><PageUrlProvider page_url={"Profile"}><Desktop1 /></PageUrlProvider></RequireAuth>} />
       <Route path="/profile/edit" element={<RequireAuth> <EditProfile /></RequireAuth>} />
       <Route path="/data" element={<RequireAuth><PageUrlProvider page_url={"Data"}><Desktop1 /></PageUrlProvider></RequireAuth>} />

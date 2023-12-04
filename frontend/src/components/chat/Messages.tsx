@@ -31,6 +31,8 @@ const Messages = (props: {chatId: number, isOwner: boolean, setIsOwner: Function
 			socket.on('chatMsgHistory', (chatHistoryReceive : ChatMessage[]) => {
 			if (chatHistoryReceive.find((element) => element.serviceMessage === true && props.isDM === true && element.msg.search("game invitation received") !== -1))
 				setInvite(true);
+			if (chatHistoryReceive.find((element) => element.serviceMessage === true && props.isDM === true && element.msg.search("Challenge accepted !") !== -1))
+				setInvite(false);
 			setChatHistory(chatHistoryReceive);
 			setRender(true);
 		});
@@ -40,6 +42,8 @@ const Messages = (props: {chatId: number, isOwner: boolean, setIsOwner: Function
 			const add : ChatMessage = {msg: chatHistoryReceive.msg, username: chatHistoryReceive.username, login: chatHistoryReceive.login, date: newDateString, id: chatHistoryReceive.id, chatId: chatHistoryReceive.idOfChat, serviceMessage: chatHistoryReceive.serviceMessage, userId: chatHistoryReceive.userId}
 			if (add.serviceMessage === true && props.isDM === true && add.msg.search("game invitation received") !== -1)
 				setInvite(true);
+			if (add.serviceMessage === true && props.isDM === true && add.msg.search("Challenge accepted !") !== -1)
+				setInvite(false);
 			setChatMessages((prevMessages) => [...prevMessages, add]);
 			if (blockedUsers.find(element => element.idUser === chatHistoryReceive.userId) === undefined)
 				socket.emit("chatListOfUser",auth.user.login);

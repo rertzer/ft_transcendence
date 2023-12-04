@@ -165,22 +165,19 @@ function Profile() {
   }
 
   const fetchUser = async (login: string) => {
-    try {
-      const bearer = auth.getBearer();
-      console.log("bearer is", bearer);
-      const data = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/user/` + login, {
-        method: "GET",
-        headers: { Authorization: bearer },
-      });
-      const newUser = await data.json();
-      if (newUser.message) {
-        setRedirect(true);
-      }
-      else {
-        setUser(newUser);
-      }
+    const bearer = auth.getBearer();
+    console.log("bearer is", bearer);
+    const data = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/user/` + login, {
+      method: "GET",
+      headers: { Authorization: bearer },
+    });
+    const newUser = await data.json();
+    if (newUser.message) {
+      setRedirect(true);
     }
-    catch(e) {console.log(e);}
+    else {
+      setUser(newUser);
+    }
   };
 
   //RESIZE WINDOW
@@ -326,8 +323,6 @@ function Profile() {
       }
     }
 
-    const profileUrl = "/profile/" + auth.user.login;
-
   return (
     <div key={"profile"} style={{
       position: 'fixed',
@@ -393,7 +388,7 @@ function Profile() {
       <CreateStyledCell coordX={14} coordY={1} width={8} height={sizeOfList == 0 ? 2 : sizeOfList + 1} text={""} className={"border"} fontSize={12} />
       {isAuth() && <CreateStyledCell coordX={1} coordY={calculate_edit_Y()} width={1} height={1} text={"Edit Profile"} className={"edit_profile"} fontSize={12} onClick={() => setEdit(true)} />}
       {edit && <Navigate to="/profile/edit"/>}
-      {redirect && <Navigate to ={profileUrl}/>}
+      {redirect && <Navigate to ={"/profile/" + auth.user.login}/>}
       {!isAuth() && 
       <div>
         <CreateStyledCell coordX={1} coordY={calculate_edit_Y()} width={1} height={1} text={"Send DM"} className={"edit_profile"} fontSize={12} onClick={() => sendDM(user.login)} />

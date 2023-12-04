@@ -24,7 +24,6 @@ export class ChatOptController {
 	@Post('setAdmin')
 	async setUserAsAdmin(@Body() user:{login:string, chatId: number}){
 		const id = await this.prismaChatService.getIdOfLogin(user.login);
-
 		if (id && (await this.prismaChatService.isAdmin(id, user.chatId)) == false)
 		{
 
