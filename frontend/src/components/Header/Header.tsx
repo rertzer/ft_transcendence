@@ -17,17 +17,6 @@ function Header() {
   const auth = useLogin();
   const [image, setImage] = useState("https://img.lamontagne.fr/c6BQg2OSHIeQEv4GJfr_br_8h5DGcOy84ruH2ZResWQ/fit/657/438/sm/0/bG9jYWw6Ly8vMDAvMDAvMDMvMTYvNDYvMjAwMDAwMzE2NDYxMQ.jpg");
 
-  const fetchImage = async () => {
-    const bearer = auth.getBearer();
-    const res = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/user/avatar/` + auth.user.avatar, {
-      method: "GET",
-      headers: { Authorization: bearer },
-    });
-    const imageBlob = await res.blob();
-    const imageObjectURL = URL.createObjectURL(imageBlob);
-    setImage(imageObjectURL);
-  };
-
   const context = useContext(PageContext);
   if (!context) {
     throw new Error('useContext must be used within a MyProvider');
@@ -53,6 +42,16 @@ function Header() {
     setInputValue(event.target.value);
   };
   useEffect(() => {
+    const fetchImage = async () => {
+      const bearer = auth.getBearer();
+      const res = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/user/avatar/` + auth.user.avatar, {
+        method: "GET",
+        headers: { Authorization: bearer },
+      });
+      const imageBlob = await res.blob();
+      const imageObjectURL = URL.createObjectURL(imageBlob);
+      setImage(imageObjectURL);
+    };
     if (auth.user.avatar) {
       try {
         fetchImage().catch((e) => console.log("Failed to fetch the avatar"));

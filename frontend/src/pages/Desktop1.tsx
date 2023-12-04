@@ -22,29 +22,8 @@ function Desktop1() {
 	const [modeGame, setModeGame] = useState('');
 	const [gameStatus, setGameStatus] = useState<GameStatus>('NOT_IN_GAME');
 
-	useEffect(() => {
-		gameSocket.connect();
-		console.log('artsghrdnhytenteynwtyegnt', auth)
-		return (()=> {
-			gameSocket.disconnect();
-		})
-	}, []);
 
-	useEffect(() => {
-	  socket.connect();
-	  return (()=>{
-		socket.disconnect();
-	  })
-	}, []);
-
-	useEffect(() => {
-		if (auth.user.login) {
-			setPlayerName(auth.user.login);
-			socket.emit("newChatConnection", auth.user.login);
-		}
-	},[auth.user.login])
-
-	const gameContextValue :IGameContextProps = {
+	const gameContextValue: IGameContextProps = {
 		roomId,
 		setRoomId,
 		gameWidth,
@@ -52,69 +31,74 @@ function Desktop1() {
 		gameHeight,
 		setGameHeight,
 		playerName,
-		setPlayerName, 
+		setPlayerName,
 		modeGame,
-		setModeGame, 
+		setModeGame,
 		gameStatus,
-		setGameStatus
+		setGameStatus,
 	};
 
-  //GET HEIGHT
-  const socket = useContext(WebsocketContext);
- 
-  const windowHeighthRef = useRef(window.innerHeight);
-  console.log("A", auth.user);
-  
-  useEffect(() => {
-  const handleResize = () => {
-	console.log("B", auth.user);
-      windowHeighthRef.current = window.innerHeight;
-      // Trigger a re-render of the component when window.innerWidth changes
-      //forceUpdate();
-    };
-    window.addEventListener('resize', handleResize);
-    return () => {
-		window.removeEventListener('resize', handleResize);
-    };
-}, []);
+	//GET HEIGHT
+	const socket = useContext(WebsocketContext);
 
+	const windowHeighthRef = useRef(window.innerHeight);
 
-	// useEffect(() => {
-	// 	console.log("C", auth.user);
-	// 	console.log("yo send something pls : " , socket.id);
-	// },[auth.user.login]);
+	function DisplayChat() {
+		const context = useContext(PageContext);
+		if (!context) {
+			throw new Error('useContext must be used within a MyProvider');
+		}
+		const { chat } = context;
 
+		if (chat === "Chat" || chat.search("New DM") !== -1)
+			return (<ChatComponent newDM={chat} />);
+		else
+			return (<div />);
+	}
 
-  function DisplayChat() {
-    const context = useContext(PageContext);
-    if (!context) {
-		throw new Error('useContext must be used within a MyProvider');
-    }
-    const { chat } = context;
-	// const navigate = useNavigate();
-	// const { roomId } = useContext(GameContext);
+	useEffect(() => {
+		const handleResize = () => {
+			windowHeighthRef.current = window.innerHeight;
+			// Trigger a re-render of the component when window.innerWidth changes
+			//forceUpdate();
+		};
+		window.addEventListener('resize', handleResize);
+		return () => {
+			window.removeEventListener('resize', handleResize);
+		};
+	}, []);
 
-	// useEffect(() => {
-	// 	if (roomId !== 0)
-	// 		updatePage("Game");
-	// }, [roomId]);
+	useEffect(() => {
+		gameSocket.connect();
+		return (() => {
+			gameSocket.disconnect();
+		})
+	}, [auth]);
 
-	if (chat === "Chat" || chat.search("New DM") !== -1)
-		return (<ChatComponent newDM={chat}/>);
-	else
-		return (<div/>);
-  }
+	useEffect(() => {
+		socket.connect();
+		return (() => {
+			socket.disconnect();
+		})
+	}, [socket]);
 
-  return (
-    <div className={styles.desktop1} style={{height: windowHeighthRef.current}}>
-		<GameContext.Provider value={gameContextValue}>
-			<Body />
-			<Header />
-			<Footer/>
-			<DisplayChat />
-		</GameContext.Provider>
-    </div>
-  );
+	useEffect(() => {
+		if (auth.user.login) {
+			setPlayerName(auth.user.login);
+			socket.emit("newChatConnection", auth.user.login);
+		}
+	}, [auth.user.login, socket]);
+
+	return (
+		<div className={styles.desktop1} style={{ height: windowHeighthRef.current }}>
+			<GameContext.Provider value={gameContextValue}>
+				<Body />
+				<Header />
+				<Footer />
+				<DisplayChat />
+			</GameContext.Provider>
+		</div>
+	);
 }
 
 export default Desktop1;

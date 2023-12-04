@@ -8,41 +8,43 @@ import { useParams } from "react-router-dom";
 import { useLocation } from 'react-router-dom';
 
 function alternateLine(size: number) {
-	const lines = [];
-	for (let i = 0; i < size; i++) {
-		if (i % 2 !== 0)
-			lines.push(
-				<CreateStyledCell key={i}
-					coordX={15 + i} coordY={1} width={8} height={1}
-					text={''} fontSize={0} className={"linePair"} />);
-		else
-			lines.push(<CreateStyledCell key={i}
-				coordX={15 + i} coordY={1} width={8} height={1}
-				text={''} fontSize={0} className={"lineUnpair"} />)
-	}
-	return (<div key={'alternateLines' + size}>{lines}</div>);
+  const lines = [];
+  for (let i = 0; i < size; i++) {
+    if (i % 2 !== 0)
+      lines.push(
+        <CreateStyledCell key={i}
+          coordX={15 + i} coordY={1} width={8} height={1}
+          text={''} fontSize={0} className={"linePair"} />);
+    else
+      lines.push(<CreateStyledCell key={i}
+        coordX={15 + i} coordY={1} width={8} height={1}
+        text={''} fontSize={0} className={"lineUnpair"} />)
+  }
+  return (<div key={'alternateLines' + size}>{lines}</div>);
 }
 
-export function AddLine (props: { game: { id: number; type: string; game_status: string | null; won: boolean; opponentId: any; opponentUserName: any; opponentLogin: any; myScore: number | null; myOpponentScore: number | null; date_begin: Date; durationInSec: number | undefined; }, 
-                                  index: number}) {
+export function AddLine(props: {
+  game: { id: number; type: string; game_status: string | null; won: boolean; opponentId: any; opponentUserName: any; opponentLogin: any; myScore: number | null; myOpponentScore: number | null; date_begin: Date; durationInSec: number | undefined; },
+  index: number
+}) {
   const navigate = useNavigate();
   return (
-  <div key={props.index}>
-    <CreateStyledCell coordX={(props.index)} coordY={7} width={1} height={1} text={props.game.type} fontSize={12} className={"dataItem"}/>
-    <CreateStyledCell coordX={(props.index)} coordY={2} width={1} height={1} text={props.game.game_status || ''} fontSize={12} className={"dataItem"}/>
-    <CreateStyledCell coordX={(props.index)} coordY={3} width={1} height={1} text={props.game.won ? "WIN" : "LOST"} fontSize={12} className={"dataItem"}/>
-    <CreateStyledCell coordX={(props.index)} coordY={4} width={1} height={1} text={props.game.opponentUserName.toString()} fontSize={12} className={"dataItemButton"} onClick={() => navigate(`/profile/${props.game.opponentLogin}`)}/>
-    <CreateStyledCell coordX={(props.index)} coordY={5} width={1} height={1} text={props.game.myScore?.toString() || ''} fontSize={12} className={"dataItem"}/>
-    <CreateStyledCell coordX={(props.index)} coordY={6} width={1} height={1} text={props.game.myOpponentScore?.toString() || ''} fontSize={12} className={"dataItem"}/>
-    <CreateStyledCell coordX={(props.index)} coordY={1} width={1} height={1} text={props.game.date_begin.toString().slice(0, 10)} fontSize={11} className={"dataItem"}/>
-    <CreateStyledCell coordX={(props.index)} coordY={8} width={1} height={1} text={Math.floor(props.game.durationInSec || 0)?.toString()+'s'} fontSize={12} className={"dataItem"}/>
-  </div>);
+    <div key={props.index}>
+      <CreateStyledCell coordX={(props.index)} coordY={7} width={1} height={1} text={props.game.type} fontSize={12} className={"dataItem"} />
+      <CreateStyledCell coordX={(props.index)} coordY={2} width={1} height={1} text={props.game.game_status || ''} fontSize={12} className={"dataItem"} />
+      <CreateStyledCell coordX={(props.index)} coordY={3} width={1} height={1} text={props.game.won ? "WIN" : "LOST"} fontSize={12} className={"dataItem"} />
+      <CreateStyledCell coordX={(props.index)} coordY={4} width={1} height={1} text={props.game.opponentUserName.toString()} fontSize={12} className={"dataItemButton"} onClick={() => navigate(`/profile/${props.game.opponentLogin}`)} />
+      <CreateStyledCell coordX={(props.index)} coordY={5} width={1} height={1} text={props.game.myScore?.toString() || ''} fontSize={12} className={"dataItem"} />
+      <CreateStyledCell coordX={(props.index)} coordY={6} width={1} height={1} text={props.game.myOpponentScore?.toString() || ''} fontSize={12} className={"dataItem"} />
+      <CreateStyledCell coordX={(props.index)} coordY={1} width={1} height={1} text={props.game.date_begin.toString().slice(0, 10)} fontSize={11} className={"dataItem"} />
+      <CreateStyledCell coordX={(props.index)} coordY={8} width={1} height={1} text={Math.floor(props.game.durationInSec || 0)?.toString() + 's'} fontSize={12} className={"dataItem"} />
+    </div>);
 }
 
 function Profile() {
 
   const { login_url } = useParams();
-	const [sizeOfList, setSizeOfList] = useState(0);
+  const [sizeOfList, setSizeOfList] = useState(0);
   const location = useLocation();
 
   const empty_user = {
@@ -59,11 +61,11 @@ function Profile() {
     game_lost: 0,
     game_played: 0,
   };
-  
+
   interface statObject {
     userId: number,
-    userLogin: string, 
-    userUsername: string | null, 
+    userLogin: string,
+    userUsername: string | null,
     numberGames: number,
     numberGamesBasic: number,
     numberGamesAdvanced: number,
@@ -91,22 +93,22 @@ function Profile() {
     }[]
   }
 
-  const empty_gameUser : statObject = {
-    userId:0,
-    userLogin:'', 
-    userUsername:'', 
+  const empty_gameUser: statObject = {
+    userId: 0,
+    userLogin: '',
+    userUsername: '',
     numberGames: 0,
     numberGamesBasic: 0,
-    numberGamesAdvanced:  0,
-    numberWon:  0,
+    numberGamesAdvanced: 0,
+    numberWon: 0,
     numberLost: 0,
     numberWonBasic: 0,
     numberLostBasic: 0,
-    numberWonAdvanced:  0,
-    numberLostAdvanced:  0,
-    totalGameDurationInSec:  0,
-    totalGameDurationBasicInSec:  0,
-    totalGameDurationAdvancedInSec:  0,
+    numberWonAdvanced: 0,
+    numberLostAdvanced: 0,
+    totalGameDurationInSec: 0,
+    totalGameDurationBasicInSec: 0,
+    totalGameDurationAdvancedInSec: 0,
     games: [
       {
         id: 0,
@@ -132,51 +134,8 @@ function Profile() {
   const [gameUser, setGameUser] = useState(empty_gameUser);
   const [redirect, setRedirect] = useState(false);
 
-  const fetchImage = async () => {
-    const bearer = auth.getBearer();
-    const res = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/user/avatar/` + user.avatar, {
-      method: "GET",
-      headers: { Authorization: bearer },
-    });
-    console.log("fetchImage on route /user/avatar/", user.avatar);
-    const imageBlob = await res.blob();
-    const imageObjectURL = URL.createObjectURL(imageBlob);
-    setImage(imageObjectURL);
-  };
 
-  const fetchGameUser = async () => {
-    try {
-      const bearer = auth.getBearer();
-      const data = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/gameStats/login/${user.login}`, {
-      method: "GET",
-      headers: { Authorization: bearer },
-      });
-      const newUser = await data.json();
-      if (!data) {
-        console.log("error");
-      }
-      else {
-        setGameUser(newUser);
-      }
-    }
-    catch(e) {}
-  }
 
-  const fetchUser = async (login: string) => {
-    const bearer = auth.getBearer();
-    console.log("bearer is", bearer);
-    const data = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/user/` + login, {
-      method: "GET",
-      headers: { Authorization: bearer },
-    });
-    const newUser = await data.json();
-    if (newUser.message) {
-      setRedirect(true);
-    }
-    else {
-      setUser(newUser);
-    }
-  };
 
   //RESIZE WINDOW
   const [edit, setEdit] = useState(false);
@@ -212,11 +171,27 @@ function Profile() {
   }, [location.pathname]);
 
 
-	useEffect(() => {
-		setSizeOfList(gameUser?.games?.length || 0);
-	}, [gameUser])
-  
   useEffect(() => {
+    setSizeOfList(gameUser?.games?.length || 0);
+  }, [gameUser])
+
+  useEffect(() => {
+
+    const fetchUser = async (login: string) => {
+      const bearer = auth.getBearer();
+      console.log("bearer is", bearer);
+      const data = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/user/` + login, {
+        method: "GET",
+        headers: { Authorization: bearer },
+      });
+      const newUser = await data.json();
+      if (newUser.message) {
+        setRedirect(true);
+      }
+      else {
+        setUser(newUser);
+      }
+    };
     try {
       if (!(user.login) && myuser) {
         fetchUser(myuser);
@@ -224,9 +199,38 @@ function Profile() {
     } catch (e) {
       console.log(e);
     }
-  }, [auth, login_url]);
+  }, [auth, login_url, myuser, user.login]);
 
   useEffect(() => {
+
+    const fetchImage = async () => {
+      const bearer = auth.getBearer();
+      const res = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/user/avatar/` + user.avatar, {
+        method: "GET",
+        headers: { Authorization: bearer },
+      });
+      console.log("fetchImage on route /user/avatar/", user.avatar);
+      const imageBlob = await res.blob();
+      const imageObjectURL = URL.createObjectURL(imageBlob);
+      setImage(imageObjectURL);
+    };
+    const fetchGameUser = async () => {
+      try {
+        const bearer = auth.getBearer();
+        const data = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/gameStats/login/${user.login}`, {
+          method: "GET",
+          headers: { Authorization: bearer },
+        });
+        const newUser = await data.json();
+        if (!data) {
+          console.log("error");
+        }
+        else {
+          setGameUser(newUser);
+        }
+      }
+      catch (e) { }
+    }
     if (user.avatar) {
       try {
         fetchImage().catch((e) => console.log("Failed to fetch the avatar"));
@@ -234,13 +238,13 @@ function Profile() {
         console.log(e);
       }
     }
-    try{
+    try {
       if (user.login)
         fetchGameUser();
-    }catch(e){
+    } catch (e) {
       console.log(e);
     }
-  }, [user, login_url]);
+  }, [user, login_url, auth]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -251,46 +255,50 @@ function Profile() {
     return () => {
       window.removeEventListener('resize', handleResize);
     };
-  }, []);
+  }, [forceUpdate]);
 
-  async function addToFriends(login:string) {
-		const requestOptions = {
-			method: 'post',
-			headers: { 'Content-Type': 'application/json',
-			Authorization: auth.getBearer()},
-			body: JSON.stringify({ login: auth.user.login, friendToAdd: login})
-		};
-		try {
-			await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/friend/addFriend/`, requestOptions)
-		}
-		catch (error) {
-			console.error("Error while adding friend", error);
-		}
-	}
+  async function addToFriends(login: string) {
+    const requestOptions = {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: auth.getBearer()
+      },
+      body: JSON.stringify({ login: auth.user.login, friendToAdd: login })
+    };
+    try {
+      await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/friend/addFriend/`, requestOptions)
+    }
+    catch (error) {
+      console.error("Error while adding friend", error);
+    }
+  }
 
   async function sendDM(login: string) {
-		if (chat === "none") {
-		  const requestOptions = {
-			method: 'post',
-			headers: { 'Content-Type': 'application/json',
-			Authorization: auth.getBearer()},
-			body: JSON.stringify({ idSender: auth.user.id, loginReceiver: login})
-		  };
-		  try {
-			const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/newPrivateConv`, requestOptions);
-			if (!response.ok) {
-			  throw new Error("Request failed");
-			}
+    if (chat === "none") {
+      const requestOptions = {
+        method: 'post',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: auth.getBearer()
+        },
+        body: JSON.stringify({ idSender: auth.user.id, loginReceiver: login })
+      };
+      try {
+        const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/newPrivateConv`, requestOptions);
+        if (!response.ok) {
+          throw new Error("Request failed");
+        }
         const data = await response.json();
         updateChat("Chat New DM " + data.id.toString());
-		  }
-		  catch (error) {
-			console.error("Error while starting private conversation", error);
-		  }
-		} else {
-		    updateChat("none");
-		}
-	  }
+      }
+      catch (error) {
+        console.error("Error while starting private conversation", error);
+      }
+    } else {
+      updateChat("none");
+    }
+  }
 
   return (
     <div key={"profile"} style={{
@@ -318,7 +326,7 @@ function Profile() {
       {(isAuth() || !login_url) && <CreateStyledCell coordX={5} coordY={1} width={1} height={1} text={"email"} className={"title_profile"} fontSize={12} />}
       {(isAuth() || !login_url) && <CreateStyledCell coordX={5} coordY={2} width={2} height={1} text={user.email} className={"data_profile"} fontSize={12} />}
       <CreateStyledCell coordX={3} coordY={1} width={isAuth() ? 3 : 2} height={isAuth() ? 3 : 2} text={""} className={"border_profile"} fontSize={12} />
-      
+
       <CreateStyledCell coordX={7} coordY={2} width={1} height={1} text={"Basic"} className={"title_profile"} fontSize={12} />
       <CreateStyledCell coordX={7} coordY={3} width={1} height={1} text={"Advanced"} className={"title_profile"} fontSize={12} />
       <CreateStyledCell coordX={7} coordY={4} width={1} height={1} text={"Total"} className={"title_profile"} fontSize={12} />
@@ -341,6 +349,7 @@ function Profile() {
       <CreateStyledCell coordX={7} coordY={2} width={3} height={5} text={""} className={"border_profile"} fontSize={12} />
       <CreateStyledCell coordX={8} coordY={1} width={4} height={4} text={""} className={"border_profile"} fontSize={12} />
 
+
       <CreateStyledCell coordX={14} coordY={7} width={1} height={1} text={"Type"} className={"title_contacts"} fontSize={12} />
       <CreateStyledCell coordX={14} coordY={2} width={1} height={1} text={"Status"} className={"title_contacts"} fontSize={12} />
       <CreateStyledCell coordX={14} coordY={3} width={1} height={1} text={"Result"} className={"title_contacts"} fontSize={12} />
@@ -352,18 +361,18 @@ function Profile() {
       {alternateLine(sizeOfList === 0 ? 1 : sizeOfList)}
       {gameUser.games?.map((game, index) => {
         const variableToPass = 15 + index;
-        return (<AddLine game={game} index={variableToPass} key={index}/>);
+        return (<AddLine game={game} index={variableToPass} key={index} />);
       })}
-      {sizeOfList === 0 && <CreateStyledCell coordX={15} coordY={1} width={8} height={1} text={"No game"} fontSize={12} className={"dataItem"}/>}
+      {sizeOfList === 0 && <CreateStyledCell coordX={15} coordY={1} width={8} height={1} text={"No game"} fontSize={12} className={"dataItem"} />}
       <CreateStyledCell coordX={14} coordY={1} width={8} height={sizeOfList === 0 ? 2 : sizeOfList + 1} text={""} className={"border"} fontSize={12} />
       {isAuth() && <CreateStyledCell coordX={1} coordY={calculate_edit_Y()} width={1} height={1} text={"Edit Profile"} className={"edit_profile"} fontSize={12} onClick={() => setEdit(true)} />}
-      {edit && <Navigate to="/profile/edit"/>}
-      {redirect && <Navigate to ="/profile"/>}
-      {!isAuth() && 
-      <div>
-        <CreateStyledCell coordX={1} coordY={calculate_edit_Y()} width={1} height={1} text={"Send DM"} className={"edit_profile"} fontSize={12} onClick={() => sendDM(user.login)} />
-        <CreateStyledCell coordX={2} coordY={calculate_edit_Y()} width={1} height={1} text={"Add friend"} className={"edit_profile"} fontSize={12} onClick={() => addToFriends(user.login)} />
-      </div>}
+      {edit && <Navigate to="/profile/edit" />}
+      {redirect && <Navigate to="/profile" />}
+      {!isAuth() &&
+        <div>
+          <CreateStyledCell coordX={1} coordY={calculate_edit_Y()} width={1} height={1} text={"Send DM"} className={"edit_profile"} fontSize={12} onClick={() => sendDM(user.login)} />
+          <CreateStyledCell coordX={2} coordY={calculate_edit_Y()} width={1} height={1} text={"Add friend"} className={"edit_profile"} fontSize={12} onClick={() => addToFriends(user.login)} />
+        </div>}
     </div>
   );
 }
