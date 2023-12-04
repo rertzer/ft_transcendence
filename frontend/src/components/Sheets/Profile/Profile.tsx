@@ -371,7 +371,7 @@ function Profile() {
       {sizeOfList === 0 && <CreateStyledCell coordX={15} coordY={1} width={8} height={1} text={"No game"} fontSize={12} className={"dataItem"} />}
       <CreateStyledCell coordX={14} coordY={1} width={8} height={sizeOfList === 0 ? 2 : sizeOfList + 1} text={""} className={"border"} fontSize={12} />
       {isAuth() && <CreateStyledCell coordX={1} coordY={calculate_edit_Y()} width={1} height={1} text={"Edit Profile"} className={"edit_profile"} fontSize={12} onClick={() => setEdit(true)} />}
-      {edit && <Navigate to="/profile/edit"/>}
+      {(edit || auth.user.newbie) && <Navigate to="/edit"/>}
       {redirect && <Navigate to ={"/profile/" + auth.user.login}/>}
       {!isAuth() &&
       <div>
