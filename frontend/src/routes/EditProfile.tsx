@@ -58,6 +58,7 @@ function EditProfile() {
           body: formData,
         }
       );
+      console.log("EditProfile: handleUser status", )
       const answer = await fileData.json();
       console.log("Answer", JSON.stringify(answer));
       setUserOk(true);
@@ -102,24 +103,6 @@ function EditProfile() {
   catch(e) {console.log(e);}}
   };
 
-  const handleTeapot = async (event: MouseEvent<HTMLButtonElement>)=>{
-    event.preventDefault();
-    console.log("handle teapot");
-    const data =  await fetch(
-      `http://${process.env.REACT_APP_URL_MACHINE}:4000/user/teapot`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: auth.getBearer(),
-         
-        },
-        
-      }
-    );
-    const resp = await data.json();
-    console.log(resp);
-  }
-
   useEffect(() => {
     if (!newUsername && auth.user.username) setNewUsername(auth.user.username);
   }, [auth.user.username]);
@@ -152,7 +135,6 @@ function EditProfile() {
 
             {userOk && <Navigate to={returnPath}></Navigate>}
             <button onClick={handleUser}>Edit</button>
-            <button onClick={handleTeapot}>teapot</button>
           </form>
         </div>
       </div>

@@ -3,6 +3,7 @@ import {
   Body,
   Controller,
   Get,
+  ImATeapotException,
   Param,
   Post,
   Res,
@@ -14,7 +15,7 @@ import { FileInterceptor } from "@nestjs/platform-express";
 import { Response } from "express";
 import { extname } from "path";
 import { diskStorage } from "multer";
-import { EditDto } from "src/auth/dto";
+import { EditDto } from "src/user/dto";
 import { UserService } from "./user.service";
 import { JwtGuard } from "../auth/guard";
 import { GetUser } from "../auth/decorator";
@@ -25,27 +26,24 @@ import * as fs from "fs";
 export class UserController {
   constructor(private userService: UserService) {}
 
-  @Get("teapot")
-  teapot() {
-    console.log("teaPot controller");
-    return this.userService.teaPot();
-  }
-
   @Get(":login")
   fetchByLogin(@Param("login") login: string) {
     return this.userService.fetchByLogin(login);
   }
 
   @Get("avatar/:avatar")
-  fetchAvatar(@Param("avatar") avatar: string, @Res() response: Response) {
+  async fetchAvatar(@Param("avatar") avatar: string, @Res() response: Response) {
     console.log("getting file", avatar);
-    if (avatar != null) {
-
-      const fileExtension = this.userService.getFileExtension({name: avatar});
+    if (avatar) {
+      console.log("fetchAvatar, if avatar");
+      const fileExtension = await this.userService.getFileExtension(avatar);
       if (!fileExtension) {
+        console.log("fetchAvatar, no file extension");
         throw new BadRequestException("No valid file");
       }
+      console.log("fetchAvatar, extension", fileExtension);
       if (fs.existsSync("/var/avatar/" + avatar)) {
+        console.log("fetchAvatar, file exists");
         const fileStream = this.userService.fetchAvatar(avatar);
         response.setHeader("Content-Type", `image/${fileExtension}`);
         response.setHeader(
@@ -54,6 +52,7 @@ export class UserController {
         );
         fileStream.then((fs) => fs.pipe(response));
       } else {
+        console.log("fetch avatar, file not exist");
         throw new BadRequestException("No valid file");
       }
     }
@@ -97,6 +96,4 @@ export class UserController {
   edit(@Body() dto: EditDto) {
     return this.userService.edit(dto);
   }
-
-
 }

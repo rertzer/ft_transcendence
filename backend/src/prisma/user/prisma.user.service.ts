@@ -1,5 +1,5 @@
 import { ConfigService } from "@nestjs/config";
-import { EditDto } from "src/auth/dto";
+import { EditDto } from "src/user/dto";
 import {
   BadRequestException,
   ImATeapotException,
