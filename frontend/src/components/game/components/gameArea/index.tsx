@@ -88,31 +88,15 @@ function GameArea(props:any) {
 	}]);
 
 	const [obstacles, setObstacles] = useState<IObstacles[]>([]);
-	
+
 	useEffect(() => {
 		gameSocket.emit("give_me_room_status", {roomId});
 	},[roomId]);
 
-	useEffect(()=> {
-		function onConnect() {
-			console.log("Connected with socket: ", gameSocket.id);
-			console.log(window.devicePixelRatio)
-		}
-		function onDisconnect() {
-			console.log("Disconnected");
-		}
-		gameSocket.on('connect', onConnect);
-		gameSocket.on('disconnect', onDisconnect);
-		return () => {
-			gameSocket.off('connect', onConnect);
-			gameSocket.off('disconnect', onDisconnect);
-		}	
-	}, []);
-
 	useEffect(() => {
 		function onRoomStatus(data:any) {
 			if(data.idRoom !== roomId) return;
-			setPong((prev) => ({...prev, 
+			setPong((prev) => ({...prev,
 				ballRadius: data.gameParam.ballRadius,
 				paddleWidth: data.gameParam.paddleWidth,
 				paddleHeight: data.gameParam.paddleHeight,
@@ -148,8 +132,8 @@ function GameArea(props:any) {
 
 		return () => {
 			gameSocket.off('room_status', onRoomStatus);
-		}			
-			
+		}
+
 	}, [playerName, roomId, mySide, setGameStatus]);
 
 
@@ -187,7 +171,7 @@ function GameArea(props:any) {
 		gameSocket.on('game_state', onGameState);
 		return () => {
 			gameSocket.off('game_state', onGameState);
-		}	
+		}
 
 	}, [myPlayerMoves, mySide, roomId, setGameStatus]);
 

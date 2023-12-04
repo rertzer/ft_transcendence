@@ -30,7 +30,6 @@ export class FtAuthService {
       return { success: "false" };
     }
     const user: any = req.user;
-    console.log("tfa status", user.tfa_activated);
     const randKey = this.setTemporaryKey(user.login, user.tfa_activated);
     if (user.tfa_activated)
       res.redirect(this.config.get('PONG_FRONT_CALLBACK') + `/twofa?key=${randKey}`);
@@ -53,7 +52,6 @@ export class FtAuthService {
   }
 
   getStoredKeyByKey(key: string) {
-    console.log("tableau GLBK", this.randKeys, "cle", key);
     function isKey(k: { login: string; key: string }) {
       return k.key === key;
     }
@@ -61,7 +59,6 @@ export class FtAuthService {
     if (storedKey) {
       const index = this.randKeys.indexOf(storedKey);
       this.randKeys.splice(index, 1);
-      console.log("login found is", storedKey.login);
       return storedKey;
     }
   }
@@ -72,7 +69,6 @@ export class FtAuthService {
     ).join("");
     const key = randomDigits.toString();
     this.randKeys.push({ login, tfa_activated, key });
-    console.log("tableau STK", this.randKeys);
     return key;
   }
 
@@ -90,12 +86,12 @@ export class FtAuthService {
   }
 
   async provideTokenByKey(key: string) {
-    console.log("provided key", key);
     const stored_key = this.getStoredKeyByKey(key);
-    if (stored_key){console.log("login is", stored_key.login);
-    if (stored_key.login && ! stored_key.tfa_activated) {
-      return this.signToken(stored_key.login);
-    }}
+    if (stored_key){
+    	if (stored_key.login && ! stored_key.tfa_activated) {
+      		return this.signToken(stored_key.login);
+    	}
+	}
     throw new ForbiddenException("2fa, we have a problem");
   }
 
@@ -126,7 +122,6 @@ export class FtAuthService {
         email: data.email,
       };
       const pong_user = await this.validateUser(user);
-      console.log("pong user is ", pong_user);
       return cb(null, pong_user);
     } catch (error) {
       throw new ForbiddenException("42, we have a problem");

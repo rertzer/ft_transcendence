@@ -51,7 +51,7 @@ function BasicMenu() {
     function closeTab() {
       window.close();
     }
-    
+
 	function newBasicGame (){
 		leaveRoom();
 		setModeGame('BASIC');
@@ -63,7 +63,7 @@ function BasicMenu() {
 		setModeGame('ADVANCED');
 		gameSocket.emit('match_me', {playerName:playerName, typeGame:'ADVANCED'});
 	}
-    
+
     const leaveRoom = () => {
       const dataToSend = {
         waitingRoom: (gameStatus === 'IN_WAITING_ROOM'),
@@ -167,7 +167,6 @@ function BasicMenu() {
 
       else
         updateZoom(zoom + increment);
-      console.log(zoom);
     }
     function reduce_zoom() {
       if (zoom - increment < 50)

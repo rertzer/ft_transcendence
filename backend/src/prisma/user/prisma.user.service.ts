@@ -133,7 +133,6 @@ export class PrismaUserService extends PrismaClient {
   }
 
   async test() {
-    console.log("teaPot prisma test");
     throw new ImATeapotException("Hello from the tea pot");
     const ceci = "cela";
     return { ceci };

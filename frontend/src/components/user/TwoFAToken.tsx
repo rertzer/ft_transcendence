@@ -20,7 +20,6 @@ function TwoFAToken() {
         body: JSON.stringify({ token }),
       });
       const answer = await fileData.json();
-      console.log("Answer is ", answer);
       setTokenOk(answer);
     }
   };

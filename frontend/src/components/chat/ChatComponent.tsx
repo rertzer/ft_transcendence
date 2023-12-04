@@ -14,7 +14,7 @@ export type Channel = {
     type : string;
     status: string;
     /*---------LastMessageReceive-------*/
-    username: string | null; 
+    username: string | null;
     msg: string| null;
     dateSend: Date | null;
     userId: number | null;
@@ -96,7 +96,6 @@ useEffect(() => {
     }
   }, [allChannels, DM, props.newDM, updateChat])
 
-  console.log("Active", activeChannel);
     return (
         <div className="chatcomponent">
             <div className='container'>

@@ -10,47 +10,38 @@ function Redirect() {
   const [key, setKey] = useState<string | undefined>();
 
   const location = useLocation();
-  console.log("location", location.search);
   const queryParams = new URLSearchParams(location.search);
   const param_key = queryParams.get("key");
   if (param_key && param_key !== key) setKey(param_key);
-  
-  console.log("url ", queryParams, "key is", param_key);
 
-  const getToken = async () => {
-    const flatkey = JSON.stringify({ key });
-    console.log("asking for", flatkey);
-    const data = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/ft_auth/token`, {
-      mode: "cors",
-      method: "POST",
-      headers: { "Content-Type": "application/json; charset=utf-8" },
-      body: flatkey,
-    });
-    console.log("receive data", data);
-    const token = await data.json();
-    console.log("received token", token);
-    let isOk = false;
-    if (token.message) {
-      console.log("Bad login");
-    } else {
-      auth.login(token);
-      isOk = true;
-    }
-    setTokenOk(isOk);
-  };
- 
+
+
   useEffect(() => {
+	const getToken = async () => {
+		const flatkey = JSON.stringify({ key });
+		const data = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/ft_auth/token`, {
+		  mode: "cors",
+		  method: "POST",
+		  headers: { "Content-Type": "application/json; charset=utf-8" },
+		  body: flatkey,
+		});
+		const token = await data.json();
+		let isOk = false;
+		if (!token.message) {
+		  auth.login(token);
+		  isOk = true;
+		}
+		setTokenOk(isOk);
+	  };
+
     if (key) {
       try {
-        console.log("ici");
         getToken();
       } catch (e) {
-        console.log(e);
+        console.error(e);
       }
-    } else {
-      console.log("no key");
     }
-  }, [key]);
+  }, [key, auth]);
 
   useEffect(() => {
     if (tokenOk) {

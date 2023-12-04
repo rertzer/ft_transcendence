@@ -137,7 +137,6 @@ function Profile() {
 
   let myuser = auth.user.login;
   if (login_url) {
-    console.log(login_url);
     myuser = login_url; }
 
   function isAuth() {
@@ -146,7 +145,6 @@ function Profile() {
 
   useEffect(() => {
     async function checkIfAlreadyFriend() {
-      console.log("TRIGGERED")
       try {
         const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/friend/${auth.user.login}/${user.login}/isMyFriend`, {
           method: "GET",
@@ -156,7 +154,6 @@ function Profile() {
           throw new Error("Request failed");
         }
         const data = await response.json();
-        console.log(data);
         if (data)
           setFriend(data);
       }
@@ -175,7 +172,6 @@ function Profile() {
   useEffect(() => {
     const fetchUser = async (login: string) => {
       const bearer = auth.getBearer();
-      console.log("bearer is", bearer);
       const data = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/user/` + login, {
         method: "GET",
         headers: { Authorization: bearer },
@@ -193,7 +189,7 @@ function Profile() {
         fetchUser(myuser);
       }
     } catch (e) {
-      console.log(e);
+      console.error(e);
     }
   }, [auth, login_url, myuser, user.login]);
 
@@ -205,7 +201,6 @@ function Profile() {
         method: "GET",
         headers: { Authorization: bearer },
       });
-      console.log("fetchImage on route /user/avatar/", user.avatar);
       const imageBlob = await res.blob();
       const imageObjectURL = URL.createObjectURL(imageBlob);
       setImage(imageObjectURL);
@@ -218,27 +213,26 @@ function Profile() {
           headers: { Authorization: bearer },
         });
         const newUser = await data.json();
-        if (!data) {
-          console.log("error");
-        }
-        else {
+        if (data) {
           setGameUser(newUser);
         }
       }
-      catch (e) { }
+      catch (e) {
+		console.error(e);
+	  }
     }
     if (user.avatar) {
       try {
         fetchImage();
       } catch (e) {
-        console.log(e);
+        console.error(e);
       }
     }
     try {
       if (user.login)
         fetchGameUser();
     } catch (e) {
-      console.log(e);
+      console.error(e);
     }
   }, [user, login_url, auth]);
 
@@ -255,7 +249,6 @@ function Profile() {
 
   const fetchUser = async (login: string) => {
     const bearer = auth.getBearer();
-    console.log("bearer is", bearer);
     const data = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/user/` + login, {
       method: "GET",
       headers: { Authorization: bearer },
@@ -311,26 +304,6 @@ function Profile() {
       updateChat("none");
     }
   }
-
-    async function checkIfAlreadyFriend() {
-      console.log("TRIGGERED")
-      try {
-        const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/friend/${auth.user.login}/${user.login}/isMyFriend`, {
-          method: "GET",
-          headers: { Authorization: auth.getBearer()},
-          });
-        if (!response.ok) {
-          throw new Error("Request failed");
-        }
-        const data = await response.json();
-        console.log(data);
-        if (data)
-          setFriend(data);
-      }
-      catch(error) {
-        console.error("Error while checking if user is friend", error);
-      }
-    }
 
   return (
     <div key={"profile"} style={{

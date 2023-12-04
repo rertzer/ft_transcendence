@@ -10,7 +10,6 @@ export function WaitingRoom(props:any) {
 		function processRoomJoined(data:{roomId:number, gameStatus: GameStatus}) {
 			setGameStatus(data.gameStatus);
 			setRoomId(data.roomId);
-			console.log('I joined room number ' + data.roomId.toString() + ' to play');
 		}
 
 		function processErrorJoin(data:{roomId:number, errorMsg:string}) {
@@ -21,7 +20,7 @@ export function WaitingRoom(props:any) {
 				setGameStatus("OPPONENT_LEFT_ROOM");
 			}
 		}
-		
+
 		gameSocket.on('room_joined', processRoomJoined);
 		gameSocket.on('error_join', processErrorJoin);
 

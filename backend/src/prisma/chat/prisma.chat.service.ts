@@ -56,15 +56,11 @@ export class PrismaChatService {
 		})
 		if (exist)
 		{
-			console.log(exist);
 			for (const element of exist)
 			{
-				console.log("id sender = ", idSender, "id receiver= ", idReceiver);
-				console.log("channels users", element.channelsUsers);
-				if (element.channelsUsers.find((elem:any) => elem.user_id === idSender && element.owner !== elem.user_id) 
+				if (element.channelsUsers.find((elem:any) => elem.user_id === idSender && element.owner !== elem.user_id)
 					|| element.channelsUsers.find((elem:any) => elem.user_id === idReceiver && element.owner !== elem.user_id))
 				{
-					console.log("element id = ", element.id);
 					return element.id;
 				}
 			}
@@ -83,10 +79,8 @@ export class PrismaChatService {
 		})
 		if (inChat)
 		{
-			console.log("found in chat")
 			if (inChat.kicked == true)
 			{
-				console.log("found in chat 3")
 				const worked = await this.prismaService.chatChannelsUser.update({
 					where: {
 						id : inChat.id,
@@ -194,7 +188,7 @@ export class PrismaChatService {
 		if (userId)
 			return userId.chatChannelsUser;
 	}
-	
+
 	async getAllDm(oldUsername: string)
     {
         const arrayOfDm = await this.prismaService.chatChannels.findMany({
@@ -207,21 +201,16 @@ export class PrismaChatService {
         })
         if (arrayOfDm)
         {
-            console.log("array of dm:", arrayOfDm);
             return (arrayOfDm);
         }
     }
 
     async updateNewUsernameOnDm(arrayOfDm:any, oldUsername:string, newUsername:string)
     {
-        console.log("oldUsername = ", oldUsername, "new username = ", newUsername);
         for (const element of arrayOfDm)
         {
-            console.log(element.name)
             const nameParts = element.name.split(' ');
-            console.log(nameParts);
             const indexOfOldUsername = nameParts.indexOf(oldUsername);
-            console.log("index = ", indexOfOldUsername);
             if (indexOfOldUsername !== -1) {
                 nameParts[indexOfOldUsername] = newUsername;
                 const newName = nameParts.join(' ');
@@ -233,8 +222,6 @@ export class PrismaChatService {
                         name: newName,
                     }
                 })
-                if (worked)
-                    console.log("updated with name : ", newName);
             }
         }
     }
@@ -332,7 +319,6 @@ export class PrismaChatService {
 
 	async blockUser(login: string, userBlockedLogin:string, date: Date)
 	{
-		console.log("login who ask for block :", login, "user to block = ", userBlockedLogin);
 		const getLogId = await this.getIdOfLogin(login);
 		const getBlockedId = await this.getIdOfLogin(userBlockedLogin);
 		if (getLogId && getBlockedId)
@@ -364,21 +350,16 @@ export class PrismaChatService {
 	async getListOfBlocked(login:string)
 	{
 		const getLogId = await this.getIdOfLogin(login);
-		console.log("hey //")
 		if (getLogId)
 		{
-			console.log("hey// //")
 			const list = await this.prismaService.blockedUser.findMany({
 				where :{
 					user_id : getLogId,
 				},
 			})
-			console.log(list);
 			const listChanged = [];
 			if (list)
 			{
-		console.log("hey /////////////////")
-
 				for (const element of list)
 				{
 					const userBlocked = await this.getUserOfId(element.blocked_user_id)
@@ -392,7 +373,6 @@ export class PrismaChatService {
 						listChanged.push(obj);
 					}
 				}
-				console.log("new list =",listChanged, "end of new list");
 				return (listChanged);
 			}
 
@@ -403,7 +383,6 @@ export class PrismaChatService {
 	{
 		const getLogId = await this.getIdOfLogin(login);
 		const getBlockedId = await this.getIdOfLogin(userBlockedLogin);
-		console.log("blocker:", login, "blocked", userBlockedLogin);
 		if (getLogId && getBlockedId)
 		{
 			const isBlocked = await this.prismaService.blockedUser.findFirst({

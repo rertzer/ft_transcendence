@@ -19,7 +19,7 @@ import { giveMeARoomDto, JoinGameDto, JoinWaitingRoomDto, GiveMeRoomStatusDto, P
 })
 
 export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect{
-	
+
 	private readonly logger = new Logger(GameSocketEvents.name);
 	private printEventRecieved:boolean = true;
 
@@ -36,11 +36,10 @@ export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, On
 	private readonly gameService: GameLogicService;
 
 	@WebSocketServer()
-	server: Namespace; 
+	server: Namespace;
 
-	//Connexion 
+	//Connexion
 	handleConnection(client:Socket){
-		if (this.printEventRecieved) console.log(`GameSocket Client connected: ${client.id}`);
 		this.playersService.create({
 			name:'',
 			roomState:[],
@@ -50,7 +49,6 @@ export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, On
     }
 
 	handleDisconnect(client: Socket) {
-		if (this.printEventRecieved) console.log(`GameSocket Client disconnected ${client.id}`);
 		const player = this.playersService.findOne(client);
 		if (player) {
 			const rooms_player = this.roomsService.findRoomsOfPlayer(player);
@@ -59,13 +57,12 @@ export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, On
 			});
 			this.roomsService.removePlayerFromWaitingRooms(player);
 		};
-		this.playersService.remove(client);	
+		this.playersService.remove(client);
 	}
 
-    //Recevoir un event 
+    //Recevoir un event
 	@SubscribeMessage('give_me_a_room')
 	async handleGiveMeARoom(@MessageBody() data:giveMeARoomDto, @ConnectedSocket() client:Socket){
-		if (this.printEventRecieved) console.log('give_me_a_room');
 		const newRoomId = await this.roomsService.createEmptyRoom(data.typeGame);
 		const responseData = {
 			roomId:newRoomId?.id
@@ -75,18 +72,16 @@ export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, On
 
 	@SubscribeMessage('match_me')
 	async handleJoinWaitingRoom(@MessageBody() data:JoinWaitingRoomDto, @ConnectedSocket() client:Socket){
-		if (this.printEventRecieved) console.log('match_me');
 		const player = this.playersService.findOne(client);
 		if (player) {
 			player.name = data.playerName;
 			player.idBdd = await this.prismaGameService.getIdOfLogin(data.playerName);
 			this.roomsService.joinWaitingRoom(player, data.typeGame);
-		} 
+		}
 	}
 
 	@SubscribeMessage('join_room')
 	async handleJoinGame(@MessageBody() data:JoinGameDto, @ConnectedSocket() client:Socket){
-		if (this.printEventRecieved) console.log('join_room');
 		const player = this.playersService.findOne(client);
 		if (player) {
 			player.name = data.playerName;
@@ -97,20 +92,17 @@ export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, On
 
 	@SubscribeMessage('give_me_room_status')
 	handleGiveMeRoomStatus(@MessageBody() data:GiveMeRoomStatusDto){
-		if (this.printEventRecieved) console.log('give_me_room_status');
 		const room = this.roomsService.findRoomById(data.roomId);
 		if (room) this.roomsService.sendRoomStatus(room);
 	}
 
 	@SubscribeMessage('keyevent')
 	handlePlayerKeyEvent(@MessageBody() data:PlayerKeyEventDto, @ConnectedSocket() client:Socket){
-		if (this.printEventRecieved) console.log('keyevent');
 		this.roomsService.handlePlayerKeyEvent({roomId: data.roomId, key:data.key, idPlayerMove:data.idPlayerMove, client});
 	}
 
 	@SubscribeMessage('i_am_leaving')
 	handleLeaving(@MessageBody() data:LeavingDto, @ConnectedSocket() client:Socket){
-		if (this.printEventRecieved) console.log('i_am_leaving');
 		const player = this.playersService.findOne(client);
 		if (player && data.waitingRoom){
 			if (data.modeGame === 'ADVANCED') {
@@ -124,7 +116,7 @@ export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, On
 			const room = this.roomsService.findRoomById(data.roomId);
 			player.roomState = player.roomState.filter(rs => {return (rs.room !== room)});
 			this.roomsService.removePlayerFromRoom(player, data.roomId);
-		} 
+		}
 	}
 
 	@Interval(1000/60)
@@ -132,7 +124,7 @@ export class GameSocketEvents  implements OnGatewayInit, OnGatewayConnection, On
 		this.roomsService.playGameLoop();
 		this.roomsService.broadcastGameState();
 	};
-	
+
 	afterInit(): void {
 		this.logger.log('Game Socket Gateway initialised')
 	}

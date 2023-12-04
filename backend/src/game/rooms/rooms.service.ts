@@ -16,8 +16,8 @@ export class RoomsService  implements OnModuleInit{
 	private roomMaxId:number = 1;
 	private waitingRoomBasic: IPlayer[] = [];
 	private waitingRoomAdvanced: IPlayer[] = [];
-	
-	async onModuleInit() {} 
+
+	async onModuleInit() {}
 
 	displayInfo() {
 		console.log("-------------------------------------------------");
@@ -32,7 +32,7 @@ export class RoomsService  implements OnModuleInit{
 
 	async createRoom(playerLeft:IPlayer, playerRight:IPlayer, typeGame:TypeGame) {
 		const room = this.createEmptyRoom(typeGame);
-		if (!room) return null; 
+		if (!room) return null;
 		room.gameStatus = 'WAITING_TO_START';
 		room.playerLeft = playerLeft;
 		room.playerRight = playerRight;
@@ -72,7 +72,7 @@ export class RoomsService  implements OnModuleInit{
 			playerRight:null,
 			scoreLeft:0,
 			scoreRight:0,
-			gameStatus:'WAITING_FOR_PLAYER', 
+			gameStatus:'WAITING_FOR_PLAYER',
 			createdOn: new Date(),
 			finishOn: null,
 			startingCountDownStart: null,
@@ -92,14 +92,14 @@ export class RoomsService  implements OnModuleInit{
 		}
 		this.rooms.push(newRoom);
 		return (newRoom);
-	}; 
+	};
 
 	async joinWaitingRoom(player:IPlayer, typeGame:TypeGame) {
 		const waitingPlayers = (typeGame === 'ADVANCED' ? this.waitingRoomAdvanced.filter((p) => {return (p.idBdd !== player.idBdd)}) : this.waitingRoomBasic.filter((p) => {return (p.idBdd !== player.idBdd)}));
 		if (waitingPlayers.length === 0) {
 			if (typeGame === 'ADVANCED') {
 				this.waitingRoomAdvanced.push(player);
-			} 
+			}
 			else {
 				this.waitingRoomBasic.push(player);
 			}
@@ -146,7 +146,7 @@ export class RoomsService  implements OnModuleInit{
 		}
 		return room;
 	};
-	
+
 	findRoomOfPlayerBySocket(socket: Socket): Room | null {
 		const room = this.rooms.find((element) => (element.playerLeft?.socket === socket || element.playerRight?.socket === socket));
 		if (typeof(room) === 'undefined') {
@@ -167,7 +167,7 @@ export class RoomsService  implements OnModuleInit{
 		let room = this.findRoomById(roomId);
 		if (room === null) {
 			player.socket.emit('error_join', {roomId: roomId, errorMsg: 'The room does not exist'});
-			return;  
+			return;
 		}
 		if (room.playerLeft === player || room.playerRight === player) {
 			player.socket.emit('error_join', {roomId: room.id, errorMsg: 'Player already in room'});
@@ -195,7 +195,6 @@ export class RoomsService  implements OnModuleInit{
 			room.gameStatus = 'WAITING_TO_START';
 			await this.addNewBddGame(room);
 		}
-		//console.log('Player ', player.socket.id, ' added to Room ', room.id);
 		player.socket.emit('room_joined', {roomId: room.id});
 	};
 
@@ -283,7 +282,7 @@ export class RoomsService  implements OnModuleInit{
 					readyToPlay:room.playerRight?.roomState.find((r) => r.room === room)?.readyToPlay,
 					idPlayerMove:room.playerRight?.roomState.find((r) => r.room === room)?.idPlayerMove
 				},
-				scoreLeft:room.scoreLeft, 
+				scoreLeft:room.scoreLeft,
 				scoreRight:room.scoreRight,
 				gameStatus:room.gameStatus,
 				startingCount: room.startingCount

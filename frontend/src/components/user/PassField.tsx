@@ -7,7 +7,6 @@ function PassField(props: { value: string; handleValid: Function }) {
   const [confPasswordClass, setConfPasswordClass] = useState("NA");
 
   useEffect(() => {
-    console.log("useEffect");
     if ((confPassword && newPassword) || confPassword) {
       if (confPassword === newPassword) {
         setConfPasswordClass("OK");

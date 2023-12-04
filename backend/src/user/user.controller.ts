@@ -33,17 +33,12 @@ import {
 
 	@Get("avatar/:avatar")
 	async fetchAvatar(@Param("avatar") avatar: string, @Res() response: Response) {
-	  console.log("getting file", avatar);
 	  if (avatar) {
-		console.log("fetchAvatar, if avatar");
 		const fileExtension = await this.userService.getFileExtension(avatar);
 		if (!fileExtension) {
-		  console.log("fetchAvatar, no file extension");
 		  throw new BadRequestException("No valid file");
 		}
-		console.log("fetchAvatar, extension", fileExtension);
 		if (fs.existsSync("/var/avatar/" + avatar)) {
-		  console.log("fetchAvatar, file exists");
 		  const fileStream = this.userService.fetchAvatar(avatar);
 		  response.setHeader("Content-Type", `image/${fileExtension}`);
 		  response.setHeader(
@@ -52,7 +47,6 @@ import {
 		  );
 		  fileStream.then((fs) => fs.pipe(response));
 		} else {
-		  console.log("fetch avatar, file not exist");
 		  throw new BadRequestException("No valid file");
 		}
 	  }

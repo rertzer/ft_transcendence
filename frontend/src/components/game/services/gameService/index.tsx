@@ -12,14 +12,10 @@ class GameService {
 		return new Promise((resolve, reject) => {
 			socket.emit("join_game", {roomId, playerName});
 			socket.on("room_joined", (data) => {
-				console.log("Room joined !");
-				console.log(data);
 				resolve(true);
 			});
 			socket.on('room_joined_error', (error) => {reject(error)});
 			socket.on('room_status_change', (data) => {
-				console.log("room_status_change");
-				console.log(data);
 				resolve(true);
 			})
 		});

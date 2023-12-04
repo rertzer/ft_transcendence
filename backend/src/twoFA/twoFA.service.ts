@@ -8,7 +8,6 @@ export class TwoFAService {
   constructor(private prisma: PrismaUserService) {}
 
   async setup(login: string) {
-    console.log("TFA setup, login is", login);
     const secret = speakeasy.generateSecret({ name: `PongOffice ${login}` });
     const user = await this.prisma.setTfaSecret({
       login,
@@ -16,8 +15,6 @@ export class TwoFAService {
     });
     if (secret.otpauth_url) {
       const qrcode_url = await qrcode.toDataURL(secret.otpauth_url);
-      console.log("In service qrcode_url:", qrcode_url);
-
       return { qrcode_url };
     }
   }
@@ -31,7 +28,6 @@ export class TwoFAService {
         encoding: "ascii",
         token,
       });
-      console.log("verification is", verified);
     }
     user = await this.prisma.setTfaActivated({ login, verified });
 

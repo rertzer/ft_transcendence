@@ -70,7 +70,6 @@ function ContinuousSlider() {
 
     else
       updateZoom(zoom + increment);
-    console.log(zoom);
   }
   function reduce_zoom() {
     if (zoom - increment < 50)
@@ -92,7 +91,7 @@ function ContinuousSlider() {
             style={{color: dark ? '#AAAAAA' : '#555555', position:'relative', top:'0.5px', height:'14px'}}
             onClick={reduce_zoom}/>
             <ThemeProvider theme={dark ? theme : themeLight}>
-              <Slider 
+              <Slider
                 size="small"
                 aria-label="Small"
                 value={zoom}
@@ -103,8 +102,8 @@ function ContinuousSlider() {
                 marks={marks}
                 sx={{width:100, height:3}}/>
             </ThemeProvider>
-          <AddCircleIcon 
-            fontSize='small' 
+          <AddCircleIcon
+            fontSize='small'
             style={{color:dark ? '#AAAAAA' : '#555555', position:'relative', top:'0.5px', height:'14px'}}
             onClick={add_zoom}/>
             <div style={{position: 'relative', left:'7px'}}>
@@ -113,7 +112,7 @@ function ContinuousSlider() {
         </Stack>
       </Box>
     </div>
-    
+
   );
 }
 
@@ -126,7 +125,7 @@ function Footer() {
     throw new Error('useContext must be used within a MyProvider');
   }
   const { chat, dark, updateChat } = context;
-  const { roomId, playerName, setGameStatus, setRoomId, setModeGame, modeGame, gameStatus, setMatchMe } = useContext(gameContext);
+  const { roomId, setGameStatus, setRoomId, setModeGame, modeGame, gameStatus} = useContext(gameContext);
   const handleChat = (str : string) => {
     updateChat(str);
   }
@@ -216,13 +215,13 @@ function Footer() {
     {
       chat.search("Chat") !== -1 ?
       <div className={dark ? styles.button : styles.buttonLight}  onClick={() => handleChat("none")}>
-       <ContactSupportIcon className={styles.icon} /> 
+       <ContactSupportIcon className={styles.icon} />
         <span className={styles.contact}>
           Chat
         </span>
       </div> :
       <div className={dark ? styles.button : styles.buttonLight} onClick={() => handleChat("Chat")}>
-        <ContactSupportIcon className={styles.icon} /> 
+        <ContactSupportIcon className={styles.icon} />
         <span className={styles.contact}>
           Chat
         </span>

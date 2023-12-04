@@ -5,7 +5,6 @@ import { useEffect, useState, MouseEvent } from "react";
 
 import StringField from "../components/user/StringField";
 import EmailField from "../components/user/EmailField";
-import { error } from "console";
 
 interface IToSend {
   login: string;
@@ -40,16 +39,10 @@ function EditProfile() {
 
   const handleUser = async (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    console.log("Editing the user");
-
-    console.log("Token in EditProfile is", auth.getBearer());
-
     if (newAvatar) {
       try{
-      console.log("new Avatar", newAvatar);
       let formData = new FormData();
       formData.append("file", newAvatar, newAvatar.name);
-      console.log("newAvatar", formData.keys, newAvatar.name);
 
       const fileData = await fetch(
         `http://${process.env.REACT_APP_URL_MACHINE}:4000/user/editAvatar`,
@@ -59,12 +52,10 @@ function EditProfile() {
           body: formData,
         }
       );
-      console.log("EditProfile: handleUser status", )
-      const answer = await fileData.json();
-      console.log("Answer", JSON.stringify(answer));
+      await fileData.json();
       setUserOk(true);
       }
-        catch(e) {console.log(e);}
+        catch(e) {console.error(e);}
     }
 
     let tosend: IToSend = { login: auth.user.login };
@@ -73,7 +64,6 @@ function EditProfile() {
 
     if (tosend.username || tosend.email){
     try{
-    console.log("fetching", tosend);
     const data = await fetch(
       `http://${process.env.REACT_APP_URL_MACHINE}:4000/user/edit`,
       {
@@ -86,12 +76,9 @@ function EditProfile() {
       }
     );
     const newUser = await data.json();
-    console.log("nouveau", newUser);
 
     if (newUser) {
       if (newUser.message) {
-        console.log("Bad request");
-
         setUserOk(false);
       } else {
         if (auth.user.newbie)
@@ -103,7 +90,7 @@ function EditProfile() {
               OldUsername : auth.user.username,
               newUsername : newUsername,
             }
-            const data = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/updateDmName`, {
+            await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/updateDmName`, {
             method: "POST",
             headers: {
               Authorization: auth.getBearer(),
@@ -119,16 +106,15 @@ function EditProfile() {
         }
         auth.edit(newUser);
         setUserOk(true);
-        console.log("Edited!!!", userOk);
       }
     }
   }
-  catch(e) {console.log(e);}}
+  catch(e) {console.error(e);}}
   };
 
   useEffect(() => {
     if (!newUsername && auth.user.username) setNewUsername(auth.user.username);
-  }, [auth.user.username]);
+  }, [auth.user.username, newUsername]);
 
   return (
     <div className="register">

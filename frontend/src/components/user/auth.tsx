@@ -23,7 +23,6 @@ export const LoginProvider = ({ children }: any) => {
     game_played: 0,
   };
   const [user, setUser] = useState(empty_user);
-  console.log("Inside Login Provider");
   const [image, setImage] = useState("norminet.jpeg");
 
   //////////////////////////////////////// Functions ///////////////////////////////////////////////////
@@ -35,37 +34,17 @@ export const LoginProvider = ({ children }: any) => {
   };
 
   const logout = () => {
-    console.log("Logging out");
     sessionStorage.setItem("Token", "");
     token = { login: "", access_token: "" };
     setImage("");
     setUser(empty_user);
   };
 
-  const fetchImage = async () => {
-    try {
-      const bearer = "Bearer " + token.access_token;
-      const res = await fetch(
-        `http://${process.env.REACT_APP_URL_MACHINE}:4000/user/avatar/` +
-          user.avatar,
-        {
-          method: "GET",
-          headers: { Authorization: bearer },
-        }
-      );
-      const imageBlob = await res.blob();
-      const imageObjectURL = URL.createObjectURL(imageBlob);
-      setImage(imageObjectURL);
-    } catch (e) {
-      console.log(e);
-    }
-  };
 
   const reload = () => {
     if (token.login) {
       const bearer = "Bearer " + token.access_token;
       const fetchUser = async () => {
-        console.log("bearer is", bearer);
         fetch(
           `http://${process.env.REACT_APP_URL_MACHINE}:4000/user/${token.login}`,
           {
@@ -75,7 +54,7 @@ export const LoginProvider = ({ children }: any) => {
         )
           .then((response) => response.json())
           .then((data) => setUser(data))
-          .catch((error) => console.log(error));
+          .catch((error) => console.error(error));
       };
       fetchUser();
     }
@@ -95,11 +74,30 @@ export const LoginProvider = ({ children }: any) => {
 
   //////////////////////////////// refresh //////////////////////////////////////
   useEffect(() => {
+	const fetchImage = async () => {
+		try {
+		  const bearer = "Bearer " + token.access_token;
+		  const res = await fetch(
+			`http://${process.env.REACT_APP_URL_MACHINE}:4000/user/avatar/` +
+			  user.avatar,
+			{
+			  method: "GET",
+			  headers: { Authorization: bearer },
+			}
+		  );
+		  const imageBlob = await res.blob();
+		  const imageObjectURL = URL.createObjectURL(imageBlob);
+		  setImage(imageObjectURL);
+		} catch (e) {
+		  console.error(e);
+		}
+	  };
+
     if (user.avatar) {
       try {
         fetchImage();
       } catch (e) {
-        console.log(e);
+        console.error(e);
       }
     }
   }, [user]);

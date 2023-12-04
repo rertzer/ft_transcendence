@@ -54,13 +54,13 @@ function Header() {
     };
     if (auth.user.avatar) {
       try {
-        fetchImage().catch((e) => console.log("Failed to fetch the avatar"));
+        fetchImage().catch((e) => console.error("Failed to fetch the avatar"));
       } catch (e) {
-        console.log(e);
+        console.error(e);
       }
-    }  
+    }
   }, [auth]);
-  
+
   return <header className={styles.headerFrame} style={{ height: toolbar ? '65px' : '142px' }}>
         <div className={dark ? styles.headerBackground : styles.headerBackgroundLight} style={{ height: toolbar ? '65px' : '142px' }}/>
         <div className={styles.line3}>

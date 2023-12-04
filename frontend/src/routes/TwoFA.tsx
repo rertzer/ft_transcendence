@@ -1,5 +1,5 @@
 import "./EditProfile.scss";
-import { useEffect, useState, MouseEvent } from "react";
+import {useState, MouseEvent } from "react";
 import { useLogin } from "../components/user/auth";
 import TwoFAToken from "../components/user/TwoFAToken";
 import { useNavigate } from "react-router-dom";
@@ -16,12 +16,10 @@ function Twofa() {
 
   const handleTfa = async (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    console.log("Setup Tfa");
 
     const raw_token: string | null = sessionStorage.getItem("Token");
     let token = { login: "", access_token: "" };
     if (raw_token) token = JSON.parse(raw_token);
-    console.log("Token in EditProfile is", token);
     const bearer = "Bearer " + token.access_token;
 
     const data = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/twofa/setup`, {
@@ -32,18 +30,12 @@ function Twofa() {
       },
     });
     const qr_url = await data.json();
-    console.log("qr_url is", qr_url);
     setQrcode(qr_url.qrcode_url);
   };
 
   const handleSkip = async ()=>{
     navigate('/', { replace: true });
   }
-
-
-  useEffect(() => {
-    console.log("QRCODE IS", qrcode);
-  }, [qrcode]);
 
   return (
     <div className="register">

@@ -16,7 +16,6 @@ export class CreateChatService {
 		const idOfUser = await this.prismaService.getIdOfLogin(login);
 		if (idOfUser !== undefined)
 		{
-			console.log('idOfUser', idOfUser);
 			let hashed_password;
 			if (chatPassword)
 				hashed_password = await argon.hash(chatPassword,);
@@ -26,7 +25,6 @@ export class CreateChatService {
 			targetSocket.join(chatId.toString());
 			const chatlister = new ChatLister(this.prismaService);
 			chatlister.listChatOfUser(idLogin, targetSocket);
-			console.log('chatId', chatId);
 
 			return (chatId);
 		}

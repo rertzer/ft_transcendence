@@ -42,19 +42,6 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 		}
 	});
 
-	useEffect(() => {
-		socket.on("userIsMute", (userIsMute:boolean) => {
-
-			if(!userIsMute) 
-				console.log("print something")
-			else
-				console.log(" i am muted");
-		})
-        return () => {
-			socket.off("userIsMute");
-		}
-    }, [socket])
-
 	async function checkIfUserIsBanned() {
 
 		try {
@@ -256,7 +243,6 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 				throw new Error("Request failed");
 			}
 			const data = await response.json();
-			console.log("DATA,", data)
 			setNeedToUpdate("newDM " + data.id.toString());
 			toggleUserActionsMenu();
 		}
@@ -393,7 +379,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 			const imageObjectURL = URL.createObjectURL(imageBlob);
 			setUserAvatar(imageObjectURL);
 		}
-	
+
 		async function deleteMessage() {
 			try {
 				const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/deleteMessage/${props.msgId}`, {
@@ -451,8 +437,6 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 			}
 		}
 	}, [auth, messageType, navigate, props, setRoomId, updateChat]);
-
-	console.log(props.invite, roomId);
 
 	if (messageType !== "service") {
 		return (

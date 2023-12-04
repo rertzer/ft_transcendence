@@ -11,28 +11,21 @@ function RedirectTfa() {
   const [tfaToken, setTfaToken] = useState("");
 
   const location = useLocation();
-  console.log("location", location.search);
   const queryParams = new URLSearchParams(location.search);
   const param_key = queryParams.get("key");
   if (param_key && param_key !== key) setKey(param_key);
 
-  console.log("url ", queryParams, "key is", param_key);
 
   const getToken = async () => {
-    console.log("asking for", JSON.stringify({ key, tfaToken }));
     const data = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/ft_auth/tfatoken`, {
       mode: "cors",
       method: "POST",
       headers: { "Content-Type": "application/json; charset=utf-8" },
       body: JSON.stringify({ key, tfa_token: tfaToken }),
     });
-    console.log("receive data", data);
     const token = await data.json();
-    console.log("received token", token);
     let isOk = false;
-    if (token.message) {
-      console.log("Bad login");
-    } else {
+    if (!token.message) {
       auth.login(token);
       isOk = true;
     }

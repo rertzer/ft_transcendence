@@ -62,13 +62,11 @@ export class MyGateway {
 	{
 		if (login === undefined || login === null)
 			return;
-		console.log('newChatConnection', login);
 		if (!this.socketsLogin.find((item) => item.login === login && item.sock === client))
 		{
 			const idOfLogin = await this.prismaChatService.getIdOfLogin(login);
 			if (idOfLogin)
 			{
-				console.log("succeed");
 				this.socketsLogin.push({login : login , sock: client, idOfLogin: idOfLogin})
 			}
 		}

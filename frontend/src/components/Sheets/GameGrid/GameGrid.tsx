@@ -4,7 +4,7 @@ import gameContext from '../../../context/gameContext';
 import { gameSocket } from '../../game/services/gameSocketService';
 
 export default function GameGrid() {
-	const { roomId, playerName, setGameStatus, setRoomId, setModeGame, modeGame, gameStatus, setMatchMe } = useContext(gameContext);
+	const { roomId, playerName, setGameStatus, setRoomId, setModeGame, modeGame, gameStatus} = useContext(gameContext);
 	function newBasicGame (){
 		leaveRoom();
 		setModeGame('BASIC');
@@ -16,7 +16,7 @@ export default function GameGrid() {
 		setModeGame('ADVANCED');
 		gameSocket.emit('match_me', {playerName:playerName, typeGame:'ADVANCED'});
 	}
-    
+
     const leaveRoom = () => {
       const dataToSend = {
         waitingRoom: (gameStatus === 'IN_WAITING_ROOM'),

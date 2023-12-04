@@ -96,7 +96,6 @@ export class ChatOptController {
         @Body() dto:UpdateDmNameDto
     )
     {
-        console.log("old username and new", dto.OldUsername, dto.newUsername);
         const arrayOfDm = await this.prismaChatService.getAllDm(dto.OldUsername);
         if (arrayOfDm)
         {
@@ -113,7 +112,6 @@ export class ChatOptController {
 			if ( id > 0)
 			{
 				const worked = await this.prismaChatService.userAlreadyInChat(id, dto.chat_id)
-				console.log("worked =", worked)
 				if (worked === 0)
 				{
 					if (await this.prismaChatService.addChanelUser(dto.chat_id, id, "user", getDate(), null))
@@ -271,7 +269,6 @@ export class ChatOptController {
 			else
 			{
 				const newOwner = await this.prismaChatService.leaveAsOwner(id,dto.chatId);
-				console.log("new owner username = ", newOwner);
 				return {username: newOwner};
 			}
 		}
@@ -302,8 +299,6 @@ export class ChatOptController {
 	@Post('createChat')
 	async onCreateChat(@Body() dto: CreateChatDto)
 	{
-		console.log("on create chat, dto = ", dto);
-		console.log("this.gateway.getSocketsArray() = ", this.gateway.getSocketsArray());
 		const targetSocket = this.gateway.getSocketsArray().find((socket) => socket.login === dto.login);
 		if (targetSocket !== undefined)
 		{

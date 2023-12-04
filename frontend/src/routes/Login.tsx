@@ -24,21 +24,16 @@ function Login() {
       });
       const token = await data.json();
       let token_status = false;
-      if (token.message) {
-        console.log("Bad login");
-      } else {
+      if (!token.message) {
         token_status = true;
-
         auth.login(token);
         navigate('/', { replace: true });
       }
       setTokenOk(token_status);
     } catch (e) {
-      console.log(e);
+      console.error(e);
     }
   };
-
-  console.log("Log user ok is", tokenOk);
 
   return (
     <div className="login">

@@ -8,11 +8,11 @@ interface IJoinRoomProps {
 };
 
 export function JoinRoom(props:IJoinRoomProps) {
-	const {setRoomId, setGameStatus, modeGame, playerName, setModeGame} = useContext(gameContext);
+	const {setRoomId, setGameStatus} = useContext(gameContext);
 	const [RecievedRoomID, setRecievedRoomID] = useState(0);
 
 	useEffect(()=>{
-		
+
 		function processNewEmptyRoom(data:{roomId:number}) {
 			setRecievedRoomID(data.roomId);
 		}
@@ -33,12 +33,12 @@ export function JoinRoom(props:IJoinRoomProps) {
 				setGameStatus("OPPONENT_LEFT_ROOM");
 			}
 		}
-		
+
 		gameSocket.on('new_empty_room', processNewEmptyRoom);
 		gameSocket.on('waiting_room_joined', processWaitingRoomJoined);
 		gameSocket.on('room_joined', processRoomJoined);
 		gameSocket.on('error_join', processErrorJoin);
-	
+
 		return () => {
 			gameSocket.off('new_empty_room', processNewEmptyRoom);
 			gameSocket.off('waiting_room_joined', processWaitingRoomJoined);
