@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 function TwoFAToken() {
   const auth = useLogin();
+  const [test, setTest] = useState("enter the token")
   const navigate = useNavigate();
   const [token, setToken] = useState("");
   const [tokenOk, setTokenOk] = useState<boolean|undefined>();
@@ -20,8 +21,17 @@ function TwoFAToken() {
         body: JSON.stringify({ token }),
       });
       const newUser = await data.json();
-      auth.edit(newUser);
-      setTokenOk(true);
+	  if (newUser.tfa_activated)
+	  {
+		auth.edit(newUser);
+		console.log(newUser);
+		setTokenOk(true);
+	  }
+	  else
+	  {
+		setTest("Not the right Token")
+		setToken("");
+	  }
     }
   };
 
@@ -37,7 +47,7 @@ function TwoFAToken() {
     <form>
       <input
         type="text"
-        placeholder={"enter the token"}
+        placeholder={test}
         value={token}
         onChange={(e) => setToken(e.target.value)}
       />
