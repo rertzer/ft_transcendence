@@ -79,7 +79,7 @@ export class ChatOptController {
 					const usernameReceiver = await this.prismaChatService.getUsernameWithLogin(dto.loginReceiver);
 					if (usernameReceiver && usernameSender)
 					{
-						const allGood = await this.privateConv.setDirectConv(connect.login, connect.idOfLogin, dto.loginReceiver, connect.sock, null);
+						const allGood = await this.privateConv.setDirectConv(usernameSender, connect.idOfLogin, usernameReceiver, connect.sock, null);
 						const chatlister = new ChatLister(this.prismaChatService);
 						chatlister.listChatOfUser(connect.idOfLogin, connect.sock);
 						return {id: allGood};

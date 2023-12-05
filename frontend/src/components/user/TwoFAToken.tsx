@@ -21,7 +21,7 @@ function TwoFAToken() {
         body: JSON.stringify({ token }),
       });
       const newUser = await data.json();
-	  if (newUser.tfa_activated)
+	  if (newUser && newUser.tfa_activated)
 	  {
 		auth.edit(newUser);
 		console.log(newUser);
