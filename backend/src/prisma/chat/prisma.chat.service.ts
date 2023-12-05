@@ -39,21 +39,14 @@ export class PrismaChatService {
 	async retrievChatUser(chatId:number)
 	{
 		let userAvatar = [];
-		const listOfUser = await this.prismaService.chatChannelsUser.findMany({
-			where:{
-				channel_id: chatId,
-			},
-			include:{
-				chatChannelsUser:true,
-			}
-		})
+		const listOfUser = await this.prismaService.user.findMany()
 		if (listOfUser)
 		{
 			for (const element of listOfUser)
 			{
 				const obj = {
-					login : element.chatChannelsUser.login,
-					avatar: element.chatChannelsUser.avatar,
+					login : element.login,
+					avatar: element.avatar,
 				}
 				userAvatar.push(obj);
 			}

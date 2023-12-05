@@ -403,15 +403,11 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 			const avatar = allAvatarsImg.find((item) => item.login === auth.user.login)
 			if (avatar)
 				setUserAvatar(avatar.imageObjectURL);
-			else
-				setUserAvatar("");
 		}
 		else {
 			const avatar = allAvatarsImg.find((item) => item.login === props.login)
 			if (avatar)
 				setUserAvatar(avatar.imageObjectURL);
-			else
-				setUserAvatar("");
 		}
 	}, [auth, messageType, navigate, props, setRoomId, updateChat, allAvatarsImg]);
 

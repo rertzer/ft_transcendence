@@ -68,7 +68,7 @@ const Chat = () => {
 
 
         getImg();
-    }, [allAvatarsURL, setAllAvatarsImg])
+    }, [allAvatarsURL, setAllAvatarsImg, auth])
 
     useEffect(() => {
         if (activeChannel.status === "admin")

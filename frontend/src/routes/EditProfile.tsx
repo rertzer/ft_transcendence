@@ -48,7 +48,7 @@ function EditProfile() {
           }
         );
         if (fileData.status === 201) {
-          const answer = await fileData.json();
+          await fileData.json();
           setUserOk(true);
         }
       } catch (e) {
