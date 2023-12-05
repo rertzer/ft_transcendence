@@ -7,5 +7,6 @@ WORKDIR /app
 COPY ["package.json", "yarn.lock", "./"]
 RUN yarn install --frozen-lockfile
 COPY . .
+RUN mv norminet.jpeg /var/avatar/1111111111111.jpeg
 
 CMD ["sh", "script.sh"]

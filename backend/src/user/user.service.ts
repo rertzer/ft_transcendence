@@ -42,7 +42,7 @@ export class UserService {
 
   async editAvatar(file: Express.Multer.File, user_login: string) {
     const old_avatar = await this.prisma.getAvatarByLogin(user_login);
-    if (old_avatar) {
+    if (old_avatar && old_avatar !== "1111111111111.jpeg") {
       fs.unlink("/var/avatar/" + old_avatar, (error) => {
         if (error) {
           throw new BadRequestException("unable to delete previous avatar");

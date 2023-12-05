@@ -23,13 +23,13 @@ export const LoginProvider = ({ children }: any) => {
     game_played: 0,
   };
   const [user, setUser] = useState(empty_user);
-  const [image, setImage] = useState("norminet.jpeg");
+  const [image, setImage] = useState("");
 
   //////////////////////////////////////// Functions ///////////////////////////////////////////////////
   const login = (raw_token: any) => {
     sessionStorage.setItem("Token", JSON.stringify(raw_token));
     token = raw_token;
-    setImage("norminet.jpeg");
+    setImage("");
     reload();
   };
 
@@ -60,7 +60,6 @@ export const LoginProvider = ({ children }: any) => {
   };
 
   const edit = (user: any) => {
-    console.log("setting user", user.login, user.twofa_activated)
     setUser(user);
   };
 
@@ -90,7 +89,7 @@ export const LoginProvider = ({ children }: any) => {
           const imageObjectURL = URL.createObjectURL(imageBlob);
           setImage(imageObjectURL);
         } else {
-          setImage("norminet.jpeg");
+          setImage("");
         }
       } catch (e) {
         console.error(e);

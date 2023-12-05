@@ -421,10 +421,10 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 				<div className='messageInfo'>
 					{messageType === "owner" ?
 						<div>
-							{userAvatar !== "" ? <img src={userAvatar} alt="user Avatar"/> : <img src={require("../../assets/norminet.jpeg")} alt="user Avatar"/>}
+							<img src={userAvatar} alt="user Avatar"/>
 						</div> :
 						<div className="userOptions" ref={menuRef}>
-							{userAvatar !== "" ? <img src={userAvatar} alt="user Avatar" style={{cursor:"pointer"}} onClick={toggleUserActionsMenu}/> : <img src={require("../../assets/norminet.jpeg")} alt="user Avatar" style={{cursor:"pointer"}} onClick={toggleUserActionsMenu}/>}
+							<img src={userAvatar} alt="user Avatar" style={{cursor:"pointer"}} onClick={toggleUserActionsMenu}/>
 							<div className={showUserActionsMenu ? "userActions" : "userActions-hidden"}>
 								{props.isDM === false && userInfo.userStatus === "" && <h4>{props.username}</h4>}
 								{props.isDM === false && userInfo.userStatus !== "" && <h4>{props.username + " (" + userInfo.userStatus + ")"}</h4>}

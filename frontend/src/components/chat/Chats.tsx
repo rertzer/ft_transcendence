@@ -134,7 +134,7 @@ const ChannelItem = (props: {channel: Channel}) => {
             socket.emit('retrieveMessage', {chatId: props.channel.id, messageToDisplay: 15 })
             }}}>
         <div className={activeChannel.id === props.channel.id ? "userChat active" : "userChat"}>
-            {image === "" && props.channel.type === "DM" && <img src={require("../../assets/norminet.jpeg")}  alt="user avatar"/>}
+            {/* {image === "" && props.channel.type === "DM" && <img src={require("../../assets/norminet.jpeg")}  alt="user avatar"/>} */}
             {image === "" && props.channel.type !== "DM" && <img src={require("../../assets/img1.png")}  alt="user avatar"/>}
             {image !== "" && <img src={image}  alt="user avatar"/>}
             <div className='userChatInfo'>

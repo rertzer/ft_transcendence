@@ -331,7 +331,7 @@ function Profile() {
       backgroundColor: 'red',
       top: toolbar ? '89px' : '166px'
     }}>
-      <img src={image === "" ? require("../../../assets/norminet.jpeg") : image}
+      <img src={image }
         alt="" className="profilePic"
         key={"image"}
         style={{

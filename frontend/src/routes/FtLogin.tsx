@@ -13,8 +13,7 @@ function Login() {
     <div className="login">
       <div className="card">
         <div className="right">
-          <h1>Log in</h1>
-          <button onClick={(e) => {handleSubmit(e)}}> login with 42</button>
+          <button style={{paddingBottom:'10px', paddingTop:'2px'}} onClick={(e) => {handleSubmit(e)}}> Login with <img style={{position:'relative', top:'8px', left:'3px'}} src="42_Logo.png"></img></button>
         </div>
       </div>
     </div>
