@@ -191,8 +191,7 @@ function Profile() {
 		{
 			myuser = auth.user.login
 		}
-		if (/*!(user.login) &&*/ myuser !== "") {
-			console.log("before the fectj", myuser);
+		if (myuser !== "") {
 			fetchUser(myuser);
 		}
   	} catch (e) {

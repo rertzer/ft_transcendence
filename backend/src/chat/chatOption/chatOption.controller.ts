@@ -357,7 +357,6 @@ export class ChatOptController {
 		@Param('idMessage', ParseIntPipe) idMessage: number,
 	)
 	{
-		console.log(idMessage);
 		return await this.prismaChatService.deleteMessage(idMessage);
 	}
 }

@@ -78,12 +78,10 @@ function EditProfile() {
 
     if (newUser) {
       if (newUser.message) {
-        console.log(newUser.message)
         setUserOk(false);
       } else {
         if (auth.user.newbie)
         {
-          console.log("return page changed");
           setReturnPath("/twofa");
         }
         if (newUsername)
