@@ -19,13 +19,13 @@ export function convertToLetters(n : number) : string {
 }
 
 function RepeatingLetters() {
-  const windowWidthRef = useRef(window.innerWidth);
+  const windowWidthRef = useRef(window.screen.width);
 
   const forceUpdate = useForceUpdate();
 
   useEffect(() => {
     const handleResize = () => {
-      windowWidthRef.current = window.innerWidth;
+      windowWidthRef.current = window.screen.width;
       // Trigger a re-render of the component when window.innerWidth changes
       forceUpdate();
     };
