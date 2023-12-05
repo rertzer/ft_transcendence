@@ -1,4 +1,5 @@
 import { Navigate, useNavigate } from "react-router-dom";
+import { useLocation } from 'react-router-dom';
 import { useState } from "react";
 import { useLogin } from "../../user/auth";
 import { PageContext } from "../../../context/PageContext";
@@ -30,7 +31,7 @@ export function AddLine(props: {
   return (
     <div key={props.index}>
       <CreateStyledCell coordX={(props.index)} coordY={7} width={1} height={1} text={props.game.type} fontSize={12} className={"dataItem"} />
-      <CreateStyledCell coordX={(props.index)} coordY={2} width={1} height={1} text={props.game.game_status || ''} fontSize={12} className={"dataItem"} />
+      <CreateStyledCell coordX={(props.index)} coordY={2} width={1} height={1} text={(props.game.game_status === 'FINISH_BY_FORFAIT' ? 'FORFAIT' : props.game.game_status) || ''} fontSize={12} className={"dataItem"} />
       <CreateStyledCell coordX={(props.index)} coordY={3} width={1} height={1} text={props.game.won ? "WIN" : "LOST"} fontSize={12} className={"dataItem"} />
       <CreateStyledCell coordX={(props.index)} coordY={4} width={1} height={1} text={props.game.opponentUserName.toString()} fontSize={12} className={"dataItemButton"} onClick={() => navigate(`/profile/${props.game.opponentLogin}`)} />
       <CreateStyledCell coordX={(props.index)} coordY={5} width={1} height={1} text={props.game.myScore?.toString() || ''} fontSize={12} className={"dataItem"} />
@@ -44,6 +45,7 @@ function Profile() {
 
   const { login_url } = useParams();
   const [sizeOfList, setSizeOfList] = useState(0);
+  const [twoFa, setTwoFa] = useState(false);
 
   const empty_user = {
     id: 0,
@@ -109,7 +111,7 @@ function Profile() {
     totalGameDurationAdvancedInSec: 0,
     games: [],
   }
-
+  const location = useLocation();
   const [image, setImage] = useState("");
   const [friend, setFriend] = useState(false);
   const auth = useLogin();
@@ -124,20 +126,16 @@ function Profile() {
   const [edit, setEdit] = useState(false);
 
   const context = useContext(PageContext);
-  if (!context) { throw new Error('useContext must be used within a MyProvider'); }
-  const { scroll, toolbar, zoom, updateChat, chat } = context;
-  const windowWidthRef = useRef(window.innerWidth);
-  const forceUpdate = useForceUpdate();
+    if (!context) { throw new Error('useContext must be used within a MyProvider'); }
+	const { scroll, toolbar, zoom, updateChat, chat } = context;
+	const windowWidthRef = useRef(window.innerWidth);
+	  const forceUpdate = useForceUpdate();
 
 
   function calculate_edit_Y() {
     const result = Math.floor((windowWidthRef.current - (windowWidthRef.current / 100 * 2 + 31)) / (80 + (zoom - 100) / 2) - 1);
     return (result > 4 ? result : 5);
   }
-
-  let myuser = auth.user.login;
-  if (login_url) {
-    myuser = login_url; }
 
   function isAuth() {
     return (user.login === auth.user.login || (!login_url));
@@ -163,13 +161,17 @@ function Profile() {
     }
     if (user.id !== 0)
       checkIfAlreadyFriend();
-  },[user, auth]);
+  },[user, auth, location.pathname]);
 
   useEffect(() => {
     setSizeOfList(gameUser?.games?.length || 0);
   }, [gameUser])
 
   useEffect(() => {
+	let myuser = auth.user.login;
+	if (login_url) {
+		myuser = login_url; 
+	}
     const fetchUser = async (login: string) => {
       const bearer = auth.getBearer();
       const data = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/user/` + login, {
@@ -184,14 +186,18 @@ function Profile() {
         setUser(newUser);
       }
     };
-    try {
-      if (!(user.login) && myuser) {
-        fetchUser(myuser);
-      }
-    } catch (e) {
-      console.error(e);
-    }
-  }, [auth, login_url, myuser, user.login]);
+	try {
+		if (!login_url)
+		{
+			myuser = auth.user.login
+		}
+		if (myuser !== "") {
+			fetchUser(myuser);
+		}
+  	} catch (e) {
+	console.error(e);
+  	}
+  }, [auth, login_url, user.login, location.pathname]);
 
   useEffect(() => {
 
@@ -228,13 +234,15 @@ function Profile() {
         console.error(e);
       }
     }
+	else
+		setImage("");
     try {
       if (user.login)
         fetchGameUser();
     } catch (e) {
       console.error(e);
     }
-  }, [user, login_url, auth]);
+  }, [user, login_url, auth, location.pathname]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -305,6 +313,16 @@ function Profile() {
     }
   }
 
+  async function setEditAndHideChat() {
+	setEdit(true);
+	updateChat("none");
+  }
+
+  async function setTwoFaAndHideChat() {
+    setTwoFa(true);
+    updateChat("none");
+  }
+
   return (
     <div key={"profile"} style={{
       position: 'fixed',
@@ -370,8 +388,10 @@ function Profile() {
       })}
       {sizeOfList === 0 && <CreateStyledCell coordX={15} coordY={1} width={8} height={1} text={"No game"} fontSize={12} className={"dataItem"} />}
       <CreateStyledCell coordX={14} coordY={1} width={8} height={sizeOfList === 0 ? 2 : sizeOfList + 1} text={""} className={"border"} fontSize={12} />
-      {isAuth() && <CreateStyledCell coordX={1} coordY={calculate_edit_Y()} width={1} height={1} text={"Edit Profile"} className={"edit_profile"} fontSize={12} onClick={() => setEdit(true)} />}
-      {edit && <Navigate to="/profile/edit"/>}
+      {isAuth() && <CreateStyledCell coordX={1} coordY={calculate_edit_Y()} width={1} height={1} text={"Edit Profile"} className={"edit_profile"} fontSize={12} onClick={setEditAndHideChat} />}
+      {isAuth() && <CreateStyledCell coordX={2} coordY={calculate_edit_Y()} width={1} height={1} text={"TwoFa Settings"} className={"edit_profile"} fontSize={12} onClick={setTwoFaAndHideChat} />}
+      {twoFa && <Navigate to="/twofa"/>}
+      {(edit || auth.user.newbie) && <Navigate to="/edit"/>}
       {redirect && <Navigate to ={"/profile/" + auth.user.login}/>}
       {!isAuth() &&
       <div>

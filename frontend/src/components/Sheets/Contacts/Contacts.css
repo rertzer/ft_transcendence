@@ -46,15 +46,24 @@
     background-color: lightsalmon;
     border: 2px solid rgb(150, 0, 0);
 	cursor: pointer;
-}
+} 
 
 .DM_contacts {
     color: black;
     display:block;
     text-align: center;
     font-weight: 600;
+    background-color: rgb(169, 169, 239);
+    border: 2px solid rgb(91, 91, 184);
+	cursor: pointer;
+}
+.DM_contacts:hover {
+    color: black;
+    display:block;
+    text-align: center;
+    font-weight: 600;
     background-color: rgb(118, 118, 245);
-    border: 1px solid rgb(150, 0, 0);
+    border: 2px solid rgb(91, 91, 184);
 	cursor: pointer;
 }
 .delete_contacts:hover {

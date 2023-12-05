@@ -31,6 +31,13 @@ import {
 	  return this.userService.fetchByLogin(login);
 	}
 
+	@Get('username/:username')
+	fetchByUsername(
+		@Param('username') username: string,
+	) {
+		return this.userService.fetchByUsername(username);
+	}
+
 	@Get("avatar/:avatar")
 	async fetchAvatar(@Param("avatar") avatar: string, @Res() response: Response) {
 	  if (avatar) {
