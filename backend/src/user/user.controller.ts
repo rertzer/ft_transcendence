@@ -3,10 +3,10 @@ import {
 	Body,
 	Controller,
 	Get,
-	ImATeapotException,
 	Param,
 	Post,
 	Res,
+	UnsupportedMediaTypeException,
 	UploadedFile,
 	UseGuards,
 	UseInterceptors,
@@ -73,9 +73,9 @@ import {
 		  if (allowedFileExtensions.includes(extension)) {
 			cb(null, true);
 		  } else {
-			throw new BadRequestException("No valid file");
-			//req.fileValidationError = FileValidationErrors.UNSUPPORTED_FILE_TYPE;
-			cb(null, false);
+			req.fileValidationError = FileValidationErrors.UNSUPPORTED_FILE_TYPE;
+			
+			cb(new UnsupportedMediaTypeException('Bad file format'), false);
 		  }
 		},
 		storage: diskStorage({
