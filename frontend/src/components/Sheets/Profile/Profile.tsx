@@ -238,7 +238,7 @@ function Profile() {
 	else
 		setImage("");
     try {
-      if (user.login && login_url)
+      if (user.login)
         fetchGameUser();
     } catch (e) {
       console.error(e);
