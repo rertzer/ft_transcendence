@@ -39,7 +39,6 @@ function EditProfile() {
       try {
         let formData = new FormData();
         formData.append("file", newAvatar, newAvatar.name);
-        console.log("fetch avatar")
         const fileData = await fetch(
           `http://${process.env.REACT_APP_URL_MACHINE}:4000/user/editAvatar`,
           {
@@ -48,10 +47,8 @@ function EditProfile() {
             body: formData,
           }
         );
-        console.log("EditProfile: handleUser newAvatar status", fileData.status);
         if (fileData.status === 201) {
           const answer = await fileData.json();
-          console.log("Answer", JSON.stringify(answer));
           setUserOk(true);
         }
       } catch (e) {
