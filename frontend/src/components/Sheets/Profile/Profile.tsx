@@ -31,7 +31,7 @@ export function AddLine(props: {
   return (
     <div key={props.index}>
       <CreateStyledCell coordX={(props.index)} coordY={7} width={1} height={1} text={props.game.type} fontSize={12} className={"dataItem"} />
-      <CreateStyledCell coordX={(props.index)} coordY={2} width={1} height={1} text={props.game.game_status || ''} fontSize={12} className={"dataItem"} />
+      <CreateStyledCell coordX={(props.index)} coordY={2} width={1} height={1} text={(props.game.game_status === 'FINISH_BY_FORFAIT' ? 'FORFAIT' : props.game.game_status) || ''} fontSize={12} className={"dataItem"} />
       <CreateStyledCell coordX={(props.index)} coordY={3} width={1} height={1} text={props.game.won ? "WIN" : "LOST"} fontSize={12} className={"dataItem"} />
       <CreateStyledCell coordX={(props.index)} coordY={4} width={1} height={1} text={props.game.opponentUserName.toString()} fontSize={12} className={"dataItemButton"} onClick={() => navigate(`/profile/${props.game.opponentLogin}`)} />
       <CreateStyledCell coordX={(props.index)} coordY={5} width={1} height={1} text={props.game.myScore?.toString() || ''} fontSize={12} className={"dataItem"} />
@@ -392,7 +392,7 @@ function Profile() {
       {isAuth() && <CreateStyledCell coordX={1} coordY={calculate_edit_Y()} width={1} height={1} text={"Edit Profile"} className={"edit_profile"} fontSize={12} onClick={setEditAndHideChat} />}
       {isAuth() && <CreateStyledCell coordX={2} coordY={calculate_edit_Y()} width={1} height={1} text={"TwoFa Settings"} className={"edit_profile"} fontSize={12} onClick={setTwoFaAndHideChat} />}
       {twoFa && <Navigate to="/twofa"/>}
-      {edit && <Navigate to="/profile/edit"/>}
+      {(edit || auth.user.newbie) && <Navigate to="/edit"/>}
       {redirect && <Navigate to ={"/profile/" + auth.user.login}/>}
       {!isAuth() &&
       <div>

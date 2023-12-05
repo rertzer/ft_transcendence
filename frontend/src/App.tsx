@@ -21,7 +21,7 @@ function App() {
 	    <Route path="/" element={<RequireAuth><PageUrlProvider page_url={"Profile"}><Desktop1 /></PageUrlProvider></RequireAuth>} />
       <Route path="/game" element={<RequireAuth><PageUrlProvider page_url={"Game"}><Desktop1 /></PageUrlProvider></RequireAuth>} />
       <Route path="/profile/:login_url" element={<RequireAuth><PageUrlProvider page_url={"Profile"}><Desktop1 /></PageUrlProvider></RequireAuth>} />
-      <Route path="/profile/edit" element={<RequireAuth> <EditProfile /></RequireAuth>} />
+      <Route path="/edit" element={<RequireAuth> <EditProfile /></RequireAuth>} />
       <Route path="/data" element={<RequireAuth><PageUrlProvider page_url={"Data"}><Desktop1 /></PageUrlProvider></RequireAuth>} />
       <Route path="/contacts" element={<RequireAuth><PageUrlProvider page_url={"Contacts"}><Desktop1 /></PageUrlProvider></RequireAuth>} />
       <Route path="/login" element={<Login />} />

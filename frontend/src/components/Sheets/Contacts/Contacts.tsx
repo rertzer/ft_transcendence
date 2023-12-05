@@ -208,13 +208,16 @@ export function Contacts(props: { sx: number, sy: number, zoom: number, toolbar:
       return (<div key={friend.id}><AddLine scrollX={props.sx} scrollY={props.sy} toolbar={props.toolbar} zoom={props.zoom} name={friend.username} login={friend.login} id={friend.id} coordX={variableToPass} connected={friend.connected} avatar={friend.avatar} key={`${friend.id}`}/>
 		<div onClick={()=>{sendDM(friend.login)}}><CreateStyledCell
 		  coordX={variableToPass} coordY={3} width={1} height={1} key={"3"}
-		  text={'send DM'} fontSize={12} className={"DM_contacts"} /></div>
+		  text={'Send DM'} fontSize={12} className={"DM_contacts"} /></div>
 		<div key={"removeFriend"} onClick={() =>removeFriend(friend.id)}>
 		<CreateStyledCell
 			coordX={variableToPass} coordY={4} width={1} height={1} key={"3"}
-			text={'unfriend'} fontSize={12} className={"delete_contacts"} />
+			text={'Unfriend'} fontSize={12} className={"delete_contacts"} />
+		
 		</div>
-		</div>)}
-	)};
+		</div>)})};
+		<CreateStyledCell
+			coordX={3} coordY={1} width={2} height={sizeOfList === 0 ? 2 : sizeOfList + 1 } key={"4"}
+			text={''} fontSize={12} className={"border"} />
 	</div>)
 }

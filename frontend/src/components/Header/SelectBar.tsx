@@ -17,13 +17,10 @@ import ZoomInIcon from '@mui/icons-material/ZoomIn';
 import ZoomOutIcon from '@mui/icons-material/ZoomOut';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import RadioButtonCheckedIcon from '@mui/icons-material/RadioButtonChecked';
-import InfoIcon from '@mui/icons-material/Info';
-import KeyboardIcon from '@mui/icons-material/Keyboard';
-import PsychologyAltIcon from '@mui/icons-material/PsychologyAlt';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
-
+ 
 import { useLogin } from '../user/auth';
 import { gameSocket } from '../game/services/gameSocketService';
 import gameContext from '../../context/gameContext';
@@ -230,16 +227,6 @@ function BasicMenu() {
       </List>
     );
   }
-  function Help() {
-    return (
-      <List dense onMouseLeave={() => handleClick("none")} sx={{ color: dark ? 'white' : '#111111', }} style={{ position: 'fixed', top: '64px', left: '255px', width: 200, paddingTop: "0px", paddingBottom: "0px", backgroundColor: dark ? '#2f2f2f' : 'white', border: dark ? '1px solid black' : '1px solid grey' }} >
-        <ListItemButton><PsychologyAltIcon fontSize="small" /><ListItemText style={{ position: 'relative', left: '10px' }}>What's this ? </ListItemText></ListItemButton>
-        <ListItemButton><KeyboardIcon fontSize="small" /><ListItemText style={{ position: 'relative', left: '10px' }}>Controls </ListItemText></ListItemButton>
-        <Divider />
-        <ListItemButton><InfoIcon fontSize="small" /><ListItemText style={{ position: 'relative', left: '10px' }}>About us </ListItemText ></ListItemButton>
-      </List>
-    );
-  }
   function Font() {
     const context = useContext(PageContext);
     if (!context) { throw new Error('useContext must be used within a MyProvider'); }
@@ -272,8 +259,6 @@ function BasicMenu() {
         return <Styles />;
       case "Window":
         return <Window />;
-      case "Help":
-        return <Help />;
       case "Font":
         return <Font />;
       default:
@@ -356,9 +341,6 @@ function BasicMenu() {
       </div>
       <div className={dark ? style.file : style.fileLight} style={{ left: '190px', width: '65px' }} onMouseEnter={() => handleClick("Window")}>
         <div className={dark ? style.file1 : style.file1Light} style={{ width: '65px', }}>Window</div>
-      </div>
-      <div className={dark ? style.file : style.fileLight} style={{ left: '255px', width: '45px' }} onMouseEnter={() => handleClick("Help")}>
-        <div className={dark ? style.file1 : style.file1Light} style={{ width: '45px', }}>Help</div>
       </div>
       {BarSwitch()}
     </ThemeProvider>
