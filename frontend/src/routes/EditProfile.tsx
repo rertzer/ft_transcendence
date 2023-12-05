@@ -31,8 +31,7 @@ function EditProfile() {
     const avatar = selectedFiles?.[0];
     if (avatar) {
       setNewAvatar(avatar);
-    }
-    else{
+    } else {
       setNewAvatar(undefined);
     }
   };
@@ -40,22 +39,27 @@ function EditProfile() {
   const handleUser = async (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     if (newAvatar) {
-      try{
-      let formData = new FormData();
-      formData.append("file", newAvatar, newAvatar.name);
+      try {
+        let formData = new FormData();
+        formData.append("file", newAvatar, newAvatar.name);
 
-      const fileData = await fetch(
-        `http://${process.env.REACT_APP_URL_MACHINE}:4000/user/editAvatar`,
-        {
-          method: "POST",
-          headers: { Authorization: auth.getBearer() },
-          body: formData,
+        const fileData = await fetch(
+          `http://${process.env.REACT_APP_URL_MACHINE}:4000/user/editAvatar`,
+          {
+            method: "POST",
+            headers: { Authorization: auth.getBearer() },
+            body: formData,
+          }
+        );
+        console.log("EditProfile: handleUser status", fileData.status);
+        if (fileData.status === 201) {
+          const answer = await fileData.json();
+          console.log("Answer", JSON.stringify(answer));
+          setUserOk(true);
         }
-      );
-      await fileData.json();
-      setUserOk(true);
+      } catch (e) {
+        console.log(e);
       }
-        catch(e) {console.error(e);}
     }
 
     let tosend: IToSend = { login: auth.user.login };
