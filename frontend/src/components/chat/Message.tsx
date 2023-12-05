@@ -355,6 +355,9 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 		}
 		else {
 			setGameStatus('NOT_IN_GAME');
+			if (roomId !== 0)
+				setRoomId(0);
+			props.setInvite(false);
 			setActiveChannel({
 				id: -1,
 				channelName: "PongOffice Chat",

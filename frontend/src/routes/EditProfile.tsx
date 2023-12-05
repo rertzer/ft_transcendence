@@ -40,10 +40,9 @@ function EditProfile() {
   const handleUser = async (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     if (newAvatar) {
-      try{
+      try {
       let formData = new FormData();
       formData.append("file", newAvatar, newAvatar.name);
-
       const fileData = await fetch(
         `http://${process.env.REACT_APP_URL_MACHINE}:4000/user/editAvatar`,
         {

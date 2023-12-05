@@ -171,9 +171,9 @@ function Profile() {
     setSizeOfList(gameUser?.games?.length || 0);
   }, [gameUser])
 
-  useEffect(() => {
-    setRender(!render);
-  },[location.pathname]);
+//   useEffect(() => {
+//     setRender(!render);
+//   },[location.pathname]);
 
   useEffect(() => {
     const fetchUser = async (login: string) => {
@@ -239,6 +239,8 @@ function Profile() {
         console.error(e);
       }
     }
+	else
+		setImage("");
     try {
       if (user.login && login_url)
         fetchGameUser();
@@ -316,6 +318,11 @@ function Profile() {
     }
   }
 
+  async function setEditAndHideChat() {
+	setEdit(true);
+	updateChat("none");
+  }
+
   return (
     <div key={"profile"} style={{
       position: 'fixed',
@@ -381,7 +388,7 @@ function Profile() {
       })}
       {sizeOfList === 0 && <CreateStyledCell coordX={15} coordY={1} width={8} height={1} text={"No game"} fontSize={12} className={"dataItem"} />}
       <CreateStyledCell coordX={14} coordY={1} width={8} height={sizeOfList === 0 ? 2 : sizeOfList + 1} text={""} className={"border"} fontSize={12} />
-      {isAuth() && <CreateStyledCell coordX={1} coordY={calculate_edit_Y()} width={1} height={1} text={"Edit Profile"} className={"edit_profile"} fontSize={12} onClick={() => setEdit(true)} />}
+      {isAuth() && <CreateStyledCell coordX={1} coordY={calculate_edit_Y()} width={1} height={1} text={"Edit Profile"} className={"edit_profile"} fontSize={12} onClick={setEditAndHideChat} />}
       {edit && <Navigate to="/profile/edit"/>}
       {redirect && <Navigate to ={"/profile/" + auth.user.login}/>}
       {!isAuth() &&
