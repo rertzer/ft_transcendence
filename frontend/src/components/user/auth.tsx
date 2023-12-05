@@ -60,6 +60,7 @@ export const LoginProvider = ({ children }: any) => {
   };
 
   const edit = (user: any) => {
+    console.log("setting user", user.login, user.twofa_activated)
     setUser(user);
   };
 

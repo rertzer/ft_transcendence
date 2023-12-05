@@ -1,7 +1,8 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import * as speakeasy from "speakeasy";
 import * as qrcode from "qrcode";
 import { PrismaUserService } from "src/prisma/user/prisma.user.service";
+import { User } from "@prisma/client";
 
 @Injectable()
 export class TwoFAService {
@@ -30,7 +31,7 @@ export class TwoFAService {
       });
     }
     user = await this.prisma.setTfaActivated({ login, verified });
-
+    user.tfa_secret = "nope";
     return user;
   }
 
@@ -47,14 +48,13 @@ export class TwoFAService {
     return verified;
   }
 
-
-async cancel(login: string) {
-
-  const verified = false;
-  let user = await this.prisma.getUserByLogin(login);
-  if (user)
-  user = await this.prisma.setTfaActivated({ login, verified });
-
-  return user;
-}
+  async cancel(login: string) {
+    const verified = false;
+    let user = await this.prisma.getUserByLogin(login);
+    if (user) {
+      user = await this.prisma.setTfaActivated({ login, verified });
+      user.tfa_secret = "nope";
+    }
+    return user;
+  }
 }
