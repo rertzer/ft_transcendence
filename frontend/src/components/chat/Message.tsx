@@ -374,13 +374,18 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 
 	useEffect(() => {
 		async function fetchAvatar(avatar: string) {
-			const res = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/user/avatar/` + avatar, {
-			method: "GET",
-			headers: { Authorization: auth.getBearer() },
-			});
-			const imageBlob = await res.blob();
-			const imageObjectURL = URL.createObjectURL(imageBlob);
-			setUserAvatar(imageObjectURL);
+			try {
+				const res = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/user/avatar/` + avatar, {
+				method: "GET",
+				headers: { Authorization: auth.getBearer() },
+				});
+				const imageBlob = await res.blob();
+				const imageObjectURL = URL.createObjectURL(imageBlob);
+				setUserAvatar(imageObjectURL);
+			}
+			catch (e) {
+				console.error(e);
+			}
 		}
 
 		async function deleteMessage() {
