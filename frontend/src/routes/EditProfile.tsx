@@ -16,11 +16,8 @@ interface IToSend {
 function EditProfile() {
   const auth = useLogin();
 
-  let tmp = auth.user.username;
-  if (tmp === null) tmp = "";
-
   const [userOk, setUserOk] = useState(false);
-  const [newUsername, setNewUsername] = useState(tmp);
+  const [newUsername, setNewUsername] = useState(auth.user.username);
   const [newEmail, setNewEmail] = useState(auth.user.email);
   const [newAvatar, setNewAvatar] = useState<File>();
   const [returnPath, setReturnPath] = useState("/");
@@ -119,10 +116,6 @@ function EditProfile() {
   useEffect(() => {
     if (auth.user.newbie) setReturnPath("/twofa");
   }, [auth]);
-
-  useEffect(() => {
-    if (!newUsername && auth.user.username) setNewUsername(auth.user.username);
-  }, [auth.user.username, newUsername]);
 
   return (
     <div className="register">
