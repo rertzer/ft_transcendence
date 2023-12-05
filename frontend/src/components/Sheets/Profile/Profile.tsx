@@ -45,6 +45,7 @@ function Profile() {
 
   const { login_url } = useParams();
   const [sizeOfList, setSizeOfList] = useState(0);
+  const [twoFa, setTwoFa] = useState(false);
 
   const empty_user = {
     id: 0,
@@ -136,10 +137,6 @@ function Profile() {
     return (result > 4 ? result : 5);
   }
 
-//   let myuser = auth.user.login;
-//   if (login_url) {
-//     myuser = login_url; }
-
   function isAuth() {
     return (user.login === auth.user.login || (!login_url));
   }
@@ -169,10 +166,6 @@ function Profile() {
   useEffect(() => {
     setSizeOfList(gameUser?.games?.length || 0);
   }, [gameUser])
-
-//   useEffect(() => {
-//     setRender(!render);
-//   },[location.pathname]);
 
   useEffect(() => {
 	let myuser = auth.user.login;
@@ -326,6 +319,11 @@ function Profile() {
 	updateChat("none");
   }
 
+  async function setTwoFaAndHideChat() {
+    setTwoFa(true);
+    updateChat("none");
+  }
+
   return (
     <div key={"profile"} style={{
       position: 'fixed',
@@ -392,6 +390,8 @@ function Profile() {
       {sizeOfList === 0 && <CreateStyledCell coordX={15} coordY={1} width={8} height={1} text={"No game"} fontSize={12} className={"dataItem"} />}
       <CreateStyledCell coordX={14} coordY={1} width={8} height={sizeOfList === 0 ? 2 : sizeOfList + 1} text={""} className={"border"} fontSize={12} />
       {isAuth() && <CreateStyledCell coordX={1} coordY={calculate_edit_Y()} width={1} height={1} text={"Edit Profile"} className={"edit_profile"} fontSize={12} onClick={setEditAndHideChat} />}
+      {isAuth() && <CreateStyledCell coordX={2} coordY={calculate_edit_Y()} width={1} height={1} text={"TwoFa Settings"} className={"edit_profile"} fontSize={12} onClick={setTwoFaAndHideChat} />}
+      {twoFa && <Navigate to="/twofa"/>}
       {edit && <Navigate to="/profile/edit"/>}
       {redirect && <Navigate to ={"/profile/" + auth.user.login}/>}
       {!isAuth() &&
