@@ -3,14 +3,14 @@ import { PageContext } from '../../../context/PageContext';
 import styles from "./Numbers.module.css";
 
 function RepeatingNumbers() {
-  const windowHeightRef = useRef(window.innerHeight);
+  const windowHeightRef = useRef(window.screen.height);
 
 
   const forceUpdate = useForceUpdate();
   
   useEffect(() => {
     const handleResize = () => {
-      windowHeightRef.current = window.innerHeight;
+      windowHeightRef.current = window.screen.height;
       // Trigger a re-render of the component when window.innerHeight changes
       forceUpdate();
     };

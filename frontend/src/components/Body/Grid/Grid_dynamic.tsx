@@ -55,8 +55,8 @@ function Grid() {
   const { modeGame, gameStatus } = useContext(gameContext);
 
   //HANDLE WINDOW RESIZE
-  const windowHeightRef = useRef(window.innerHeight);
-  const windowWidthRef = useRef(window.innerWidth);
+  const windowHeightRef = useRef(window.screen.height);
+  const windowWidthRef = useRef(window.screen.width);
 
   const forceUpdate = useForceUpdate();
 
@@ -67,8 +67,8 @@ function Grid() {
 
   useEffect(() => {
     const handleResize = () => {
-      windowWidthRef.current = window.innerWidth;
-      windowHeightRef.current = window.innerHeight;
+      windowWidthRef.current = window.screen.width;
+      windowHeightRef.current = window.screen.height;
       // Trigger a re-render of the component when window.innerWidth changes
       forceUpdate();
     };
