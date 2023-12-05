@@ -21,12 +21,12 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 	if (!context) { throw new Error('useContext must be used within a MyProvider'); }
 	const { updateChat } = context;
 	const {roomId, setRoomId, setGameStatus} = useContext(GameContext)
-	const {setActiveChannel, setNeedToUpdate, setBlockedUsers } = useContext(ChatContext)
+	const {setActiveChannel, setNeedToUpdate, setBlockedUsers, allAvatarsImg } = useContext(ChatContext)
     const [showUserActionsMenu, setShowUserActionsMenu] = useState(false);
 	const [userInfo, setUserInfo] = useState<uInfo>({userStatus: "user", friend: false, ingame: false})
 	const [errorMessage, setErrorMessage] = useState("");
     const socket = useContext(WebsocketContext);
-	const [userAvatar, setUserAvatar] = useState("");
+	const [userAvatar, setUserAvatar] = useState<string | undefined>("");
 	let menuRef = useRef<HTMLInputElement>(null);
 	let messageType = "normal";
 
@@ -373,21 +373,6 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 	}
 
 	useEffect(() => {
-		async function fetchAvatar(avatar: string) {
-			try {
-				const res = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/user/avatar/` + avatar, {
-				method: "GET",
-				headers: { Authorization: auth.getBearer() },
-				});
-				const imageBlob = await res.blob();
-				const imageObjectURL = URL.createObjectURL(imageBlob);
-				setUserAvatar(imageObjectURL);
-			}
-			catch (e) {
-				console.error(e);
-			}
-		}
-
 		async function deleteMessage() {
 			try {
 				const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/deleteMessage/${props.msgId}`, {
@@ -403,20 +388,6 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 			}
 		}
 
-		async function fetchUserAvatar() {
-			try {
-				const data = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/user/` + props.login, {
-				method: "GET",
-				headers: { Authorization: auth.getBearer() },
-				});
-				const newUser = await data.json();
-				if (newUser.avatar) {
-						fetchAvatar(newUser.avatar);
-				}
-				} catch (e) {
-					console.error(e);
-				}
-			}
 		if (messageType === "service") {
 			if (props.isDM && props.login !== auth.user.login && props.msg.search("Challenge accepted !") !== -1) {
 				deleteMessage();
@@ -429,22 +400,20 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 			}
 		}
 		else if (messageType === "owner") {
-			if (auth.user.avatar) {
-				try {
-					fetchAvatar(auth.user.avatar);
-				} catch (e) {
-					console.error(e);
-				}
-			}
+			const avatar = allAvatarsImg.find((item) => item.login === auth.user.login)
+			if (avatar)
+				setUserAvatar(avatar.imageObjectURL);
+			else
+				setUserAvatar("");
 		}
 		else {
-			try {
-				fetchUserAvatar();
-			} catch (e) {
-				console.error(e);
-			}
+			const avatar = allAvatarsImg.find((item) => item.login === props.login)
+			if (avatar)
+				setUserAvatar(avatar.imageObjectURL);
+			else
+				setUserAvatar("");
 		}
-	}, [auth, messageType, navigate, props, setRoomId, updateChat]);
+	}, [auth, messageType, navigate, props, setRoomId, updateChat, allAvatarsImg]);
 
 	if (messageType !== "service") {
 		return (

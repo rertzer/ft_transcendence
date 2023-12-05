@@ -16,6 +16,7 @@ import { BanKickLeaveDto,
 	ChatListOfUserDto,
 	CreateChatDto,
 	InviteUserDto, IsBlockedUserDto, JoinChatDto, PrivateConvDto, SetAdminDto, UnblockUserDto, UpdateDmNameDto } from "../../user/dto/chat.dto";
+import { MessageBody } from "@nestjs/websockets";
 
 
 @UseGuards(JwtGuard)
@@ -102,6 +103,8 @@ export class ChatOptController {
             await this.prismaChatService.updateNewUsernameOnDm(arrayOfDm, dto.OldUsername, dto.newUsername)
         }
     }
+
+
 
 	@Post('inviteUser')
 	async inviteUser(@Body() dto:InviteUserDto)
@@ -312,6 +315,18 @@ export class ChatOptController {
 		}
 		return {id: -1};
 	}
+
+	@Get("retrieveCommonsChatUser/:chatId")
+	async retrieveCommonsChatUser(
+		@Param('chatId',ParseIntPipe) chatId: number,
+	) {
+		const listOfUsers = await this.prismaChatService.retrievChatUser(chatId)
+		if (listOfUsers)
+			return listOfUsers;
+		else
+			return [];
+	}
+
 
 	@Get("listOfBlockedUser/:login")
 	async listOfBlockUser(

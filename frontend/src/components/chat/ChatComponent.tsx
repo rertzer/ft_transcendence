@@ -45,6 +45,8 @@ const ChatComponent = (props: {newDM: string}) => {
         userId: null,
         userLogin: "",
     })
+    const [allAvatarsURL, setAllAvatarsURL] = useState<{login:string, avatar:string}[]>([]);
+    const [allAvatarsImg, setAllAvatarsImg] = useState<{login:string, imageObjectURL:string | undefined}[]>([]);
 
   const ChatValue: IChatContext = {
     allChannels,
@@ -55,6 +57,10 @@ const ChatComponent = (props: {newDM: string}) => {
     setNeedToUpdate,
     blockedUsers,
     setBlockedUsers,
+    allAvatarsURL,
+    setAllAvatarsURL, 
+	allAvatarsImg,
+	setAllAvatarsImg,
   }
 
 useEffect(() => {

@@ -22,6 +22,10 @@ export interface IChatContext {
 	setNeedToUpdate: (str: string) => void;
 	blockedUsers: {idUser: number, username: string, login: string}[];
 	setBlockedUsers: (blocked: {idUser: number, username: string, login: string}[]) => void;
+	allAvatarsURL: {login:string, avatar:string}[];
+	setAllAvatarsURL: (allAvatars: {login:string, avatar:string}[]) => void;
+	allAvatarsImg: {login:string,imageObjectURL:string| undefined}[];
+	setAllAvatarsImg: (allAvatars: {login:string,  imageObjectURL:string | undefined}[]) => void;
 };
 
 const defaultState:IChatContext = {
@@ -43,6 +47,10 @@ const defaultState:IChatContext = {
 	setNeedToUpdate: () => {},
 	blockedUsers: [],
 	setBlockedUsers: () => {},
+	allAvatarsURL: [],
+	setAllAvatarsURL: () => {},
+	allAvatarsImg: [],
+	setAllAvatarsImg: () => {}
 };
 
 export default React.createContext(defaultState);

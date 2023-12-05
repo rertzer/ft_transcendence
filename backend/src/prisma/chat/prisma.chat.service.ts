@@ -36,6 +36,33 @@ export class PrismaChatService {
 		}
 	}
 
+	async retrievChatUser(chatId:number)
+	{
+		let userAvatar = [];
+		const listOfUser = await this.prismaService.chatChannelsUser.findMany({
+			where:{
+				channel_id: chatId,
+			},
+			include:{
+				chatChannelsUser:true,
+			}
+		})
+		if (listOfUser)
+		{
+			for (const element of listOfUser)
+			{
+				const obj = {
+					login : element.chatChannelsUser.login,
+					avatar: element.chatChannelsUser.avatar,
+				}
+				userAvatar.push(obj);
+			}
+			return userAvatar;
+		}
+		else
+			return null;
+	}
+
 	async checkIfDmExist(idSender:number, idReceiver: number)
 	{
 		const exist =  await this.prismaService.chatChannels.findMany({
