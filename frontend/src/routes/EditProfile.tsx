@@ -31,8 +31,7 @@ function EditProfile() {
     const avatar = selectedFiles?.[0];
     if (avatar) {
       setNewAvatar(avatar);
-    }
-    else{
+    } else {
       setNewAvatar(undefined);
     }
   };
@@ -44,63 +43,66 @@ function EditProfile() {
     console.log("Token in EditProfile is", auth.getBearer());
 
     if (newAvatar) {
-      try{
-      console.log("new Avatar", newAvatar);
-      let formData = new FormData();
-      formData.append("file", newAvatar, newAvatar.name);
-      console.log("newAvatar", formData.keys, newAvatar.name);
+      try {
+        let formData = new FormData();
+        formData.append("file", newAvatar, newAvatar.name);
 
-      const fileData = await fetch(
-        `http://${process.env.REACT_APP_URL_MACHINE}:4000/user/editAvatar`,
-        {
-          method: "POST",
-          headers: { Authorization: auth.getBearer() },
-          body: formData,
+        const fileData = await fetch(
+          `http://${process.env.REACT_APP_URL_MACHINE}:4000/user/editAvatar`,
+          {
+            method: "POST",
+            headers: { Authorization: auth.getBearer() },
+            body: formData,
+          }
+        );
+        console.log("EditProfile: handleUser status", fileData.status);
+        if (fileData.status === 201) {
+          const answer = await fileData.json();
+          console.log("Answer", JSON.stringify(answer));
+          setUserOk(true);
         }
-      );
-      console.log("EditProfile: handleUser status", )
-      const answer = await fileData.json();
-      console.log("Answer", JSON.stringify(answer));
-      setUserOk(true);
+      } catch (e) {
+        console.log(e);
       }
-        catch(e) {console.log(e);}
     }
 
     let tosend: IToSend = { login: auth.user.login };
     if (newUsername) tosend.username = newUsername;
     if (newEmail) tosend.email = newEmail;
 
-    if (tosend.username || tosend.email){
-    try{
-    console.log("fetching", tosend);
-    const data = await fetch(
-      `http://${process.env.REACT_APP_URL_MACHINE}:4000/user/edit`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: auth.getBearer(),
-          "Content-Type": "application/json; charset=utf-8",
-        },
-        body: JSON.stringify(tosend),
-      }
-    );
-    const newUser = await data.json();
-    console.log("nouveau", newUser);
+    if (tosend.username || tosend.email) {
+      try {
+        console.log("fetching", tosend);
+        const data = await fetch(
+          `http://${process.env.REACT_APP_URL_MACHINE}:4000/user/edit`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: auth.getBearer(),
+              "Content-Type": "application/json; charset=utf-8",
+            },
+            body: JSON.stringify(tosend),
+          }
+        );
+        const newUser = await data.json();
+        console.log("nouveau", newUser);
 
-    if (newUser) {
-      if (newUser.message) {
-        console.log("Bad request");
+        if (newUser) {
+          if (newUser.message) {
+            console.log("Bad request");
 
-        setUserOk(false);
-      } else {
-        if (auth.user.newbie) setReturnPath("/twofa");
-        auth.edit(newUser);
-        setUserOk(true);
-        console.log("Edited!!!", userOk);
+            setUserOk(false);
+          } else {
+            if (auth.user.newbie) setReturnPath("/twofa");
+            auth.edit(newUser);
+            setUserOk(true);
+            console.log("Edited!!!", userOk);
+          }
+        }
+      } catch (e) {
+        console.log(e);
       }
     }
-  }
-  catch(e) {console.log(e);}}
   };
 
   useEffect(() => {
