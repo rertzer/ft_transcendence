@@ -123,7 +123,6 @@ function Profile() {
 
   //RESIZE WINDOW
   const [edit, setEdit] = useState(false);
-  const [render, setRender] = useState(false);
 
   const context = useContext(PageContext);
     if (!context) { throw new Error('useContext must be used within a MyProvider'); }
@@ -137,9 +136,9 @@ function Profile() {
     return (result > 4 ? result : 5);
   }
 
-  let myuser = auth.user.login;
-  if (login_url) {
-    myuser = login_url; }
+//   let myuser = auth.user.login;
+//   if (login_url) {
+//     myuser = login_url; }
 
   function isAuth() {
     return (user.login === auth.user.login || (!login_url));
@@ -176,6 +175,10 @@ function Profile() {
 //   },[location.pathname]);
 
   useEffect(() => {
+	let myuser = auth.user.login;
+	if (login_url) {
+		myuser = login_url; 
+	}
     const fetchUser = async (login: string) => {
       const bearer = auth.getBearer();
       const data = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/user/` + login, {
@@ -202,7 +205,7 @@ function Profile() {
   	} catch (e) {
 	console.error(e);
   	}
-  }, [auth, login_url, myuser, user.login, location.pathname]);
+  }, [auth, login_url, user.login, location.pathname]);
 
   useEffect(() => {
 
