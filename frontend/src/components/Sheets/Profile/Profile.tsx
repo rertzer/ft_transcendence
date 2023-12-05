@@ -30,7 +30,7 @@ export function AddLine(props: {
   return (
     <div key={props.index}>
       <CreateStyledCell coordX={(props.index)} coordY={7} width={1} height={1} text={props.game.type} fontSize={12} className={"dataItem"} />
-      <CreateStyledCell coordX={(props.index)} coordY={2} width={1} height={1} text={props.game.game_status || ''} fontSize={12} className={"dataItem"} />
+      <CreateStyledCell coordX={(props.index)} coordY={2} width={1} height={1} text={(props.game.game_status === 'FINISH_BY_FORFAIT' ? 'FORFAIT' : props.game.game_status) || ''} fontSize={12} className={"dataItem"} />
       <CreateStyledCell coordX={(props.index)} coordY={3} width={1} height={1} text={props.game.won ? "WIN" : "LOST"} fontSize={12} className={"dataItem"} />
       <CreateStyledCell coordX={(props.index)} coordY={4} width={1} height={1} text={props.game.opponentUserName.toString()} fontSize={12} className={"dataItemButton"} onClick={() => navigate(`/profile/${props.game.opponentLogin}`)} />
       <CreateStyledCell coordX={(props.index)} coordY={5} width={1} height={1} text={props.game.myScore?.toString() || ''} fontSize={12} className={"dataItem"} />
