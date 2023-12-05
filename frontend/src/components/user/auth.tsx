@@ -40,7 +40,6 @@ export const LoginProvider = ({ children }: any) => {
     setUser(empty_user);
   };
 
-
   const reload = () => {
     if (token.login) {
       const bearer = "Bearer " + token.access_token;
@@ -54,13 +53,14 @@ export const LoginProvider = ({ children }: any) => {
         )
           .then((response) => response.json())
           .then((data) => setUser(data))
-          .catch((error) => console.error(error));
+          .catch((error) => console.log(error));
       };
       fetchUser();
     }
   };
 
   const edit = (user: any) => {
+    console.log("setting user", user.login, user.twofa_activated)
     setUser(user);
   };
 
@@ -74,24 +74,28 @@ export const LoginProvider = ({ children }: any) => {
 
   //////////////////////////////// refresh //////////////////////////////////////
   useEffect(() => {
-	const fetchImage = async () => {
-		try {
-		  const bearer = "Bearer " + token.access_token;
-		  const res = await fetch(
-			`http://${process.env.REACT_APP_URL_MACHINE}:4000/user/avatar/` +
-			  user.avatar,
-			{
-			  method: "GET",
-			  headers: { Authorization: bearer },
-			}
-		  );
-		  const imageBlob = await res.blob();
-		  const imageObjectURL = URL.createObjectURL(imageBlob);
-		  setImage(imageObjectURL);
-		} catch (e) {
-		  console.error(e);
-		}
-	  };
+    const fetchImage = async () => {
+      try {
+        const bearer = "Bearer " + token.access_token;
+        const res = await fetch(
+          `http://${process.env.REACT_APP_URL_MACHINE}:4000/user/avatar/` +
+            user.avatar,
+          {
+            method: "GET",
+            headers: { Authorization: bearer },
+          }
+        );
+        if (res) {
+          const imageBlob = await res.blob();
+          const imageObjectURL = URL.createObjectURL(imageBlob);
+          setImage(imageObjectURL);
+        } else {
+          setImage("norminet.jpeg");
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    };
 
     if (user.avatar) {
       try {
@@ -100,7 +104,7 @@ export const LoginProvider = ({ children }: any) => {
         console.error(e);
       }
     }
-  }, [user,token.access_token]);
+  }, [user, token.access_token]);
 
   if (!user.login) reload();
 

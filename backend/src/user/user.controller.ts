@@ -54,7 +54,8 @@ import {
 		  );
 		  fileStream.then((fs) => fs.pipe(response));
 		} else {
-		  throw new BadRequestException("No valid file");
+		  return;
+			//throw new BadRequestException("No valid file");
 		}
 	  }
 	}

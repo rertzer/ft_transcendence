@@ -11,7 +11,6 @@ export class UserService {
   returnIfExist(data: User | null) {
     if (data) {
       data.tfa_secret = "nope";
-      data.tfa_activated = false;
       return data;
     } else {
       throw new BadRequestException("Sorry, bad request");

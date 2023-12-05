@@ -6,12 +6,12 @@ function TwoFAToken() {
   const auth = useLogin();
   const navigate = useNavigate();
   const [token, setToken] = useState("");
-  const [tokenOk, setTokenOk] = useState();
+  const [tokenOk, setTokenOk] = useState<boolean|undefined>();
 
   const handleToken = async (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     if (token) {
-      const fileData = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/twofa/validate`, {
+      const data = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/twofa/validate`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json; charset=utf-8",
@@ -19,8 +19,9 @@ function TwoFAToken() {
         },
         body: JSON.stringify({ token }),
       });
-      const answer = await fileData.json();
-      setTokenOk(answer);
+      const newUser = await data.json();
+      auth.edit(newUser);
+      setTokenOk(true);
     }
   };
 

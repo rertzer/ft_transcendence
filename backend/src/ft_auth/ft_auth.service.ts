@@ -64,6 +64,7 @@ export class FtAuthService {
   }
 
   setTemporaryKey(login: string, tfa_activated: boolean): string {
+    console.log("setTemporaryKey");
     const randomDigits = Array.from({ length: 30 }, () =>
       Math.floor(Math.random() * 10)
     ).join("");

@@ -31,8 +31,7 @@ function EditProfile() {
     const avatar = selectedFiles?.[0];
     if (avatar) {
       setNewAvatar(avatar);
-    }
-    else{
+    } else {
       setNewAvatar(undefined);
     }
   };
@@ -41,77 +40,85 @@ function EditProfile() {
     event.preventDefault();
     if (newAvatar) {
       try {
-      let formData = new FormData();
-      formData.append("file", newAvatar, newAvatar.name);
-      const fileData = await fetch(
-        `http://${process.env.REACT_APP_URL_MACHINE}:4000/user/editAvatar`,
-        {
-          method: "POST",
-          headers: { Authorization: auth.getBearer() },
-          body: formData,
+        let formData = new FormData();
+        formData.append("file", newAvatar, newAvatar.name);
+
+        const fileData = await fetch(
+          `http://${process.env.REACT_APP_URL_MACHINE}:4000/user/editAvatar`,
+          {
+            method: "POST",
+            headers: { Authorization: auth.getBearer() },
+            body: formData,
+          }
+        );
+        console.log("EditProfile: handleUser status", fileData.status);
+        if (fileData.status === 201) {
+          const answer = await fileData.json();
+          console.log("Answer", JSON.stringify(answer));
+          setUserOk(true);
         }
-      );
-      await fileData.json();
-      setUserOk(true);
+      } catch (e) {
+        console.log(e);
       }
-        catch(e) {console.error(e);}
     }
 
     let tosend: IToSend = { login: auth.user.login };
     if (newUsername) tosend.username = newUsername;
     if (newEmail) tosend.email = newEmail;
 
-    if (tosend.username || tosend.email){
-    try{
-    const data = await fetch(
-      `http://${process.env.REACT_APP_URL_MACHINE}:4000/user/edit`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: auth.getBearer(),
-          "Content-Type": "application/json; charset=utf-8",
-        },
-        body: JSON.stringify(tosend),
-      }
-    );
-    const newUser = await data.json();
-
-    if (newUser) {
-      if (newUser.message) {
-        setUserOk(false);
-      } else {
-        if (auth.user.newbie)
-        {
-          setReturnPath("/twofa");
-        }
-        if (newUsername)
-        {
-          try{
-            const toSend2 = {
-              OldUsername : auth.user.username,
-              newUsername : newUsername,
-            }
-            await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/updateDmName`, {
+    if (tosend.username || tosend.email) {
+      try {
+        const data = await fetch(
+          `http://${process.env.REACT_APP_URL_MACHINE}:4000/user/edit`,
+          {
             method: "POST",
             headers: {
               Authorization: auth.getBearer(),
               "Content-Type": "application/json; charset=utf-8",
             },
-            body: JSON.stringify(toSend2),
-            });
+            body: JSON.stringify(tosend),
           }
-          catch(error)
-          {
-            console.error(error);
+        );
+        const newUser = await data.json();
+
+        if (newUser) {
+          if (newUser.message) {
+            setUserOk(false);
+          } else {
+            if (newUsername) {
+              try {
+                const toSend2 = {
+                  OldUsername: auth.user.username,
+                  newUsername: newUsername,
+                };
+                await fetch(
+                  `http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/updateDmName`,
+                  {
+                    method: "POST",
+                    headers: {
+                      Authorization: auth.getBearer(),
+                      "Content-Type": "application/json; charset=utf-8",
+                    },
+                    body: JSON.stringify(toSend2),
+                  }
+                );
+              } catch (error) {
+                console.error(error);
+              }
+            }
+            auth.edit(newUser);
+            setUserOk(true);
           }
         }
-        auth.edit(newUser);
-        setUserOk(true);
+      } catch (e) {
+        console.error(e);
       }
     }
-  }
-  catch(e) {console.error(e);}}
   };
+
+  useEffect(() => {
+    if (auth.user.newbie) setReturnPath("/twofa");
+  }, [auth]);
 
   useEffect(() => {
     if (!newUsername && auth.user.username) setNewUsername(auth.user.username);

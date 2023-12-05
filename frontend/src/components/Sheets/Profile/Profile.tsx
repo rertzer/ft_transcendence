@@ -234,8 +234,9 @@ function Profile() {
         console.error(e);
       }
     }
-	else
-		setImage("");
+	  else {
+		  setImage("");
+    }
     try {
       if (user.login)
         fetchGameUser();
