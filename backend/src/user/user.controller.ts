@@ -66,7 +66,8 @@ import {
 		  if (allowedFileExtensions.includes(extension)) {
 			cb(null, true);
 		  } else {
-			req.fileValidationError = FileValidationErrors.UNSUPPORTED_FILE_TYPE;
+			throw new BadRequestException("No valid file");
+			//req.fileValidationError = FileValidationErrors.UNSUPPORTED_FILE_TYPE;
 			cb(null, false);
 		  }
 		},
