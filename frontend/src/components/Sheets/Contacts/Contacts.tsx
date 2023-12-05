@@ -24,7 +24,7 @@ export function AddLine(props: {scrollX: number, scrollY: number, toolbar: boole
 
 	const navigate = useNavigate();
 	const [image, setImage] = useState(
-		"norminet.jpeg"
+		""
 	  );
 	const auth = useLogin();
 		let add;
