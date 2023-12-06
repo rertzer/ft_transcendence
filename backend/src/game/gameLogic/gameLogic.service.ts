@@ -123,7 +123,7 @@ export class GameLogicService {
 			let sidePlayer:string = (ball.pos.x <= 1 / 2) ? 'left' : 'right';
 			let direction = (ball.pos.x <= 1 / 2) ? 1 : -1;
 			if (this.colisionPaddle(playerWithBallPosY, ball, room.gameParam, sidePlayer)) {
-				let colisionY = (ball.pos.y - (playerWithBallPosY)) / (room.gameParam.paddleHeight / 4);
+				let colisionY = (ball.pos.y - (playerWithBallPosY)) / (room.gameParam.paddleHeight / 3);
 				let ang = colisionY * (Math.PI / 4);
 				ball.dir.x = direction * Math.cos(ang);
 				ball.dir.y = Math.sin(ang);
