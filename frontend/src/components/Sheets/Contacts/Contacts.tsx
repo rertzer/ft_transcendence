@@ -23,9 +23,6 @@ function alternateLine(size: number) {
 export function AddLine(props: {scrollX: number, scrollY: number, toolbar: boolean, zoom: number, name: string, login:string, id: number, coordX:number, connected: string, avatar: string, key:string}) {
 
 	const navigate = useNavigate();
-	const [image, setImage] = useState(
-		""
-	  );
 	const auth = useLogin();
 		let add;
 		let classname;
@@ -43,36 +40,8 @@ export function AddLine(props: {scrollX: number, scrollY: number, toolbar: boole
 		classname= "status_unconnected"
 	}
 
-	const fetchImage = async () => {
-		const bearer = auth.getBearer();
-		const res = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/user/avatar/` + props.avatar, {
-		  method: "GET",
-		  headers: { Authorization: bearer },
-		});
-		const imageBlob = await res.blob();
-		const imageObjectURL = URL.createObjectURL(imageBlob);
-		setImage(imageObjectURL);
-	  };
-	if (props.avatar)
-		fetchImage();
 	return (
 		<div key={props.name}>
-			<div key={"img"} style={{ position:'fixed',
-                	color:'black',
-                	backgroundColor:'red',
-                	top: props.toolbar ? '89px' : '166px' }}>
-      			<img src={image}
-            		alt="" className="profilePic"
-            		style={{  width:`${(20 + (props.zoom - 100) / 8) * 1}px`,
-                    	height:`${(20 + (props.zoom - 100) / 8) * 1}px`,
-                    	objectFit: 'cover',
-                    	position: 'absolute',
-						borderLeft: '1px solid black',
-						borderTop: '1px solid black',
-						borderBottom: '1px solid black',
-                    	top: `${(20 + (props.zoom - 100) / 8) * (props.coordX - props.scrollX)}px`,
-                    	left: `${-(20 + (props.zoom - 100) / 8) * 1 + (80 + (props.zoom - 100) / 2) * (1 - props.scrollY)}px`, }} />
-			</div>
 			<div key={"1"}><CreateStyledCell
 				coordX={props.coordX} coordY={1} width={1} height={1}
 				text={props.name} fontSize={12} className={"contacts_button"} onClick={() => navigate(`/profile/${props.login}`)}/>

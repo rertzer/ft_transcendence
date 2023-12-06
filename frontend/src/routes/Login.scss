@@ -59,6 +59,10 @@
                 font-weight: bold;
                 cursor: pointer;
             }
+            p.errorMessage{
+                color: red;
+                text-align: center;
+            }
         }
     }
 }

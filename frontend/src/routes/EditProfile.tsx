@@ -21,6 +21,7 @@ function EditProfile() {
   const [newEmail, setNewEmail] = useState(auth.user.email);
   const [newAvatar, setNewAvatar] = useState<File>();
   const [returnPath, setReturnPath] = useState("/");
+  const [avatarError, setAvatarError] = useState("");
 
   const handleAvatar = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { files } = event.target;
@@ -35,6 +36,9 @@ function EditProfile() {
 
   const handleUser = async (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
+    setAvatarError("");
+    setUserOk(false);
+    let avatarOk = true;
     if (newAvatar) {
       try {
         let formData = new FormData();
@@ -48,64 +52,67 @@ function EditProfile() {
           }
         );
         if (fileData.status === 201) {
-          await fileData.json();
           setUserOk(true);
+        } else {
+          setAvatarError(fileData.statusText);
+          avatarOk = false;
         }
       } catch (e) {
         console.error(e);
       }
     }
+    if (avatarOk) {
+      let tosend: IToSend = { login: auth.user.login };
+      if (newUsername) tosend.username = newUsername;
+      if (newEmail) tosend.email = newEmail;
 
-    let tosend: IToSend = { login: auth.user.login };
-    if (newUsername) tosend.username = newUsername;
-    if (newEmail) tosend.email = newEmail;
-
-    if (tosend.username || tosend.email) {
-      try {
-        const data = await fetch(
-          `http://${process.env.REACT_APP_URL_MACHINE}:4000/user/edit`,
-          {
-            method: "POST",
-            headers: {
-              Authorization: auth.getBearer(),
-              "Content-Type": "application/json; charset=utf-8",
-            },
-            body: JSON.stringify(tosend),
-          }
-        );
-        const newUser = await data.json();
-
-        if (newUser) {
-          if (newUser.message) {
-            setUserOk(false);
-          } else {
-            if (newUsername) {
-              try {
-                const toSend2 = {
-                  OldUsername: auth.user.username,
-                  newUsername: newUsername,
-                };
-                await fetch(
-                  `http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/updateDmName`,
-                  {
-                    method: "POST",
-                    headers: {
-                      Authorization: auth.getBearer(),
-                      "Content-Type": "application/json; charset=utf-8",
-                    },
-                    body: JSON.stringify(toSend2),
-                  }
-                );
-              } catch (error) {
-                console.error(error);
-              }
+      if (tosend.username || tosend.email) {
+        try {
+          const data = await fetch(
+            `http://${process.env.REACT_APP_URL_MACHINE}:4000/user/edit`,
+            {
+              method: "POST",
+              headers: {
+                Authorization: auth.getBearer(),
+                "Content-Type": "application/json; charset=utf-8",
+              },
+              body: JSON.stringify(tosend),
             }
-            auth.edit(newUser);
-            setUserOk(true);
+          );
+          const newUser = await data.json();
+
+          if (newUser) {
+            if (newUser.message) {
+              setUserOk(false);
+            } else {
+              if (newUsername) {
+                try {
+                  const toSend2 = {
+                    OldUsername: auth.user.username,
+                    newUsername: newUsername,
+                  };
+                  await fetch(
+                    `http://${process.env.REACT_APP_URL_MACHINE}:4000/chatOption/updateDmName`,
+                    {
+                      method: "POST",
+                      headers: {
+                        Authorization: auth.getBearer(),
+                        "Content-Type": "application/json; charset=utf-8",
+                      },
+                      body: JSON.stringify(toSend2),
+                    }
+                  );
+                } catch (error) {
+                  console.error(error);
+                }
+              }
+              auth.edit(newUser);
+              setUserOk(true);
+            }
           }
+        } catch (e) {
+          console.error(e);
         }
-      } catch (e) {
-        console.error(e);
       }
     }
   };
@@ -126,7 +133,7 @@ function EditProfile() {
               <h3>please setup your profile</h3>
             </div>
           )}
-          <form name="editForm">
+          <form name="formNewUsername">
             <StringField
               placeholder="username"
               value={newUsername}
@@ -135,13 +142,13 @@ function EditProfile() {
             />
             <EmailField value={newEmail} handleValid={setNewEmail} />
             <input
-              name="editEmailInput"
+              name="inputNewFile"
               type="file"
               onChange={(e) => {
                 handleAvatar(e);
               }}
             />
-
+            {avatarError && <p className="errorMessage">{avatarError}</p>}
             {userOk && <Navigate to={returnPath}></Navigate>}
             <button onClick={handleUser}>Edit</button>
           </form>
