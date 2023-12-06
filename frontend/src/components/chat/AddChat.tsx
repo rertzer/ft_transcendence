@@ -81,6 +81,7 @@ export const AddChat = (props: {showSubMenu: string, setShowSubMenu: Function}) 
 				<div className='form'>
 					<div>
 						<input
+							name="channelNameInput"
 							type="text"
 							placeholder="Channel Name"
 							maxLength={42}
@@ -98,6 +99,7 @@ export const AddChat = (props: {showSubMenu: string, setShowSubMenu: Function}) 
 						</select>
 						{chatType === 'protected by password' && (
 							<input
+							name="passwordInput"
 							type="password"
 							placeholder="Password"
 							maxLength={16}

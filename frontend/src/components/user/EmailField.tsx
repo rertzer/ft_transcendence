@@ -18,6 +18,7 @@ function EmailField(props: { value: string; handleValid: Function }) {
 
   return (
     <input
+      name="emailFieldInput"
       className={checkClass}
       type="email"
       placeholder="email"

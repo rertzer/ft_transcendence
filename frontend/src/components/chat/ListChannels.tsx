@@ -122,6 +122,7 @@ export const ListChannels = (props: {showSubMenu: string, setShowSubMenu: Functi
 				<div className="joinInfo">
 				{chanToJoin.id === -1 ? <span>Choose a channel to join</span> : <span>Do you want to join "{chanToJoin.name}" ?</span>}
 				{chanToJoin.type === "protected by password" && <input
+					name="enterPasswordInput"
 					type="password"
 					placeholder='Password'
 					value={password}

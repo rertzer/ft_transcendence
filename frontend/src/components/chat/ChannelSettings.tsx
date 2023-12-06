@@ -143,6 +143,7 @@ export const ChannelSettings = (props: {showSubMenu: string, setShowSubMenu: Fun
                             <div>
                                 <span>Change channel password</span>
 				                <input
+                                    name="passwordChangeInput"
 					                type="password"
                                     maxLength={16}
 					                placeholder='New password'
@@ -161,6 +162,7 @@ export const ChannelSettings = (props: {showSubMenu: string, setShowSubMenu: Fun
                             <div>
                                 <span>Add channel password</span>
                                 <input
+                                    name="addPasswordInput"
 					                type="password"
                                     maxLength={16}
 					                placeholder='Password'
@@ -178,6 +180,7 @@ export const ChannelSettings = (props: {showSubMenu: string, setShowSubMenu: Fun
                             <div>
                                 <span>Add channel password</span>
                                 <input
+                                    name="addPasswordInput"
 					                type="password"
                                     maxLength={16}
 					                placeholder='Password'
@@ -196,6 +199,7 @@ export const ChannelSettings = (props: {showSubMenu: string, setShowSubMenu: Fun
                     <div className='inviteUsers'>
                         <span>Invite a user to join the channel</span>
                         <input
+                            name="inviteUserInput"
 					        type="text"
                             maxLength={32}
 					       placeholder='Username'

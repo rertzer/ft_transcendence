@@ -31,6 +31,7 @@ const MessageInput = (props: {chatId: number}) => {
     return (
         <div className='messageinput'>
             <input
+				name="messageInput"
 				type="text"
 				placeholder='Write...'
 				maxLength={1024}

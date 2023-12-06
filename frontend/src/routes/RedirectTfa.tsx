@@ -54,8 +54,9 @@ function RedirectTfa() {
       <div className="card">
         <div className="left">
           <h1>Log in</h1>
-          <form>
+          <form name="redirectForm">
             <input
+              name="enterTokenInput"
               type="text"
               placeholder={"enter the token"}
               value={tfaToken}

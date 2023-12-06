@@ -6,6 +6,7 @@ function StringField(props: {
 }) {
   return (
     <input
+      name="stringFieldInput"
       type="text"
       placeholder={props.placeholder}
       value={props.value}

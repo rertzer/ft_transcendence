@@ -18,6 +18,7 @@ function PassField(props: { value: string; handleValid: Function }) {
   return (
     <>
       <input
+        name="choosePasswordInput"
         type="password"
         placeholder="Password"
         value={newPassword}
@@ -25,6 +26,7 @@ function PassField(props: { value: string; handleValid: Function }) {
         onChange={(e) => setNewPassword(e.target.value)}
       />
       <input
+        name="confirmPasswordInput"
         className={confPasswordClass}
         type="password"
         placeholder="Confirm Password"

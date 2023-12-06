@@ -126,7 +126,7 @@ function EditProfile() {
               <h3>please setup your profile</h3>
             </div>
           )}
-          <form>
+          <form name="editForm">
             <StringField
               placeholder="username"
               value={newUsername}
@@ -135,6 +135,7 @@ function EditProfile() {
             />
             <EmailField value={newEmail} handleValid={setNewEmail} />
             <input
+              name="editEmailInput"
               type="file"
               onChange={(e) => {
                 handleAvatar(e);

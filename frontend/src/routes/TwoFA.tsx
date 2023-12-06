@@ -66,7 +66,7 @@ function Twofa() {
           <h2>{auth.user.login}</h2>
           {!qrcode && (
             <div>
-              <form>
+              <form name="2FAForm">
                 {!auth.user.tfa_activated && (
                   <button onClick={handleTfa}>setup </button>
                 )}

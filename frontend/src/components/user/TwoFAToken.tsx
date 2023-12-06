@@ -46,6 +46,7 @@ function TwoFAToken() {
   return (
     <form>
       <input
+        name="2FATokenInput"
         type="text"
         placeholder={test}
         value={token}
