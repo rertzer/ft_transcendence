@@ -86,7 +86,7 @@ export class PrismaUserService extends PrismaClient {
       });
       return user;
     } catch (error) {
-      throw new BadRequestException("Bad request");
+      throw new BadRequestException("Invalid input");
     }
   }
 

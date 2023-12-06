@@ -22,6 +22,7 @@ function EditProfile() {
   const [newAvatar, setNewAvatar] = useState<File>();
   const [returnPath, setReturnPath] = useState("/");
   const [avatarError, setAvatarError] = useState("");
+  const [userError, setUserError] = useState("");
 
   const handleAvatar = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { files } = event.target;
@@ -84,6 +85,7 @@ function EditProfile() {
           if (newUser) {
             if (newUser.message) {
               setUserOk(false);
+              setUserError(newUser.message);
             } else {
               if (newUsername) {
                 try {
@@ -149,6 +151,7 @@ function EditProfile() {
               }}
             />
             {avatarError && <p className="errorMessage">{avatarError}</p>}
+            {userError && <p className="errorMessage">{userError}</p>}
             {userOk && <Navigate to={returnPath}></Navigate>}
             <button onClick={handleUser}>Edit</button>
           </form>
