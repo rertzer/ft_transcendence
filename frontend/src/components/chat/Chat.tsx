@@ -84,7 +84,7 @@ const Chat = () => {
     return (
         <div className='chat'>
             <ConversationBar isOwner={isOwner} isAdmin={isAdmin}/>
-            <Messages chatId={activeChannel.id} isOwner={isOwner} setIsOwner={setIsOwner} isAdmin={isAdmin} setIsAdmin={setIsAdmin} isDM={isDM}/>
+            <Messages key={activeChannel.id + " " + auth.user.login} chatId={activeChannel.id} isOwner={isOwner} setIsOwner={setIsOwner} isAdmin={isAdmin} setIsAdmin={setIsAdmin} isDM={isDM}/>
             <MessageInput chatId={activeChannel.id}/>
         </div>
     )

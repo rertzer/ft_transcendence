@@ -103,7 +103,7 @@ export function SmartCell(props:{i:number, j:number}) {
       }, [scrollX, scrollY]);
 
     return (
-      <input key={`x:${props.i} y:${props.j}`} 
+      <input id={`x:${props.i} y:${props.j}`} key={`x:${props.i} y:${props.j}`} 
                  size={1}
                  onMouseDown={() => handleUpdateCoords(props.i, props.j)}
                  value={input}

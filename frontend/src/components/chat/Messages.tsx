@@ -119,7 +119,7 @@ const Messages = (props: {chatId: number, isOwner: boolean, setIsOwner: Function
 								)}
 							</div>)
 							} else {
-								return(<div></div>);
+								return(<div key={message.date + message.id}></div>);
 							}
 			  			})}
 			  		</div>

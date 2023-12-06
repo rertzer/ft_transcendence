@@ -24,7 +24,6 @@ function TwoFAToken() {
 	  if (newUser && newUser.tfa_activated)
 	  {
 		auth.edit(newUser);
-		console.log(newUser);
 		setTokenOk(true);
 	  }
 	  else

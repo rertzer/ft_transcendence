@@ -6,6 +6,7 @@ import { useLogin } from "../../components/user/auth";
 import GameContext from "../../context/gameContext";
 import { PageContext } from "../../context/PageContext";
 import { useNavigate } from 'react-router-dom';
+import { gameSocket } from "../game/services/gameSocketService";
 
 type uInfo = {
 	userStatus: string, // "owner", "admin", "user", "banned", "out" (if kicked or left)
@@ -20,7 +21,7 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 	const context = useContext(PageContext);
 	if (!context) { throw new Error('useContext must be used within a MyProvider'); }
 	const { updateChat } = context;
-	const {roomId, setRoomId, setGameStatus} = useContext(GameContext)
+	const {roomId, setRoomId, setGameStatus, gameStatus, modeGame} = useContext(GameContext)
 	const {setActiveChannel, setNeedToUpdate, setBlockedUsers, allAvatarsImg } = useContext(ChatContext)
     const [showUserActionsMenu, setShowUserActionsMenu] = useState(false);
 	const [userInfo, setUserInfo] = useState<uInfo>({userStatus: "user", friend: false, ingame: false})
@@ -347,6 +348,12 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 		}
 		if (answer === "ok") {
 			sendServiceMessage("Challenge accepted ! Game started in room " + idToJoin);
+			const dataToSend = {
+				waitingRoom: (gameStatus === 'IN_WAITING_ROOM'),
+				modeGame: modeGame,
+				roomId: roomId
+			  };
+			gameSocket.emit("i_am_leaving", dataToSend);
 			navigate("/game");
 			props.setInvite(false);
 			setRoomId(idToJoin);
@@ -354,9 +361,11 @@ const  Message = (props: {username: string, login: string, date: string, msg: st
 			updateChat("none");
 		}
 		else {
-			setGameStatus('NOT_IN_GAME');
-			if (roomId !== 0)
+			
+			if (!(gameStatus === 'PLAYING' || gameStatus === 'STARTING'|| gameStatus === 'WAITING_FOR_PLAYER'|| gameStatus === 'WAITING_TO_START')){
+				setGameStatus('NOT_IN_GAME');
 				setRoomId(0);
+			}
 			props.setInvite(false);
 			setActiveChannel({
 				id: -1,

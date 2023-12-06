@@ -87,7 +87,7 @@ function Grid() {
   for (let i: number = sy; (i - sy) * (80 + ((zoom - 100)) / 2) < windowWidthRef.current; i++) {
     for (let j: number = sx; (j - sx) * (20 + ((zoom - 100)) / 8) < windowHeightRef.current; j++) {
       components.push(
-        <SmartCell i={i} j={j} key={`${i} ${j}`}/>)
+        <SmartCell i={i} j={j} key={i+" "+j}/>)
     }
   }
   let x_square = x - sy;

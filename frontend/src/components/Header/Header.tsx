@@ -32,15 +32,7 @@ function Header() {
   }
   const {gameStatus} = useContext(gameContext);
   const navigate = useNavigate();
-  const [inputValue, setInputValue] = useState('');
-  const handleKeyDown = (event:any) => {
-    if (event.key === 'Enter') {
-      navigate(`/profile/${inputValue}`);
-    }
-  };
-  const handleChange = (event:any) => {
-    setInputValue(event.target.value);
-  };
+
   useEffect(() => {
     const fetchImage = async () => {
       const bearer = auth.getBearer();
@@ -64,7 +56,7 @@ function Header() {
   return <header className={styles.headerFrame} style={{ height: toolbar ? '65px' : '142px' }}>
         <div className={dark ? styles.headerBackground : styles.headerBackgroundLight} style={{ height: toolbar ? '65px' : '142px' }}/>
         <div className={styles.line3}>
-        {(printGameMenu()) ? <GameBar /> : <input className={dark ? styles.bar : styles.barLight} value={inputValue} onChange={handleChange} onKeyDown={handleKeyDown} /> }
+        {(printGameMenu()) ? <GameBar /> : <input className={dark ? styles.bar : styles.barLight} id="useless input"/> }
           <div className={styles.menu}>
             <div className={dark ? styles.menuBackground : styles.menuBackgroundLight} />
             <div className={styles.buttpn}>

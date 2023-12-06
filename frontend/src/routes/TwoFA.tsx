@@ -31,7 +31,7 @@ function Twofa() {
         setQrcode(qr_url.qrcode_url);
       }
     } catch (e) {
-      console.log(e);
+      console.error(e);
     }
   };
 

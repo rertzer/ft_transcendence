@@ -164,22 +164,25 @@ export function Contacts(props: { sx: number, sy: number, zoom: number, toolbar:
 
 	useEffect(() => {
 		const getUser2 = async () => {
-			try {
-				const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/friend/listFriends/${auth.user.login}`, {
-					method: 'GET',
-					headers: { Authorization: auth.getBearer()},
-				});
-				if (!response.ok) {
-					console.error(`Error fetching friends: ${response.status}`);
-					return;
+			if (auth.user.login)
+			{
+				try {
+					const response = await fetch(`http://${process.env.REACT_APP_URL_MACHINE}:4000/friend/listFriends/${auth.user.login}`, {
+						method: 'GET',
+						headers: { Authorization: auth.getBearer()},
+					});
+					if (!response.ok) {
+						console.error(`Error fetching friends: ${response.status}`);
+						return;
+					}
+	
+					const data = await response.json();
+					if (data) {
+						setListOfFriend(data);
+					}
+				} catch (error) {
+					console.error('Error fetching friends:', error);
 				}
-
-				const data = await response.json();
-				if (data) {
-					setListOfFriend(data);
-				}
-			} catch (error) {
-				console.error('Error fetching friends:', error);
 			}
 		}
 		getUser2();
