@@ -1,0 +1,4 @@
+POSTGRES_PASSWORD=unguessable
+POSTGRES_USER=someone
+POSTGRES_DB=something
+POSTGRES_HOST=someonelse

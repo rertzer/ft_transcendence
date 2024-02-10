@@ -1,0 +1,8 @@
+DATABASE_URL = "postgresql://<POSTGRES_USER>:<POSTGRES_PASSWORD>@<POSTGRES_HOST:<DB_PORT>/<POSTGRES_DB>?schema=public"
+JWT_SECRET = "guessme"
+FORTYTWO_AUTHOR_URL = "<AUTHORIZE_PATH>"
+FORTYTWO_TOKEN_URL = "TOKEN_PATH"
+FORTYTWO_CALLBACK_URL = "http://<COMPUTER_NAME:<BACK_PORT_NB>/ft_auth/callback"
+FORTYTWO_CLIENTID = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+FORTYTWO_CLIENTSECRET = "yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy"
+PONG_FRONT_CALLBACK = "<COMPUTER_NAME>:<FRONT_PORT_NB>/redirect"
