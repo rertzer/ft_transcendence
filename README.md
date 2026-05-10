@@ -22,7 +22,7 @@ automatically matched with someone else
 - Advanced version with multiple balls and graphs with hitbox
 - The game is responsive!
 
-### Athentification
+### Athentication
 - Password are hashed
 - Protected against SQL injections
 - The user must login using the OAuth system of 42 intranet
